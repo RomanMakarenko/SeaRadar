@@ -1,0 +1,107 @@
+# SeaRadar — правила роботи з проєктом
+
+## 1. Статус baseline
+
+Цей файл є стабільним operational contract для людей та AI-асистентів.
+
+- **Product / MVP:** `Waiting for MVP input`
+- **Stack / architecture:** `Waiting for MVP input`
+- **Sprint dates and owners:** `Waiting for MVP input`
+- **Current phase:** governance setup only
+
+Не вигадувати поведінку SeaRadar, користувачів, метрики, стек, архітектуру, тести, deployment, production readiness або user validation до появи підтвердженої MVP-специфікації.
+
+## 2. Канонічні артефакти
+
+| Артефакт | Канонічний шлях | Роль | Правило оновлення |
+|---|---|---|---|
+| Project contract | `SPEC.md` | Довгоживуча специфікація проблеми, користувача, outcome, scope і acceptance | Редагувати після узгодженого рішення про зміну контракту |
+| Task contract | `TASK_SPEC.md` | Контракт однієї малої перевірюваної роботи | Оновлювати до початку роботи та при зміні scope |
+| Evidence | `EVIDENCE.md` | Фактичний журнал перевірених результатів | Тільки append-only; не замінювати планом або narration |
+| Delivery history | `RUNBOOK.md` | Операційна історія, рішення, blockers і handoff | Тільки append-only після фактичної перевірки |
+| Sprint convention | `docs/sprints/README.md` | Формат майбутніх S1–S3 планів | Змінювати лише разом із governance-рішенням |
+| Decision convention | `docs/decisions/README.md` | Формат stack/architecture/scope decision records | Додавати окремий record на кожне рішення |
+
+Не створювати паралельні canonical names (`EVIDENCE_LOG.md`, `docs/SPEC.md`, дублікати templates) без окремого decision record. У цьому проєкті `EVIDENCE.md` є canonical evidence path.
+
+## 3. Статуси та metadata
+
+Кожен довгоживучий артефакт повинен мати: `ID`, `Version`, `Status`, `Owner`, `Date`, `Related artifacts`.
+
+Використовувати такі статуси:
+
+- `Draft` — створено, але не погоджено;
+- `Ready` — контракт погоджено та можна виконувати;
+- `Active` — робота триває;
+- `Verified` — результат підтверджений свіжим evidence;
+- `Superseded` — замінено новою версією.
+
+Для значень усередині документів використовувати окремі маркери: `Confirmed`, `Assumption`, `Unknown`, `Needs verification`, `Blocked`, `Waiting for MVP input`.
+
+Template, documented example, catalog entry або текст у плані не є доказом фізичного файлу, виконання команди чи якості результату.
+
+## 4. Контрольований AI workflow
+
+Перед кожною зміною:
+
+1. Прочитати актуальний tree, пов'язані артефакти та affected paths.
+2. Зафіксувати task ID, goal, allowed paths, expected diff і targeted check у `TASK_SPEC.md`.
+3. Перевірити, що зміна підтримує scope `SPEC.md`.
+
+Під час роботи:
+
+- робити один bounded slice за ітерацію;
+- не додавати unrelated cleanup, redesign або dependency без рішення;
+- не змінювати файли поза allowed paths;
+- явно маркувати assumptions та Unknowns;
+- не читати й не записувати secrets/credentials без окремого дозволу;
+- зупинятися, якщо scope розширився, contract неясний або немає oracle для перевірки.
+
+Після зміни людина має перевірити diff і обрати `continue`, `revise` або `HOLD`. Не вважати відсутність помилки моделі evidence.
+
+## 5. Acceptance, verification і rollback
+
+Кожен task має містити:
+
+- observable acceptance criteria;
+- targeted commands або manual checks;
+- expected та observed result;
+- checkpoint після slice;
+- stop conditions;
+- rollback/recovery path.
+
+Рішення sprint: `DONE`, `CONTINUE WITH APPROVAL` або `HOLD`. Для demo окремо розділяти blocking checks, advisory checks, evidence anchors і межу claims. Demo readiness не є deployment authorization.
+
+Rollback має описувати, як повернутися до останнього підтвердженого стану, хто приймає рішення і яке evidence потрібне. Не виконувати production, publish, migration або destructive commands без окремої авторизації.
+
+## 6. Правила артефактів
+
+- `SPEC.md` — contract про проблему, primary user/JTBD, value proposition, success metric, core flow, scope, non-goals, release slice та acceptance. Не є task plan або evidence.
+- `TASK_SPEC.md` — contract конкретної роботи: owner, input, output, constraints, verification, checkpoint, exit і rollback. До MVP це inactive template.
+- `EVIDENCE.md` — лише спостережені факти: source, expected, observed, timestamp, status і limitations. Не називати documented example фактичним виконанням.
+- `RUNBOOK.md` — історія delivery та handoff; не повний chat transcript, не специфікація і не заміна evidence.
+- `docs/sprints/` — лише майбутні S1, S2, S3 після затвердження SPEC і stack. Кожен sprint має один observable outcome.
+- `docs/decisions/` — окремі записи рішень із context, options, decision, rationale, consequences, owner і verification trigger.
+
+## 7. Change control та звіт
+
+Зміну scope, canonical path, статусу або decision оформити перед реалізацією та пов'язати через IDs. Не тихо переписувати історію. Evidence і RUNBOOK дописувати лише після перевірки.
+
+Фінальний звіт кожної роботи має містити:
+
+1. змінені файли;
+2. фактичні команди та їх статус;
+3. evidence links/IDs;
+4. unresolved Unknowns та blockers;
+5. rollback або recovery note;
+6. handoff і наступний bounded action.
+
+## 8. Порядок перевірки
+
+Поки runtime і stack не обрані, використовувати structural/content checks для Markdown та Git. Після вибору stack порядок за замовчуванням:
+
+```text
+check → validate → build → targeted tests → demo gate
+```
+
+Не звітувати про команду, яку не запускали, і не підміняти `Unknown` правдоподібним результатом.

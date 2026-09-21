@@ -1,0 +1,21 @@
+# OS and IDE local state
+.DS_Store
+.idea/shelf/
+.idea/workspace.xml
+.idea/httpRequests/
+.idea/dataSources/
+.idea/dataSources.local.xml
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Common generated output (revisit after stack selection)
+out/
+build/
+dist/
+node_modules/
+coverage/
