@@ -75,3 +75,28 @@ Each entry must include: date/session, goal and scope, changed artifacts, comman
 - **Scope boundary:** these inputs are recorded for the next session but were not audited, executed, incorporated into product code or treated as evidence. The local installation path for the Feature-Sliced skill was not independently verified.
 - **Commands and status:** no new inspection or use of those resources was performed; no files within them were changed.
 - **Handoff:** the next session may review these resources only under a separate bounded task contract; keep them outside the current decomposition/checkpoint diff until explicitly selected.
+
+### 2026-09-22 — B-01 task contract
+
+- **Session:** continuation from `CHECKPOINT-SEA-R1-001`; bounded contract preparation for `R1-B01-SCAFFOLD`.
+- **Goal and scope:** create the task contract for B-01 before any product implementation; preserve the R1 boundary and exclude manually added untracked inputs.
+- **Changed artifacts:** updated `TASK_SPEC.md`; appended `E-SEA-006` to `EVIDENCE.md`. No product source, package manifest, lock-file, dependency or runtime configuration was added.
+- **Decision:** product-owner `continue` was received; the selected next slice is `TASK-SEA-R1-B01-001`. Implementation remains gated by human review of the completed contract.
+- **Commands and status:** `git diff --check` — `PASS`; `git status --short` / `git diff --stat` — `PASS` for scoped inspection; `find . -maxdepth 2 -type f | sort` — `PASS` for confirming no scaffold exists.
+- **Observed state:** `TASK_SPEC.md` contains the B-01 goal, allowed paths, non-goals, acceptance criteria, verification plan, stop conditions and rollback. No `package.json`, lock-file or product source was present in the inspected tree.
+- **Blockers / Unknowns:** human review of `TASK_SPEC.md` remains required before implementation; exact package-manager resolution and runtime behavior remain unverified; S2/S3 and architecture-beyond-R1 Unknowns are unchanged.
+- **Rollback / recovery:** restore the pre-contract `TASK_SPEC.md` after inspecting the diff if the contract is rejected; preserve append-only evidence and prior RUNBOOK history; do not touch excluded untracked paths.
+- **Evidence:** `E-SEA-006` records the contract preparation and structural checks.
+- **Handoff:** review `TASK_SPEC.md`; if accepted, implement only `R1-B01-SCAFFOLD`, then run its targeted checks and append actual evidence before any B-02 transition. Current decision: `CONTINUE WITH APPROVAL`.
+
+### 2026-09-22 — B-01 scaffold implementation and targeted checks
+
+- **Session:** implementation continuation for `TASK-SEA-R1-B01-001` / `R1-B01-SCAFFOLD`.
+- **Goal and scope:** create the minimum Next.js App Router + React + TypeScript strict scaffold, verify local startup and strict typing, and exclude all B-02+ functionality.
+- **Changed artifacts:** added `package.json`, `package-lock.json`, `tsconfig.json`, `app/layout.tsx`, `app/page.tsx`, `app/globals.css`; updated `.gitignore`; Next.js 16 generated its managed `nextjs-agent-rules` block in `CLAUDE.md`; updated the active contract and appended `E-SEA-007`. No Leaflet, map, vessel, AIS, motion, Playwright or server feature was added.
+- **Commands and status:** `npm install --no-audit --no-fund` — `PASS`; `npm ls --depth=0` — `PASS`; `npm run dev` plus HTTP request to loopback — `PASS`; `npx tsc --noEmit` — initially `FAIL` because the broad include traversed excluded `reference/`, then `PASS` after narrowing `tsconfig.json`; `git diff --check` — `PASS`; targeted source search — `PASS`.
+- **Observed state:** `http://127.0.0.1:3000/` returned the `SeaRadar` heading and `R1 application scaffold.` paragraph. `next-env.d.ts` remains generated and ignored per Next.js guidance. The environment is Node.js `v22.16.0`, not the R1 Node.js 24 baseline.
+- **Blockers / Unknowns:** human diff review remains pending; Node.js 24 compatibility is unverified in this environment; real browser/manual visual check and `next build` were not run; all R1/S2/S3 Unknowns remain unchanged.
+- **Rollback / recovery:** remove only the B-01 implementation paths and restore the prior contract version after inspecting the diff if the slice is rejected; preserve append-only evidence/history and do not touch excluded untracked inputs. If removing the Next.js-managed block, note that a future `next dev` will recreate it unless the approved exception remains.
+- **Evidence:** `E-SEA-007` records installation, dependency, dev-server, type-check and scope observations.
+- **Handoff:** perform human diff review and decide `continue`, `revise` or `HOLD`. Do not start `R1-B02-MAP` until B-01 is accepted and Node.js 24/manual/build limitations are resolved or explicitly accepted.

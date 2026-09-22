@@ -90,3 +90,27 @@
 - **Status:** `PASS`
 - **Reviewer / owner:** delivery/technical owner — executor role; product-owner review pending.
 - **Limitations and follow-up:** the checkpoint records only documentation/planning state. It is not a commit, archive, product acceptance or implementation evidence. A broader repository-wide link scan also found an unrelated `/LICENSE` reference under untracked `reference/`; that path was excluded from this task and requires separate review.
+
+### E-SEA-006 — B-01 task contract created
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B01-001`; `CHECKPOINT-SEA-R1-001`
+- **Claim under verification:** the next bounded implementation slice has an explicit task contract before product code is started.
+- **Source:** updated `TASK_SPEC.md`; `git diff --check`; `git status --short`; `git diff --stat`; shallow tree inspection with `find . -maxdepth 2 -type f | sort`.
+- **Expected:** B-01 contract defines scope, allowed paths, non-goals, acceptance and verification; no product scaffold or dependency is created by contract preparation; excluded untracked inputs remain outside the slice.
+- **Observed:** `TASK_SPEC.md` now contains `TASK-SEA-R1-B01-001`; `git diff --check` passed; the diff stat showed only `TASK_SPEC.md`; no `package.json`, lock-file or product source was present in the inspected tree; excluded untracked inputs remained visible and unchanged.
+- **Timestamp / environment:** 2026-09-22; macOS 15 / local SeaRadar workspace; runtime not started.
+- **Status:** `PASS`
+- **Reviewer / owner:** delivery/technical owner — executor role; human review of the new contract remains required before implementation.
+- **Limitations and follow-up:** this verifies contract structure and the no-implementation boundary only. It does not verify B-01 runtime behavior, dependencies, build, tests or acceptance. Next action is human review of `TASK_SPEC.md`, followed by implementation only if the contract remains accepted.
+
+### E-SEA-007 — B-01 scaffold targeted checks
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B01-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** the minimal B-01 scaffold installs, type-checks under strict TypeScript, starts locally and exposes no B-02+ functionality.
+- **Source:** `package.json`; `package-lock.json`; `app/layout.tsx`; `app/page.tsx`; `app/globals.css`; `tsconfig.json`; `.gitignore`; `npm install --no-audit --no-fund`; `npm ls --depth=0`; `npx tsc --noEmit`; `npm run dev` with an HTTP request to `http://127.0.0.1:3000/`; `git diff --check`; targeted source search.
+- **Expected:** the minimum Next.js App Router + React + TypeScript strict scaffold is available; the dev server serves the minimal page; no Leaflet, vessel, AIS, motion or test functionality is introduced; generated files and dependencies remain bounded.
+- **Observed:** npm installation passed and produced `package-lock.json`; installed direct packages were Next.js `16.3.5`, React/React DOM `19.3.0`, TypeScript `6.0.3` and the required type packages; the dev server served the expected `SeaRadar` heading and `R1 application scaffold.` paragraph; strict type-check passed after narrowing `tsconfig.json` to `app/**` and generated Next types; `git diff --check` passed; targeted source search found no excluded B-02+ functionality.
+- **Timestamp / environment:** 2026-09-22; macOS 15; Node.js `v22.16.0`; npm `11.4.2`; local SeaRadar workspace.
+- **Status:** `PASS`
+- **Reviewer / owner:** delivery/technical owner — executor role; human diff review remains pending.
+- **Limitations and follow-up:** the R1 baseline specifies Node.js 24 but the observed environment is Node.js 22.16.0; compatibility on Node.js 24 remains `Needs verification`. A real browser/manual visual check and `next build` were not run. Next.js 16 generated a managed `nextjs-agent-rules` block in `CLAUDE.md`; the product owner approved retaining that generated exception and it is not a manual governance rewrite.

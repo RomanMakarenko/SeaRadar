@@ -1,101 +1,146 @@
 # TASK_SPEC.md — bounded task contract
 
-- **ID:** `TASK-SEA-R1-DECOMP-001`
-- **Version:** `1.1.0`
+- **ID:** `TASK-SEA-R1-B01-001`
+- **Version:** `1.0.1`
 - **Status:** `Active`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-09-22
-- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-003-r1-handoff.md`](docs/decisions/DEC-003-r1-handoff.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), [`docs/checkpoints/CHECKPOINT-01.md`](docs/checkpoints/CHECKPOINT-01.md)
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/checkpoints/CHECKPOINT-01.md`](docs/checkpoints/CHECKPOINT-01.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-003-r1-handoff.md`](docs/decisions/DEC-003-r1-handoff.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md)
 
 ## Goal and linked outcome
 
-- **Goal:** зафіксувати перевірювану декомпозицію Sprint 1 / R1, стратегію handoff між bounded sessions і checkpoint для перезапуску сесії без запуску product implementation.
-- **SPEC outcome:** `SPEC-SEA-001 / R1 plan with explicit session boundaries, reproducible handoffs and a restartable checkpoint`.
-- **Current behavior:** `SPRINT-01.md` містить backlog B-01…B-07, але не має окремих session contracts, handoff protocol і checkpoint record.
-- **Desired behavior:** кожна сесія має назву, goal, non-goals, checks, evidence, acceptance і наступний handoff; checkpoint фіксує останній перевірений стан і межі наступної сесії; runtime code не створюється.
+- **Goal:** створити найменший локальний каркас SeaRadar для R1 без прикладної функціональності.
+- **Backlog:** `B-01` / `R1-B01-SCAFFOLD`.
+- **SPEC outcome:** `SPEC-SEA-001 / R1 minimal local application foundation`.
+- **Current behavior:** у репозиторії немає product source, package manifest або runtime implementation; R1 decomposition і restart checkpoint готові.
+- **Desired behavior:** мінімальний Next.js App Router + React + TypeScript strict застосунок запускається локально однією командою, має Git/Node/Next ignore rules і lock-файл та не містить зайвого прикладного функціоналу.
 
 ## Owner and allowed paths
 
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест» — приймає межі та outcome.
-- **Delivery / technical owner:** виконавець проєкту — веде decomposition, decision records, evidence, checkpoint і handoff.
-- **Allowed paths:**
-  - `TASK_SPEC.md`
-  - `SPRINT-01.md`
-  - `SPEC.md`
-  - `EVIDENCE.md`
-  - `RUNBOOK.md`
-  - `docs/decisions/README.md`
-  - `docs/decisions/DEC-003-r1-handoff.md`
-  - `docs/decisions/DEC-004-checkpoint-convention.md`
-  - `docs/checkpoints/CHECKPOINT-01.md`
-- **Affected paths:** тільки перелічені governance-документи; product source, package manifest, lockfile, runtime configuration і secrets не зачіпати.
+- **Delivery / technical owner:** виконавець проєкту — реалізує bounded slice, запускає перевірки, веде evidence і handoff.
+- **Planning path:** `TASK_SPEC.md`.
+- **Implementation paths, only if required by the approved B-01 contract:**
+  - `package.json`
+  - один lock-файл, створений фактичним обраним package manager
+  - `tsconfig.json`
+  - один Next config file (`next.config.*`), лише якщо він потрібен каркасу
+  - `next-env.d.ts`, якщо його створює Next.js/TypeScript setup
+  - `.gitignore`
+  - `app/layout.tsx`
+  - `app/page.tsx`
+  - `app/globals.css`, лише якщо він потрібен стартовій сторінці
+- **Conditional path:** `CLAUDE.md` не редагувати вручну. Під час `next dev` Next.js 16 автоматично додав керований блок `nextjs-agent-rules`; product owner дозволив залишити саме цей generated block у B-01 diff. Інші зміни `CLAUDE.md` не дозволені.
+- **Excluded paths:** `reference/`, `.agents/`, `.claude/`, `skills-lock.json`, `TASK_INITIAL.md`, `TASK_DECOMPOSE.md`, `docs/checkpoints/`, `EVIDENCE.md`, `RUNBOOK.md`, `SPEC.md`, `SPRINT-01.md`, S2/S3 plans, secrets and unrelated files. `EVIDENCE.md` і `RUNBOOK.md` оновлюються лише append-only після фактичної перевірки та handoff.
 
 ## Inputs and constraints
 
-- **Inputs:** approved `SPEC.md`; current R1 backlog in `SPRINT-01.md`; user approval of bounded handoff strategy; explicit request to inspect the diff and create a restartable checkpoint in the 2026-09-22 session.
-- **Constraints:** не реалізовувати B-01…B-07; не встановлювати dependencies; не створювати S2/S3 plans; не вигадувати acceptance або runtime evidence; зберегти один canonical path на кожен артефакт; не включати сторонні untracked paths до checkpoint без review.
-- **Dependencies:** актуальний R1 backlog, decision-record convention і повний diff поточного робочого дерева.
+- **Inputs:** approved `SPEC.md`; B-01 contract in `SPRINT-01.md`; R1 stack decision `DEC-002-r1-stack.md`; restart state `CHECKPOINT-01.md`; selected handoff protocol `DEC-003-R1-HANDOFF`.
+- **Explicit authorization:** product-owner decision `continue` was given before this contract was created. The product owner subsequently approved retaining the Next.js-managed `CLAUDE.md` block after it was generated by `next dev`.
+- **Stack baseline:** Node.js 24; TypeScript 6.x with `strict`; Next.js App Router + React; package manager and exact resolved versions must be observed from the resulting manifest/lock-file, not invented in evidence.
+- **Constraints:** one bounded slice; no Leaflet, map, vessel model, demo data, AIS, server/API logic, button, motion, test runner or future placeholders; no unnecessary generated examples, assets or dependencies; do not read or write secrets; keep the application loopback-only for local verification.
+- **Governance constraint:** do not claim B-01 acceptance until the commands and manual checks actually run and their output/observations are recorded.
 
 ## Expected output
 
-`SPRINT-01.md` містить сім коротких session contracts для B-01…B-07 та reusable handoff protocol; `DEC-003-r1-handoff.md` фіксує обране рішення; `DEC-004-checkpoint-convention.md` фіксує record path; `CHECKPOINT-01.md` містить перевірений handoff для restart; `RUNBOOK.md` і `EVIDENCE.md` містять фактичні записи цієї bounded documentation роботи.
+A minimal, reviewable application scaffold that:
+
+1. exposes a local development command through `package.json`;
+2. starts the Next.js development server on the configured local loopback URL;
+3. renders a minimal start page through the App Router;
+4. compiles TypeScript in strict mode;
+5. contains an appropriate Node/Next `.gitignore`;
+6. contains exactly the lock-file produced by the selected package manager;
+7. contains no Leaflet, vessel, AIS, route, motion, server or test functionality;
+8. contains no unnecessary example application content or unrelated dependencies.
 
 ## In scope
 
-- Decompose B-01…B-07 into named sessions: `R1-B01-SCAFFOLD`, `R1-B02-MAP`, `R1-B03-VESSEL-MODEL`, `R1-B04-VESSEL-CARD`, `R1-B05-DEMO-ROUTES`, `R1-B06-MOTION`, `R1-B07-PLAYWRIGHT-SELECTION`.
-- Record per-session goals, non-goals, checks, evidence anchors, acceptance and handoff.
-- Record the handoff strategy and its alternatives, rationale, risks and revisit trigger.
-- Inspect the complete current diff and record a documentation checkpoint for the next session.
-- Verify documentation structure and links only.
+- Inspect the empty repository and confirm the minimum scaffold shape before editing.
+- Create the minimal Next.js + React + TypeScript strict scaffold.
+- Add the required local development command and lock-file.
+- Add/update `.gitignore` for Node.js and Next.js generated files.
+- Replace or remove generator content that is not required for the minimal start page.
+- Run only the B-01 checks listed below after implementation.
+- Review the complete selected diff against this contract before handoff.
 
 ## Non-goals
 
-- Product implementation, dependency installation, build, runtime or browser tests.
-- Creating Sprint 2/3 plans or an unrequested checkpoint archive format.
-- Including or modifying unrelated untracked paths such as `.agents/`, `.claude/`, `reference/`, `skills-lock.json`, `TASK_INITIAL.md` or `TASK_DECOMPOSE.md`.
-- Committing or pushing this documentation change without a separate request.
-- Treating a planned check or documented acceptance criterion as executed evidence.
+- Leaflet, OpenStreetMap, map layout or map configuration.
+- Vessel types, demo vessels, routes, markers, icons, cards or source labels.
+- Motion, timers, real-time state, AISStream, network/API/server logic or secrets.
+- Playwright, browser tests, visual regression or any other test framework.
+- S2/S3 planning or implementation.
+- Dependency additions not required by the minimum Next.js scaffold.
+- Deployment, publication, production readiness, user validation or performance claims.
+- Unrelated cleanup of manually added untracked paths.
 
 ## Acceptance criteria
 
-- [ ] Seven named R1 sessions map one-to-one to B-01…B-07.
-- [ ] Every session has observable goal, explicit non-goals, targeted check, evidence source, acceptance criterion and handoff.
-- [ ] Handoff strategy distinguishes plan from observed evidence and uses canonical artifacts only.
-- [ ] DEC-003 records selected option, alternatives, rationale, consequences and revisit trigger.
-- [ ] DEC-004 and CHECKPOINT-01 record the restartable checkpoint convention and current state.
-- [ ] S2/S3 remain absent and no product implementation paths change.
-- [ ] Structural/content and Markdown-link checks pass.
-- [ ] Human checkpoint: product owner reviews the decomposition and checkpoint before R1 implementation begins.
+- [x] `package.json` contains the minimum required scripts and dependencies for the selected Next.js App Router + React + TypeScript strict scaffold.
+- [x] Exactly one package-manager lock-file exists for the selected package manager and is consistent with the manifest (`package-lock.json`; excluded `skills-lock.json` is not a package-manager lock-file).
+- [x] TypeScript configuration enables strict checking and no B-02+ application code is present.
+- [x] `.gitignore` covers relevant Node.js/Next.js generated files without hiding required source or governance artifacts.
+- [x] `npm run dev` starts the application on the agreed local loopback URL and the start page is reachable by HTTP check.
+- [x] The start page is minimal and contains no Leaflet, map, vessel, AIS, motion or test functionality.
+- [x] No unnecessary generated example content or unrelated dependencies remain in the scaffold.
+- [x] The selected diff contains only the allowed B-01 paths, the product-owner-approved Next.js-managed block in `CLAUDE.md`, plus append-only evidence/history updates made after verification.
+- [ ] Human diff review confirms `continue`, `revise` or `HOLD` before the next bounded session.
 
-**Current acceptance status:** `Structural checks PASS; diff reviewed for documentation scope; product-owner checkpoint pending; implementation intentionally not started.`
+**Current acceptance status:** `CONTINUE WITH APPROVAL — targeted checks pass; Node.js 24 baseline and human diff review remain unresolved.`
 
 ## Verification
 
-- **Targeted commands:** `git diff --check`; `git status --short`; `git diff --stat`; `find . -maxdepth 3 -type f | sort`; metadata/heading/link checks; absence checks for S2/S3 and product source.
-- **Manual check:** inspect the complete diff including untracked files selected for the task; compare decomposition to B-01…B-07; confirm no planned check is reported as executed.
-- **Expected result:** seven session contracts, DEC-003, DEC-004 and CHECKPOINT-01 exist; no runtime files or dependencies are added; unrelated untracked paths are explicitly excluded.
-- **Observed result:** `git diff --check` PASS; final documentation diff review PASS for in-scope files; scoped checkpoint/metadata/link/scope validation PASS; `CHECKPOINT-01.md` exists; unrelated untracked paths identified and excluded.
+### Pre-edit checks
+
+- **Commands:** `git status --short`; inspect the current tree; compare planned paths with this contract and `SPRINT-01.md`.
+- **Expected:** no existing product implementation is overwritten without inspection; excluded untracked paths remain outside the slice.
+- **Observed:** `git status --short` showed only excluded untracked inputs; product source and package manifest were not present in the inspected baseline.
+
+### Post-edit checks
+
+Run and record actual output/status for:
+
+1. `git diff --check` — no whitespace errors.
+2. `git status --short` — only allowed B-01 paths and intended append-only records appear.
+3. `npm run dev` — development server starts on loopback; stop it after the manual check.
+4. Manual browser/open check of the minimal start page — page renders without the B-02+ features listed in non-goals.
+5. Manifest/lock/tree inspection — exactly one lock-file, strict TypeScript configuration, no unnecessary dependencies or generator examples.
+6. Targeted content search — no Leaflet, AISStream, vessel, route, motion or Playwright implementation was introduced by B-01.
+
+- **Expected result:** all applicable checks pass, or failures are recorded as `FAIL`/`BLOCKED` with the exact limitation; no planned check is reported as evidence before execution.
+- **Observed:** `npm install --no-audit --no-fund` passed; `npm run dev` served `http://127.0.0.1:3000/` and returned the expected `SeaRadar` heading and scaffold paragraph; `npx tsc --noEmit` initially failed because the broad TypeScript include traversed excluded `reference/` sources, then passed after narrowing `tsconfig.json` to the B-01 app and generated Next types; `git diff --check` passed; dependency inspection showed only the minimum scaffold packages.
+- **Limitations:** the environment reports Node.js `v22.16.0`, while the R1 baseline is Node.js 24; a real browser/manual visual check and `next build` were not run in this slice. The Next.js-managed `CLAUDE.md` block is included only because the product owner approved the generated exception.
+- **Evidence sources:** command output, inspected tree, manifest, lock-file, diff and HTTP response. Use a new `E-SEA-*` entry after actual verification.
 
 ## Checkpoint and stop conditions
 
-- **Checkpoint:** record `CHECKPOINT-01.md`, run structural/content checks, inspect the complete selected diff, then wait for product-owner review before starting `R1-B01-SCAFFOLD`.
-- **Stop when:** the requested checkpoint would require implementation, a session boundary is ambiguous, a new dependency or unrelated path is needed, or a planned check is mistaken for evidence.
-- **Exit decision:** `CONTINUE WITH APPROVAL` — plan and restart checkpoint are recorded; implementation is not authorized by this task.
+- **Checkpoint:** after implementation checks and human diff review, append factual evidence and a RUNBOOK handoff; create a new checkpoint record only if the slice is accepted and the checkpoint convention is followed.
+- **Stop before implementation if:** the required scaffold shape is ambiguous; the selected package manager would introduce an unapproved dependency/tooling change; an existing file outside the allowed paths must change; a secret or external service is required; or B-02+ behavior appears necessary for B-01.
+- **Stop after implementation if:** a check fails, the diff contains unexpected paths, the dev server cannot be verified, or acceptance requires an unapproved scope change.
+- **Exit decisions:** `DONE` only after acceptance evidence and human diff review; otherwise `CONTINUE WITH APPROVAL` or `HOLD`.
 
 ## Risks and open questions
 
-- Session sizes may need revision after observing actual task complexity.
-- Exact command and evidence details become concrete only when each session starts.
-- Checkpoint archive packaging/publication remains `Needs verification`; this task creates only a Markdown restart record.
-- User-declared manual inputs: `reference/` contains a React example and TypeScript pattern references; `.agents/skills/shadcn` is manually installed; Feature-Sliced was installed from `https://github.com/feature-sliced/skills.git` but its local path is not independently verified. These inputs are outside this task and unaudited.
-- `.claude/`, `skills-lock.json`, `TASK_INITIAL.md` and `TASK_DECOMPOSE.md` are also outside this task and require separate review before any commit.
-- Metric, AISStream, S2/S3 and architecture-beyond-R1 Unknowns remain unchanged.
+- Exact current stable package versions and package-manager lock-file format must be resolved from the authorized R1 stack and actual installation result; observed versions are Next.js `16.3.5`, React/React DOM `19.3.0`, TypeScript `6.0.3`, and Node declarations `26.6.2`.
+- The verification environment reports Node.js `22.16.0`, not the R1 Node.js 24 baseline; runtime compatibility on Node.js 24 remains `Needs verification`.
+- The existing root `CLAUDE.md` is a governance contract; whether any B-01-specific command note is needed remains `Needs verification` and must not be solved by silently rewriting it.
+- Browser/manual verification may depend on the local environment; record the actual environment and any limitation.
+- Product metrics, AISStream availability, architecture beyond R1 and S2/S3 remain unchanged `Unknown`/`Waiting for MVP input`.
 
 ## Rollback / recovery
 
-If the decomposition or checkpoint is rejected, restore the pre-task versions of `TASK_SPEC.md`, `SPRINT-01.md`, `SPEC.md`, `docs/decisions/README.md`, `EVIDENCE.md` and `RUNBOOK.md` from Git after inspecting the diff; remove only the newly created DEC-004/checkpoint files if explicitly authorized. Do not delete or rewrite prior evidence history and do not touch unrelated untracked paths.
+Before implementation, preserve the current working tree and inspect the complete diff. If B-01 is rejected or a check fails, restore only the B-01 implementation paths to their pre-task state; do not delete or rewrite excluded untracked inputs, prior evidence entries or prior RUNBOOK history. The product owner decides whether to `revise` or `HOLD`. The last confirmed planning checkpoint remains `CHECKPOINT-01.md` until a new accepted checkpoint is recorded.
 
 ## Handoff
 
-This task ends after the plan, diff review and checkpoint are recorded. The next bounded action is a separate task contract for `R1-B01-SCAFFOLD`; it must begin by reading `CHECKPOINT-01.md`, the latest `SPRINT-01.md`, `TASK_SPEC.md`, `EVIDENCE.md` and `RUNBOOK.md`, and must not start before the product-owner checkpoint.
+This contract is the gate before implementation. The current session may implement B-01 only after this contract is reviewed as complete. At the end of the slice, handoff must include:
+
+- actual changed files;
+- commands and manual checks actually run with status;
+- new evidence ID and limitations;
+- unresolved Unknowns and blockers;
+- rollback/recovery path;
+- human decision `continue`, `revise` or `HOLD`;
+- next bounded session: `R1-B02-MAP` only after accepted B-01.
