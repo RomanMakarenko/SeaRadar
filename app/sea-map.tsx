@@ -3,7 +3,7 @@
 import type { Map as LeafletMap, Marker, TileLayer } from "leaflet";
 import { useEffect, useRef } from "react";
 import { MAP_CONFIG } from "./map-config";
-import { DEMO_VESSEL } from "./vessel-model";
+import { DEMO_VESSELS } from "./vessel-model";
 import type { Vessel } from "./vessel-model";
 
 interface SeaMapProps {
@@ -20,8 +20,10 @@ export default function SeaMap({ onVesselSelect }: SeaMapProps) {
     let disposed = false;
     let map: LeafletMap | null = null;
     let tileLayer: TileLayer | null = null;
-    let vesselMarker: Marker | null = null;
-    let handleMarkerClick: (() => void) | null = null;
+    const vesselMarkers: Array<{
+      marker: Marker;
+      handleClick: () => void;
+    }> = [];
     let resizeFrame: number | null = null;
 
     const invalidateSize = () => {
@@ -56,32 +58,36 @@ export default function SeaMap({ onVesselSelect }: SeaMapProps) {
         attribution: MAP_CONFIG.attribution,
       }).addTo(map);
 
-      const iconState = DEMO_VESSEL.courseDeg === null ? "neutral" : "course";
-      const courseStyle =
-        DEMO_VESSEL.courseDeg === null
-          ? ""
-          : ` style="--vessel-course: ${DEMO_VESSEL.courseDeg}deg"`;
-      const vesselIcon = L.divIcon({
-        className: "vessel-marker",
-        html: `<span class="vessel-glyph"${courseStyle} aria-hidden="true"></span>`,
-        iconSize: [24, 24],
-        iconAnchor: [12, 12],
-      });
+      for (const vessel of DEMO_VESSELS) {
+        const iconState = vessel.courseDeg === null ? "neutral" : "course";
+        const courseStyle =
+          vessel.courseDeg === null
+            ? ""
+            : ` style="--vessel-course: ${vessel.courseDeg}deg"`;
+        const vesselIcon = L.divIcon({
+          className: "vessel-marker",
+          html: `<span class="vessel-glyph"${courseStyle} aria-hidden="true"></span>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12],
+        });
 
-      vesselMarker = L.marker([DEMO_VESSEL.lat, DEMO_VESSEL.lon], {
-        icon: vesselIcon,
-        interactive: true,
-      }).addTo(map);
+        const marker = L.marker([vessel.lat, vessel.lon], {
+          icon: vesselIcon,
+          interactive: true,
+        }).addTo(map);
 
-      handleMarkerClick = () => {
-        onVesselSelectRef.current(DEMO_VESSEL);
-      };
-      vesselMarker.on("click", handleMarkerClick);
+        const handleClick = () => {
+          onVesselSelectRef.current(vessel);
+        };
+        marker.on("click", handleClick);
 
-      const vesselMarkerElement = vesselMarker.getElement();
-      if (vesselMarkerElement) {
-        vesselMarkerElement.dataset.vesselId = DEMO_VESSEL.id;
-        vesselMarkerElement.dataset.icon = iconState;
+        const vesselMarkerElement = marker.getElement();
+        if (vesselMarkerElement) {
+          vesselMarkerElement.dataset.vesselId = vessel.id;
+          vesselMarkerElement.dataset.icon = iconState;
+        }
+
+        vesselMarkers.push({ marker, handleClick });
       }
 
       invalidateSize();
@@ -105,14 +111,13 @@ export default function SeaMap({ onVesselSelect }: SeaMapProps) {
         cancelAnimationFrame(resizeFrame);
       }
 
-      if (vesselMarker && handleMarkerClick) {
-        vesselMarker.off("click", handleMarkerClick);
+      for (const { marker, handleClick } of vesselMarkers) {
+        marker.off("click", handleClick);
+        marker.remove();
       }
-      vesselMarker?.remove();
+      vesselMarkers.length = 0;
       tileLayer?.remove();
       map?.remove();
-      handleMarkerClick = null;
-      vesselMarker = null;
       tileLayer = null;
       map = null;
     };
