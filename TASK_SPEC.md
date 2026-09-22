@@ -69,7 +69,7 @@ A minimal B-04 slice that:
 - [ ] `EVIDENCE.md` and `RUNBOOK.md` contain only actual B-04 results and limitations after verification.
 - [ ] Human diff review confirms `continue`, `revise` or `HOLD` before B-05.
 
-**Current acceptance status:** `Contract updated; implementation and all B-04 checks are pending. Browser visual acceptance and Node.js 24 compatibility remain Unknown until verified.`
+**Current acceptance status:** `Implementation, type/build/source checks and delivery commit are verified; browser visual/DOM acceptance remains UNKNOWN/BLOCKED, Node.js 24 compatibility is Needs verification, and final human B-04 diff decision is pending.`
 
 ## Verification
 

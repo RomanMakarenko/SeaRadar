@@ -148,3 +148,15 @@ Each entry must include: date/session, goal and scope, changed artifacts, comman
 - **Rollback / recovery:** inspect the B-04 diff and restore the B-03 implementation/task contract from commit `bad4df2` by reverting only B-04 paths if rejected; preserve append-only evidence/history and excluded untracked inputs. Do not stop the pre-existing dev server as part of this handoff.
 - **Evidence:** `E-SEA-011` records the actual B-04 type, build, source/scope, HTTP and environment checks and their limitations.
 - **Handoff:** status is `CONTINUE WITH APPROVAL`; human owner must review the B-04 diff and choose `continue`, `revise` or `HOLD`. Next bounded action is `R1-B05-DEMO-ROUTES` only after B-04 acceptance.
+
+### 2026-09-22 — B-04 commit and next-session handoff preparation
+
+- **Session:** delivery handoff preparation after `TASK-SEA-R1-B04-001` implementation verification.
+- **Goal and scope:** make the next session restartable from the pushed B-04 commit without replaying the conversation; no B-05 implementation was started.
+- **Changed artifacts:** updated the B-04 acceptance-status line in `TASK_SPEC.md`; appended `E-SEA-012` to `EVIDENCE.md`; appended this delivery handoff. Product implementation remains in commit `addc7ba`.
+- **Commands and status:** `git diff --check`, `npx tsc --noEmit`, `npm run build` and targeted B-04 source/scope checks — `PASS`; `git push origin sprint1` — `PASS`; `git log -1` confirmed `addc7ba` at both `sprint1` and `origin/sprint1`; final `git status --short` showed only excluded pre-existing untracked inputs.
+- **Delivery state:** branch `sprint1` is synchronized with `origin/sprint1` at `addc7ba` (`feat(r1): add B-04 vessel selection card`). The commit contains only the seven B-04/task/evidence files; `.agents/`, `.claude/`, `reference/`, `TASK_INITIAL.md`, `TASK_DECOMPOSE.md` and `skills-lock.json` were not staged.
+- **Blockers / Unknowns:** browser visual/DOM acceptance remains `UNKNOWN/BLOCKED` because no supported browser runtime is installed; Node.js 24 compatibility remains `Needs verification` because the environment is Node.js `v22.16.0`; `npm run dev` remains blocked by the pre-existing listener on `127.0.0.1:3000`.
+- **Rollback / recovery:** inspect `git show addc7ba`; if B-04 is rejected, restore the last accepted B-03 state at `bad4df2` by reverting only the B-04 implementation/task-contract changes while preserving append-only evidence/history and excluded untracked inputs.
+- **Evidence:** `E-SEA-011` records implementation checks; `E-SEA-012` records commit/push and branch synchronization.
+- **Next session start:** read `TASK_SPEC.md`, the latest `EVIDENCE.md` entries `E-SEA-011` and `E-SEA-012`, and the latest two `RUNBOOK.md` entries; inspect `git show addc7ba`; perform the human B-04 diff review and explicitly choose `continue`, `revise` or `HOLD`. Only after `continue`, create the bounded `TASK-SEA-R1-B05-001` contract and start `R1-B05-DEMO-ROUTES`.

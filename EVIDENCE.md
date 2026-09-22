@@ -162,3 +162,15 @@
 - **Status:** `PASS` for type, build, diff and corrected source/scope checks; `PASS` for supplemental loopback HTTP response via the existing server; `BLOCKED` for starting a second dev server because port `127.0.0.1:3000` was already in use; `UNKNOWN` for browser visual/DOM acceptance and Node.js 24 compatibility.
 - **Reviewer / owner:** delivery/technical owner — executor role; final human B-04 diff review remains pending.
 - **Limitations and follow-up:** no browser observation verified marker click behavior, live card content, literal `<b>Демо</b>` rendering, repeated/map click selection persistence, panel order, resize behavior or unmount cleanup. The first local targeted assertion script failed because its own ordering assertion matched the `VesselCard` import rather than the rendered element; the corrected validator passed. The existing server was not stopped because it was not started by this bounded check. Human diff review must choose `continue`, `revise` or `HOLD` before B-05; the B-03 commit `bad4df2` remains the recovery point.
+
+### E-SEA-012 — B-04 delivery commit and remote branch handoff
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B04-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** the verified B-04 implementation is committed on the first sprint branch and pushed to the configured remote without including excluded untracked inputs.
+- **Source:** `git status --short`; `git log -1 --oneline --decorate`; `git remote -v`; `git push origin sprint1` output.
+- **Expected:** branch `sprint1` contains the B-04 commit; `origin/sprint1` points to the same commit; excluded untracked inputs remain outside the commit; no unexpected tracked changes remain after push.
+- **Observed:** commit `addc7ba` (`feat(r1): add B-04 vessel selection card`) is at `HEAD -> sprint1` and `origin/sprint1`; push completed as `bad4df2..addc7ba sprint1 -> sprint1`; `git status --short` lists only the pre-existing excluded untracked paths `.agents/`, `.claude/`, `TASK_DECOMPOSE.md`, `TASK_INITIAL.md`, `reference/` and `skills-lock.json`.
+- **Timestamp / environment:** 2026-09-22; macOS 15; local SeaRadar workspace; remote `origin` is `git@github.com:RomanMakarenko/SeaRadar.git`.
+- **Status:** `PASS` for commit/remote delivery and excluded-path boundary; `UNKNOWN` for browser visual/DOM acceptance and Node.js 24 compatibility as recorded in `E-SEA-011`.
+- **Reviewer / owner:** delivery/technical owner — executor role; final human B-04 diff decision remains pending.
+- **Limitations and follow-up:** remote delivery does not substitute for live browser acceptance or final human review. The next session must inspect commit `addc7ba`, review the B-04 diff, and choose `continue`, `revise` or `HOLD` before creating the B-05 task contract.
