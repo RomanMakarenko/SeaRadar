@@ -1,0 +1,12 @@
+"use client";
+
+import dynamic from "next/dynamic";
+
+const SeaMap = dynamic(() => import("./sea-map"), {
+  ssr: false,
+  loading: () => <div className="sea-map" aria-label="Завантаження карти Дуврської протоки" />,
+});
+
+export default function MapShell() {
+  return <SeaMap />;
+}
