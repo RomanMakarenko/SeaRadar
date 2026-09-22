@@ -1,7 +1,7 @@
 # EVIDENCE.md — фактичний evidence ledger
 
 - **ID:** `EVIDENCE-SEA-001`
-- **Version:** `0.2.0`
+- **Version:** `0.4.0`
 - **Status:** `Active`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
@@ -66,3 +66,27 @@
 - **Status:** `PASS`
 - **Reviewer / owner:** delivery/technical owner — executor role; product-owner checkpoint pending.
 - **Limitations and follow-up:** this verifies documentation structure and content only; it does not verify application behavior, build, tests, AISStream availability, user validation, deployment or production readiness. An initial overly broad duplicate-text check flagged the intentional sentence documenting `EVIDENCE_LOG.md`; the corrected link-focused validator passed. Human review of the diff is still required before the task is `Verified`.
+
+### E-SEA-004 — R1 decomposition and handoff strategy recorded
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-DECOMP-001`; `DEC-003-R1-HANDOFF`
+- **Claim under verification:** Sprint 1 has seven named bounded sessions with per-session goals, non-goals, checks, evidence anchors, acceptance criteria and handoff; the handoff strategy is recorded without product implementation.
+- **Source:** user approval in the 2026-09-22 session; `git diff --check`; final Python decomposition/metadata/link validator; `find . -maxdepth 3 -type f -print | sort`; complete documentation diff review.
+- **Expected:** all B-01…B-07 sessions are represented one-to-one; DEC-003 exists and links resolve; S2/S3 and product source paths remain absent; planned checks are clearly distinguished from observed evidence.
+- **Observed:** `git diff --check` passed; seven named sessions were found; every session contains the required goal, non-goals, check, evidence, acceptance and handoff labels; metadata and Markdown links passed; no implementation files, dependencies or S2/S3 plans were added.
+- **Timestamp / environment:** 2026-09-22; macOS 15 / local SeaRadar workspace; runtime not started.
+- **Status:** `PASS`
+- **Reviewer / owner:** delivery/technical owner — executor role; product-owner review before R1-B01 remains required.
+- **Limitations and follow-up:** this proves only the decomposition and documentation structure. It does not prove any B-01…B-07 check, runtime behavior, build, tests or acceptance. The next implementation slice requires a separate task contract after the human checkpoint.
+
+### E-SEA-005 — restart checkpoint and selected diff review
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-DECOMP-001`; `DEC-004-CHECKPOINT-CONVENTION`; `CHECKPOINT-SEA-R1-001`
+- **Claim under verification:** the current R1 planning state and selected documentation diff are captured in a restartable checkpoint without including unrelated working-tree paths.
+- **Source:** `git diff --check`; `git status --short`; `git diff --name-only`; `git diff --stat`; scoped Python checkpoint/metadata/link/scope validator; `docs/checkpoints/CHECKPOINT-01.md`.
+- **Expected:** selected tracked diff has no unexpected paths; checkpoint and decision links resolve; S2/S3 and product implementation paths remain absent; unrelated untracked paths are explicitly excluded.
+- **Observed:** `git diff --check` passed; tracked changes were limited to `EVIDENCE.md`, `RUNBOOK.md`, `SPEC.md`, `SPRINT-01.md`, `TASK_SPEC.md` and `docs/decisions/README.md`; scoped validator passed; `CHECKPOINT-01.md` and `DEC-004` exist; `.agents/`, `.claude/`, `reference/`, `skills-lock.json`, `TASK_INITIAL.md` and `TASK_DECOMPOSE.md` remain untracked and excluded.
+- **Timestamp / environment:** 2026-09-22; macOS 15 / local SeaRadar workspace; runtime not started.
+- **Status:** `PASS`
+- **Reviewer / owner:** delivery/technical owner — executor role; product-owner review pending.
+- **Limitations and follow-up:** the checkpoint records only documentation/planning state. It is not a commit, archive, product acceptance or implementation evidence. A broader repository-wide link scan also found an unrelated `/LICENSE` reference under untracked `reference/`; that path was excluded from this task and requires separate review.

@@ -1,12 +1,12 @@
 # SPRINT-01 - Реліз R1: карта й демонстраційні судна
 
 - **ID:** `SPRINT-SEA-R1-001`
-- **Version:** `1.0.0`
+- **Version:** `1.1.0`
 - **Status:** `Ready`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-09-22
-- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md)
+- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-003-r1-handoff.md`](docs/decisions/DEC-003-r1-handoff.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md)
 
 > Це єдиний деталізований і погоджений план на поточний момент: реліз R1. Sprint 2 і Sprint 3 ще не деталізовані та не авторизовані.
 
@@ -113,3 +113,109 @@
 - Додати четверте демонстраційне судно з власним маршрутом.
 - Зламати очищення таймера й побачити наслідки в консолі.
 - Попросити свіжу сесію Claude Code прочитати diff checkpoint 02 і назвати, що в ньому не перевірено тестами.
+
+---
+
+## Частина C. Декомпозиція на bounded sessions
+
+Ця частина фіксує план роботи, а не виконані результати. Позначені checks, evidence та acceptance стають фактичними лише після запуску відповідної сесії та запису результату в `EVIDENCE.md`.
+
+### Стратегія handoff між сесіями
+
+Одна сесія = один короткий bounded slice з окремим іменем. На початку наступної сесії читаються актуальні `SPRINT-01.md`, `TASK_SPEC.md`, останні записи `EVIDENCE.md` і `RUNBOOK.md`. Повний transcript чату не є необхідним.
+
+Наприкінці сесії handoff має містити:
+
+- фактично змінені файли;
+- фактично виконані команди або manual checks та їхній статус;
+- evidence ID і limitations;
+- unresolved Unknowns і blockers;
+- rollback/recovery path;
+- наступну названу сесію та її bounded starting point.
+
+План не є evidence: запланований check не можна називати пройденим до його фактичного запуску. Після кожного slice виконується human diff review і явно обирається `continue`, `revise` або `HOLD`.
+
+### `R1-B01-SCAFFOLD` — каркас застосунку
+
+- **B-01:** мінімальний Next.js + React + TypeScript strict проєкт, запуск, Git і lock-файл.
+- **Goal:** отримати мінімальну локальну основу застосунку.
+- **Non-goals:** Leaflet, карта, судна, AIS, серверна логіка та майбутні заготовки.
+- **Check:** `npm run dev`; стартова сторінка; `.gitignore`; lock-файл; відсутність зайвих залежностей.
+- **Evidence:** tree, manifest, lock-файл, фактичний output запуску та diff.
+- **Acceptance:** застосунок запускається однією локальною командою й не містить непотрібного прикладного функціоналу.
+- **Handoff:** передати наступній сесії фактичний запуск, список файлів і рішення щодо структури app directory; наступна — `R1-B02-MAP`.
+
+### `R1-B02-MAP` — карта Дуврської протоки
+
+- **B-02:** Leaflet лише на клієнті, OSM Standard з атрибуцією, район і початковий вид з конфігурації.
+- **Goal:** показати стабільну карту на всю доступну область.
+- **Non-goals:** судна, рух, картки, AIS і кнопка справжніх даних.
+- **Check:** `next build`; пряме відкриття; refresh; resize; відсутність сірої карти або артефактів.
+- **Evidence:** build output і manual checklist/screenshot з обмеженнями мережі.
+- **Acceptance:** карта працює після прямого відкриття й оновлення, має атрибуцію та коректний initial view.
+- **Handoff:** передати build/manual result і відомі map limitations; наступна — `R1-B03-VESSEL-MODEL`.
+
+### `R1-B03-VESSEL-MODEL` — модель судна та значок
+
+- **B-03:** узгоджена структура судна, одне demo-судно, значок за курсом або neutral при `null`.
+- **Goal:** показати одне коректно описане демонстраційне судно на карті.
+- **Non-goals:** рух, три маршрути, картка, AIS і таймери.
+- **Check:** судно в межах району; `data-vessel-id`; `data-icon="course"|"neutral"`; підпис джерела.
+- **Evidence:** code diff і manual check фактичних координат/значка.
+- **Acceptance:** судно видно, значок відповідає `courseDeg` або `null`, джерело позначене як демонстраційне.
+- **Handoff:** передати фактичну модель і перевірені атрибути; наступна — `R1-B04-VESSEL-CARD`.
+
+### `R1-B04-VESSEL-CARD` — вибір і картка
+
+- **B-04:** клік по судну відкриває картку у форматі узгоджених значень.
+- **Goal:** показати картку саме обраного судна без HTML-інтерпретації назви.
+- **Non-goals:** автоматичний рух, три судна, справжні дані та пошук.
+- **Check:** `id`, name, coordinates, speed, course, timestamp, source; повторний клік; ім'я `<b>Демо</b>` як текст.
+- **Evidence:** browser/manual check і screenshot або test output.
+- **Acceptance:** картка відповідає `id`, невідомі значення — "Немає даних", `0 kn` не плутається з `null`.
+- **Handoff:** передати формат картки й відомі UI limitations; наступна — `R1-B05-DEMO-ROUTES`.
+
+### `R1-B05-DEMO-ROUTES` — три demo-судна
+
+- **B-05:** `demo-1`…`demo-3`, по 8–12 точок маршруту та швидкість кожного.
+- **Goal:** отримати три незалежні демонстраційні траєкторії всередині району.
+- **Non-goals:** таймер, pause, rewind, loop, AIS і зміна конфігурації під час роботи.
+- **Check:** три `data-vessel-id` на карті; усі точки маршрутів у районі; швидкості задані літералами.
+- **Evidence:** конфігураційний diff і manual inspection координат.
+- **Acceptance:** три судна видно одночасно з коректними іменами, маршрутами та початковими курсами.
+- **Handoff:** передати перевірений набір demo data; наступна — `R1-B06-MOTION`.
+
+### `R1-B06-MOTION` — рух і зупинка
+
+- **B-06:** tick 2000 мс, курс як азимут відрізка, оновлення картки, зупинка на останній точці.
+- **Goal:** показати помітний рух суден і стабільний фінальний стан.
+- **Non-goals:** pause, rewind, loop, controlled time та автоматична перевірка руху.
+- **Check:** ручний рух; зупинка зі швидкістю `0`; картка оновлюється; hot reload не накопичує timers; cleanup на unmount.
+- **Evidence:** manual checklist і console observation; не називати планову перевірку виконаною без фактичного output.
+- **Acceptance:** судна переміщуються кожні 2000 мс, на останній точці стоять, і вибране судно показує той самий стан.
+- **Handoff:** передати observed timer behavior та limitations; наступна — `R1-B07-PLAYWRIGHT-SELECTION`.
+
+### `R1-B07-PLAYWRIGHT-SELECTION` — browser tests
+
+- **B-07:** один Playwright browser, dev-server з конфігурації, тести вибору, tile requests blocked.
+- **Goal:** отримати відтворювану автоматичну перевірку базового вибору судна.
+- **Non-goals:** автоматична перевірка руху, AIS, visual regression та інші test frameworks.
+- **Check:** test command; green output; три `data-vessel-id`; правильна картка; повторний клік; заблоковані tile requests.
+- **Evidence:** повний фактичний test output, конфігурація runner і список тестів.
+- **Acceptance:** B-07 тести проходять одним runner без мережевої залежності тайлів.
+- **Handoff:** передати test output, known limitations і рекомендацію для checkpoint R1; наступний крок — human review та окреме рішення про checkpoint, не автоматичний перехід до S2/S3.
+
+### Handoff template
+
+```text
+Session: R1-B0N-NAME
+Status: DONE | CONTINUE WITH APPROVAL | HOLD
+Changed files: <фактичний список>
+Checks run: <команда/manual check> — <status>
+Evidence: <E-ID або Unknown>
+Observed: <факт>
+Limitations / blockers: <факти>
+Rollback: <як повернутися до останнього verified стану>
+Next session: <назва і bounded starting point>
+Human decision: continue | revise | HOLD
+```

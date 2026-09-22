@@ -1,12 +1,12 @@
 # Decision records
 
 - **ID:** `DECISIONS-GOV-001`
-- **Version:** `0.2.0`
+- **Version:** `0.4.0`
 - **Status:** `Ready`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-09-22
-- **Related artifacts:** [`../../SPEC.md`](../../SPEC.md), [`../../TASK_SPEC.md`](../../TASK_SPEC.md), [`../../EVIDENCE.md`](../../EVIDENCE.md), [`../../RUNBOOK.md`](../../RUNBOOK.md), [`DEC-001-mvp-contract.md`](DEC-001-mvp-contract.md), [`DEC-002-r1-stack.md`](DEC-002-r1-stack.md)
+- **Related artifacts:** [`../../SPEC.md`](../../SPEC.md), [`../../TASK_SPEC.md`](../../TASK_SPEC.md), [`../../EVIDENCE.md`](../../EVIDENCE.md), [`../../RUNBOOK.md`](../../RUNBOOK.md), [`../checkpoints/CHECKPOINT-01.md`](../checkpoints/CHECKPOINT-01.md), [`DEC-001-mvp-contract.md`](DEC-001-mvp-contract.md), [`DEC-002-r1-stack.md`](DEC-002-r1-stack.md), [`DEC-003-r1-handoff.md`](DEC-003-r1-handoff.md), [`DEC-004-checkpoint-convention.md`](DEC-004-checkpoint-convention.md)
 
 ## Decision record format
 
@@ -28,6 +28,8 @@ A catalog entry or chat statement is not a decision. Do not select a technology 
 |---|---|---|
 | [`DEC-001-mvp-contract.md`](DEC-001-mvp-contract.md) | `Ready` | Approved, versioned `PROJECT_BRIEF.md` contract; R1 is the only detailed release slice |
 | [`DEC-002-r1-stack.md`](DEC-002-r1-stack.md) | `Ready` | Node.js 24, TypeScript 6.x strict, Next.js + React, Leaflet, OSM Standard, Playwright Test |
+| [`DEC-003-r1-handoff.md`](DEC-003-r1-handoff.md) | `Ready` | Named bounded sessions with canonical handoff through sprint, task, evidence and runbook artifacts |
+| [`DEC-004-checkpoint-convention.md`](DEC-004-checkpoint-convention.md) | `Ready` | Canonical Markdown restart records at `docs/checkpoints/CHECKPOINT-0N.md` |
 
 ## Pending decisions
 
@@ -37,5 +39,6 @@ A catalog entry or chat statement is not a decision. Do not select a technology 
 | Sprint 2 / Sprint 3 allocation | `Waiting for input` | Approved outcomes, owners, dates, acceptance and dependencies |
 | Quantitative success metric | `Needs verification` | Baseline, target, observation window and collection confirmation |
 | AISStream service terms | `Needs verification` | Confirmed free-tier terms, availability and source behavior |
+| Checkpoint archive packaging/publication | `Waiting for input` | Owner-approved archive format, publication target and recovery ownership |
 
 Future records should use `docs/decisions/DEC-<number>-<short-name>.md` and update this index after verification. A changed decision gets a new versioned record; the prior record is marked `Superseded` only after the replacement is approved.

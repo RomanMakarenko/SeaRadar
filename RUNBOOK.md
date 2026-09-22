@@ -1,7 +1,7 @@
 # RUNBOOK.md — delivery history and handoff
 
 - **ID:** `RUNBOOK-SEA-001`
-- **Version:** `0.2.0`
+- **Version:** `0.4.0`
 - **Status:** `Active`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
@@ -41,3 +41,37 @@ Each entry must include: date/session, goal and scope, changed artifacts, comman
 - **Rollback / recovery:** inspect the complete diff, then restore the pre-task files from Git if the owner rejects the alignment; do not delete `START.md` or `TASK_INITIAL.md`; do not rewrite prior evidence entries.
 - **Evidence:** `E-SEA-003` records the observed structural/content checks and their limitations.
 - **Handoff:** product owner reviews the complete diff and chooses `continue`, `revise` or `HOLD`. After approval, create a new bounded task for the first R1 implementation slice; do not infer or implement S2/S3.
+
+### 2026-09-22 — R1 decomposition and handoff strategy
+
+- **Session:** documentation-only planning session for `TASK-SEA-R1-DECOMP-001`.
+- **Goal and scope:** record the approved seven-session decomposition for B-01…B-07 and the canonical handoff strategy; explicitly do not execute product implementation.
+- **Changed artifacts:** updated `TASK_SPEC.md`, `SPRINT-01.md`, `SPEC.md`, `docs/decisions/README.md`, `EVIDENCE.md` and this `RUNBOOK.md`; added `docs/decisions/DEC-003-r1-handoff.md`. No product source, package manifest, lockfile, dependency or S2/S3 plan was added.
+- **Interaction and decisions:** the user agreed that named bounded sessions with a concise handoff are rational for token economy and continuity. Selected protocol: plan in `SPRINT-01.md`, current contract in `TASK_SPEC.md`, observed facts in `EVIDENCE.md`, operational handoff in `RUNBOOK.md`; no full chat transcript or unapproved checkpoint directory.
+- **Decomposition:** `R1-B01-SCAFFOLD`, `R1-B02-MAP`, `R1-B03-VESSEL-MODEL`, `R1-B04-VESSEL-CARD`, `R1-B05-DEMO-ROUTES`, `R1-B06-MOTION`, `R1-B07-PLAYWRIGHT-SELECTION`.
+- **Commands and status:** `git diff --check` — `PASS`; final Python decomposition/metadata/link validator — `PASS`; `find . -maxdepth 3 -type f -print | sort` — `PASS`; documentation diff review — `CONTINUE WITH APPROVAL` pending product-owner review. No runtime or implementation command was run.
+- **Blockers / Unknowns:** actual checks, evidence and acceptance for B-01…B-07 remain unexecuted; checkpoint archive convention remains pending; metric, AISStream, S2/S3 and architecture-beyond-R1 Unknowns are unchanged.
+- **Rollback / recovery:** restore the pre-task documentation files from Git after inspecting the diff if the owner rejects the plan; preserve prior evidence and runbook history; do not touch product source because none is in scope.
+- **Evidence:** `E-SEA-004` records the structural verification and its limitations.
+- **Handoff:** wait for product-owner review. The next bounded action is a separate task contract for `R1-B01-SCAFFOLD`; do not begin it from this task.
+
+### 2026-09-22 — CHECKPOINT-01 restart handoff
+
+- **Session:** diff review and restart checkpoint for `TASK-SEA-R1-DECOMP-001`.
+- **Goal and scope:** inspect the selected documentation diff and create a small canonical checkpoint so the next session can restart without replaying the chat; no product implementation.
+- **Changed artifacts:** updated `TASK_SPEC.md`, `EVIDENCE.md`, `RUNBOOK.md`, `docs/decisions/README.md`; added `docs/decisions/DEC-004-checkpoint-convention.md` and `docs/checkpoints/CHECKPOINT-01.md`. Unrelated untracked paths were not modified.
+- **Diff review:** `git diff --check` — `PASS`; tracked diff paths were exactly `EVIDENCE.md`, `RUNBOOK.md`, `SPEC.md`, `SPRINT-01.md`, `TASK_SPEC.md` and `docs/decisions/README.md`; scoped checkpoint/metadata/link/scope validator — `PASS`.
+- **Observed state:** last confirmed commit is `41db3d7`; R1 decomposition is recorded; no product source, package manifest, lockfile, dependency, runtime or browser test was added; S2/S3 remain absent.
+- **Excluded working-tree items:** `.agents/`, `.claude/`, `reference/`, `skills-lock.json`, `TASK_INITIAL.md` and `TASK_DECOMPOSE.md` remain untracked and outside this checkpoint. A broader link scan found an unrelated `/LICENSE` reference under `reference/`; it was not changed.
+- **Blockers / Unknowns:** product-owner review is pending; B-01…B-07 checks remain unexecuted; checkpoint archive/publication remains pending; product metrics, AISStream, S2/S3 and architecture-beyond-R1 Unknowns remain unchanged.
+- **Rollback / recovery:** return to commit `41db3d7` after inspecting the selected diff if this checkpoint is rejected; do not delete unrelated untracked paths or rewrite prior evidence.
+- **Evidence:** `E-SEA-005` records the selected diff review and scoped validation.
+- **Handoff:** next session must read `docs/checkpoints/CHECKPOINT-01.md`, `TASK_SPEC.md`, `SPRINT-01.md`, `EVIDENCE.md` and this `RUNBOOK.md`; wait for `continue`, `revise` or `HOLD` before creating the B-01 task contract.
+
+### 2026-09-22 — user-provided references and installed skills
+
+- **Session:** user clarification for `CHECKPOINT-01`.
+- **User-declared manual inputs:** the user manually added `reference/` with an example React project and TypeScript pattern references; manually installed the shadcn skill at `.agents/skills/shadcn`; and installed a Feature-Sliced skill from `https://github.com/feature-sliced/skills.git`.
+- **Scope boundary:** these inputs are recorded for the next session but were not audited, executed, incorporated into product code or treated as evidence. The local installation path for the Feature-Sliced skill was not independently verified.
+- **Commands and status:** no new inspection or use of those resources was performed; no files within them were changed.
+- **Handoff:** the next session may review these resources only under a separate bounded task contract; keep them outside the current decomposition/checkpoint diff until explicitly selected.

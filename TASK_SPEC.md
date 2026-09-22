@@ -1,104 +1,101 @@
 # TASK_SPEC.md — bounded task contract
 
-- **ID:** `TASK-SEA-GOV-001`
-- **Version:** `1.0.0`
+- **ID:** `TASK-SEA-R1-DECOMP-001`
+- **Version:** `1.1.0`
 - **Status:** `Active`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-09-22
-- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md)
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-003-r1-handoff.md`](docs/decisions/DEC-003-r1-handoff.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), [`docs/checkpoints/CHECKPOINT-01.md`](docs/checkpoints/CHECKPOINT-01.md)
 
 ## Goal and linked outcome
 
-- **Goal:** привести governance-артефакти до узгодженого стану після підтвердження MVP baseline та поточного R1 stack.
-- **SPEC outcome:** `SPEC-SEA-001 / approved MVP contract with R1 as the only detailed release slice`.
-- **Current behavior:** canonical artifacts still describe MVP input, stack selection and sprint authorization as pending.
-- **Desired behavior:** approved baseline, current R1 decisions, explicit Unknowns, owners and change-control path are recorded consistently.
+- **Goal:** зафіксувати перевірювану декомпозицію Sprint 1 / R1, стратегію handoff між bounded sessions і checkpoint для перезапуску сесії без запуску product implementation.
+- **SPEC outcome:** `SPEC-SEA-001 / R1 plan with explicit session boundaries, reproducible handoffs and a restartable checkpoint`.
+- **Current behavior:** `SPRINT-01.md` містить backlog B-01…B-07, але не має окремих session contracts, handoff protocol і checkpoint record.
+- **Desired behavior:** кожна сесія має назву, goal, non-goals, checks, evidence, acceptance і наступний handoff; checkpoint фіксує останній перевірений стан і межі наступної сесії; runtime code не створюється.
 
 ## Owner and allowed paths
 
-- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест» — приймає продуктову специфікацію та scope.
-- **Delivery / technical owner:** виконавець проєкту — веде артефакти, decision records та structural verification.
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест» — приймає межі та outcome.
+- **Delivery / technical owner:** виконавець проєкту — веде decomposition, decision records, evidence, checkpoint і handoff.
 - **Allowed paths:**
-  - `CLAUDE.md`
-  - `PROJECT_BRIEF.md`
-  - `SPEC.md`
   - `TASK_SPEC.md`
   - `SPRINT-01.md`
-  - `ABOUT.md`
-  - `docs/README.md`
-  - `docs/sprints/README.md`
-  - `docs/decisions/README.md`
-  - `docs/decisions/DEC-001-mvp-contract.md`
-  - `docs/decisions/DEC-002-r1-stack.md`
+  - `SPEC.md`
   - `EVIDENCE.md`
   - `RUNBOOK.md`
-- **Affected paths:** the paths above; no product source, package manifest, lockfile, runtime configuration or secret file.
+  - `docs/decisions/README.md`
+  - `docs/decisions/DEC-003-r1-handoff.md`
+  - `docs/decisions/DEC-004-checkpoint-convention.md`
+  - `docs/checkpoints/CHECKPOINT-01.md`
+- **Affected paths:** тільки перелічені governance-документи; product source, package manifest, lockfile, runtime configuration і secrets не зачіпати.
 
 ## Inputs and constraints
 
-- **Inputs:** approved `PROJECT_BRIEF.md`; current R1 details in `SPRINT-01.md`; owner clarification recorded in the session on 2026-09-22.
-- **Constraints:** no product implementation; no dependency installation; no secret access; no production, deployment or user-validation claims; no Sprint 2/3 plans or inferred requirements; preserve append-only history in `EVIDENCE.md` and `RUNBOOK.md`.
-- **Dependencies:** structural/content checks only; runtime stack is not implemented in this governance slice.
+- **Inputs:** approved `SPEC.md`; current R1 backlog in `SPRINT-01.md`; user approval of bounded handoff strategy; explicit request to inspect the diff and create a restartable checkpoint in the 2026-09-22 session.
+- **Constraints:** не реалізовувати B-01…B-07; не встановлювати dependencies; не створювати S2/S3 plans; не вигадувати acceptance або runtime evidence; зберегти один canonical path на кожен артефакт; не включати сторонні untracked paths до checkpoint без review.
+- **Dependencies:** актуальний R1 backlog, decision-record convention і повний diff поточного робочого дерева.
 
 ## Expected output
 
-A reviewable governance baseline in which the approved and changeable MVP contract, R1 stack decision, owners, current scope and unresolved Unknowns are cross-linked without creating duplicate canonical artifacts.
+`SPRINT-01.md` містить сім коротких session contracts для B-01…B-07 та reusable handoff protocol; `DEC-003-r1-handoff.md` фіксує обране рішення; `DEC-004-checkpoint-convention.md` фіксує record path; `CHECKPOINT-01.md` містить перевірений handoff для restart; `RUNBOOK.md` і `EVIDENCE.md` містять фактичні записи цієї bounded documentation роботи.
 
 ## In scope
 
-- Promote the confirmed MVP contract to a versioned `Ready` baseline.
-- Record the current R1 stack and MVP-contract decisions with options considered only where evidenced.
-- Mark R1 as the only detailed sprint; keep S2/S3 absent and `Waiting for input`.
-- Align project guidance and documentation indexes.
-- Append factual verification to `EVIDENCE.md` and interaction/handoff history to `RUNBOOK.md` after checks run.
+- Decompose B-01…B-07 into named sessions: `R1-B01-SCAFFOLD`, `R1-B02-MAP`, `R1-B03-VESSEL-MODEL`, `R1-B04-VESSEL-CARD`, `R1-B05-DEMO-ROUTES`, `R1-B06-MOTION`, `R1-B07-PLAYWRIGHT-SELECTION`.
+- Record per-session goals, non-goals, checks, evidence anchors, acceptance and handoff.
+- Record the handoff strategy and its alternatives, rationale, risks and revisit trigger.
+- Inspect the complete current diff and record a documentation checkpoint for the next session.
+- Verify documentation structure and links only.
 
 ## Non-goals
 
-- Product implementation or runtime setup.
-- Creating Sprint 2/3 plans, checkpoint templates or missing tutorial directories.
-- Choosing unconfirmed metrics, dates, service terms, architecture beyond the R1 boundary or deployment model.
-- Reading, writing, displaying or validating secrets.
-- Deleting `START.md` or `TASK_INITIAL.md`.
+- Product implementation, dependency installation, build, runtime or browser tests.
+- Creating Sprint 2/3 plans or an unrequested checkpoint archive format.
+- Including or modifying unrelated untracked paths such as `.agents/`, `.claude/`, `reference/`, `skills-lock.json`, `TASK_INITIAL.md` or `TASK_DECOMPOSE.md`.
+- Committing or pushing this documentation change without a separate request.
+- Treating a planned check or documented acceptance criterion as executed evidence.
 
 ## Acceptance criteria
 
-- [ ] All changed long-lived artifacts have ID, Version, Status, Owner and Related artifacts metadata where applicable.
-- [ ] `PROJECT_BRIEF.md` is marked as the approved but changeable MVP baseline.
-- [ ] `SPEC.md` is `Ready`, links the brief and R1, and keeps metrics/service terms/S2-S3 Unknown or Needs verification where unconfirmed.
-- [ ] R1 stack is recorded in a formal decision record; future changes require a new versioned decision record.
-- [ ] Product owner and delivery/technical owner are distinct and consistently named.
-- [ ] `EVIDENCE.md` and `RUNBOOK.md` retain existing entries and receive append-only records after verification.
-- [ ] No S2/S3 plan or duplicate canonical path is created.
-- [ ] Structural/content checks and `git diff --check` pass; no runtime or secret claims are made.
-- [ ] Human checkpoint: review complete diff before marking this task `Verified`.
+- [ ] Seven named R1 sessions map one-to-one to B-01…B-07.
+- [ ] Every session has observable goal, explicit non-goals, targeted check, evidence source, acceptance criterion and handoff.
+- [ ] Handoff strategy distinguishes plan from observed evidence and uses canonical artifacts only.
+- [ ] DEC-003 records selected option, alternatives, rationale, consequences and revisit trigger.
+- [ ] DEC-004 and CHECKPOINT-01 record the restartable checkpoint convention and current state.
+- [ ] S2/S3 remain absent and no product implementation paths change.
+- [ ] Structural/content and Markdown-link checks pass.
+- [ ] Human checkpoint: product owner reviews the decomposition and checkpoint before R1 implementation begins.
 
-**Current acceptance status:** `Structural checks PASS; human diff checkpoint pending before Verified.`
+**Current acceptance status:** `Structural checks PASS; diff reviewed for documentation scope; product-owner checkpoint pending; implementation intentionally not started.`
 
 ## Verification
 
-- **Targeted commands:** `git diff --check`; `git status --short`; `git diff --stat`; `find . -maxdepth 3 -type f | sort`; metadata/link/Unknown checks; absence checks for S2/S3 and duplicate canonical paths.
-- **Manual check:** inspect the complete diff against this task and confirm append-only sections were not rewritten.
-- **Expected result:** all required governance files and decision links exist; R1 is the only detailed sprint; S2/S3 remain absent and explicitly unknown; no secret or runtime claim is introduced.
-- **Observed result:** `git diff --check` PASS; final structural/content validation PASS; Markdown relative-link validation PASS; S2/S3 paths absent; human product-owner checkpoint pending.
+- **Targeted commands:** `git diff --check`; `git status --short`; `git diff --stat`; `find . -maxdepth 3 -type f | sort`; metadata/heading/link checks; absence checks for S2/S3 and product source.
+- **Manual check:** inspect the complete diff including untracked files selected for the task; compare decomposition to B-01…B-07; confirm no planned check is reported as executed.
+- **Expected result:** seven session contracts, DEC-003, DEC-004 and CHECKPOINT-01 exist; no runtime files or dependencies are added; unrelated untracked paths are explicitly excluded.
+- **Observed result:** `git diff --check` PASS; final documentation diff review PASS for in-scope files; scoped checkpoint/metadata/link/scope validation PASS; `CHECKPOINT-01.md` exists; unrelated untracked paths identified and excluded.
 
 ## Checkpoint and stop conditions
 
-- **Checkpoint:** after the bounded governance slice, run structural checks and review the full diff before final status.
-- **Stop when:** scope expands; a referenced fact is not in the supplied artifacts or user clarification; a new dependency is needed; an append-only history would need rewriting; a secret or runtime claim is encountered; rollback is unclear.
-- **Exit decision:** `CONTINUE WITH APPROVAL` until the human diff review; then `DONE` only if acceptance and evidence are satisfied.
+- **Checkpoint:** record `CHECKPOINT-01.md`, run structural/content checks, inspect the complete selected diff, then wait for product-owner review before starting `R1-B01-SCAFFOLD`.
+- **Stop when:** the requested checkpoint would require implementation, a session boundary is ambiguous, a new dependency or unrelated path is needed, or a planned check is mistaken for evidence.
+- **Exit decision:** `CONTINUE WITH APPROVAL` — plan and restart checkpoint are recorded; implementation is not authorized by this task.
 
 ## Risks and open questions
 
-- Quantitative success metric baseline, target and observation window remain `Unknown`.
-- AISStream terms, availability and source behavior remain `Needs verification`.
-- Sprint 2/3 scope, owners, dates and architecture remain `Waiting for input`.
-- No runtime implementation or user validation exists in this task.
+- Session sizes may need revision after observing actual task complexity.
+- Exact command and evidence details become concrete only when each session starts.
+- Checkpoint archive packaging/publication remains `Needs verification`; this task creates only a Markdown restart record.
+- User-declared manual inputs: `reference/` contains a React example and TypeScript pattern references; `.agents/skills/shadcn` is manually installed; Feature-Sliced was installed from `https://github.com/feature-sliced/skills.git` but its local path is not independently verified. These inputs are outside this task and unaudited.
+- `.claude/`, `skills-lock.json`, `TASK_INITIAL.md` and `TASK_DECOMPOSE.md` are also outside this task and require separate review before any commit.
+- Metric, AISStream, S2/S3 and architecture-beyond-R1 Unknowns remain unchanged.
 
 ## Rollback / recovery
 
-After reviewing the diff, restore the pre-task files from Git if the governance alignment is rejected. Keep `START.md` and untracked `TASK_INITIAL.md` untouched. If only one artifact is rejected, revert that artifact and append the decision to `RUNBOOK.md`; do not rewrite prior evidence.
+If the decomposition or checkpoint is rejected, restore the pre-task versions of `TASK_SPEC.md`, `SPRINT-01.md`, `SPEC.md`, `docs/decisions/README.md`, `EVIDENCE.md` and `RUNBOOK.md` from Git after inspecting the diff; remove only the newly created DEC-004/checkpoint files if explicitly authorized. Do not delete or rewrite prior evidence history and do not touch unrelated untracked paths.
 
 ## Handoff
 
-After verification and human diff review, the next bounded action is to define and approve the first R1 implementation task (B-01 or an explicitly selected slice) in a new task contract. Do not implement product code as part of this task.
+This task ends after the plan, diff review and checkpoint are recorded. The next bounded action is a separate task contract for `R1-B01-SCAFFOLD`; it must begin by reading `CHECKPOINT-01.md`, the latest `SPRINT-01.md`, `TASK_SPEC.md`, `EVIDENCE.md` and `RUNBOOK.md`, and must not start before the product-owner checkpoint.
