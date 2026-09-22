@@ -1,106 +1,116 @@
 # SPEC.md — SeaRadar project contract
 
 - **ID:** `SPEC-SEA-001`
-- **Version:** `0.1.0`
-- **Status:** `Draft`
-- **Owner:** `Waiting for MVP input`
-- **Date:** 2026-09-21
-- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md)
+- **Version:** `1.0.0`
+- **Status:** `Ready`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-22
+- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md)
 
-> Цей документ є reviewer-oriented contract shell. MVP input ще не надано. Незаповнені поля мають статус `Unknown`, а не є припущеннями про продукт.
+> Це поточна затверджена MVP-база, перенесена з `PROJECT_BRIEF.md`. Вона може змінюватися: зміна контракту потребує нової версії цього документа та пов'язаного decision record до початку роботи за зміненим scope.
 
 ## Problem
 
-`Unknown — Waiting for MVP input.`
+На заняттях з основ судноводіння викладачу потрібен простий локальний інструмент для показу карти Дуврської протоки, руху навчальних суден і, пізніше, знімка справжніх суден. Публічні сайти перевантажені, залежать від реєстрації або реклами й не дають викладачу достатнього контролю над тим, що бачать курсанти.
 
 ## Primary user
 
-`Unknown — Waiting for MVP input.`
+Викладач відділення теорії судноводіння навчального центру «Норд-Вест». Курсанти є глядачами на проєкторі й не користуються програмою самостійно.
 
 ## User / JTBD
 
-- **When:** `Unknown`
-- **I want to:** `Unknown`
-- **So I can:** `Unknown`
-- **Constraints:** `Unknown`
-- **Evidence status:** `Waiting for MVP input`
+- **When:** перед або під час заняття з основ судноводіння;
+- **I want to:** відкрити карту Дуврської протоки, показати рух навчальних суден, відкрити їхні дані та за кнопкою отримати знімок справжніх суден;
+- **So I can:** пояснити курс, швидкість, зміну положення й межі актуальності AIS-даних на живому прикладі без залежності від поточного трафіку для навчальної частини;
+- **Constraints:** один викладач на одному ноутбуці; локальний запуск; район один і фіксований; карта та справжні дані потребують інтернету; ключ AISStream не потрапляє у вихідний код, передані файли або UI; продукт не використовується для реальної навігації.
+- **Evidence status:** підтверджено затвердженим `PROJECT_BRIEF.md`; реалізація ще не перевірена.
 
 ## Value proposition
 
-- **Problem:** `Unknown`
-- **Alternative today:** `Unknown`
-- **Promised outcome:** `Unknown`
-- **Proof signal:** `Unknown`
-- **Claims excluded until verified:** adoption, production impact, scalability, revenue and user validation.
+- **Problem:** публічні сайти стеження за суднами заважають поясненню через рекламу, глобальний масштаб, перевантажений інтерфейс і обмеження доступу до деталей.
+- **Alternative today:** публічні сайти стеження за суднами.
+- **Promised outcome:** викладач запускає локальний інструмент і керовано показує навчальну та, коли доступна, справжню обстановку в Дуврській протоці.
+- **Proof signal:** приймання US-01…US-10 за відтворюваними перевірками й ручним проходженням історій.
+- **Claims excluded until verified:** adoption, production impact, scalability, revenue, user validation, безперервна доступність AISStream і повнота картини суден.
 
 ## Desired outcome
 
-`Unknown — не визначати feature-first; спочатку потрібен один bounded outcome.`
+Отримати працездатний локальний навчальний посібник, який частинами можна запускати й приймати: спочатку карта та демонстраційні судна, потім знімок AIS-даних за кнопкою, а наприкінці — відтворювані перевірки відсутності спотворення даних та інструкція встановлення.
 
 ## Success metric
 
 | Поле | Значення |
 |---|---|
-| Name | `Unknown` |
-| Unit | `Unknown` |
-| Baseline | `Unknown` |
-| Target | `Unknown` |
-| Observation window | `Unknown` |
-| Collection method | `Unknown` |
-| Guardrail metric | `Unknown` |
-| Status | `Waiting for MVP input` |
+| Name | Acceptance coverage of approved MVP |
+| Unit | Пройдені перевірки користувацьких історій та data-integrity checks |
+| Baseline | `Unknown — implementation checks have not run` |
+| Target | `Needs verification — US-01…US-10 and US-09 checks accepted at final handoff` |
+| Observation window | `Unknown — release/checkpoint schedule is not supplied` |
+| Collection method | `EVIDENCE.md`, targeted tests, manual acceptance and checkpoint review |
+| Guardrail metric | `No secret exposure, no scope drift, no claims beyond observed evidence` |
+| Status | `Needs verification` |
 
 ## Core flow
 
-`Unknown — trigger → AI-assisted/product step → human checkpoint → observable result`.
+1. Викладач запускає локальний застосунок.
+2. Бачить карту Дуврської протоки та демонстраційні судна.
+3. Переміщує карту, наближає її та клікає по судну для відкриття картки.
+4. Показує рух і зупинку демонстраційних суден.
+5. Натискає одну кнопку для короткого збору справжніх AIS-повідомлень.
+6. Бачить отримані судна, час збору, кількість і обмеження повноти даних або зрозуміле повідомлення про невдачу.
+7. Після кожного bounded slice проходить людський checkpoint і отримує фактичний evidence/handoff.
 
 ## Scope
 
 ### In scope
 
-- Один bounded MVP release slice після отримання та узгодження MVP input.
-- Тільки поведінка, потрібна для перевірки визначеного outcome.
+- **R1 / поточний release slice:** US-01…US-04 — карта, демонстраційне судно, значок, вибір і картка; US-05…US-08 — справжні судна за кнопкою, підписи та повідомлення про помилки; US-09 — відтворювані перевірки цілісності даних; US-10 — фінальна інструкція встановлення.
+- Локальний запуск на `http://localhost:3000` loopback.
+- Один фіксований район: Дуврська протока.
+- Демонстраційні та справжні судна як одна узгоджена структура даних.
 
 ### Non-goals
 
-- Вибір stack або architecture до decision record.
-- Три sprint plans до затвердження MVP scope.
-- Autonomous approval/merge/deployment.
-- Production readiness, масштабування, billing, додаткові інтеграції та широкі ролі, якщо вони не потрібні core flow.
+- Зони, тривоги, сповіщення, історія руху, сліди, replay, пошук і фільтри.
+- Кілька районів, збереження налаштувань, безперервне real-time оновлення, вхід за паролем, кілька користувачів, віддалений сервер або хмара.
+- Рекомендації, прогнози, «розумні» функції та використання для реальної навігації.
+- S2/S3 plans, їхні дати, owners, задачі та додатковий scope — `Waiting for MVP input`.
 
 ## Release slice
 
-`Unknown — буде визначено після фіксації user, JTBD, core flow і success signal.`
+`R1 — карта й демонстраційні судна` деталізований у `SPRINT-01.md` і є єдиним поточно авторизованим sprint plan. Він використовує поточний stack baseline з `DEC-002-r1-stack.md`. Подальші sprint-и не деталізувати з припущень; їх можна створити лише після окремого погодження меж і decision records.
 
 ## Acceptance criteria
 
-1. Primary user, JTBD, outcome і межі scope зафіксовані в цій SPEC.
-2. Release slice має observable acceptance та reproducible verification path.
-3. Кожен task має bounded contract у `TASK_SPEC.md` або пов'язаному task record.
-4. Кожен заявлений результат має evidence у `EVIDENCE.md`.
-5. Непідтверджені claims позначені `Unknown` або `Needs verification`.
+1. `PROJECT_BRIEF.md` є затвердженим, але версійованим джерелом MVP-контракту.
+2. Викладач може пройти US-01…US-08 руками за інструкцією та побачити очікувану поведінку.
+3. Перевірки US-09 відтворювано демонструють правила вибору найсвіжіших повідомлень, унікальності, Unknown/null, координат і обмеження збору.
+4. US-10 має бути виконана фінальною інструкцією встановлення та запуску.
+5. Кожен заявлений результат має evidence з expected/observed і limitation.
+6. Непідтверджені claims позначені `Unknown` або `Needs verification`; product implementation, deployment і user validation не вважаються виконаними без evidence.
 
-**Current acceptance status:** `Blocked — Waiting for MVP input`.
+**Current acceptance status:** `Ready as a contract; implementation acceptance is not yet verified.`
 
 ## Verification plan
 
-До надходження MVP input: structural/content review документів та Git status.
+- **Поточний governance slice:** structural/content review canonical artifacts, decision links, Unknown markers, append-only history and Git diff.
+- **R1 implementation:** `check → validate → build → targeted tests → demo gate` після затвердження конкретного implementation task.
+- **Final acceptance:** запуск за інструкцією, ручне проходження US-01…US-08, запуск US-09 checks, перевірка сценарію без ключа, щонайменше одна спроба справжнього знімка або чесний evidence про недоступність джерела, перевірка відсутності ключа у переданих файлах.
 
-Після надходження MVP input: targeted checks, tests, demo quality gate і handoff, визначені в sprint/task contracts. Команди поки `Unknown`, бо stack не обраний.
+## Assumptions and Unknowns
 
-## Assumptions
-
-- Проєкт має бути організований як AI-assisted delivery з human checkpoints. `Assumption — підтвердити з owner.`
-- MVP складатиметься з трьох sprint-ів, згідно з intake note. `Waiting for MVP input.`
+- **Confirmed:** `PROJECT_BRIEF.md` затверджений як поточна MVP-база; деталізований лише R1; stack із `SPRINT-01.md` прийнятий як поточний R1 baseline.
+- **Needs verification:** умови безкоштовного AISStream, стабільність джерела, фактична кількість суден і поведінка джерела при обриві зв'язку.
+- **Unknown:** точні baseline/target/observation window метрики, дати sprint-ів, деталізація S2/S3, architecture beyond R1, implementation/runtime evidence.
 
 ## Open decisions
 
-- Який продукт і його bounded core flow?
-- Хто primary user та owner рішення?
-- Який stack та architecture відповідають MVP constraints?
-- Які baseline, target і observation window метрики?
-- Які рівні verification потрібні для кожного slice?
+- Архітектурна деталізація поза R1 — `Unknown`.
+- Межі та outcome Sprint 2 і Sprint 3 — `Waiting for MVP input`.
+- Точні metric baseline, target та observation window — `Needs verification`.
+- Будь-яка зміна approved brief, scope або R1 stack — новий versioned decision record і версія SPEC.
 
-## MVP input gate
+## Change-control gate
 
-Роботу над product implementation не починати, доки owner не надасть MVP specification і не буде узгоджено: user/JTBD, outcome, scope/non-goals, acceptance, success metric, constraints та спосіб delivery у трьох sprint-ах.
+Не починати роботу за зміненими вимогами, поки product owner не затвердить нову версію `PROJECT_BRIEF.md`/`SPEC.md`, пов'язаний decision record і bounded task contract. Delivery/technical owner фіксує зміни, evidence та handoff; product owner приймає продуктову зміну.

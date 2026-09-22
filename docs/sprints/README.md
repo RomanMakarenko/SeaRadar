@@ -1,14 +1,16 @@
 # Sprint planning convention
 
 - **ID:** `SPRINT-GOV-001`
-- **Version:** `0.1.0`
-- **Status:** `Draft`
-- **Owner:** `Waiting for MVP input`
-- **Date:** 2026-09-21
+- **Version:** `0.2.0`
+- **Status:** `Ready`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-22
+- **Related artifacts:** [`../../SPEC.md`](../../SPEC.md), [`../../TASK_SPEC.md`](../../TASK_SPEC.md), [`../../SPRINT-01.md`](../../SPRINT-01.md), [`../decisions/DEC-001-mvp-contract.md`](../decisions/DEC-001-mvp-contract.md), [`../decisions/DEC-002-r1-stack.md`](../decisions/DEC-002-r1-stack.md), [`../../EVIDENCE.md`](../../EVIDENCE.md), [`../../RUNBOOK.md`](../../RUNBOOK.md)
 
 ## Boundary
 
-SeaRadar will be decomposed into exactly three MVP sprints only after `SPEC.md` is populated and the stack/architecture decisions are approved. Until then, `S1`, `S2` and `S3` plan files intentionally do not exist.
+The approved MVP baseline currently has one detailed sprint record: root-level [`SPRINT-01.md`](../../SPRINT-01.md), release R1. Sprint 2 and Sprint 3 are intentionally absent and remain `Unknown` / `Waiting for input`; their tasks, dates, owners and outcomes must not be inferred from the high-level three-sprint statement.
 
 ## Required sprint contract
 
@@ -26,6 +28,14 @@ Each future `S1`, `S2` or `S3` record must contain:
 - exit decision: `DONE`, `CONTINUE WITH APPROVAL` or `HOLD`;
 - evidence links and a RUNBOOK handoff, including on `HOLD`.
 
+## Current catalog
+
+| Sprint | Release | Status | Canonical record |
+|---|---|---|---|
+| Sprint 1 | R1 | `Ready` | [`../../SPRINT-01.md`](../../SPRINT-01.md) |
+| Sprint 2 | Unknown | `Waiting for input` | Not created |
+| Sprint 3 | Unknown | `Waiting for input` | Not created |
+
 ## Creation gate
 
-Create sprint files only when the owner approves the MVP contract, success metric, stack decision, architecture decision and three-sprint boundaries. Do not fill dates, tasks or technical choices from assumptions.
+Create future sprint files only when the product owner approves the corresponding MVP outcome, scope, success signal, stack/architecture implications and task boundaries. Do not fill dates, tasks or technical choices from assumptions.

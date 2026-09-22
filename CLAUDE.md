@@ -1,15 +1,25 @@
 # SeaRadar — правила роботи з проєктом
 
+- **ID:** `GOV-SEA-001`
+- **Version:** `1.1.0`
+- **Status:** `Ready`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-22
+- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md)
+
 ## 1. Статус baseline
 
 Цей файл є стабільним operational contract для людей та AI-асистентів.
 
-- **Product / MVP:** `Waiting for MVP input`
-- **Stack / architecture:** `Waiting for MVP input`
-- **Sprint dates and owners:** `Waiting for MVP input`
-- **Current phase:** governance setup only
+- **Product / MVP:** `Ready — approved PROJECT_BRIEF.md / SPEC.md baseline; changes require a version bump and decision record`
+- **Stack / architecture:** `Ready for R1 only — current stack is recorded in DEC-002; architecture beyond R1 is Unknown`
+- **Sprint 1 / R1:** `Ready — only currently detailed and authorized sprint`
+- **Sprint 2 / Sprint 3:** `Waiting for MVP input — no plans or requirements are authorized`
+- **Sprint dates:** `Unknown`
+- **Current phase:** governance baseline approved; R1 implementation remains task-gated
 
-Не вигадувати поведінку SeaRadar, користувачів, метрики, стек, архітектуру, тести, deployment, production readiness або user validation до появи підтвердженої MVP-специфікації.
+Не вигадувати поведінку SeaRadar, користувачів, метрики, архітектуру поза R1, тести, deployment, production readiness або user validation. Підтверджені зміни до brief, scope або stack оформлювати новою версією та пов'язаним decision record до реалізації.
 
 ## 2. Канонічні артефакти
 
