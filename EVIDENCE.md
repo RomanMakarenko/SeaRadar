@@ -233,3 +233,14 @@
 - **Status:** `PASS`; human decision is `continue`; commit and push are explicitly authorized by the user.
 - **Reviewer / owner:** delivery/technical owner — executor role.
 - **Limitations and follow-up:** Node.js 24 compatibility remains `Needs verification`; B-06 manual visual limitations remain `UNKNOWN`/`BLOCKED`. Remote delivery is recorded separately after the push completes.
+
+### E-SEA-018 — B-07 remote delivery
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B07-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** the reviewed B-07 slice was committed without unrelated paths and pushed to `origin/sprint1`.
+- **Source:** `git commit --amend`; `git show --stat --oneline HEAD`; `git diff HEAD^ HEAD --name-only`; `git push origin sprint1`; final `git status --short`; `git log -2 --oneline --decorate`.
+- **Expected:** the B-07 commit contains only the authorized implementation, test, dependency, contract and append-only history files; `origin/sprint1` points to the delivered commit; pre-existing excluded untracked paths remain outside the commit.
+- **Observed:** commit `c89127f` (`feat(r1): add B-07 Playwright selection checks`) contains exactly `.gitignore`, `EVIDENCE.md`, `RUNBOOK.md`, `TASK_SPEC.md`, `package-lock.json`, `package.json`, `playwright.config.ts` and `tests/vessel-selection.spec.ts`; push completed `f215aae..c89127f sprint1 -> sprint1`; local and remote delivery target is `c89127f`; `sea-radar-s1.png` was intentionally kept untracked after an unexpected staged inclusion was removed from the commit; all other pre-existing excluded untracked paths remain present.
+- **Status:** `PASS` for bounded commit contents, remote push and excluded-path boundary.
+- **Reviewer / owner:** delivery/technical owner — executor role; human B-07 decision is `continue`.
+- **Limitations and follow-up:** Node.js 24 compatibility remains `Needs verification`; B-06 manual visual movement, course, final-stop, hot-reload and unmount checks remain `UNKNOWN`/`BLOCKED`. No automatic transition to S2/S3 is authorized.

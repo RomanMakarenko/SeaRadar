@@ -220,3 +220,14 @@ Each entry must include: date/session, goal and scope, changed artifacts, comman
 - **Decision:** `continue`; no correctness, scope or test-boundary blockers found. Human review is closed and commit/push is authorized.
 - **Limitations:** Node.js 24 compatibility remains `Needs verification`; B-06 manual movement, final-stop, hot-reload and unmount checks remain `UNKNOWN`/`BLOCKED`.
 - **Next action:** commit and push the verified B-07 slice, then record remote synchronization.
+
+### 2026-09-22 — B-07 remote delivery
+
+- **Session:** post-review delivery for `TASK-SEA-R1-B07-001` / `R1-B07-PLAYWRIGHT-SELECTION`.
+- **Delivered commit:** `c89127f` — `feat(r1): add B-07 Playwright selection checks`.
+- **Commit boundary:** exactly `.gitignore`, `EVIDENCE.md`, `RUNBOOK.md`, `TASK_SPEC.md`, `package-lock.json`, `package.json`, `playwright.config.ts` and `tests/vessel-selection.spec.ts`; the unexpected `sea-radar-s1.png` was removed from the commit index and preserved locally as untracked.
+- **Commands and status:** `git commit --amend --no-edit` — `PASS`; `git show --stat --oneline HEAD` — `PASS`; `git diff HEAD^ HEAD --name-only` — `PASS`; `git push origin sprint1` — `PASS`, `f215aae..c89127f sprint1 -> sprint1`.
+- **Remote state:** local and `origin/sprint1` point to `c89127f`; pre-existing excluded untracked paths remain outside the commit.
+- **Evidence:** `E-SEA-018` records the bounded commit contents and remote synchronization.
+- **Limitations:** Node.js 24 compatibility remains `Needs verification`; B-06 manual movement, final-stop, hot-reload and unmount checks remain `UNKNOWN`/`BLOCKED`.
+- **Handoff:** B-07 is verified and delivered; no automatic transition to S2/S3. Next action requires a new bounded task and explicit approval.
