@@ -17,10 +17,18 @@ export default function MapShell() {
       currentVessel?.id === vessel.id ? currentVessel : vessel,
     );
   }, []);
+  const handleVesselUpdate = useCallback((vessel: Vessel) => {
+    setSelectedVessel((currentVessel) =>
+      currentVessel?.id === vessel.id ? vessel : currentVessel,
+    );
+  }, []);
 
   return (
     <div className="sea-map-shell">
-      <SeaMap onVesselSelect={handleVesselSelect} />
+      <SeaMap
+        onVesselSelect={handleVesselSelect}
+        onVesselUpdate={handleVesselUpdate}
+      />
       <div className="map-panel">
         <button type="button" className="future-data-button" disabled>
           Завантажити справжні дані
