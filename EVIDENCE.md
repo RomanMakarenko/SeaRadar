@@ -1,11 +1,11 @@
 # EVIDENCE.md — фактичний evidence ledger
 
 - **ID:** `EVIDENCE-SEA-001`
-- **Version:** `0.5.0`
+- **Version:** `0.6.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-22
+- **Date:** 2026-09-23
 - **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md)
 
 ## Purpose and boundary
@@ -339,3 +339,73 @@
 - **Status:** `PASS`; Sprint 1 acceptance decision is `DONE`.
 - **Reviewer / owner:** product owner — acceptance role; delivery/technical owner records the decision.
 - **Limitations:** this record closes the acceptance decision; it does not retroactively turn source/manual evidence into direct instrumentation. Sprint 2 and Sprint 3 remain outside the approved scope.
+
+### E-SEA-028 — Sprint 2 planning decomposition
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R2-PLAN-001`; `SPRINT-02.md`; `SPRINT-SEA-R1-001`.
+- **Claim under verification:** the staged Sprint 2 input was decomposed into bounded planning slices without overwriting the verified R1 task contract or starting R2 implementation.
+- **Source:** current `CLAUDE.md`, `SPEC.md`, `SPRINT-02.md`, prior `TASK_SPEC.md`, `git status --short --branch`, staged diff, current `TASK_SPEC.md` after the append-only R2 section, and structural validator output.
+- **Expected:** R1 B-07 task history remains intact; R2 planning has a separate task ID; B-08…B-13 each have goals, non-goals, allowed output, acceptance/evidence boundaries, stop conditions and recovery; no secret or product implementation is read or changed.
+- **Observed:** R1 `TASK-SEA-R1-B07-001` remains present and unchanged before the appended R2 section. `TASK-SEA-R2-PLAN-001` is present with status `Active`; the plan contains bounded rows for B-08 through B-13, governance gate, verification, stop conditions, rollback and handoff. `git diff --check` passed. Structural checks found all required R1/R2 markers and no literal credential. `git ls-files` found no tracked `.env` or `.env.*.local` files. No app/server/data/test implementation was changed.
+- **Status:** `PASS` for the planning/documentation slice only.
+- **Limitations:** human diff review is pending; current governance artifacts still mark Sprint 2 `Waiting for MVP input`; no R2 code, live AISStream connection, sample capture, secret access or product acceptance was performed. The staged `SPRINT-02.md` and pre-existing staged `START.md` changes were not altered by this slice.
+
+### E-SEA-029 — B-08 secure-configuration task contract
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R2-B08-001`; `TASK-SEA-R2-PLAN-001`; `SPRINT-02.md`.
+- **Claim under verification:** the next R2 bounded slice has a separate draft contract for secure configuration and a server-only key accessor, without starting implementation or authorizing B-09.
+- **Source:** current `CLAUDE.md`, `SPEC.md`, `PROJECT_BRIEF.md`, `SPRINT-02.md`, `TASK_SPEC.md`, `docs/decisions/README.md`; `git status --short --branch`; staged/unstaged diff names; `git diff --check`; structural contract validator; tracked-path and key-assignment scan.
+- **Expected:** the R1 B-07 contract and R2 planning section remain intact; the B-08 draft names only `.env.example`, `.gitignore`, separately authorized `.claude/settings.json` permission rules and `server/aisstream-config.ts`; B-09+ behavior, live provider access, dependency changes and secret reads remain excluded.
+- **Observed:** `TASK-SEA-R2-B08-001` was appended with `Draft` status, governance gate, allowed/excluded paths, acceptance criteria, verification, stop conditions, rollback and handoff. The R1 B-07 contract and `TASK-SEA-R2-PLAN-001` remain present. Before this append, staged paths were `SPRINT-02.md` and pre-existing `START.md`; no B-08 implementation path was changed. `git diff --check` passed; the structural validator passed; `git ls-files` found no tracked local secret path; the tracked HEAD scan found no non-empty `AISSTREAM_API_KEY` assignment. No `.env.local` or `.env.*.local` file was read or created.
+- **Timestamp / environment:** 2026-09-23; macOS; local SeaRadar workspace; Node.js/runtime not used for this contract-only check.
+- **Status:** `PASS` for contract/document boundary and secret-path scan; `UNKNOWN` for accessor behavior, permission refusal, provider availability and all R2 product acceptance.
+- **Reviewer / owner:** delivery/technical owner — executor role; human review and R2 scope authorization remain pending.
+- **Limitations and follow-up:** the current `CLAUDE.md`/`SPEC.md` governance gate still says Sprint 2 `Waiting for MVP input`; no implementation, permission-file edit, live request, dependency change or secret access was performed. A refusal test using a local secret fixture is not run because this session explicitly forbids creating or reading such a file. Obtain explicit `continue` and R2 authorization before implementing B-08.
+
+### E-SEA-030 — R2 scope authorization and governance synchronization
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001` v1.1.0; `TASK-SEA-R2-B08-001`; `TASK-SEA-R2-PLAN-001`; `DEC-006-R2-SCOPE`.
+- **Claim under verification:** the product owner's explicit R2/B-08 authorization is represented in versioned governance artifacts without claiming R2 implementation or acceptance.
+- **Source:** user confirmation in the current session: “Підтверджую scope R2 і дозволяю перейти до B-08”; `DEC-006-r2-scope.md`; `CLAUDE.md`; `SPEC.md`; `docs/decisions/README.md`; `TASK_SPEC.md`; `git diff --check`; governance structural validator; staged/unstaged path inspection.
+- **Expected:** R2 is authorized as task-gated; B-08 is the current bounded slice; Sprint 3 and B-09…B-13 remain separately gated; R1 B-07 history and staged `SPRINT-02.md`/`START.md` paths remain untouched.
+- **Observed:** `DEC-006-R2-SCOPE` was added with status `Ready`; `CLAUDE.md` is v1.3.0 and identifies R2 as authorized with B-08 task-gated; `SPEC.md` is v1.1.0 and links R2/DEC-006; the decision index lists DEC-006 and marks Sprint 2 allocation partially resolved; `TASK-SEA-R2-B08-001` is v1.0.0/`Active` and links DEC-006. `git diff --check` passed; governance validator passed; staged paths remained `SPRINT-02.md` and pre-existing `START.md`; no B-08 implementation path was changed in this governance step.
+- **Timestamp / environment:** 2026-09-23; macOS; local SeaRadar workspace; no live provider or secret access.
+- **Status:** `PASS` for governance synchronization and recorded authorization.
+- **Reviewer / owner:** product owner — scope authorization; delivery/technical owner — artifact update.
+- **Limitations and follow-up:** this evidence does not prove B-08 accessor behavior, permission refusal, AISStream availability, key validity or any R2 user-story acceptance. Proceed only with B-08 paths; do not start B-09.
+
+### E-SEA-031 — B-08 partial implementation checks
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001` v1.1.0; `TASK-SEA-R2-B08-001`; `DEC-006-R2-SCOPE`.
+- **Claim under verification:** the non-permission B-08 configuration and accessor slice is bounded and passes its available local checks without reading a real key or contacting AISStream.
+- **Source:** `.env.example`; unchanged `.gitignore`; `server/aisstream-config.ts`; `git diff --check`; changed-path and source-boundary validators; `git check-ignore --no-index`; `git ls-files`; direct TypeScript check; `npx tsc --noEmit`; `npm run build`; `npm ls --depth=0`; Node 22 `--experimental-strip-types` assertions.
+- **Expected:** `.env.example` contains only `AISSTREAM_API_KEY=`; existing ignore rules protect local env files while allowing the example; accessor returns `null` for missing/blank input without logging, network access or client imports; no dependencies or product paths change.
+- **Observed:** `.env.example` exactly matched the one-line empty placeholder; `.gitignore` was byte-for-byte unchanged and `git check-ignore --no-index` passed for `.env.local` and `.env.test.local` while `.env.example` was not ignored; no local env path was tracked. Source checks passed for the accessor boundary. The first direct TypeScript command failed with TS5112 because TypeScript 6 refuses a file argument while loading `tsconfig.json`; the corrected `--ignoreConfig` command then required `--types node` and passed. Normal `npx tsc --noEmit` passed; `npm run build` passed with the pre-existing external package-lock warning; `npm ls --depth=0` completed with the pre-existing extraneous `@emnapi/runtime` and `@img/sharp-wasm32`; missing/blank accessor assertions passed. No `.env.local` or `.env.*.local` file was created/read, no real key was used, and no live AISStream request was made.
+- **Timestamp / environment:** 2026-09-23; macOS; Node.js 22; Next.js 16.3.5; TypeScript 6.0.3; npm dependency tree unchanged.
+- **Status:** `PASS` for the available `.env.example`, ignore-boundary, source, type, build and missing/blank accessor checks; `BLOCKED` for project permission rules because the session denied the requested configuration-skill action before `.claude/settings.json` could be created.
+- **Reviewer / owner:** delivery/technical owner — executor role.
+- **Limitations and follow-up:** `.claude/settings.json` was not created, so B-08 is incomplete and the permission refusal matrix remains unverified. No human final diff review or commit/push was performed. The exact permission change needs explicit approval in a session that permits project settings modification; after that, rerun the settings checks and review the complete B-08 diff. AISStream registration is not required for this slice.
+
+### E-SEA-032 — B-08 permission rules and refusal matrix
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001` v1.1.0; `TASK-SEA-R2-B08-001`; `DEC-006-R2-SCOPE`.
+- **Claim under verification:** the approved project-level deny rules were created narrowly and block reads of the specified local secret paths without changing the local settings file.
+- **Source:** user authorization in session; `.claude/settings.json` creation result; unchanged `.claude/settings.local.json`; `test ! -e` checks for `.env`, `.env.local` and `.env.test.local`; read attempts for those absent paths; `.env.example` read allowance.
+- **Expected:** only `Read(./.env)`, `Read(./.env.local)` and `Read(./.env.*.local)` are denied; secret-path checks are blocked; `.env.example` remains readable; no secret file is accessed.
+- **Observed:** `.claude/settings.json` was created with the three approved deny rules. `.claude/settings.local.json` was not changed. `.env`, `.env.local` and `.env.test.local` were confirmed absent before permission checks; read attempts were denied by the active project permission settings. `.env.example` remained readable. No secret content, real key or live AISStream request was used.
+- **Timestamp / environment:** 2026-09-23; macOS; Node.js 22; Claude Code project settings active.
+- **Status:** `PASS` for settings creation and the available permission refusal/allowance matrix; final human diff review remains pending.
+- **Reviewer / owner:** delivery/technical owner — executor role.
+- **Limitations and follow-up:** this evidence does not prove real-key safety, provider availability or R2 user-story acceptance. Perform the human diff review and choose `continue`, `revise` or `HOLD` before B-09 or commit/push. AISStream registration is not required for this slice.
+
+### E-SEA-033 — B-08 final diff review
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001` v1.1.0; `TASK-SEA-R2-B08-001`; `DEC-006-R2-SCOPE`.
+- **Claim under verification:** the final B-08 diff is bounded, internally consistent and ready for the user-authorized commit/push.
+- **Source:** final working-tree diff/status; `.env.example`; `.claude/settings.json`; `server/aisstream-config.ts`; `git diff --check`; `npx tsc --noEmit`; `npm run build`; secret-path absence checks; prior permission matrix and accessor checks.
+- **Expected:** no B-08 scope drift or secret exposure; documentation reflects the completed settings step; final checks pass; no commit includes staged/untracked paths outside the selected B-08/governance boundary.
+- **Observed:** the review found and corrected the stale B-08 handoff and metadata dates/versions. The final patch check and TypeScript validation passed; the production build passed with the known external package-lock warning; required B-08 paths were present, secret fixture paths were absent, and no application/package/test/live-provider paths changed. The user explicitly authorized commit and push on branch `sprint2`.
+- **Timestamp / environment:** 2026-09-23; macOS; Node.js 22; Next.js 16.3.5; TypeScript 6.0.3.
+- **Status:** `PASS` for final diff review and commit boundary.
+- **Reviewer / owner:** delivery/technical owner — executor role; user authorization for commit/push.
+- **Limitations and follow-up:** this evidence does not claim R2 runtime acceptance, provider availability, real-key validity or B-09 readiness. Commit only the selected B-08/governance paths; preserve pre-existing staged and unrelated untracked paths. Stop before B-09.
