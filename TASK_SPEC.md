@@ -248,7 +248,7 @@ Current handoff:
 # TASK-SEA-R2-B08-001 — Secure configuration and server-only key accessor
 
 - **Version:** `1.0.0`
-- **Status:** `Active`
+- **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-09-23
@@ -298,9 +298,9 @@ Current handoff:
 - [x] `.claude/settings.json` contains only the verified deny rules for the specified secret-file read patterns; unrelated permissions are unchanged.
 - [x] `server/aisstream-config.ts` is server-only by path/import boundary, returns `null` for missing/blank configuration without exception, and does not log or expose the value.
 - [x] No implementation path outside this contract changes; no dependency or live AISStream request is introduced.
-- [ ] Human diff review chooses `continue`, `revise` or `HOLD` before B-09 or any commit/push.
+- [x] Human diff review chooses `continue`, `revise` or `HOLD` before B-09 or any commit/push.
 
-**Current acceptance status:** `CONTINUE WITH APPROVAL; implementation and permission matrix passed; final human diff review remains pending.`
+**Current acceptance status:** `DONE; implementation, permission matrix and final diff review passed; the user-authorized commit was pushed to `origin/sprint2`.`
 
 ## Verification
 
