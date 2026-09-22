@@ -1,7 +1,7 @@
 # Decision records
 
 - **ID:** `DECISIONS-GOV-001`
-- **Version:** `0.4.0`
+- **Version:** `0.5.0`
 - **Status:** `Ready`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
@@ -27,9 +27,10 @@ A catalog entry or chat statement is not a decision. Do not select a technology 
 | Decision | Status | Selected baseline / boundary |
 |---|---|---|
 | [`DEC-001-mvp-contract.md`](DEC-001-mvp-contract.md) | `Ready` | Approved, versioned `PROJECT_BRIEF.md` contract; R1 is the only detailed release slice |
-| [`DEC-002-r1-stack.md`](DEC-002-r1-stack.md) | `Ready` | Node.js 24, TypeScript 6.x strict, Next.js + React, Leaflet, OSM Standard, Playwright Test |
+| [`DEC-002-r1-stack.md`](DEC-002-r1-stack.md) | `Superseded` | Historical R1 baseline: Node.js 24, TypeScript 6.x strict, Next.js + React, Leaflet, OSM Standard, Playwright Test |
 | [`DEC-003-r1-handoff.md`](DEC-003-r1-handoff.md) | `Ready` | Named bounded sessions with canonical handoff through sprint, task, evidence and runbook artifacts |
 | [`DEC-004-checkpoint-convention.md`](DEC-004-checkpoint-convention.md) | `Ready` | Canonical Markdown restart records at `docs/checkpoints/CHECKPOINT-0N.md` |
+| [`DEC-005-r1-node22.md`](DEC-005-r1-node22.md) | `Ready` | Current R1 runtime baseline: Node.js 22.x |
 
 ## Pending decisions
 

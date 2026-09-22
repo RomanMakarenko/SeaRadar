@@ -1,12 +1,12 @@
 # TASK_SPEC.md — bounded task contract
 
 - **ID:** `TASK-SEA-R1-B07-001`
-- **Version:** `1.0.0`
+- **Version:** `1.1.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-09-22
-- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`f215aae`](https://github.com/RomanMakarenko/SeaRadar/commit/f215aae)
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md), [`f215aae`](https://github.com/RomanMakarenko/SeaRadar/commit/f215aae)
 
 ## Goal and linked outcome
 
@@ -33,8 +33,8 @@
 ## Inputs and constraints
 
 - **Inputs:** approved `SPEC.md` and `SPRINT-01.md` B-07 contract; accepted B-06 implementation at `f215aae`; existing Next.js App Router and client-only Leaflet boundary; installed Next.js Playwright guidance read before implementation.
-- **Explicit authorization:** user requested continuation of only B-07 from `NEXT_SESSION.md`; no commit or push is authorized in this session.
-- **Stack baseline:** Node.js 24; TypeScript strict; Next.js App Router + React; Leaflet 1.9.x; Playwright Test as the only test runner. `@playwright/test` is the one dependency required by this B-07 stack slice; no other dependency is authorized.
+- **Explicit authorization:** user requested continuation of only B-07 from `NEXT_SESSION.md`; after human review, commit and push were authorized and completed for the verified delivery.
+- **Stack baseline:** Node.js 22; TypeScript strict; Next.js App Router + React; Leaflet 1.9.x; Playwright Test as the only test runner. `@playwright/test` is the one dependency required by this B-07 stack slice; no other dependency is authorized.
 - **Runner:** Playwright Test configuration must declare exactly one browser project. The project must use Chromium only and must not add Firefox/WebKit projects or another test framework.
 - **Server:** `webServer` in `playwright.config.ts` must launch the configured `npm run dev` command on `http://127.0.0.1:3000`, with `reuseExistingServer: true` so a pre-existing listener is not stopped or replaced. The test must use the configured `baseURL`.
 - **Network isolation:** each test must block requests to `https://tile.openstreetmap.org/**` before navigation. The test must assert that no OSM tile request reaches the server; blocked requests are expected and are not a test failure.
@@ -94,7 +94,7 @@ A minimal B-07 slice that:
 
 - `git diff --check`, `npx tsc --noEmit`, `npm run build`, `npm ls --depth=0`, structural/config scope validation, `npx playwright test --list`, Chromium installation and `npx playwright test tests/vessel-selection.spec.ts` all passed. The targeted test reported `1 passed (2.8s)` with one `[chromium]` project and asserted blocked OSM requests with zero completed tile requests.
 - `lsof` showed the pre-existing Node PID `79575` listening on `127.0.0.1:3000`; Playwright reused it through `reuseExistingServer: true`. Supplemental `curl` returned `HTTP 200 text/html; charset=utf-8`. No product file under `app/` changed.
-- Current limitations: Node.js 24 compatibility is `Needs verification` on Node.js `v22.23.2`; B-06 manual movement, course, final-stop, hot-reload and unmount checks remain `UNKNOWN`/`BLOCKED`; no fresh dev server was started or stopped. These do not block the B-07 automated selection slice.
+- Current limitations: the B-07 checks were executed on Node.js `v22.23.2`; B-06 manual movement, course, final-stop, hot-reload and unmount checks remain `UNKNOWN`/`BLOCKED`; no fresh dev server was started or stopped. These do not block the B-07 automated selection slice.
 
 ## Checkpoint and stop conditions
 
@@ -106,7 +106,7 @@ A minimal B-07 slice that:
 ## Risks and open questions
 
 - Browser binaries may be unavailable or incompatible with the current environment; targeted test status must remain `BLOCKED`/`UNKNOWN` if installation or launch cannot be completed.
-- The current runtime may be below the Node.js 24 R1 baseline; compatibility remains `Needs verification` until checked in this session.
+- The current runtime is the approved Node.js 22 R1 baseline; no Node.js 24 compatibility claim is required.
 - A pre-existing `127.0.0.1:3000` listener may be reused by Playwright; its provenance and freshness are not established by this task.
 - Headless Playwright selection checks do not replace manual visual acceptance of movement, course orientation, final stop, hot reload or unmount cleanup; those B-06 limitations remain.
 - Product metrics, AISStream availability, architecture beyond R1 and S2/S3 remain `Unknown`/`Waiting for MVP input`.
@@ -121,7 +121,7 @@ Current handoff:
 
 - **Changed files:** `TASK_SPEC.md`, `package.json`, `package-lock.json`, `.gitignore`, `playwright.config.ts`, `tests/vessel-selection.spec.ts`, plus append-only `EVIDENCE.md` and `RUNBOOK.md`.
 - **Checks:** `git diff --check`, `npx tsc --noEmit`, `npm run build`, `npm ls --depth=0`, structural/config validator, Playwright list, Chromium install, targeted Playwright test and loopback HTTP check — `PASS`.
-- **Evidence:** `E-SEA-016`; Node.js 24 compatibility `Needs verification`; B-06 visual/manual limitations remain `UNKNOWN`/`BLOCKED`.
+- **Evidence:** `E-SEA-016`; B-07 checks ran on the approved Node.js 22 runtime; B-06 visual/manual limitations remain `UNKNOWN`/`BLOCKED`.
 - **Rollback:** restore the B-07 paths to `f215aae` only after inspecting the diff; preserve append-only history and excluded untracked inputs; do not reset the branch or stop the pre-existing server.
 - **Human decision:** `continue`; the current diff review found no scope, correctness or test-boundary blockers.
 - **Delivery:** verified B-07 commit `c89127f` is pushed to `origin/sprint1`.

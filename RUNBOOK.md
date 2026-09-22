@@ -1,12 +1,12 @@
 # RUNBOOK.md — delivery history and handoff
 
 - **ID:** `RUNBOOK-SEA-001`
-- **Version:** `0.4.0`
-- **Status:** `Active`
+- **Version:** `0.5.0`
+- **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-09-22
-- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`EVIDENCE.md`](EVIDENCE.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md)
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`EVIDENCE.md`](EVIDENCE.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md)
 
 ## Purpose and boundary
 
@@ -231,3 +231,75 @@ Each entry must include: date/session, goal and scope, changed artifacts, comman
 - **Evidence:** `E-SEA-018` records the bounded commit contents and remote synchronization.
 - **Limitations:** Node.js 24 compatibility remains `Needs verification`; B-06 manual movement, final-stop, hot-reload and unmount checks remain `UNKNOWN`/`BLOCKED`.
 - **Handoff:** B-07 is verified and delivered; no automatic transition to S2/S3. Next action requires a new bounded task and explicit approval.
+
+### 2026-09-22 — B-06 manual movement confirmation
+
+- **Session:** post-delivery clarification of the B-06 manual acceptance limitation.
+- **User observation:** user reported that the rendered vessel arrows move in the running application.
+- **Evidence:** `E-SEA-019` records this as a manual movement confirmation.
+- **Status:** visible movement is now `PASS` based on the user's observation. Bearing orientation, final stop at speed `0`, hot-reload timer accumulation and unmount cleanup remain `UNKNOWN` because they were not reported or observed in this session.
+- **Handoff:** this partial confirmation does not by itself change Sprint 1 to `DONE`; remaining B-06 checks and Node.js 24 compatibility still require evidence.
+
+### 2026-09-22 — B-06 course orientation confirmation
+
+- **Session:** follow-up to the B-06 manual movement confirmation.
+- **User observation:** user confirmed the course-orientation check in response to item 1.
+- **Evidence:** `E-SEA-020` records the reported manual confirmation.
+- **Status:** visible arrow/course orientation is now `PASS` based on the user's confirmation. Final stop at `0 kn`, hot-reload timer accumulation, unmount cleanup and Node.js 24 compatibility remain `UNKNOWN`/`Needs verification`.
+- **Handoff:** Sprint 1 remains not fully closed until the remaining B-06 runtime checks are evidenced.
+
+### 2026-09-22 — B-06 final-stop confirmation
+
+- **Session:** follow-up to the B-06 course-orientation confirmation.
+- **User observation:** user confirmed item 2 after nine ticks.
+- **Evidence:** `E-SEA-021` records the reported nine-tick final-stop observation.
+- **Status:** final stop at the expected nine-tick boundary is now `PASS` based on the user's confirmation, including the item-2 `0 kn` outcome. Exact vessel ids, final coordinates and post-stop observation duration were not supplied.
+- **Handoff:** remaining B-06 checks are hot-reload timer accumulation and unmount cleanup; Node.js 24 compatibility remains `Needs verification`.
+
+### 2026-09-22 — B-06 reload reset confirmation
+
+- **Session:** follow-up to the B-06 final-stop confirmation.
+- **User observation:** user reported that after reload the demo vessels return to their initial points.
+- **Evidence:** `E-SEA-022` records the reset-to-initial-points observation.
+- **Status:** reset after reload is `PASS`. This is not by itself proof of no timer accumulation during hot reload, because a full page reload recreates the lifecycle.
+- **Handoff:** hot-reload-specific timer accumulation, unmount cleanup and Node.js 24 compatibility remain open.
+
+### 2026-09-22 — B-06 unmount error check
+
+- **Session:** follow-up to the B-06 reload reset confirmation.
+- **User observation:** user reported no errors during the item-4 unmount/reload check.
+- **Evidence:** `E-SEA-023` records the no-error observation.
+- **Status:** no-error observation is `PASS`; direct proof that every timer and Leaflet listener was cleared remains unavailable from this report alone.
+- **Handoff:** Node.js 24 compatibility remains the only environment check; timer cleanup is supported by source evidence but not directly instrumented in this manual observation.
+
+### 2026-09-22 — B-06 hot-reload cadence check
+
+- **Session:** headed browser follow-up to the B-06 manual checks.
+- **Procedure:** opened Chromium headed against the existing `127.0.0.1:3000` server; added and immediately reverted a temporary comment in `app/sea-map.tsx`; selected `demo-1`; observed card coordinates before and after the temporary Fast Refresh change and at two approximately 2100 ms intervals.
+- **Observed:** coordinates progressed `51.00000, 1.45000` → `51.04000, 1.49500` → `51.05000, 1.51000` → `51.06000, 1.52500`; post-change readings advanced one literal route point per observation with no observed acceleration or skipped point. The temporary `app/sea-map.tsx` change was fully reverted. A single 404 console resource error was identified as the absent `/favicon.ico`.
+- **Status:** hot-reload cadence/no-acceleration observation `PASS`; direct timer instrumentation and unmount cleanup remain not independently measured. Evidence: `E-SEA-024`.
+- **Handoff:** only Node.js 24 compatibility remains as the primary open verification item; no commit or push was made for this evidence update.
+
+### 2026-09-22 — R1 Node.js baseline changed to 22
+
+- **Decision:** the project owner approved Node.js 22 as the R1 runtime baseline; DEC-005 records the change and supersedes DEC-002 for the current runtime value.
+- **Changes:** `package.json` and `package-lock.json` now declare `node: 22.x`; current canonical governance, SPEC, Sprint 1 and task documents point to the Node.js 22 baseline; ABOUT.md was aligned; no product code was changed.
+- **Environment:** active shell verified `node v22.23.2` and `npm 10.9.8`; the previously installed nvm Node.js `v24.1.0` was removed. `npm install --package-lock-only --ignore-scripts --no-audit --no-fund` returned `up to date` and `git diff --check` passed.
+- **Evidence:** `E-SEA-025` and `DEC-005-R1-NODE22`.
+- **Limitations:** historical entries retain the Node.js 24 wording that was true when they were recorded; `@types/node@24.13.6` remains a type-definition dependency, not the runtime requirement. No new product build or Playwright run was performed for this documentation/configuration-only change.
+- **Handoff:** use Node.js 22.x for subsequent R1 checks; do not install or activate Node.js 24 unless a new approved decision changes the baseline.
+
+### 2026-09-22 — R1 checks on Node.js 22
+
+- **Commands and status:** `node --version` / `npm --version` — `v22.23.2` / `10.9.8`, `PASS`; `git diff --check` — `PASS`; `npx tsc --noEmit` — `PASS`; `npm run build` — `PASS`; `npm ls --depth=0` — completed with the pre-existing extraneous `@emnapi/runtime` and `@img/sharp-wasm32` entries; `npx playwright test tests/vessel-selection.spec.ts` — `PASS`, `1 passed (1.5s)` under one Chromium project.
+- **Server:** Playwright reused the existing `127.0.0.1:3000` listener. Process inspection confirmed the server's executable is `/Users/romanmakarenko/.local/share/fnm/node-versions/v22.23.2/installation/bin/node`.
+- **Build note:** Next.js emitted the existing warning that it ignored `/Users/romanmakarenko/package-lock.json` outside the repository; compilation, TypeScript and static generation completed successfully.
+- **Evidence:** `E-SEA-026`.
+- **Handoff:** the R1 checks requested for the Node.js 22 baseline are complete; no Node.js 24 runtime was installed or activated during these checks. No commit or push was performed.
+
+### 2026-09-22 — Sprint 1 acceptance closure and delivery authorization
+
+- **Acceptance:** the product owner confirmed all previously listed Sprint 1 gaps and authorized commit and push: “все підтверджую і коміть та пуш”.
+- **Decision:** B-01 through B-07 are accepted; Sprint 1 status is `DONE` / `Verified`. Accepted limitations are the lack of direct timer/listener instrumentation for unmount cleanup, the known external package-lock warning and pre-existing extraneous dependency entries. No S2/S3 scope was started or inferred.
+- **Evidence:** `E-SEA-027` plus the preceding implementation, check, review and Node.js 22 records through `E-SEA-026`.
+- **Delivery:** prepare one bounded commit containing the approved tracked baseline/documentation changes and the new `DEC-005` record; preserve all pre-existing untracked paths; push only to `origin/sprint1`.

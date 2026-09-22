@@ -1,19 +1,19 @@
 # SeaRadar — правила роботи з проєктом
 
 - **ID:** `GOV-SEA-001`
-- **Version:** `1.1.0`
+- **Version:** `1.2.0`
 - **Status:** `Ready`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-09-22
-- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md)
+- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md)
 
 ## 1. Статус baseline
 
 Цей файл є стабільним operational contract для людей та AI-асистентів.
 
 - **Product / MVP:** `Ready — approved PROJECT_BRIEF.md / SPEC.md baseline; changes require a version bump and decision record`
-- **Stack / architecture:** `Ready for R1 only — current stack is recorded in DEC-002; architecture beyond R1 is Unknown`
+- **Stack / architecture:** `Ready for R1 only — current stack is recorded in DEC-005; architecture beyond R1 is Unknown`
 - **Sprint 1 / R1:** `Ready — only currently detailed and authorized sprint`
 - **Sprint 2 / Sprint 3:** `Waiting for MVP input — no plans or requirements are authorized`
 - **Sprint dates:** `Unknown`
