@@ -1,8 +1,9 @@
 "use client";
 
-import type { Map as LeafletMap, TileLayer } from "leaflet";
+import type { Map as LeafletMap, Marker, TileLayer } from "leaflet";
 import { useEffect, useRef } from "react";
 import { MAP_CONFIG } from "./map-config";
+import { DEMO_VESSEL } from "./vessel-model";
 
 export default function SeaMap() {
   const mapElementRef = useRef<HTMLDivElement | null>(null);
@@ -12,6 +13,7 @@ export default function SeaMap() {
     let disposed = false;
     let map: LeafletMap | null = null;
     let tileLayer: TileLayer | null = null;
+    let vesselMarker: Marker | null = null;
     let resizeFrame: number | null = null;
 
     const invalidateSize = () => {
@@ -46,6 +48,29 @@ export default function SeaMap() {
         attribution: MAP_CONFIG.attribution,
       }).addTo(map);
 
+      const iconState = DEMO_VESSEL.courseDeg === null ? "neutral" : "course";
+      const courseStyle =
+        DEMO_VESSEL.courseDeg === null
+          ? ""
+          : ` style="--vessel-course: ${DEMO_VESSEL.courseDeg}deg"`;
+      const vesselIcon = L.divIcon({
+        className: "vessel-marker",
+        html: `<span class="vessel-glyph"${courseStyle} aria-hidden="true"></span>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+      });
+
+      vesselMarker = L.marker([DEMO_VESSEL.lat, DEMO_VESSEL.lon], {
+        icon: vesselIcon,
+        interactive: false,
+      }).addTo(map);
+
+      const vesselMarkerElement = vesselMarker.getElement();
+      if (vesselMarkerElement) {
+        vesselMarkerElement.dataset.vesselId = DEMO_VESSEL.id;
+        vesselMarkerElement.dataset.icon = iconState;
+      }
+
       invalidateSize();
     };
 
@@ -67,8 +92,10 @@ export default function SeaMap() {
         cancelAnimationFrame(resizeFrame);
       }
 
+      vesselMarker?.remove();
       tileLayer?.remove();
       map?.remove();
+      vesselMarker = null;
       tileLayer = null;
       map = null;
     };

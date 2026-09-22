@@ -8,5 +8,12 @@ const SeaMap = dynamic(() => import("./sea-map"), {
 });
 
 export default function MapShell() {
-  return <SeaMap />;
+  return (
+    <div className="sea-map-shell">
+      <SeaMap />
+      <div className="map-source-label" data-source="demo">
+        Демонстраційні дані
+      </div>
+    </div>
+  );
 }
