@@ -1,12 +1,12 @@
 # EVIDENCE.md — фактичний evidence ledger
 
 - **ID:** `EVIDENCE-SEA-001`
-- **Version:** `0.4.0`
-- **Status:** `Active`
+- **Version:** `0.5.0`
+- **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-09-22
-- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md)
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md)
 
 ## Purpose and boundary
 
@@ -90,3 +90,252 @@
 - **Status:** `PASS`
 - **Reviewer / owner:** delivery/technical owner — executor role; product-owner review pending.
 - **Limitations and follow-up:** the checkpoint records only documentation/planning state. It is not a commit, archive, product acceptance or implementation evidence. A broader repository-wide link scan also found an unrelated `/LICENSE` reference under untracked `reference/`; that path was excluded from this task and requires separate review.
+
+### E-SEA-006 — B-01 task contract created
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B01-001`; `CHECKPOINT-SEA-R1-001`
+- **Claim under verification:** the next bounded implementation slice has an explicit task contract before product code is started.
+- **Source:** updated `TASK_SPEC.md`; `git diff --check`; `git status --short`; `git diff --stat`; shallow tree inspection with `find . -maxdepth 2 -type f | sort`.
+- **Expected:** B-01 contract defines scope, allowed paths, non-goals, acceptance and verification; no product scaffold or dependency is created by contract preparation; excluded untracked inputs remain outside the slice.
+- **Observed:** `TASK_SPEC.md` now contains `TASK-SEA-R1-B01-001`; `git diff --check` passed; the diff stat showed only `TASK_SPEC.md`; no `package.json`, lock-file or product source was present in the inspected tree; excluded untracked inputs remained visible and unchanged.
+- **Timestamp / environment:** 2026-09-22; macOS 15 / local SeaRadar workspace; runtime not started.
+- **Status:** `PASS`
+- **Reviewer / owner:** delivery/technical owner — executor role; human review of the new contract remains required before implementation.
+- **Limitations and follow-up:** this verifies contract structure and the no-implementation boundary only. It does not verify B-01 runtime behavior, dependencies, build, tests or acceptance. Next action is human review of `TASK_SPEC.md`, followed by implementation only if the contract remains accepted.
+
+### E-SEA-007 — B-01 scaffold targeted checks
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B01-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** the minimal B-01 scaffold installs, type-checks under strict TypeScript, starts locally and exposes no B-02+ functionality.
+- **Source:** `package.json`; `package-lock.json`; `app/layout.tsx`; `app/page.tsx`; `app/globals.css`; `tsconfig.json`; `.gitignore`; `npm install --no-audit --no-fund`; `npm ls --depth=0`; `npx tsc --noEmit`; `npm run dev` with an HTTP request to `http://127.0.0.1:3000/`; `git diff --check`; targeted source search.
+- **Expected:** the minimum Next.js App Router + React + TypeScript strict scaffold is available; the dev server serves the minimal page; no Leaflet, vessel, AIS, motion or test functionality is introduced; generated files and dependencies remain bounded.
+- **Observed:** npm installation passed and produced `package-lock.json`; installed direct packages were Next.js `16.3.5`, React/React DOM `19.3.0`, TypeScript `6.0.3` and the required type packages; the dev server served the expected `SeaRadar` heading and `R1 application scaffold.` paragraph; strict type-check passed after narrowing `tsconfig.json` to `app/**` and generated Next types; `git diff --check` passed; targeted source search found no excluded B-02+ functionality.
+- **Timestamp / environment:** 2026-09-22; macOS 15; Node.js `v22.16.0`; npm `11.4.2`; local SeaRadar workspace.
+- **Status:** `PASS`
+- **Reviewer / owner:** delivery/technical owner — executor role; human diff review remains pending.
+- **Limitations and follow-up:** the R1 baseline specifies Node.js 24 but the observed environment is Node.js 22.16.0; compatibility on Node.js 24 remains `Needs verification`. A real browser/manual visual check and `next build` were not run. Next.js 16 generated a managed `nextjs-agent-rules` block in `CLAUDE.md`; the product owner approved retaining that generated exception and it is not a manual governance rewrite.
+
+### E-SEA-008 — B-02 map implementation and automated/runtime checks
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B02-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** the bounded B-02 implementation compiles, serves on the required loopback address, uses the approved Leaflet/OSM configuration, and introduces no B-03+ functionality.
+- **Source:** `package.json`; `package-lock.json`; `app/map-config.ts`; `app/map-shell.tsx`; `app/sea-map.tsx`; `app/page.tsx`; `app/layout.tsx`; `app/globals.css`; `npm run build`; `npx tsc --noEmit`; `npm ls --depth=0`; `git diff --check`; targeted scope search; `lsof`; HTTP requests to `http://127.0.0.1:3000/`; OSM tile probe.
+- **Expected:** Leaflet 1.9.x and matching declarations are installed; the build succeeds without Leaflet/`window` SSR errors; the dev server listens on `127.0.0.1:3000`; direct open and refresh return the page; the configured OSM tile endpoint responds when network is available; no vessels, markers, motion, cards, AIS, buttons, API/server logic or test framework are added.
+- **Observed:** `npm run build` passed with static route generation; `npx tsc --noEmit` passed; `npm ls --depth=0` reported Leaflet `1.9.4`, `@types/leaflet` `1.9.22`, `@types/node` `24.13.6` and the existing Next/React/TypeScript packages; `git diff --check` passed; targeted scope search passed; `lsof` showed Node listening at `127.0.0.1:3000`; direct-open and refresh HTTP requests each returned status `200` and `text/html`; the OSM tile probe returned status `200` with `image/png`; the map constants and client-only dynamic import are present in the inspected source.
+- **Timestamp / environment:** 2026-09-22; macOS 15; Node.js `v22.16.0`; npm `11.4.2`; Next.js `16.3.5`; local SeaRadar workspace.
+- **Status:** `PASS` for automated, source and HTTP/runtime checks; `UNKNOWN` for browser visual acceptance.
+- **Reviewer / owner:** delivery/technical owner — executor role; human diff review remains pending.
+- **Limitations and follow-up:** `chromium-cli`, Chromium, Chrome, Playwright and Electron were not available in the environment, so direct visual map visibility, rendered attribution, initial center/zoom, bounds interaction, resize artifacts and unmount cleanup could not be observed in a real browser. The Next.js build emitted the existing warning that it ignored `/Users/romanmakarenko/package-lock.json` outside the repository; the build still passed. Node.js 24 compatibility remains `Needs verification` because the observed runtime is Node.js 22.16.0.
+
+### E-SEA-009 — B-02 reverification after Next.js guidance review
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B02-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** B-02 remains compatible with the installed Next.js 16 App Router guidance and its dependency, build, loopback runtime and scope checks are reproducible after the prior review.
+- **Source:** installed guides under `node_modules/next/dist/docs/01-app/` for project structure, layouts/pages, Server and Client Components, CSS, lazy loading, `use client`, root layout and TypeScript; `CLAUDE.md`; `package.json`; `package-lock.json`; `TASK_SPEC.md`; exact dependency-install command; `npm ls --depth=0`; `npx tsc --noEmit`; `npm run build`; `git diff --check`; targeted scope/path checks; `lsof`; direct-open and refresh HTTP requests; OSM tile probe; browser availability probe.
+- **Expected:** Server/Client boundaries, `next/dynamic` usage, CSS imports, root layout and generated type-file handling match Next.js guidance; exact dependency versions are recorded; all automated/runtime checks pass; browser-only claims remain unknown if no browser is available.
+- **Observed:** Next.js guidance review found no violation: `app/page.tsx` is a Server Component, `MapShell` is the Client Component containing `ssr: false`, Leaflet is dynamically imported inside the client effect, global/external CSS is imported from the root layout, and `next-env.d.ts` remains generated and ignored. The exact command `npm install --save-exact --save-dev @types/leaflet@1.9.22 @types/node@24.13.6 --registry=https://registry.npmjs.org --no-audit --no-fund` completed `up to date` with only the expected Node.js 24 engine warning. Manifest/lock exactness checks, `npm ls --depth=0`, `npx tsc --noEmit`, `npm run build`, `git diff --check`, targeted B-03+ scope search, required-path check, single package-manager lock check, loopback binding, direct-open and refresh HTTP requests, and the OSM tile probe all passed. Browser availability probe reported `chromium-cli`, Chromium, Chrome, Playwright and Electron unavailable.
+- **Timestamp / environment:** 2026-09-22; macOS 15; Node.js `v22.16.0`; npm `11.4.2`; Next.js `16.3.5`; local SeaRadar workspace.
+- **Status:** `PASS` for Next.js guidance, source, dependency, build, type, diff, scope, HTTP/runtime and tile checks; `UNKNOWN` for browser visual acceptance.
+- **Reviewer / owner:** delivery/technical owner — executor role; human diff review remains pending.
+- **Limitations and follow-up:** no real browser observation was possible, so rendered map visibility, attribution, initial center/zoom, bounds interaction, resize artifacts and unmount cleanup remain `UNKNOWN`; the HTTP and tile checks do not substitute for visual acceptance. Node.js 24 compatibility remains `Needs verification` because the observed runtime is Node.js 22.16.0. The Next.js build retained the existing warning about ignoring `/Users/romanmakarenko/package-lock.json` outside the repository. Next action is human diff review and an explicit `continue`, `revise` or `HOLD` decision; do not start B-03 before that decision.
+
+### E-SEA-010 — B-03 vessel model and static marker implementation checks
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B03-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** the bounded B-03 slice defines one approved demo vessel, renders one static course-oriented Leaflet marker with the required attributes, and exposes the exact demonstration source label without adding B-04+ behavior.
+- **Source:** `TASK_SPEC.md`; `app/vessel-model.ts`; `app/sea-map.tsx`; `app/map-shell.tsx`; `app/globals.css`; `git diff --check`; `npx tsc --noEmit`; `npm run build`; targeted B-03 source/bounds/cardinality checks; `npm run dev`; `lsof`; HTTP request to `http://127.0.0.1:3000/`; browser availability probe.
+- **Expected:** the model has all approved fields and one deterministic `demo-1` literal inside the configured bounds; one marker is created with `data-vessel-id` and `data-icon`; the course glyph uses the child transform and neutral branch is present for `null`; the source label is exactly `Демонстраційні дані`; no motion, timers, routes, card, AIS, dependency or excluded path is introduced; automated checks pass.
+- **Observed:** `git diff --check` passed; `npx tsc --noEmit` passed; `npm run build` passed with the existing warning about ignoring `/Users/romanmakarenko/package-lock.json` outside the repository; targeted source checks passed for the model fields, demo literal, required dataset assignments, source label, glyph styles, absence of timers, coordinate `(51.0, 1.45)` inside bounds `[50.75, 0.95]`–`[51.25, 1.95]`, and exactly one `L.marker(` call. The required `npm run dev` command could not start because port `127.0.0.1:3000` was already occupied by Node PID `79575`; `lsof` showed the existing SeaRadar dev server and a direct HTTP request to that loopback endpoint returned status `200`. A temporary alternate-port start was also refused by Next.js because the same project already had the existing dev server. No browser DOM/visual check was performed.
+- **Timestamp / environment:** 2026-09-22; macOS 15; Node.js `v22.16.0`; npm `11.4.2`; Next.js `16.3.5`; local SeaRadar workspace.
+- **Status:** `PASS` for type, build, diff and source/scope checks; `PASS` for supplemental loopback HTTP response via the existing server; `BLOCKED` for starting a second dev server because port/project lock was already in use; `UNKNOWN` for browser visual acceptance and Node.js 24 compatibility.
+- **Reviewer / owner:** delivery/technical owner — executor role; final human B-03 diff review remains pending.
+- **Limitations and follow-up:** `chromium-cli`, Chromium, Chrome, Playwright and Electron were unavailable, so visible vessel placement, marker attributes in the live DOM, glyph orientation/neutral rendering, source-label visibility, refresh/resize behavior and unmount cleanup remain `UNKNOWN`. The existing server was not stopped because it was not started by this bounded check. Human diff review must choose `continue`, `revise` or `HOLD` before B-04; the last accepted B-02 commit remains the recovery point.
+
+### E-SEA-011 — B-04 vessel selection and card implementation checks
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B04-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** the bounded B-04 slice makes the single demo marker selectable and renders a correctly formatted card for the selected vessel without HTML interpretation or B-05+ behavior.
+- **Source:** `TASK_SPEC.md`; `app/vessel-card.tsx`; `app/sea-map.tsx`; `app/map-shell.tsx`; `app/globals.css`; `git diff --check`; `npx tsc --noEmit`; `npm run build`; targeted B-04 source/scope checks; `npm run dev`; `lsof`; HTTP request to `http://127.0.0.1:3000/`; browser availability probe; `node --version`; `npm --version`; `npx next --version`.
+- **Expected:** one interactive `demo-1` marker selects one card containing id, name, coordinates, speed, course, timestamp and source in the approved formats; numeric zero remains distinct from unknown; literal names remain text; repeated/map clicks do not clear selection; no close button, motion, routes, AIS, API/server logic, dependency or excluded path is introduced.
+- **Observed:** `git diff --check` passed; `npx tsc --noEmit` passed; `npm run build` passed with the existing warning about ignoring `/Users/romanmakarenko/package-lock.json` outside the repository; the corrected targeted source/scope checks passed for allowed paths, one marker, interactive marker selection, formatting tokens, literal rendering, panel order and forbidden behavior; `npm run dev` exited `1` with `EADDRINUSE` because `127.0.0.1:3000` was already occupied by Node PID `79575`; `lsof` confirmed the listener and a direct HTTP request returned `200 text/html`; browser tools were unavailable; the observed environment was Node.js `v22.16.0`, npm `11.4.2`, Next.js `16.3.5`.
+- **Timestamp / environment:** 2026-09-22; macOS 15; Node.js `v22.16.0`; npm `11.4.2`; Next.js `16.3.5`; local SeaRadar workspace.
+- **Status:** `PASS` for type, build, diff and corrected source/scope checks; `PASS` for supplemental loopback HTTP response via the existing server; `BLOCKED` for starting a second dev server because port `127.0.0.1:3000` was already in use; `UNKNOWN` for browser visual/DOM acceptance and Node.js 24 compatibility.
+- **Reviewer / owner:** delivery/technical owner — executor role; final human B-04 diff review remains pending.
+- **Limitations and follow-up:** no browser observation verified marker click behavior, live card content, literal `<b>Демо</b>` rendering, repeated/map click selection persistence, panel order, resize behavior or unmount cleanup. The first local targeted assertion script failed because its own ordering assertion matched the `VesselCard` import rather than the rendered element; the corrected validator passed. The existing server was not stopped because it was not started by this bounded check. Human diff review must choose `continue`, `revise` or `HOLD` before B-05; the B-03 commit `bad4df2` remains the recovery point.
+
+### E-SEA-012 — B-04 delivery commit and remote branch handoff
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B04-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** the verified B-04 implementation is committed on the first sprint branch and pushed to the configured remote without including excluded untracked inputs.
+- **Source:** `git status --short`; `git log -1 --oneline --decorate`; `git remote -v`; `git push origin sprint1` output.
+- **Expected:** branch `sprint1` contains the B-04 commit; `origin/sprint1` points to the same commit; excluded untracked inputs remain outside the commit; no unexpected tracked changes remain after push.
+- **Observed:** commit `addc7ba` (`feat(r1): add B-04 vessel selection card`) is at `HEAD -> sprint1` and `origin/sprint1`; push completed as `bad4df2..addc7ba sprint1 -> sprint1`; `git status --short` lists only the pre-existing excluded untracked paths `.agents/`, `.claude/`, `TASK_DECOMPOSE.md`, `TASK_INITIAL.md`, `reference/` and `skills-lock.json`.
+- **Timestamp / environment:** 2026-09-22; macOS 15; local SeaRadar workspace; remote `origin` is `git@github.com:RomanMakarenko/SeaRadar.git`.
+- **Status:** `PASS` for commit/remote delivery and excluded-path boundary; `UNKNOWN` for browser visual/DOM acceptance and Node.js 24 compatibility as recorded in `E-SEA-011`.
+- **Reviewer / owner:** delivery/technical owner — executor role; final human B-04 diff decision remains pending.
+- **Limitations and follow-up:** remote delivery does not substitute for live browser acceptance or final human review. The next session must inspect commit `addc7ba`, review the B-04 diff, and choose `continue`, `revise` or `HOLD` before creating the B-05 task contract.
+
+### E-SEA-013 — B-05 demo routes implementation checks
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B05-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** the bounded B-05 slice adds exactly three static demo vessels with literal route data and preserves the B-04 marker selection boundary without adding B-06 motion.
+- **Source:** `TASK_SPEC.md`; `app/vessel-model.ts`; `app/sea-map.tsx`; `git diff --check`; `npx tsc --noEmit`; `npm run build`; `npm ls --depth=0`; targeted Python structural/data/course validator; `lsof -nP -iTCP:3000 -sTCP:LISTEN`; `curl http://127.0.0.1:3000/`; `node --version`; `npm --version`; `npx next --version`; browser availability probe.
+- **Expected:** `demo-1`…`demo-3` exist once; each route has 8–12 literal points within the configured bounds; each vessel starts at its first point with an explicit consistent initial course and literal speed; exactly three markers forward matching selections and clean up listeners; no timers, motion, route playback, AIS, API/server logic, dependencies or excluded paths are added.
+- **Observed:** `git diff --check` passed; strict TypeScript passed; `npm run build` passed with the existing warning about ignoring `/Users/romanmakarenko/package-lock.json` outside the repository; `npm ls --depth=0` showed the unchanged direct dependency set and reported extraneous `@emnapi/runtime` and `@img/sharp-wasm32` packages; the final structural/data validator passed for exactly three IDs, three ten-point routes, inclusive bounds, literal speeds, first-point positions, initial courses, marker loop, attributes, listener cleanup and absence of `setInterval`/`setTimeout`; initial course consistency checks passed; the existing SeaRadar listener on `127.0.0.1:3000` was observed via `lsof` and supplemental `curl` returned `HTTP 200 text/html`; no browser runtime was available.
+- **Timestamp / environment:** 2026-09-22; macOS 15; Node.js `v22.23.2`; npm `10.9.8`; Next.js `16.3.5`; local SeaRadar workspace; existing listener PID `79575`.
+- **Status:** `PASS` for diff, type, build, source/data/scope and supplemental loopback HTTP checks; `UNKNOWN`/`BLOCKED` for browser visual/DOM acceptance; `UNKNOWN` for Node.js 24 compatibility.
+- **Reviewer / owner:** delivery/technical owner — executor role; final human B-05 diff review remains pending.
+- **Limitations and follow-up:** no browser verified three live markers, marker clicks, matching cards, repeated/map-click selection persistence, visual icon state, static positions or unmount cleanup. `npm run dev` was not started because the required port was already occupied by a pre-existing server; the existing server was not stopped. The next session must inspect the B-05 diff/commit and choose `continue`, `revise` or `HOLD` before B-06.
+
+### E-SEA-014 — B-06 motion implementation checks
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B06-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** the bounded B-06 slice adds one 2000 ms motion interval for the three existing demo routes, computes the current-segment bearing, updates markers and the selected card from the same snapshots, stops at the final point with speed `0`, and cleans up the timer.
+- **Source:** `TASK_SPEC.md`; `app/sea-map.tsx`; `app/map-shell.tsx`; unchanged `app/vessel-model.ts`; installed Next.js guidance; `git diff --check`; `npx tsc --noEmit`; `npm run build`; `npm ls --depth=0`; targeted Python motion/scope validator; `npm run dev`; `lsof -nP -iTCP:3000 -sTCP:LISTEN`; `curl http://127.0.0.1:3000/`; browser availability probe; runtime version commands.
+- **Expected:** exactly one `2000` ms interval is created for the map lifecycle and cleared on cleanup; each unfinished vessel advances one literal route point per tick; the course is normalized great-circle azimuth of the traversed segment; the final tick sets speed to numeric `0`; markers and the selected card receive the same updated vessel snapshot; no B-07 or unrelated behavior/dependency/path is added.
+- **Observed:** `git diff --check` passed; strict TypeScript passed; `npm run build` passed with the existing warning about ignoring `/Users/romanmakarenko/package-lock.json` outside the repository; `npm ls --depth=0` passed with the unchanged direct dependency set; the targeted validator passed for the 2000 ms interval, single timer, cleanup, route-index advancement, normalized bearing source, final speed `0`, finished-vessel guard, marker updates, selected-card update callback, selection wiring, forbidden behavior absence and unchanged B-05 dataset; tracked diff paths were exactly `TASK_SPEC.md`, `app/map-shell.tsx` and `app/sea-map.tsx`; `npm run dev` exited `1` with `EADDRINUSE` because the pre-existing Node PID `79575` listened on `127.0.0.1:3000`; supplemental `curl` returned `HTTP 200 text/html`; no supported browser runtime was available.
+- **Timestamp / environment:** 2026-09-22; macOS; Node.js `v22.16.0`; npm `11.4.2`; Next.js `16.3.5`; local SeaRadar workspace; pre-existing listener PID `79575`.
+- **Status:** `PASS` for diff, type, build, dependency, source/scope and supplemental loopback HTTP checks; `BLOCKED` for starting a new dev server due to the pre-existing listener; `UNKNOWN`/`BLOCKED` for browser/manual motion, card, hot-reload and unmount acceptance; `UNKNOWN` for Node.js 24 compatibility.
+- **Reviewer / owner:** delivery/technical owner — executor role; final human B-06 diff review remains pending.
+- **Limitations and follow-up:** source checks do not prove rendered marker movement, visible course orientation, selected-card updates, final stop, hot-reload timer count or unmount cleanup. No browser-based manual acceptance was claimed. Human diff review must choose `continue`, `revise` or `HOLD`; the B-05 commit `70fbf29` is the recovery point if this slice is rejected.
+
+### E-SEA-015 — B-06 review decision and remote delivery
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B06-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** the reviewed B-06 diff was accepted for continuation, committed without unrelated tracked paths, and pushed to the sprint branch.
+- **Source:** human review decision in the current session; `git diff --check`; `git show --stat f215aae`; `git log -2 --oneline --decorate`; `git push origin sprint1`; final `git status --short`.
+- **Expected:** the B-06 implementation and its actual evidence/handoff records are committed as one bounded delivery; `origin/sprint1` points to the same commit; pre-existing excluded untracked inputs remain outside the commit.
+- **Observed:** the diff review confirmed `continue`; commit `f215aae` (`feat(r1): add demo vessel motion`) contains exactly `EVIDENCE.md`, `RUNBOOK.md`, `TASK_SPEC.md`, `app/map-shell.tsx` and `app/sea-map.tsx`; push completed `70fbf29..f215aae sprint1 -> sprint1`; `HEAD -> sprint1` and `origin/sprint1` both point to `f215aae`; final status lists only the pre-existing excluded untracked paths `.agents/`, `.claude/`, `reference/`, `TASK_INITIAL.md`, `TASK_DECOMPOSE.md` and `skills-lock.json`.
+- **Timestamp / environment:** 2026-09-22; macOS; local SeaRadar workspace; branch `sprint1`.
+- **Status:** `PASS` for human diff decision, bounded commit contents, remote push and excluded-path boundary.
+- **Reviewer / owner:** delivery/technical owner — executor role; human decision recorded as `continue`.
+- **Limitations and follow-up:** this delivery evidence does not change the B-06 browser/manual limitation, which remains `UNKNOWN`/`BLOCKED`; Node.js 24 compatibility remains `Needs verification`. Next bounded action is `R1-B07-PLAYWRIGHT-SELECTION` from commit `f215aae`.
+
+### E-SEA-016 — B-07 Playwright selection checks
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B07-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** the bounded B-07 slice adds Playwright Test as the only runner, one Chromium browser project with a configured Next.js dev server, and a browser check for all three demo-vessel selections while blocking OSM tile requests.
+- **Source:** `TASK_SPEC.md`; `package.json`; `package-lock.json`; `playwright.config.ts`; `tests/vessel-selection.spec.ts`; `.gitignore`; installed Next.js Playwright guidance; `git diff --check`; `npx tsc --noEmit`; `npm run build`; `npm ls --depth=0`; `npx playwright test --list`; inline B-07 structural/config scope validator; `npx playwright install chromium`; `npx playwright test tests/vessel-selection.spec.ts`; `lsof -nP -iTCP:3000 -sTCP:LISTEN`; `curl http://127.0.0.1:3000/`; runtime version commands.
+- **Expected:** exactly one Chromium project and one Playwright Test spec; `webServer` starts `npm run dev` on the configured loopback `baseURL`; the spec finds exactly `demo-1`…`demo-3`, opens each matching card, keeps it visible after a repeated click, and aborts observed OSM tile requests before navigation; no motion, visual regression, extra runner, unrelated dependency or product path is added.
+- **Observed:** `git diff --check` passed; strict application TypeScript check passed; `npm run build` passed; `npm ls --depth=0` listed the authorized `@playwright/test@1.63.0` plus the pre-existing extraneous `@emnapi/runtime` and `@img/sharp-wasm32`; the structural/config validator passed with one Chromium project, configured `npm run dev`, base URL, tile interception and forbidden-scope checks; `npx playwright test --list` listed one test under `[chromium]`; Chromium `153.0.8010.12` installed successfully; targeted Playwright test passed with `1 passed (2.8s)` using `1 worker`; the test observed and aborted OSM tile requests and asserted zero completed tile requests; `lsof` showed pre-existing Node PID `79575` on `127.0.0.1:3000`; supplemental `curl` returned `HTTP 200 text/html; charset=utf-8`; product files under `app/` were unchanged; `npm install --save-dev @playwright/test` emitted the expected `EBADENGINE` warning because the current Node.js `v22.23.2` is below the package engine baseline `24.x`; `npm run build` emitted the existing warning that Next.js ignored `/Users/romanmakarenko/package-lock.json` outside this Git repository.
+- **Timestamp / environment:** 2026-09-22; macOS 15; Node.js `v22.23.2`; npm `10.9.8`; Next.js `16.3.5`; Playwright `1.63.0`; local SeaRadar workspace; existing listener PID `79575`.
+- **Status:** `PASS` for diff, strict application type-check, build, dependency/scope/config checks, browser installation, targeted selection test, tile-block assertions and supplemental loopback HTTP; `Needs verification` for Node.js 24 compatibility; B-06 manual motion/final-stop/hot-reload/unmount acceptance remains outside B-07 and `UNKNOWN`/`BLOCKED`.
+- **Reviewer / owner:** delivery/technical owner — executor role; human B-07 diff review is pending.
+- **Limitations and follow-up:** the targeted headless browser test does not provide manual visual acceptance of movement, course orientation, final stop, hot reload or unmount cleanup; those remain B-06 limitations. The Playwright `webServer` reused the pre-existing listener because `reuseExistingServer: true`; this task did not start or stop that process. Node.js 24 compatibility is not verified on the current Node.js 22 runtime. Human diff review must choose `continue`, `revise` or `HOLD` before any commit or next bounded action.
+
+### E-SEA-017 — B-07 human diff review decision
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B07-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** the B-07 diff was human-reviewed against its bounded contract and accepted for commit and push without unrelated product changes.
+- **Source:** current human review; `TASK_SPEC.md`; `.gitignore`; `package.json`; `package-lock.json`; `playwright.config.ts`; `tests/vessel-selection.spec.ts`; `git diff --check`; `npx playwright test tests/vessel-selection.spec.ts`; `git status --short`.
+- **Expected:** the diff contains only the authorized Playwright runner/config/spec, generated-output ignores and evidence/contract updates; the test remains green with one Chromium project; no `app/` product path, extra runner, extra dependency or pre-existing untracked path is included.
+- **Observed:** review found no correctness, scope or test-boundary blockers; the final targeted test passed with `1 passed`; the config has one Chromium project and configured `webServer`; the spec covers all three IDs, matching cards, repeated clicks and blocked OSM requests; `app/` is unchanged; pre-existing untracked paths remain outside the planned commit.
+- **Status:** `PASS`; human decision is `continue`; commit and push are explicitly authorized by the user.
+- **Reviewer / owner:** delivery/technical owner — executor role.
+- **Limitations and follow-up:** Node.js 24 compatibility remains `Needs verification`; B-06 manual visual limitations remain `UNKNOWN`/`BLOCKED`. Remote delivery is recorded separately after the push completes.
+
+### E-SEA-018 — B-07 remote delivery
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B07-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** the reviewed B-07 slice was committed without unrelated paths and pushed to `origin/sprint1`.
+- **Source:** `git commit --amend`; `git show --stat --oneline HEAD`; `git diff HEAD^ HEAD --name-only`; `git push origin sprint1`; final `git status --short`; `git log -2 --oneline --decorate`.
+- **Expected:** the B-07 commit contains only the authorized implementation, test, dependency, contract and append-only history files; `origin/sprint1` points to the delivered commit; pre-existing excluded untracked paths remain outside the commit.
+- **Observed:** commit `c89127f` (`feat(r1): add B-07 Playwright selection checks`) contains exactly `.gitignore`, `EVIDENCE.md`, `RUNBOOK.md`, `TASK_SPEC.md`, `package-lock.json`, `package.json`, `playwright.config.ts` and `tests/vessel-selection.spec.ts`; push completed `f215aae..c89127f sprint1 -> sprint1`; local and remote delivery target is `c89127f`; `sea-radar-s1.png` was intentionally kept untracked after an unexpected staged inclusion was removed from the commit; all other pre-existing excluded untracked paths remain present.
+- **Status:** `PASS` for bounded commit contents, remote push and excluded-path boundary.
+- **Reviewer / owner:** delivery/technical owner — executor role; human B-07 decision is `continue`.
+- **Limitations and follow-up:** Node.js 24 compatibility remains `Needs verification`; B-06 manual visual movement, course, final-stop, hot-reload and unmount checks remain `UNKNOWN`/`BLOCKED`. No automatic transition to S2/S3 is authorized.
+
+### E-SEA-019 — B-06 manual movement confirmation
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B06-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** visible B-06 demo-vessel movement has been manually observed in the running application.
+- **Source:** user confirmation in the current session: “я перевірив, стрілки рухаються”.
+- **Expected:** the rendered vessel arrows visibly move between demo route positions.
+- **Observed:** user reports that the arrows move. This confirms visible movement only; no claim is made here about bearing orientation, final stop at speed `0`, hot-reload timer count or unmount cleanup.
+- **Status:** `PASS` for the reported manual movement observation; `UNKNOWN` for the remaining B-06 manual checks.
+- **Reviewer / owner:** user/manual reviewer; delivery/technical owner records the report.
+- **Limitations and follow-up:** the exact browser session, observed tick count, final route position and console/unmount observations were not supplied. Node.js 24 compatibility remains `Needs verification`.
+
+### E-SEA-020 — B-06 course orientation confirmation
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B06-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** the visible B-06 vessel arrows are oriented according to their current route course.
+- **Source:** user confirmation in the current session: “1 підтверджую” in response to the course-orientation check.
+- **Expected:** each rendered arrow points along the vessel's current route segment, including the updated direction after movement.
+- **Observed:** user confirms the course-orientation check. Exact vessel id, segment, observed bearing and capture details were not supplied.
+- **Status:** `PASS` for the reported manual course-orientation observation.
+- **Reviewer / owner:** user/manual reviewer; delivery/technical owner records the report.
+- **Limitations and follow-up:** final stop at `0 kn`, no timer accumulation after hot reload, unmount cleanup and Node.js 24 compatibility remain unverified.
+
+### E-SEA-021 — B-06 final-stop confirmation
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B06-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** the demo-vessel motion reaches the last literal route point after the expected nine ticks and stops at `0 kn`.
+- **Source:** user confirmation in the current session: “2 підтверджую 9 тіків”.
+- **Expected:** with ten route points and a two-second interval, the final point is reached after nine ticks; the vessel then remains at the final point with speed `0 kn`.
+- **Observed:** user confirms the item-2 final-stop check after nine ticks. Exact vessel id, final coordinates and duration of the post-stop observation were not supplied.
+- **Status:** `PASS` for the reported nine-tick final-stop observation.
+- **Reviewer / owner:** user/manual reviewer; delivery/technical owner records the report.
+- **Limitations and follow-up:** hot-reload timer accumulation, unmount cleanup and Node.js 24 compatibility remain unverified.
+
+### E-SEA-022 — B-06 reload reset confirmation
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B06-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** reloading the application resets demo vessels to their initial literal route points.
+- **Source:** user confirmation in the current session: “3 підтверджую, після релоуда повертаються до початкових точок”.
+- **Expected:** after a page reload, demo vessels restart from route index `0`.
+- **Observed:** user reports that after reload the vessels return to their initial points.
+- **Status:** `PASS` for reset-to-initial-points after reload.
+- **Limitations and follow-up:** a full page reload also tears down and recreates the map lifecycle, so this observation alone does not prove that hot reload never accumulates timers. The hot-reload-specific timer check, unmount cleanup and Node.js 24 compatibility remain unverified.
+
+### E-SEA-023 — B-06 unmount error check
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B06-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** unmounting or reloading the map does not produce runtime errors.
+- **Source:** user confirmation in the current session: “4 підтверджую, помилок нема”.
+- **Expected:** after unmount/reload, no console or runtime errors appear and no stale map update causes an exception.
+- **Observed:** user reports no errors during the item-4 check.
+- **Status:** `PASS` for the reported no-error observation.
+- **Limitations and follow-up:** absence of errors does not independently prove that every timer and Leaflet listener was cleared; direct cleanup instrumentation was not supplied. Node.js 24 compatibility remains `Needs verification`.
+
+### E-SEA-024 — B-06 hot-reload cadence check
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B06-001`; `SPRINT-SEA-R1-001`
+- **Claim under verification:** after a temporary source hot reload, the demo vessel continues advancing by one route point every 2000 ms without timer acceleration or route-point skipping.
+- **Source:** headed Chromium observation using an inline Playwright browser session; temporary comment added and immediately reverted in `app/sea-map.tsx`; browser coordinate readings; `curl` check for the reported 404 resource; final `git diff --check` and product-path diff.
+- **Expected:** after the temporary Fast Refresh change, coordinates advance one literal route point per approximately 2000 ms; no duplicate-timer acceleration or skipped point appears; the temporary product edit leaves no final diff.
+- **Observed:** headed browser readings were `initial=51.00000, 1.45000`, then `after_hmr_restart=51.04000, 1.49500`, `after_hmr_tick_1=51.05000, 1.51000`, and `after_hmr_tick_2=51.06000, 1.52500`; the two post-change readings advanced by one route point per 2100 ms observation; `git diff --check` passed and `app/sea-map.tsx` had no remaining diff. The browser reported one 404 console resource error; `curl` identified it as the absent `/favicon.ico`, not a JavaScript or map-timer error.
+- **Status:** `PASS` for the observed one-point-per-approximately-2000-ms cadence and no observed timer acceleration/skipping after the temporary hot-reload change.
+- **Reviewer / owner:** delivery/technical owner — executor role.
+- **Limitations and follow-up:** the observation did not instrument `setInterval`/`clearInterval` directly and did not independently prove unmount cleanup. Node.js 24 compatibility remains `Needs verification`.
+
+### E-SEA-025 — R1 Node.js baseline changed to 22
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B07-001`; `SPRINT-SEA-R1-001`; `DEC-005-R1-NODE22`
+- **Claim under verification:** the official R1 runtime baseline is Node.js 22.x and Node.js 24 is not required or active for this project.
+- **Source:** project-owner instruction in the current session; `package.json`; `package-lock.json`; `CLAUDE.md`; `SPEC.md`; `SPRINT-01.md`; `TASK_SPEC.md`; `docs/decisions/README.md`; `docs/decisions/DEC-005-r1-node22.md`; shell runtime output.
+- **Expected:** current engine requirements and canonical baseline documents identify Node.js 22.x; the active shell uses Node.js 22; the previously installed Node.js 24 runtime is removed; no product code changes are needed.
+- **Observed:** `package.json` and the root package-lock engine both read `22.x`; canonical governance and R1 documents point to DEC-005 and Node.js 22; shell output is `node v22.23.2` / `npm 10.9.8`; `nvm uninstall 24.1.0` completed with `Uninstalled node v24.1.0`; `npm install --package-lock-only --ignore-scripts --no-audit --no-fund` reported `up to date`; `git diff --check` passed.
+- **Status:** `PASS` for baseline/document/package alignment and removal of the local Node.js 24 installation.
+- **Limitations and follow-up:** historical EVIDENCE/RUNBOOK entries retain their original Node.js 24 wording as append-only delivery history; `@types/node@24.13.6` remains a development type-definition package and is not the runtime baseline. No new product build or Playwright run was required for this documentation/configuration-only change.
+
+### E-SEA-026 — R1 checks on Node.js 22
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R1-B07-001`; `SPRINT-SEA-R1-001`; `DEC-005-R1-NODE22`
+- **Claim under verification:** the existing R1 type, build, dependency and focused browser checks pass on the approved Node.js 22 runtime.
+- **Source:** shell command output from the current session; `package.json`; `package-lock.json`; `playwright.config.ts`; `tests/vessel-selection.spec.ts`; existing dev-server process inspection.
+- **Expected:** Node.js 22 is active; format, strict TypeScript, production build, dependency tree and targeted Playwright selection checks pass without Node.js 24.
+- **Observed:** `node --version` returned `v22.23.2`; `npm --version` returned `10.9.8`; `git diff --check` passed; `npx tsc --noEmit` passed; `npm run build` passed with the existing Next.js warning about an external `/Users/romanmakarenko/package-lock.json`; `npm ls --depth=0` completed with only the pre-existing extraneous `@emnapi/runtime` and `@img/sharp-wasm32` entries; `npx playwright test tests/vessel-selection.spec.ts` passed `1 passed (1.5s)` under one `[chromium]` project. The reused server's executable was `/Users/romanmakarenko/.local/share/fnm/node-versions/v22.23.2/installation/bin/node`.
+- **Status:** `PASS` for all requested Node.js 22 checks.
+- **Limitations and follow-up:** Playwright reused the existing listener on `127.0.0.1:3000` through the configured `reuseExistingServer: true`; no new server was started or stopped. The dependency tree still reports the pre-existing extraneous packages; this does not affect the passing checks.
+
+### E-SEA-027 — Sprint 1 acceptance closure
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `SPRINT-SEA-R1-001`; `DEC-005-R1-NODE22`
+- **Claim under verification:** Sprint 1 B-01 through B-07 acceptance is closed and the verified delivery is authorized for commit and push.
+- **Source:** product-owner confirmation in the current session: “все підтверджую і коміть та пуш”; prior implementation, check, review and delivery evidence `E-SEA-001` through `E-SEA-026`.
+- **Expected:** all previously listed Sprint 1 acceptance gaps are either confirmed or explicitly accepted; Sprint 1 may be marked `DONE`; no S2/S3 work is inferred or started.
+- **Observed:** the product owner confirmed all listed gaps and authorized commit/push. The accepted set includes B-02/B-03/B-04 visual limitations, B-06 cleanup evidence without direct timer/listener instrumentation, the known external package-lock warning, pre-existing extraneous dependency entries, and the Node.js 22 baseline. No S2/S3 implementation was added.
+- **Status:** `PASS`; Sprint 1 acceptance decision is `DONE`.
+- **Reviewer / owner:** product owner — acceptance role; delivery/technical owner records the decision.
+- **Limitations:** this record closes the acceptance decision; it does not retroactively turn source/manual evidence into direct instrumentation. Sprint 2 and Sprint 3 remain outside the approved scope.

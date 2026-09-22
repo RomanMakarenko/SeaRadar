@@ -2,11 +2,11 @@
 
 - **ID:** `DEC-002-R1-STACK`
 - **Version:** `1.0.0`
-- **Status:** `Ready`
+- **Status:** `Superseded`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-09-22
-- **Related artifacts:** [`PROJECT_BRIEF.md`](../../PROJECT_BRIEF.md), [`SPEC.md`](../../SPEC.md), [`SPRINT-01.md`](../../SPRINT-01.md), [`TASK_SPEC.md`](../../TASK_SPEC.md), [`EVIDENCE.md`](../../EVIDENCE.md), [`RUNBOOK.md`](../../RUNBOOK.md)
+- **Related artifacts:** [`PROJECT_BRIEF.md`](../../PROJECT_BRIEF.md), [`SPEC.md`](../../SPEC.md), [`SPRINT-01.md`](../../SPRINT-01.md), [`TASK_SPEC.md`](../../TASK_SPEC.md), [`EVIDENCE.md`](../../EVIDENCE.md), [`RUNBOOK.md`](../../RUNBOOK.md), [`DEC-005-r1-node22.md`](DEC-005-r1-node22.md)
 
 ## Context and constraints
 

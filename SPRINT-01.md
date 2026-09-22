@@ -1,12 +1,12 @@
 # SPRINT-01 - Реліз R1: карта й демонстраційні судна
 
 - **ID:** `SPRINT-SEA-R1-001`
-- **Version:** `1.1.0`
-- **Status:** `Ready`
+- **Version:** `1.3.0`
+- **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-09-22
-- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-003-r1-handoff.md`](docs/decisions/DEC-003-r1-handoff.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md)
+- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-003-r1-handoff.md`](docs/decisions/DEC-003-r1-handoff.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md)
 
 > Це єдиний деталізований і погоджений план на поточний момент: реліз R1. Sprint 2 і Sprint 3 ще не деталізовані та не авторизовані.
 
@@ -22,7 +22,7 @@
 
 Замовник залишив вибір за виконавцем; обрано таке, кожне значення живе в одному місці конфігурації.
 
-- **Стек:** поточний погоджений baseline R1: Node.js 24, TypeScript 6.x (`strict`), Next.js (App Router) + React, Leaflet 1.9.x (бібліотека карт), шар OpenStreetMap Standard (`https://tile.openstreetmap.org/{z}/{x}/{y}.png` - тайли, картинки карти; атрибуція "© OpenStreetMap contributors"), Playwright Test як єдиний раннер тестів. Зміна stack потребує нового versioned decision record. Leaflet підключається тільки на клієнті.
+- **Стек:** поточний погоджений baseline R1: Node.js 22, TypeScript 6.x (`strict`), Next.js (App Router) + React, Leaflet 1.9.x (бібліотека карт), шар OpenStreetMap Standard (`https://tile.openstreetmap.org/{z}/{x}/{y}.png` - тайли, картинки карти; атрибуція "© OpenStreetMap contributors"), Playwright Test як єдиний раннер тестів. Зміна stack потребує нового versioned decision record. Leaflet підключається тільки на клієнті.
 - **Район:** Дуврська протока, прямокутник від 50.75° N, 0.95° E до 51.25° N, 1.95° E. Початковий вид: центр 51.00° N, 1.45° E, zoom 10.
 - **Судно** - одна структура для демонстраційних і справжніх: `id` (рядок; для демонстрації `demo-1`…`demo-3`), `name` (рядок або `null`; порожній рядок → `null`), `lat`, `lon`, `speedKnots` (число або `null`), `courseDeg` (число в [0, 360) або `null`; курс руху, не напрямок носа), `timestamp` (ISO 8601 із зоною), `source` (`'demo'` | `'aisstream'`). Нуль і `null` - різні речі.
 - **Картка:** ідентифікатор; назва як текст, не HTML; координати через `toFixed(5)` з хвостовими нулями (`51.00000, 1.45678`); швидкість з округленням до десятих без хвостових нулів і суфіксом (`12.3 kn`, `12 kn`, `0 kn`); курс `Math.round % 360` з градусом (`135°`); час повідомлення `12:00:00 UTC`; джерело ("Демонстраційні дані" / "AISStream"). Невідоме значення - "Немає даних". Кнопки закриття немає: картка закривається тільки вибором іншого судна; повторний клік і клік по карті вибір не змінюють. Порядок панелі згори вниз: кнопка (з'явиться пізніше), підпис джерела, картка.
@@ -204,6 +204,15 @@
 - **Evidence:** повний фактичний test output, конфігурація runner і список тестів.
 - **Acceptance:** B-07 тести проходять одним runner без мережевої залежності тайлів.
 - **Handoff:** передати test output, known limitations і рекомендацію для checkpoint R1; наступний крок — human review та окреме рішення про checkpoint, не автоматичний перехід до S2/S3.
+
+### Sprint 1 closure
+
+- **Status:** `DONE`
+- **Verified scope:** B-01 through B-07 are implemented, checked and accepted by the product owner.
+- **Acceptance decision:** the product owner confirmed all previously listed acceptance gaps and authorized commit and push.
+- **Evidence:** `E-SEA-001` through `E-SEA-026`, including `E-SEA-026` for the Node.js 22 check; the closure decision is recorded as `E-SEA-027`.
+- **Accepted limitations:** the unmount cleanup check has source/manual evidence rather than direct timer/listener instrumentation; the build retains the known external package-lock warning; `npm ls` retains the pre-existing extraneous packages. These limitations were explicitly accepted for Sprint 1 closure and do not authorize S2/S3 scope.
+- **Delivery boundary:** Sprint 1 closure does not authorize Sprint 2 or Sprint 3, which remain `Waiting for MVP input`.
 
 ### Handoff template
 
