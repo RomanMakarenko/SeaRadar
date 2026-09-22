@@ -4,9 +4,16 @@ import type { Map as LeafletMap, Marker, TileLayer } from "leaflet";
 import { useEffect, useRef } from "react";
 import { MAP_CONFIG } from "./map-config";
 import { DEMO_VESSEL } from "./vessel-model";
+import type { Vessel } from "./vessel-model";
 
-export default function SeaMap() {
+interface SeaMapProps {
+  onVesselSelect: (vessel: Vessel) => void;
+}
+
+export default function SeaMap({ onVesselSelect }: SeaMapProps) {
   const mapElementRef = useRef<HTMLDivElement | null>(null);
+  const onVesselSelectRef = useRef(onVesselSelect);
+  onVesselSelectRef.current = onVesselSelect;
 
   useEffect(() => {
     const container = mapElementRef.current;
@@ -14,6 +21,7 @@ export default function SeaMap() {
     let map: LeafletMap | null = null;
     let tileLayer: TileLayer | null = null;
     let vesselMarker: Marker | null = null;
+    let handleMarkerClick: (() => void) | null = null;
     let resizeFrame: number | null = null;
 
     const invalidateSize = () => {
@@ -62,8 +70,13 @@ export default function SeaMap() {
 
       vesselMarker = L.marker([DEMO_VESSEL.lat, DEMO_VESSEL.lon], {
         icon: vesselIcon,
-        interactive: false,
+        interactive: true,
       }).addTo(map);
+
+      handleMarkerClick = () => {
+        onVesselSelectRef.current(DEMO_VESSEL);
+      };
+      vesselMarker.on("click", handleMarkerClick);
 
       const vesselMarkerElement = vesselMarker.getElement();
       if (vesselMarkerElement) {
@@ -92,9 +105,13 @@ export default function SeaMap() {
         cancelAnimationFrame(resizeFrame);
       }
 
+      if (vesselMarker && handleMarkerClick) {
+        vesselMarker.off("click", handleMarkerClick);
+      }
       vesselMarker?.remove();
       tileLayer?.remove();
       map?.remove();
+      handleMarkerClick = null;
       vesselMarker = null;
       tileLayer = null;
       map = null;
