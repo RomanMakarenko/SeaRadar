@@ -1,7 +1,7 @@
 # RUNBOOK.md — delivery history and handoff
 
 - **ID:** `RUNBOOK-SEA-001`
-- **Version:** `0.10.0`
+- **Version:** `0.12.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
@@ -457,3 +457,28 @@ Each entry must include: date/session, goal and scope, changed artifacts, comman
 - **Limitations / blockers:** no live AISStream request, real-key access, sample retention ruling, R2 acceptance or release readiness is established. B-11 remains separately gated.
 - **Rollback / recovery:** inspect `git show 72f8b94`; if the delivered B-10 slice is rejected, product owner decides recovery. Do not reset the shared branch or alter excluded pre-existing paths.
 - **Handoff:** B-10 is committed and pushed. Stop here; B-11 requires its own bounded task contract and explicit authorization.
+
+### 2026-09-23 — B-11 PositionReport transformer contract
+
+- **Session:** bounded contract preparation for `TASK-SEA-R2-B11-001` after verified B-10 delivery at `755c021`.
+- **Goal and scope:** define a future pure PositionReport-to-`Vessel` transformer and focused deterministic checks; do not implement product or test code, access secrets, contact AISStream, or begin B-12.
+- **Changed artifacts:** appended the B-11 contract to `TASK_SPEC.md`; appended `E-SEA-041` to `EVIDENCE.md`; appended this factual handoff. Updated EVIDENCE/RUNBOOK metadata versions to `0.11.0`. No transformer, test, sample, route, package, dependency, or pre-existing unrelated path changed.
+- **Contract boundary:** status is `Draft`; future implementation paths are `server/position-report-transformer.ts` and `tests/position-report-transformer.spec.ts`. Input mapping, validation ranges/sentinels, null/zero handling, timestamp precision, immutability, exclusions, acceptance, stop conditions, rollback, and separate approval gates are recorded in `TASK_SPEC.md`.
+- **Commands and status:** focused structural/content validator — initially `FAIL` on its own exact-string expectations, then `PASS` after correcting the validator to the actual equivalent contract wording; `git diff --check -- TASK_SPEC.md` — `PASS`; Git status/log/remote inspection — `PASS` for the observed baseline and preserved unrelated paths.
+- **Evidence:** `E-SEA-041` records contract structure and formatting only; B-10 sample checks/review/delivery remain `E-SEA-038` through `E-SEA-040`.
+- **Blockers / Unknowns:** no transformer behavior, test result, live observation, provider availability, real-key validity, full R2 acceptance, or release readiness is established. Human B-11 contract review and explicit implementation authorization remain pending.
+- **Rollback / recovery:** if the contract is rejected before implementation, inspect the diff and remove only the appended B-11 section; preserve append-only history and all pre-existing unrelated paths. Do not reset the branch or alter secret files.
+- **Handoff:** request human review of `TASK-SEA-R2-B11-001` and a `continue`, `revise`, or `HOLD` decision. Do not implement B-11, begin B-12, use live AISStream access, or commit/push without separate explicit authorization.
+
+### 2026-09-23 — B-11 contract clarification and remote delivery
+
+- **Session:** review and delivery of the clarified `TASK-SEA-R2-B11-001` v1.1.0 contract on branch `sprint2`.
+- **Goal and scope:** resolve MMSI and timestamp ambiguities in the draft; verify the documentation diff; commit and push only if the result is ready. No transformer/test implementation, live AISStream access or secret access.
+- **Changed artifacts:** revised the appended B-11 contract in `TASK_SPEC.md`; appended `E-SEA-042` to `EVIDENCE.md`; appended this handoff. Evidence and runbook metadata are now v0.12.0. The pre-existing `START.md` deletion and unrelated untracked paths are excluded.
+- **Clarifications:** MMSI accepts a non-negative safe-integer JSON number or trimmed ASCII digit-only string; numeric values become canonical decimal text, while digit strings preserve leading zeros. No nine-digit/range restriction was added. Timestamp accepts only `YYYY-MM-DD HH:mm:ss[.fraction] +0000 UTC`; calendar/clock values are strict, fractions are padded or truncated to milliseconds without rounding, and conflicting offsets/timezone labels are rejected.
+- **Commands and status:** focused structural/content validator — `PASS`; final `git diff --check -- TASK_SPEC.md EVIDENCE.md RUNBOOK.md` — `PASS`; complete selected-file diff review — `PASS` for scope and contract boundary. Commit/push and remote-ref verification are recorded after execution.
+- **Decision and authorization:** the user requested “if everything is ready, commit and push”; review found no documentation-scope blocker. This authorizes delivery of the reviewed contract/documentation slice only; B-11 implementation remains unauthorized.
+- **Blockers / Unknowns:** transformer behavior, tests, live provider availability, real-key validity, complete R2 acceptance and release readiness remain unverified. Contract status remains `Draft`; B-12 remains gated.
+- **Rollback / recovery:** inspect the delivery commit and revert only the selected B-11 documentation changes if rejected; preserve append-only history, the pre-existing `START.md` deletion and all unrelated untracked paths. Do not reset the shared branch or alter secret files.
+- **Evidence:** `E-SEA-041` records original contract preparation; `E-SEA-042` records the clarification checks and delivery verification.
+- **Handoff:** after verifying remote synchronization, stop. Human contract approval and separate explicit implementation authorization are still required before B-11 implementation; do not start B-12 or use live AISStream access.

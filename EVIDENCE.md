@@ -1,7 +1,7 @@
 # EVIDENCE.md — фактичний evidence ledger
 
 - **ID:** `EVIDENCE-SEA-001`
-- **Version:** `0.10.0`
+- **Version:** `0.12.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
@@ -493,3 +493,27 @@
 - **Status:** `PASS` for remote branch synchronization and bounded commit contents.
 - **Reviewer / owner:** delivery/technical owner — delivery verification; user authorization for commit/push was provided.
 - **Limitations and follow-up:** remote delivery does not establish live AISStream observation, provider availability, sample retention terms, R2 acceptance or release readiness. B-11 remains separately task-gated; do not begin it without its own contract and explicit authorization.
+
+### E-SEA-041 — B-11 task contract preparation
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001` v1.1.0; `TASK-SEA-R2-B11-001` v1.0.0 (Draft); `TASK-SEA-R2-B10-001`; `DEC-006-R2-SCOPE`.
+- **Claim under verification:** a B-11 transformer task contract is appended before implementation and keeps implementation, live access, and delivery separately gated.
+- **Source:** B-11 entry in `SPRINT-02.md`; `DEC-006-r2-scope.md`; `app/vessel-model.ts`; B-10 sample and provenance; new B-11 section in `TASK_SPEC.md`; Git status/log/remote inspection; focused structural assertions; `git diff --check -- TASK_SPEC.md`.
+- **Expected:** the contract defines the pure mapping/validation boundary, exact future implementation/test paths, observable acceptance, implementation gate, stop conditions, rollback, and handoff; no transformer, test, data, dependency, live request, or unrelated path is added.
+- **Observed:** `TASK-SEA-R2-B11-001` was appended with version `1.0.0` and status `Draft`. The contract specifies MMSI-to-string ID, trimmed/null name, UTC ISO-millisecond time, authoritative nested report coordinates and bounds/sentinels, optional speed/course null/zero behavior, `source: "aisstream"`, purity, future paths `server/position-report-transformer.ts` and `tests/position-report-transformer.spec.ts`, acceptance, gates, stop/recovery, and handoff. The corrected structural validator passed; `git diff --check -- TASK_SPEC.md` passed. Initial ad hoc exact-string assertions needed correction to match equivalent wording in the contract; no contract content change was needed for those validator mismatches. Git inspection showed `HEAD` and `origin/sprint2` at `755c021`; existing `START.md` deletion and untracked paths remain outside this change.
+- **Timestamp / environment:** 2026-09-23; macOS; local SeaRadar workspace; branch `sprint2`.
+- **Status:** `PASS` for contract structure and patch formatting; `PENDING` for human contract review and separate implementation authorization.
+- **Reviewer / owner:** delivery/technical owner — contract preparation and structural check.
+- **Limitations and follow-up:** this evidence verifies documentation only. No transformer or test exists or was run; no live provider/key access or B-11 acceptance is claimed. Human review must choose `continue`, `revise` or `HOLD`; obtain separate explicit authorization before implementation. B-12 remains gated.
+
+### E-SEA-042 — B-11 MMSI/timestamp contract clarification and delivery
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001` v1.1.0; `TASK-SEA-R2-B11-001` v1.1.0 (Draft); `E-SEA-041`; `DEC-006-R2-SCOPE`.
+- **Claim under verification:** the reviewed B-11 contract makes MMSI input forms and UTC timestamp syntax/precision explicit, and the bounded documentation change is delivered to `origin/sprint2`.
+- **Source:** revised B-11 section in `TASK_SPEC.md`; focused structural/content validator; `git diff --check`; complete selected-file diff review; Git commit, push, status and remote-ref outputs.
+- **Expected:** only B-11 contract clarification and append-only evidence/runbook records are committed; the contract remains Draft and no implementation, test, secret access or live request is included; remote branch matches the delivery commit.
+- **Observed:** structural assertions passed for the version/status, MMSI accepted/rejected forms and conversions, UTC-only timestamp grammar, strict calendar/clock validation, fraction padding/truncation without rounding, acceptance coverage, authorization gates and clarification history. `git diff --check` passed before and after the append-only records. Review confirmed no transformer/test implementation or B-11 acceptance claim. Commit and remote-ref results are recorded below after delivery.
+- **Timestamp / environment:** 2026-09-23; macOS; local SeaRadar workspace; branch `sprint2`.
+- **Status:** `PASS` for contract clarity, bounded documentation review and delivery once remote verification is recorded; implementation and B-11 acceptance remain unauthorized/unstarted.
+- **Reviewer / owner:** delivery/technical owner — contract review and checks; user explicitly requested commit/push if the clarified contract was ready.
+- **Limitations and follow-up:** these checks establish documentation structure and delivery only. No transformer behavior, tests, live provider observation, real-key validity, complete R2 acceptance or release readiness is established. B-11 contract remains `Draft`; implementation requires separate human `continue` and explicit authorization. B-12 remains task-gated.

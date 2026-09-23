@@ -587,3 +587,107 @@ If the contract is revised or rejected before implementation, inspect the diff a
 - **Commit boundary:** exactly the B-10 sample, provenance, task, evidence and runbook paths were committed; pre-existing `START.md` deletion and unrelated untracked paths remain excluded.
 - **Delivery status:** B-10 sample/provenance is verified, committed and pushed. This does not authorize live AISStream access or B-11.
 - **Handoff:** stop after B-10. Prepare a separate B-11 bounded contract and obtain explicit authorization before implementation.
+
+# TASK-SEA-R2-B11-001 — PositionReport transformer
+
+- **Version:** `1.1.0`
+- **Status:** `Draft`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-23
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), `TASK-SEA-R2-B10-001`, `E-SEA-038`, `E-SEA-039`, `E-SEA-040`, [`app/vessel-model.ts`](app/vessel-model.ts), [`data/samples/position-report.sample.json`](data/samples/position-report.sample.json), [`data/samples/PROVENANCE.md`](data/samples/PROVENANCE.md).
+
+## Goal and gate
+
+- **Goal:** define a pure, deterministic transformation from one decoded AISStream `PositionReport` envelope to the shared `Vessel` shape, or `null` when required identity, time, or position data is invalid.
+- **Backlog:** `B-11` / `R2-B11-POSITION-TRANSFORMER`.
+- **SPEC outcome:** `SPEC-SEA-001 / US-05…US-08`; this bounded task does not satisfy a user story by itself.
+- **Predecessor:** verified `TASK-SEA-R2-B10-001`; use its canonical sample and provenance as the fixture/source-shape reference. The fixture is synthetic and is not evidence of live provider receipt.
+- **Authorization gate:** this section prepares the contract only. Implementation and tests remain unauthorized until this contract is human-reviewed, the user chooses `continue`, and implementation is explicitly authorized. B-10 review/authorization does not carry forward. Live AISStream access, real-key use, commit and push each remain separately gated.
+
+## Owner and allowed paths
+
+- **Planning path:** append-only B-11 section in `TASK_SPEC.md`; do not rewrite R1, R2 planning, B-08, B-09 or B-10 history.
+- **Read-only inputs:** `SPRINT-02.md` B-11 contract; `app/vessel-model.ts`; `data/samples/position-report.sample.json`; `data/samples/PROVENANCE.md`; verified B-10 evidence and `DEC-006-R2-SCOPE`.
+- **Future implementation paths, only after review and explicit authorization:**
+  - `server/position-report-transformer.ts` — one pure server-side transformer and its input validation.
+  - `tests/position-report-transformer.spec.ts` — focused deterministic transformer checks only.
+- **Append-only records after actual checks:** `EVIDENCE.md` and `RUNBOOK.md`.
+- **Excluded paths:** all other `server/` files; `app/`, including changes to `app/vessel-model.ts`; `app/api/`; `data/`; UI/map components; package manifests/lockfile; Playwright configuration; `.env*`, credentials and `.claude/`; `SPRINT-02.md`; decisions; generated files; unrelated or pre-existing paths. Do not inspect or access secret files.
+
+## Inputs and transformation contract
+
+- **Input boundary:** one already-decoded JSON-like envelope containing `MetaData` and `Message.PositionReport`. This is a pure mapping/validation boundary; no transport, parsing of WebSocket frames or network access is included.
+- **Output boundary:** `Vessel | null` using the existing shape in `app/vessel-model.ts`. The result has `source: "aisstream"`; `id` is a string. Do not add fields to or modify the shared type.
+- **Identity:** map `MetaData.MMSI` to `Vessel.id`. Accept either a JSON non-negative safe integer or a non-empty ASCII digit-only string. Reject missing, fractional, negative, non-finite, unsafe numeric, blank, signed, or other non-digit values. Convert numeric input to its canonical base-10 decimal string; trim surrounding whitespace from string input and preserve its remaining digits, including leading zeros. Do not impose a nine-digit or upper-range restriction not present in the approved Sprint contract.
+- **Name:** map `MetaData.ShipName`, trim surrounding whitespace, and use `null` for missing, non-string, or blank values.
+- **Timestamp:** map `MetaData.time_utc`. Accept only the UTC form shown by the approved Sprint/sample contract: `YYYY-MM-DD HH:mm:ss[.fraction] +0000 UTC`, with an optional fraction of 1–9 digits. Validate the calendar date and clock fields rather than allowing invalid values to normalize; reject other offsets or timezone labels because they conflict with the `time_utc` UTC marker. Return UTC ISO 8601 with exactly millisecond precision (`.sssZ`): right-pad fractions shorter than three digits with zeros and truncate digits after the third without rounding. Missing, malformed, or invalid timestamps reject the vessel.
+- **Position:** use `Message.PositionReport.Latitude` and `Longitude`, not the metadata coordinates. Both must be finite numbers with latitude in `[-90, 90]` and longitude in `[-180, 180]`; unavailable sentinels `91`/`181`, missing values, non-numeric values, and out-of-range values reject the vessel. Never substitute `0,0`. Do not add a requirement that metadata coordinates match the report coordinates.
+- **Optional motion fields:** map `Sog` to `speedKnots`; absent, non-numeric, sentinel `102.3`, or values outside `[0, 102.2]` become `null`. Map `Cog` to `courseDeg`; absent, non-numeric, sentinel `360`, or values outside `[0, 360)` become `null`. Preserve valid numeric zero. Invalid optional fields do not reject a valid position.
+- **Other fields:** `TrueHeading` and unknown optional fields do not affect this transformation; course comes from `Cog`. Unknown extra fields must not prevent a valid report from being transformed.
+- **Purity:** do not mutate the input envelope or saved sample; no module-level mutable state, clock, I/O, logging, WebSocket lifecycle, or environment access.
+
+## Expected output
+
+After separate implementation authorization, produce only the pure transformer and focused deterministic spec at the two future implementation paths above, plus factual append-only evidence/runbook updates after checks. No endpoint wiring, collector, deduplication, vessel limit, UI, dependency, new test runner, live request, or release-level suite is part of B-11.
+
+## Acceptance criteria
+
+- [ ] A valid sample-shaped envelope produces one `Vessel` with `source: "aisstream"`, string `id` from MMSI, trimmed-or-null name, report coordinates, ISO UTC timestamp at millisecond precision, and correctly mapped speed/course.
+- [ ] MMSI accepts only non-negative safe-integer JSON numbers or trimmed ASCII digit-only strings; rejects fractional/negative/unsafe/non-digit/blank input; converts numbers to base-10 strings and preserves digit strings' leading zeros without adding a nine-digit/range rule.
+- [ ] `time_utc` accepts only `YYYY-MM-DD HH:mm:ss[.fraction] +0000 UTC` with 1–9 fractional digits when present; rejects nonzero offsets, conflicting timezone labels, malformed or impossible calendar/clock values; outputs `.sssZ`, pads shorter fractions, and truncates longer fractions without rounding.
+- [ ] Name, timestamp, latitude and longitude follow the field/type rules above; malformed envelope, missing/invalid identity, unparseable time, or invalid position returns `null` rather than throwing or producing a vessel at `0,0`.
+- [ ] Latitude/longitude inclusive bounds and unavailable/out-of-range/non-numeric cases are covered; report coordinates are authoritative even if metadata coordinates differ.
+- [ ] Missing, non-numeric, sentinel and out-of-range speed/course become `null`; valid zero speed/course remain numeric zero and do not reject an otherwise valid vessel.
+- [ ] Unknown optional fields and `TrueHeading` do not alter the mapping or prevent a valid report from being accepted; `Cog`, not `TrueHeading`, supplies course.
+- [ ] Output field names/types match the existing shared `Vessel` structure and input/sample objects remain unchanged.
+- [ ] Focused deterministic tests cover valid mapping; numeric and digit-string MMSI conversion plus invalid MMSI types/boundaries; exact UTC timestamp parsing, fractional padding/truncation, rejected offsets and impossible dates; invalid/malformed required fields; position bounds/sentinels; optional-field null/zero cases; unknown optional fields; and input non-mutation, all without network access or credentials.
+- [ ] At least three output fields are manually compared with `data/samples/position-report.sample.json`; actual comparisons and test output are recorded in evidence after implementation.
+- [ ] No B-09 transport, endpoint, collector, deduplication, 100-vessel limit, UI, dependency, live provider or unrelated path is changed.
+- [ ] Human diff review and separate explicit implementation authorization precede all future B-11 code/test changes; B-12 and later work remain task-gated.
+
+**Current acceptance status:** `Draft contract prepared; implementation, tests and B-11 acceptance have not started. Human contract review and separate implementation authorization are required.`
+
+## Verification
+
+### Contract-preparation checks
+
+1. Inspect the B-11 Sprint entry, B-10 contract/sample/provenance, shared `Vessel` type, decision gate, Git status and recent delivered baseline.
+2. Validate this contract's ID/metadata, gate, exact future paths, field mappings, validation ranges/sentinels, acceptance, excluded paths, stop conditions, rollback and handoff.
+3. Run `git diff --check` on `TASK_SPEC.md`, `EVIDENCE.md` and `RUNBOOK.md`; inspect the complete diff and changed-path boundary.
+4. Append factual contract-preparation evidence/runbook only after these checks. Do not claim any transformer/test result or B-11 acceptance.
+
+### Future implementation checks (requirements, not observed results)
+
+1. Add deterministic fixtures/assertions at `tests/position-report-transformer.spec.ts`, with no live network or credential.
+2. Run the focused transformer spec and relevant type check; record the exact command/output and environment.
+3. Manually compare at least three mapped output fields against the saved synthetic sample and record each comparison.
+4. Inspect immutability, invalid-position rejection (including no `0,0` fallback), and optional-field null/zero behavior; run `git diff --check` and verify only the future allowed paths plus post-check records changed.
+
+- **Evidence boundary:** contract structure and review prove only that the task boundary is documented. Future fixture tests/manual comparisons prove only local transformation behavior against the synthetic contract sample; they do not prove live observation, AISStream availability, vessel identity, provider semantics beyond the approved field contract, R2 user-story acceptance, or release readiness.
+
+## Stop conditions
+
+- Stop before implementation if human review does not choose `continue` and explicit implementation authorization is absent.
+- Stop if timestamp syntax/precision or an input-type rule cannot be implemented as written, if the shared output type needs modification, or if an excluded path/dependency, endpoint orchestration, secret, real key or live request appears necessary.
+- Stop after implementation if required invalid inputs produce a vessel, optional unknown values reject a valid position, zero values are lost, `0,0` is used as fallback, output differs from the agreed `Vessel` shape, the input is mutated, checks fail, or unexpected paths change.
+- **Exit decision:** `DONE` only after authorized implementation, focused checks, recorded manual comparison, evidence, and human diff review; otherwise `CONTINUE WITH APPROVAL` or `HOLD`.
+
+## Rollback / recovery
+
+If the B-11 contract is revised or rejected before implementation, inspect the diff and remove only this appended B-11 section; preserve earlier task history, append-only evidence/runbook history and all unrelated staged/untracked/generated paths. If a later authorized B-11 implementation is rejected, inspect the diff and restore only `server/position-report-transformer.ts` and `tests/position-report-transformer.spec.ts` to the verified B-10 baseline; do not reset the shared branch, delete local files, or alter unrelated paths. The product owner decides whether recovery is accepted.
+
+## Handoff
+
+- **Current changed paths:** this appended B-11 contract and post-check append-only `EVIDENCE.md`/`RUNBOOK.md` records only.
+- **Contract status:** `Draft`; implementation and tests are not authorized by contract preparation.
+- **Evidence:** contract-preparation checks only; no transformer behavior, test pass, live data or B-11 acceptance is claimed.
+- **Open unknowns:** live provider availability, real-key validity, live receipt, full R2 acceptance and release readiness remain `Unknown`/`Needs verification`.
+- **Next bounded action:** human review of `TASK-SEA-R2-B11-001` and an explicit `continue`/`revise`/`HOLD` decision. Before any implementation, obtain separate explicit authorization. Do not start B-12 or any other later slice.
+
+### B-11 contract clarification — v1.1.0
+
+- **Trigger:** contract review requested explicit MMSI and timestamp rules before approval for delivery.
+- **MMSI rule:** narrowed accepted inputs to non-negative safe-integer JSON numbers or trimmed ASCII digit-only strings; documented string conversion and rejected malformed values without imposing a nine-digit/range rule.
+- **Timestamp rule:** aligned accepted syntax to the UTC form evidenced by the Sprint/example (`+0000 UTC`), defined strict date/clock validation and sub-millisecond padding/truncation, and rejected conflicting offsets/timezone labels.
+- **Status and boundary:** contract remains `Draft`; no transformer, test, live-provider request, secret access, or implementation authorization is included.
