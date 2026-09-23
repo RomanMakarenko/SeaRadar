@@ -1,7 +1,7 @@
 # EVIDENCE.md — фактичний evidence ledger
 
 - **ID:** `EVIDENCE-SEA-001`
-- **Version:** `0.9.0`
+- **Version:** `0.10.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
@@ -481,3 +481,15 @@
 - **Status:** `PASS`; B-10 is verified within its bounded sample/provenance scope.
 - **Reviewer / owner:** user — final B-10 review decision; delivery/technical owner — checks and recordkeeping.
 - **Limitations and follow-up:** this review does not establish live observation, AISStream availability, real-key validity, sample retention terms, R2 acceptance or release readiness. B-11 needs a separate task contract and explicit authorization; live access, commit and push remain separately gated.
+
+### E-SEA-040 — B-10 remote delivery
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001` v1.1.0; `TASK-SEA-R2-B10-001` v1.0.0; `E-SEA-038`; `E-SEA-039`.
+- **Claim under verification:** the reviewed B-10 sample/provenance delivery commit is present on `origin/sprint2` and excludes unrelated working-tree paths.
+- **Source:** `git ls-remote origin refs/heads/sprint2`; `git status --short --branch`; `git log -1 --oneline --decorate`; `git show --format=fuller --stat --oneline HEAD`.
+- **Expected:** local `HEAD` and `origin/sprint2` point to the B-10 delivery commit; its five changed paths are the approved sample and B-10 records; pre-existing deletion/untracked inputs remain excluded.
+- **Observed:** `git ls-remote` returned `72f8b94eb9c88a92d84281be88d7629e458ed0e8` for `refs/heads/sprint2`; `HEAD` and `origin/sprint2` both point to `72f8b94` (`feat(r2): add B-10 PositionReport sample`). The commit contains exactly `EVIDENCE.md`, `RUNBOOK.md`, `TASK_SPEC.md`, `data/samples/PROVENANCE.md` and `data/samples/position-report.sample.json`. `git status --short --branch` showed only the pre-existing `START.md` deletion and excluded untracked inputs.
+- **Timestamp / environment:** 2026-09-23; macOS; local SeaRadar workspace; branch `sprint2`.
+- **Status:** `PASS` for remote branch synchronization and bounded commit contents.
+- **Reviewer / owner:** delivery/technical owner — delivery verification; user authorization for commit/push was provided.
+- **Limitations and follow-up:** remote delivery does not establish live AISStream observation, provider availability, sample retention terms, R2 acceptance or release readiness. B-11 remains separately task-gated; do not begin it without its own contract and explicit authorization.

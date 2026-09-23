@@ -580,3 +580,10 @@ If the contract is revised or rejected before implementation, inspect the diff a
 - **Decision:** user selected `continue` for the B-10 review. B-10 is `Verified` within this bounded sample/provenance scope. This does not authorize B-11, live provider access, commit or push.
 - **Recovery:** if this review is later rejected, inspect the diff and remove only the two B-10 sample files and revert B-10 task status; preserve append-only evidence/history and all pre-existing staged/untracked paths.
 - **Next action:** stop at B-10. B-11 requires its own bounded task contract and explicit authorization.
+
+### B-10 post-review delivery update
+
+- **Observed delivery:** commit `72f8b94` (`feat(r2): add B-10 PositionReport sample`) is present at local `HEAD` and `origin/sprint2`; remote ref verified by `git ls-remote origin refs/heads/sprint2` as `72f8b94eb9c88a92d84281be88d7629e458ed0e8`.
+- **Commit boundary:** exactly the B-10 sample, provenance, task, evidence and runbook paths were committed; pre-existing `START.md` deletion and unrelated untracked paths remain excluded.
+- **Delivery status:** B-10 sample/provenance is verified, committed and pushed. This does not authorize live AISStream access or B-11.
+- **Handoff:** stop after B-10. Prepare a separate B-11 bounded contract and obtain explicit authorization before implementation.

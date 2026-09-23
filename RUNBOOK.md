@@ -1,7 +1,7 @@
 # RUNBOOK.md — delivery history and handoff
 
 - **ID:** `RUNBOOK-SEA-001`
-- **Version:** `0.9.0`
+- **Version:** `0.10.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
@@ -445,3 +445,15 @@ Each entry must include: date/session, goal and scope, changed artifacts, comman
 - **Recovery:** if the B-10 review is later rejected, inspect the diff and remove only the two B-10 sample files / restore the task status; preserve append-only evidence/history and unrelated paths.
 - **Evidence:** `E-SEA-039` (review); `E-SEA-038` (implementation checks).
 - **Handoff:** stop after B-10. B-11 requires its own bounded task contract and explicit authorization. No live request, commit or push was performed.
+
+### 2026-09-23 — B-10 remote delivery verification
+
+- **Session:** post-push delivery verification for `TASK-SEA-R2-B10-001` on branch `sprint2`.
+- **Goal and scope:** verify the user-authorized B-10 commit is synchronized to the remote and record the actual delivery state; no new product/sample changes, live request or secret access.
+- **Delivery:** commit `72f8b94` (`feat(r2): add B-10 PositionReport sample`) is at local `HEAD` and `origin/sprint2`; `git ls-remote origin refs/heads/sprint2` returned `72f8b94eb9c88a92d84281be88d7629e458ed0e8`.
+- **Commit boundary:** exactly `EVIDENCE.md`, `RUNBOOK.md`, `TASK_SPEC.md`, `data/samples/PROVENANCE.md` and `data/samples/position-report.sample.json`. `START.md` deletion and unrelated untracked inputs remain excluded.
+- **Commands and status:** `git ls-remote origin refs/heads/sprint2`, `git status --short --branch`, `git log -1 --oneline --decorate` and `git show --format=fuller --stat --oneline HEAD` — `PASS` for the observed remote hash, local/remote refs, commit summary and preserved excluded paths.
+- **Evidence:** `E-SEA-040` records the remote delivery check; `E-SEA-038` and `E-SEA-039` record the sample checks and human review.
+- **Limitations / blockers:** no live AISStream request, real-key access, sample retention ruling, R2 acceptance or release readiness is established. B-11 remains separately gated.
+- **Rollback / recovery:** inspect `git show 72f8b94`; if the delivered B-10 slice is rejected, product owner decides recovery. Do not reset the shared branch or alter excluded pre-existing paths.
+- **Handoff:** B-10 is committed and pushed. Stop here; B-11 requires its own bounded task contract and explicit authorization.
