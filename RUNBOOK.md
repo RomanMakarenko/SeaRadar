@@ -1,7 +1,7 @@
 # RUNBOOK.md — delivery history and handoff
 
 - **ID:** `RUNBOOK-SEA-001`
-- **Version:** `0.14.0`
+- **Version:** `0.15.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
@@ -507,3 +507,13 @@ Each entry must include: date/session, goal and scope, changed artifacts, comman
 - **Unknowns:** live provider availability/receipt, real-key validity, provider semantics beyond the contract, full R2 acceptance and release readiness remain `Unknown`/`Needs verification`.
 - **Recovery:** if the review decision is revised, inspect and restore only the B-11 implementation/test paths to the verified B-10 baseline; preserve append-only evidence/history and all unrelated paths. No commit or push was made.
 - **Handoff:** B-11 local scope is verified. B-12 is not authorized by this decision and requires its own task contract, review and explicit implementation authorization.
+
+### 2026-09-24 — B-11 commit and push verification
+
+- **Session:** user-authorized commit and push of the reviewed B-11 implementation on `sprint2`.
+- **Commit:** `9f1dc6a3d593165f77f6d55dd8fbffa8ccad8abd` — `feat(r2): implement B-11 PositionReport transformer`.
+- **Commit boundary:** exactly `EVIDENCE.md`, `RUNBOOK.md`, `TASK_SPEC.md`, `server/position-report-transformer.ts` and `tests/position-report-transformer.spec.ts`; no unrelated path was staged.
+- **Commands and status:** `git diff --cached --check` — `PASS`; `git commit` — `PASS`; `git push origin sprint2` — `PASS`; `git show --format=fuller --stat --oneline HEAD` — `PASS` for five-path scope; `git status --short --branch` and `git log -1 --oneline --decorate` — `PASS`; `git ls-remote origin refs/heads/sprint2` — `PASS`, remote hash matches local HEAD.
+- **Observed working tree:** `START.md` remains a pre-existing deletion; `.agents/`, `.claude/skills/`, `NEXT_SESSION.md`, `README.pdf`, `SPRINT-02.md`, `reference/` and `skills-lock.json` remain untracked and unstaged.
+- **Evidence:** `E-SEA-045` records commit boundary and remote synchronization; `E-SEA-043` and `E-SEA-044` record implementation checks and final review.
+- **Handoff:** B-11 is committed and pushed. B-12 remains task-gated and was not started.

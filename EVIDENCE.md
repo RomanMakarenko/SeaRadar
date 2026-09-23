@@ -1,7 +1,7 @@
 # EVIDENCE.md — фактичний evidence ledger
 
 - **ID:** `EVIDENCE-SEA-001`
-- **Version:** `0.14.0`
+- **Version:** `0.15.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
@@ -542,3 +542,15 @@
 - **Status:** `PASS` for final bounded B-11 diff review; B-11 is `DONE` within its local task scope.
 - **Reviewer / owner:** delivery/technical owner — code/diff review; user — instruction to continue.
 - **Limitations and follow-up:** this review does not establish live AISStream observation, provider availability or semantics beyond the task contract, real-key validity, R2 user-story acceptance or release readiness. B-12 requires its own task contract, review and explicit implementation authorization; it was not started.
+
+### E-SEA-045 — B-11 commit and remote delivery
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001` v1.1.0; `TASK-SEA-R2-B11-001` v1.1.0; `E-SEA-043`; `E-SEA-044`.
+- **Claim under verification:** the user-authorized B-11 implementation and review records were committed on `sprint2` and the same commit is present on `origin/sprint2`.
+- **Source:** explicit user request to commit and push; staged path inspection; `git diff --cached --check`; `git commit`; `git push origin sprint2`; `git show --format=fuller --stat --oneline HEAD`; `git status --short --branch`; `git log -1 --oneline --decorate`; `git ls-remote origin refs/heads/sprint2`.
+- **Expected:** only the five reviewed B-11 paths are in the commit; local HEAD and remote sprint2 point to the same commit; pre-existing deletion and untracked paths remain unstaged and untouched.
+- **Observed:** commit `9f1dc6a3d593165f77f6d55dd8fbffa8ccad8abd` (`feat(r2): implement B-11 PositionReport transformer`) contains exactly `EVIDENCE.md`, `RUNBOOK.md`, `TASK_SPEC.md`, `server/position-report-transformer.ts` and `tests/position-report-transformer.spec.ts`. `git push origin sprint2` completed `1687875..9f1dc6a sprint2 -> sprint2`. `git status` and `git log` showed `HEAD` and `origin/sprint2` at `9f1dc6a`; `git ls-remote origin refs/heads/sprint2` returned the same full hash. `START.md` remains deleted and the unrelated untracked paths remain unstaged.
+- **Timestamp / environment:** 2026-09-24; local SeaRadar workspace; branch `sprint2`.
+- **Status:** `PASS` for scoped commit, push and remote synchronization.
+- **Reviewer / owner:** delivery/technical owner — commit boundary and remote verification; user — explicit commit/push request.
+- **Limitations and follow-up:** delivery does not establish live AISStream receipt, provider availability, real-key validity, complete R2 acceptance or release readiness. B-12 remains separately task-gated.
