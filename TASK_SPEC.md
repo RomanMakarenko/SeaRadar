@@ -711,3 +711,181 @@ If the B-11 contract is revised or rejected before implementation, inspect the d
 - **Observed:** final review found no functional or scope findings; implementation and focused tests align with this task contract. No code changes were made during the review.
 - **Decision:** `DONE` for bounded local B-11 scope. Review outcome is `E-SEA-044`; live provider behavior, complete R2 acceptance and release readiness remain unverified.
 - **Next gate:** B-12 remains separately task-gated; its own contract, review and explicit implementation authorization are required.
+
+# TASK-SEA-R2-B12-001 — Bounded snapshot collector
+
+- **Version:** `1.0.0`
+- **Status:** `Ready`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-24
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), [`docs/decisions/DEC-007-r2-b09-streaming-boundary.md`](docs/decisions/DEC-007-r2-b09-streaming-boundary.md), `TASK-SEA-R2-B09-001`, `TASK-SEA-R2-B11-001`, `E-SEA-034`, `E-SEA-043`, `E-SEA-044`, [`server/aisstream-reader.ts`](server/aisstream-reader.ts), [`app/api/snapshot/route.ts`](app/api/snapshot/route.ts), [`server/position-report-transformer.ts`](server/position-report-transformer.ts).
+
+## Goal, predecessor and authorization gate
+
+- **Goal:** collect a bounded set of AISStream `PositionReport` messages and return the approved final snapshot response, using the existing pure B-11 transformer and a deterministic event-source/clock seam.
+- **Backlog:** `B-12` / `R2-B12-SNAPSHOT-COLLECTOR`.
+- **SPEC outcome:** `SPEC-SEA-001 / US-05…US-08`; this bounded task does not satisfy or close a user story by itself.
+- **Predecessors:** verified B-09 intermediate reader/route and B-11 transformer. B-10 remains a synthetic sample; it is not evidence of live provider behavior.
+- **Boundary decision:** on 2026-09-24, the user approved a narrow B-09 transport-boundary extension for B-12 through [`DEC-007-R2-B09-STREAMING-BOUNDARY`](docs/decisions/DEC-007-r2-b09-streaming-boundary.md), now `Ready`. The extension is limited to delivering multiple raw text events during one bounded attempt so the collector can create the final snapshot. It does not reopen or rewrite the historical B-09 acceptance record. DEC-007 is the approved B-12-specific exception to the unchanged `SPRINT-02.md` Part C wording.
+- **Authorization gate:** the task contract is `Ready` after the human review decision `continue` on 2026-09-24. B-12 implementation, tests and endpoint changes still require separate explicit implementation authorization. Approval of DEC-007 resolves the transport-boundary governance conflict but does not authorize implementation. Live AISStream requests, real-key use, commit and push remain separately gated.
+
+## Причина зміни межі — пояснення для замовника
+
+У B-09 ми навмисно реалізували проміжний крок: сервер відкриває одне з'єднання, надсилає підписку та повертає перше отримане повідомлення як сирий текст. Після цього reader закриває з'єднання. Така поведінка відповідала меті B-09 — перевірити серверну межу читання та проміжний endpoint до появи перетворювача й збирача.
+
+У B-12 мета вже інша: зібрати **знімок**, а не одне повідомлення. За затвердженим контрактом потрібно приймати повідомлення протягом обмеженого вікна до 15 секунд, об'єднати повторні повідомлення за MMSI, залишити останню позицію за часом повідомлення і припинити збір після 100 унікальних суден або завершення вікна. Для цього з'єднання має залишатися відкритим після першої позиції та передавати наступні повідомлення до завершення спроби.
+
+Якби B-12 залишився лише поверх незміненого одноразового reader, він міг би отримати не більше одного повідомлення з одного підключення. Такий результат не відповідав би ані вимозі зібрати кілька суден, ані правилам дедуплікації та вибору найновішої позиції. Альтернатива — відкрити окреме друге WebSocket-з'єднання без повторного використання B-09 reader — створила б дві реалізації одного транспортного lifecycle і ризик розбіжностей у підписці, тайм-ауті, обробці помилок та закритті ресурсів.
+
+Тому запропоноване вузьке розширення змінює лише межу передачі повідомлень: B-09 reader зможе віддати collector-у послідовність сирих текстових подій замість завершення на першій події. Collector залишатиметься окремою відповідальністю: декодує повідомлення, використовує B-11 transformer, веде набір суден і формує одну фінальну відповідь. Зберігаються AISStream, серверне підключення, затверджена підписка та bounding box, 15-секундне загальне вікно, ліміт 100, фіксовані повідомлення про помилки, захист ключа та одноразовий характер запиту. Безперервний моніторинг, історія, зберігання, повторне використання попереднього знімка та зміни інтерфейсу не додаються.
+
+Для замовника практичний наслідок — це не нова функція і не розширення продуктового обсягу, а необхідна технічна зміна між уже прийнятими кроками, щоб кнопка в майбутньому могла отримати саме знімок із кількох суден. Зміна збільшує обсяг локальних перевірок lifecycle reader-а: треба довести, що всі повідомлення в одній спробі передаються collector-у, а з'єднання й таймери закриваються один раз при кожному результаті. Це буде перевірятися фіктивними подіями та контрольованим часом без реального ключа й без мережевого запиту. Такі перевірки доведуть локальну логіку, але не доступність AISStream і не отримання реального трафіку.
+
+## Owner and exact paths
+
+- **Planning path:** цей append-only B-12 section у `TASK_SPEC.md`; не переписувати історію B-08…B-11 та попередні записи.
+- **Future implementation paths — only after both authorization gates:**
+  - `server/aisstream-reader.ts` — вузько розширити reader з first-message completion до доставки послідовності raw text events протягом одного обмеженого lifecycle; зберегти transport/error/security constraints нижче.
+  - `server/snapshot-collector.ts` — новий bounded collector: decode, B-11 transformation, per-MMSI selection, completion and final result.
+  - `app/api/snapshot/route.ts` — замінити проміжну raw-відповідь B-09 на фінальний B-12 response, зберігши шлях endpoint, Node runtime, no-key guard, фіксований error envelope та серверну межу ключа.
+  - `tests/snapshot-reader.spec.ts` — оновити лише focused B-09 reader lifecycle checks, щоб перевірити багатоповідомленнєву межу й зберегти раніше погоджені subscription/error/cancellation гарантії.
+  - `tests/snapshot-collector.spec.ts` — додати focused deterministic collector checks з fake event source та controlled clock.
+- **Append-only records after actual implementation checks and review:** `EVIDENCE.md` and `RUNBOOK.md`.
+- **Excluded paths:** all `.env*` files and credentials; `server/aisstream-config.ts`; `server/position-report-transformer.ts`; B-10 sample/provenance under `data/`; `app/vessel-model.ts`; all UI/map/demo paths and B-13 work; `tests/vessel-selection.spec.ts`; package manifests/lockfile, dependencies, Playwright config and test-runner configuration; `CLAUDE.md`, `SPEC.md`, `PROJECT_BRIEF.md`, `SPRINT-02.md`, `docs/decisions/`; generated files; `NEXT_SESSION.md`, `README.pdf`, `.agents/`, `.claude/skills/`, `reference/`, `skills-lock.json`, the pre-existing `START.md` deletion and all other unrelated paths. Do not inspect, modify, stage or clean excluded paths.
+
+## Inputs and behavioral boundary
+
+- **Read-only inputs:** B-12 Part C in `SPRINT-02.md`; verified B-09 reader and route; verified B-11 transformer and its focused tests; shared `Vessel` shape in `app/vessel-model.ts`; DEC-006 and this task contract. The B-10 fixture is synthetic and may be used only as a shape fixture.
+- **Reader/event-source responsibility:** connect only to the already approved AISStream endpoint and send the exact B-09 subscription immediately after open: `{ APIKey, BoundingBoxes: [[[50.75, 0.95], [51.25, 1.95]]], FilterMessageTypes: ['PositionReport'] }`. Deliver each received text message to the collector in arrival order. The reader does not parse JSON, transform vessels, deduplicate, choose latest timestamps, expose payloads in errors/logs, or create a second connection for the collector.
+- **Reader lifecycle:** the collector owns the single 15,000 ms total deadline, starts it before invoking/constructing the event source (and therefore before WebSocket construction), and includes connect/open/subscription time. The reader/event source has no second independent window timer; it reports whether open/subscription succeeded and forwards subsequent text events. If the deadline fires before successful open/subscription, return `connect_failed`; if it fires after subscription, return the successful `window_elapsed` snapshot. After subscription, provider error maps to `provider_error`, and an unexpected close before normal completion maps to `disconnected`. A non-text/binary message maps to `provider_error`. The collector's deadline or 100-vessel completion stops the reader. Success, failure, timeout and cancellation clear the collector deadline and close/clean reader resources once; events after settlement have no effect.
+- **Collector input:** each reader text event is parsed as one JSON value and passed to `transformPositionReport` from B-11. A valid JSON PositionReport that the B-11 transformer rejects (`null`, including invalid required identity/time/position) is ignored and does not create a vessel or abort the attempt. A text event that is not valid JSON is a provider payload failure and terminates the attempt with the existing fixed `provider_error` mapping. No raw payload is included in a response, message or log.
+- **Identity and updates:** use transformed `Vessel.id` (MMSI string) as the uniqueness key. The first valid vessel for an id is retained until a later valid report for the same id has a strictly newer B-11 normalized millisecond timestamp; then replace the entire vessel object. For equal timestamps retain the first accepted object. Older reports do not replace newer data. Invalid reports do not replace a valid vessel.
+- **Window result:** when the full deadline elapses after the connection has opened and subscription was sent, return a successful snapshot, including an empty snapshot if there are no valid vessels. `reason` is `window_elapsed`, `truncated` is `false`, and `windowSeconds` is `15`.
+- **Limit result:** when the 100th unique valid vessel is accepted, stop immediately and return a successful snapshot with exactly 100 vessels, `reason: 'limit_reached'`, and `truncated: true`. Duplicate messages for existing ids do not increase the count or trigger the limit. The configured limit remains 100; do not accept or return a 101st unique vessel.
+- **Errors and partial data:** any reader/provider failure after zero or more accepted messages returns the fixed HTTP 502 error response and discards all collected vessels; partial data is never returned as success. Use only B-09 code/message pairs: `no_api_key` — `Ключ AISStream не налаштовано`; `connect_failed` — `Не вдалося підключитися до джерела`; `provider_error` — `Джерело повернуло помилку`; `disconnected` — `З'єднання з джерелом розірвано`; `internal` — `Внутрішня помилка сервера`. Do not add a public error code or include provider text, raw payload, key, stack or socket details. `no_api_key` is detected before opening a socket.
+- **Cancellation:** abort stops the reader, clears the collector deadline and rejects/cancels without returning a partial snapshot or adding a public cancellation error code. The route preserves B-09 cancellation behavior for an aborted request; no late event may settle or mutate a completed attempt.
+- **One-shot completion:** the collector produces exactly one terminal result. On every terminal path, the deadline and reader resources are cleaned up exactly once. Any queued/late callback after completion is ignored.
+- **Clock and constants:** inject a clock/timer and a fakeable event-source boundary so deterministic tests control time and events without network access. Production uses the approved 15-second window and 100-vessel limit; no caller-controlled query parameter or UI-configurable limit/window is added. `attemptedAt` is captured at route attempt start and `collectedAt` at successful completion using the server clock; tests use a controlled clock.
+- **Final response contract:** successful HTTP 200 response has exactly the approved fields and values:
+
+  ```json
+  { "ok": true, "vessels": [], "collectedAt": "<timestamp>", "windowSeconds": 15, "count": 0, "truncated": false, "reason": "window_elapsed" }
+  ```
+
+  `vessels` contains the final whole `Vessel` objects, `count` equals `vessels.length`, and `reason` is exactly `window_elapsed` or `limit_reached`. Failure remains HTTP 502:
+
+  ```json
+  { "ok": false, "attemptedAt": "<timestamp>", "error": { "code": "<fixed code>", "message": "<fixed message>" } }
+  ```
+
+  No B-13 UI state/text behavior or additional response field is part of this task.
+
+## Expected output
+
+1. A B-09-compatible, injectable server reader boundary that delivers multiple raw text events during one bounded attempt, retaining the exact approved provider endpoint/subscription, key isolation and fixed error mapping.
+2. One new server-side collector using the B-11 transformer for validation and mapping, with 15-second/100-vessel constants, deterministic deduplication/latest-timestamp behavior, whole-snapshot success and no partial success.
+3. `GET /api/snapshot` updated from the B-09 intermediate raw response to the final B-12 success/error response contract above.
+4. Focused deterministic reader and collector checks. No live provider call, real key, new dependency, UI, persistence, continuous stream, history or release-level suite.
+5. Factual append-only evidence and delivery handoff only after actual checks and final human diff review.
+
+## Acceptance criteria
+
+- [ ] The reader sends the exact existing subscription immediately after WebSocket open and forwards multiple text messages in order from the same connection; it does not stop after the first text message.
+- [ ] The total 15-second deadline starts before socket creation and includes connection and subscription time; successful open/subscription with no valid PositionReport by the deadline returns an empty success, while failure to reach subscription by the deadline maps to `connect_failed`.
+- [ ] The collector uses the existing B-11 transformer and existing `Vessel` structure without changing B-11 paths or behavior; invalid transformed reports are not included and no position defaults to `0,0`.
+- [ ] Repeated MMSI produces one vessel; strictly newer timestamp replaces the entire object; older timestamp does not replace it; equal timestamp retains the first accepted object; comparison follows B-11 millisecond precision.
+- [ ] The collection ends at the 15-second window with `reason: 'window_elapsed'`, including the empty-success case, or immediately upon accepting the 100th unique valid vessel with `reason: 'limit_reached'`, `count: 100`, and `truncated: true`.
+- [ ] Provider error, unexpected disconnect, malformed JSON payload, or internal failure after partial input returns the fixed HTTP 502 contract and never exposes the collected partial set, raw provider text, socket details, key or stack.
+- [ ] No-key returns the exact B-09 `no_api_key` response and does not construct a socket. Cancellation returns/rejects without a partial response or new public code.
+- [ ] Reader and collector settle once; timer, listener and socket cleanup occurs exactly once on window, limit, error, disconnect and cancellation; late events do not change the result.
+- [ ] Deterministic fake-event/controlled-clock checks cover: window elapsed; deadline before connection/subscription; limit reached; duplicate MMSI; newer, older and equal timestamps; invalid transformed reports; provider error after partial input; disconnect after partial input; cancellation after partial input; malformed JSON; repeated/late terminal events; exactly-once completion and cleanup; and success/error response shapes.
+- [ ] Existing B-09 guarantees (Node.js Route Handler, exact endpoint/subscription, fixed errors, no-key behavior, secret isolation and cancellation cleanup) remain covered after updating the reader lifecycle tests.
+- [ ] No package/dependency, B-11 transformer, sample, shared model, UI/map/demo, B-13 or unrelated path is changed; no live request or secret access occurs.
+- [ ] Final human diff review explicitly chooses `continue`, `revise` or `HOLD`; commit/push require separate explicit authorization.
+
+**Current acceptance status:** `Ready after contract review; all implementation acceptance criteria remain unchecked. No B-12 implementation, test, endpoint change or live request is authorized or claimed.`
+
+## Verification
+
+### Contract-preparation checks
+
+1. Verify branch/HEAD/remote baseline and preserve the pre-existing deletion/untracked paths.
+2. Compare the proposed reader extension, exact paths, final response shape, timing, dedupe, failure, cancellation and customer rationale against `SPRINT-02.md` Part A/Part C, B-09, B-11, `SPEC.md` and DEC-006.
+3. Run `git diff --check -- TASK_SPEC.md`; inspect the complete B-12 append and verify the only changed path is `TASK_SPEC.md`.
+4. Validate required metadata, separate authorization gates, the B-09 extension, exact allowed/excluded paths, customer rationale, response/error behavior, acceptance, stop conditions and rollback.
+5. Do not read or scan secret files, run the app/build, call AISStream, append implementation evidence, update the read-only `SPRINT-02.md`, or modify `NEXT_SESSION.md` during contract preparation.
+
+- **Expected:** the contract is structurally complete and ready for human review; all implementation acceptance remains unchecked. This contract-preparation check is not evidence of reader, collector, route or provider behavior.
+
+### Future implementation checks — requirements, not observed results
+
+1. Run `git diff --check` and inspect the complete changed-path boundary.
+2. Run focused `npx playwright test tests/snapshot-reader.spec.ts tests/snapshot-collector.spec.ts` with fake events and controlled time; no network or real key.
+3. Run `npx tsc --noEmit`, the repository's required build check, and relevant direct server type checking if required by the implementation; record exact commands and results. Avoid commands that load local environment files unless required and separately reviewed; never inspect their values.
+4. Verify the final route response shape and all fixed error mappings through deterministic tests. A no-key check must use an injected/missing configuration seam or a safe blank-key setup that does not inspect a secret file.
+5. Inspect that B-09 transport invariants and B-11 transformer behavior are retained; confirm timer/socket cleanup and no partial-success path.
+6. Do not run live AISStream requests, use a real key, add release-level R3 tests, perform B-13 UI checks, or claim live provider availability from these tests.
+
+- **Evidence boundary:** fake-source/controlled-clock checks can establish only local reader/collector/route behavior under the tested event sequences. They cannot establish AISStream availability, real-key validity, actual message receipt, vessel identity, completeness of traffic, complete R2 user-story acceptance or release readiness.
+
+## Stop conditions
+
+- Stop before implementation if this Draft is not human-reviewed with `continue` and a separate explicit B-12 implementation authorization is absent.
+- DEC-007 now resolves the B-12-specific conflict with `SPRINT-02.md` Part C. Stop before implementation if DEC-007 is superseded/revoked or if the proposed B-12 boundary materially changes; keep the Sprint file read-only in this task. Also stop if exact subscription, fixed messages, timing boundary or response semantics conflict with the approved product contract; if any required path beyond the listed future implementation paths is needed; or if a dependency, live provider request, real key or secret-file access appears necessary.
+- Stop if implementation would require changing B-08 key handling or B-11 transformation semantics, modifying UI/shared vessel model, adding public error codes, returning partial data, opening a second parallel provider connection, or introducing continuous/persistent behavior.
+- Stop after implementation if the reader fails to forward later messages, the deadline omits connection time, equal/older timestamps replace the accepted vessel, duplicates consume the unique limit, error/cancellation returns partial success, a key/provider detail is exposed, cleanup or completion occurs more than once, tests fail, or unexpected paths change.
+- **Exit decision:** `DONE` only after separately authorized implementation, focused checks, factual evidence, final human diff review and explicit `continue`; otherwise `CONTINUE WITH APPROVAL` or `HOLD`.
+
+## Rollback / recovery
+
+If this Draft is revised or rejected before implementation, inspect the diff and remove or revise only the appended B-12 section in `TASK_SPEC.md`; preserve verified B-08…B-11 history, append-only evidence/runbook history, the pre-existing `START.md` deletion and all unrelated staged/untracked/generated paths. If a later authorized B-12 implementation is rejected, inspect the diff and restore only `server/aisstream-reader.ts`, `server/snapshot-collector.ts`, `app/api/snapshot/route.ts`, `tests/snapshot-reader.spec.ts` and `tests/snapshot-collector.spec.ts` to their last verified pre-B-12 state. Do not reset the shared branch, delete local files, stop unrelated processes, or inspect/alter secret files. Product owner decides recovery acceptance based on reviewed diff and actual evidence.
+
+## Human contract review
+
+- **Date:** 2026-09-24.
+- **Decision:** `continue` — the task contract and customer-facing rationale are approved as the contract for any future separately authorized implementation.
+- **Review scope:** contract consistency against Sprint 2 Part A/Part C and DEC-007, including response shapes, one-connection boundary, 15-second total window, 100-vessel limit, timestamp deduplication, fixed errors, cancellation, cleanup, deterministic verification and excluded paths.
+- **Outcome:** no contract blocker identified. The B-12 implementation acceptance criteria below remain unchecked and are not claimed as satisfied.
+- **Authorization boundary:** this decision approves the contract only. It is not the separate explicit authorization required before changing implementation or test paths, and it does not authorize live AISStream access, real-key use, commit or push.
+
+## Handoff
+
+- **Contract-preparation changes:** this appended B-12 section in `TASK_SPEC.md` only. No B-09/B-11 implementation path, test, endpoint, evidence ledger, runbook, sprint input or handoff file was changed in contract preparation or contract review.
+- **Contract status:** `Ready`; human review decision `continue` recorded on 2026-09-24. B-12 implementation authorization remains absent.
+- **Evidence boundary:** pre-edit Git synchronization was verified at `6bcbfd332dafc8aef7a4fdd01aec06e820c260cf`. No B-12-specific implementation checks or product behavior have been executed.
+- **Open Unknowns/blockers:** live provider availability, real-key validity, live receipt, actual AISStream event semantics, complete R2 user-story acceptance and release readiness remain `Unknown`/`Needs verification`. `CLAUDE.md` and `SPEC.md` still describe B-08 as current; governance-status synchronization is a separate documentation decision and was not changed here. DEC-007 is `Ready` and resolves the B-12 transport-boundary conflict; implementation still requires separate explicit authorization.
+- **Next bounded action:** obtain separate explicit authorization for B-12 implementation before touching any implementation/test path. Do not begin B-13, run live AISStream, inspect a real key, commit or push without their respective separate authorization.
+
+# TASK-SEA-R2-DEC007-001 — B-12 transport-boundary decision record
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-24
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-02.md`](SPRINT-02.md), [`docs/decisions/README.md`](docs/decisions/README.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), `TASK-SEA-R2-B09-001`, `TASK-SEA-R2-B12-001`.
+
+## Goal and boundary
+
+- **Goal:** prepare `DEC-007`, obtain the product owner's approval and update the decision index for the narrowly scoped B-09 reader-boundary extension for B-12.
+- **Approved decision:** one existing B-09 WebSocket attempt forwards multiple ordered raw text messages to B-12's collector; no second connection, transformer change, continuous service or product-scope expansion.
+- **This is documentation only:** it does not approve B-12 implementation, endpoint/test changes, live provider access, secret access, commit or push. Those remain separately gated.
+
+## Owner and allowed paths
+
+- `TASK_SPEC.md` — this bounded preparation contract and the B-12 cross-reference.
+- `docs/decisions/DEC-007-r2-b09-streaming-boundary.md` — the approved B-12 boundary decision record.
+- `docs/decisions/README.md` — register the approved record in the current-decisions index.
+- **Excluded:** `SPRINT-02.md` (read-only); `CLAUDE.md`, `SPEC.md`, implementation/tests, `EVIDENCE.md`, `RUNBOOK.md`, all secrets and all unrelated/pre-existing paths.
+
+## Acceptance and verification
+
+- [x] DEC-007 has the required metadata, context, options, approved decision, rationale, consequences/risks, verification trigger and links to the B-12 task and related evidence/records.
+- [x] The user approved DEC-007 on 2026-09-24; status is `Ready`, and the record does not authorize implementation.
+- [x] The Part C conflict is explicitly resolved for B-12 by DEC-007; the read-only `SPRINT-02.md` remains unchanged.
+- [x] The approved decision is registered in `docs/decisions/README.md`; no sprint, code, test, evidence or runbook path changed.
+- **Targeted checks:** `git diff --check -- TASK_SPEC.md` and the DEC-007 structural check passed. `git diff --no-index --check /dev/null docs/decisions/DEC-007-r2-b09-streaming-boundary.md` emitted no whitespace diagnostics; exit status `1` reflected the expected new-file difference. Full documentation diff and changed-path boundary were inspected.
+- **Observed result:** DEC-007 is `Ready`; the B-12 transport-boundary exception is recorded and indexed. B-12's own task contract remains `Draft` pending its separate review. No implementation, live provider request, secret access, commit or push occurred.
+- **Rollback:** inspect and remove/revise only the appended DEC007 task section and the DEC-007 entry/file. Preserve all historical and pre-existing paths.
+- **Next gate:** human review of `TASK-SEA-R2-B12-001`; implementation remains separately authorized only after that review and explicit user authorization.
