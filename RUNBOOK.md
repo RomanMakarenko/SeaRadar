@@ -374,3 +374,24 @@ Each entry must include: date/session, goal and scope, changed artifacts, comman
 - **Rollback / recovery:** if commit/push is rejected, preserve the working tree and revert only the selected B-08/governance commit after inspecting its contents; do not reset or delete pre-existing staged/untracked paths or secret files.
 - **Evidence:** `E-SEA-033`; prior implementation and permission evidence are `E-SEA-031` and `E-SEA-032`.
 - **Handoff:** commit and push only the selected B-08/governance paths, then stop before B-09. No production or live-provider action is authorized.
+
+### 2026-09-23 — B-09 reader and intermediate route local verification
+
+- **Session:** bounded implementation continuation for `TASK-SEA-R2-B09-001` on branch `sprint2` after contract review/continue.
+- **Goal and scope:** add only the server-only AISStream reader, intermediate `GET /api/snapshot`, deterministic lifecycle tests and the requested empty local key-file placeholder. Do not add B-10–B-13 behavior, a live request, a real key, dependencies, UI, collector or transformer.
+- **Changed artifacts:** updated the appended B-09 section in `TASK_SPEC.md`; added `server/aisstream-reader.ts`, `app/api/snapshot/route.ts` and `tests/snapshot-reader.spec.ts`; created a zero-byte ignored `.env.local` without reading or overwriting its contents. No package manifest, lockfile, Playwright configuration, existing B-07 test or B-08 path changed.
+- **Commands and status:** official AISStream documentation fetch — endpoint/subscription requirements confirmed; `git diff --check` — `PASS`; B-09 structural validator — `PASS`; tracked secret-path/assignment scan — `PASS`; ignored zero-byte env-file metadata check — `PASS`; direct server TypeScript check — `PASS`; `npx tsc --noEmit` — `PASS`; `npm run build` — `PASS` with the known external package-lock warning; `npm ls --depth=0` — completed with pre-existing extraneous packages; `npx playwright test tests/snapshot-reader.spec.ts` — `PASS`, 7 tests; sanitized loopback no-key `curl` check — `PASS` against the existing local server.
+- **Observed behavior:** fake WebSocket tests confirmed immediate exact subscription, a deadline starting before construction, pre-open `connect_failed`, post-subscription `raw: null` timeout, text raw success, binary/provider error, post-subscription disconnect, cancellation cleanup including a socket-created-during-abort race, and late-event suppression. The no-key route check returned HTTP 502 with the exact fixed Ukrainian message both in the focused test and over loopback. The built route is listed as a dynamic Node.js `/api/snapshot` handler.
+- **Decision:** `CONTINUE WITH APPROVAL`; local checks pass, but final human diff review remains required. No commit or push was performed.
+- **Blockers / Unknowns:** live provider availability, real-key validity, live connection/message receipt and complete R2 user-story acceptance remain `Unknown`/`Blocked`. Provider error semantics beyond the bounded WebSocket/message boundary are not live-verified.
+- **Rollback / recovery:** inspect the complete diff, then remove only the three B-09 implementation files and the appended B-09 task section if rejected; preserve the verified B-08 baseline, append-only records, pre-existing staged/untracked/generated paths and any local secret file. Do not reset the branch or delete `.env.local`.
+- **Evidence:** `E-SEA-034`; B-08 evidence remains `E-SEA-033` and earlier entries.
+- **Handoff:** perform final human diff review and choose `continue`, `revise` or `HOLD`. If `continue`, a separate authorization is still required before any commit/push; the owner may now add the real key locally to `.env.local` but must never send it in chat or commit it. No live AISStream request has been run.
+
+### 2026-09-23 — B-09 final human diff review
+
+- **Session:** final bounded review for `TASK-SEA-R2-B09-001` on branch `sprint2`.
+- **Decision:** user chose `continue`; B-09 local implementation is `DONE`/`Verified` within its approved boundary. This does not claim live provider availability, real-key validity or complete R2 acceptance.
+- **Review result:** approved paths remain limited to `TASK_SPEC.md`, `server/aisstream-reader.ts`, `app/api/snapshot/route.ts`, `tests/snapshot-reader.spec.ts`, append-only evidence/history and the ignored zero-byte `.env.local` preflight artifact. No dependency, unrelated product path, B-10–B-13 behavior, secret content, commit or push was introduced.
+- **Evidence:** `E-SEA-035` and local implementation checks in `E-SEA-034`.
+- **Handoff:** the next action is either a separately authorized live-provider check using the locally stored key or a separately authorized commit/push. Do not paste the key into chat; preserve staged and unrelated untracked paths.

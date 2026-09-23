@@ -409,3 +409,27 @@
 - **Status:** `PASS` for final diff review and commit boundary.
 - **Reviewer / owner:** delivery/technical owner — executor role; user authorization for commit/push.
 - **Limitations and follow-up:** this evidence does not claim R2 runtime acceptance, provider availability, real-key validity or B-09 readiness. Commit only the selected B-08/governance paths; preserve pre-existing staged and unrelated untracked paths. Stop before B-09.
+
+### E-SEA-034 — B-09 reader and intermediate route local checks
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001` v1.1.0; `TASK-SEA-R2-B09-001` v1.0.0; `DEC-006-R2-SCOPE`.
+- **Claim under verification:** the bounded B-09 server reader, intermediate route and deterministic lifecycle tests satisfy the approved local contract without reading a real key or contacting AISStream.
+- **Source:** official AISStream documentation (`https://aisstream.io/documentation`); `TASK_SPEC.md`; `SPRINT-02.md`; `server/aisstream-config.ts`; `server/aisstream-reader.ts`; `app/api/snapshot/route.ts`; `tests/snapshot-reader.spec.ts`; `git diff --check`; structural B-09 validator; tracked-path secret scan; ignored-file metadata check; direct TypeScript check; `npx tsc --noEmit`; `npm run build`; `npm ls --depth=0`; `npx playwright test tests/snapshot-reader.spec.ts`; sanitized loopback `curl` check.
+- **Expected:** the reader uses the documented server endpoint and exact subscription, starts the 15-second deadline before construction, returns the first text message or `raw: null`, maps fixed failures without provider/key text, cleans socket/timer once, exposes a Node.js route, and keeps the local key file empty and ignored.
+- **Observed:** the official documentation confirmed `wss://stream.aisstream.io/v0/stream` and the required subscription fields. The route built as a dynamic Node.js handler. Direct server type-check passed; normal TypeScript validation passed; production build passed; dependency inspection showed no new dependency; structural validation and `git diff --check` passed. The focused Playwright spec ran 7 tests and all 7 passed, covering immediate subscription, total-window timing, raw/null, connection/provider/disconnect/binary mappings, cancellation cleanup including an abort race, and blank-key route behavior. The existing local server returned the expected no-key loopback response with HTTP 502 and `no_api_key`. `.env.local` exists as a zero-byte ignored path; its contents were not read or printed. No real key, live request or provider payload was used.
+- **Timestamp / environment:** 2026-09-23; macOS; Node.js 22.x; Next.js 16.3.5; TypeScript 6.0.3; Playwright 1.63.0.
+- **Status:** `PASS` for bounded local implementation checks; `UNKNOWN`/`BLOCKED` for live provider availability, real-key validity, live connection/message receipt and complete R2 user-story acceptance.
+- **Reviewer / owner:** delivery/technical owner — executor role; final human diff review remains required.
+- **Limitations and follow-up:** the test suite uses fake WebSocket/timer boundaries and cannot prove AISStream availability or live payload semantics. The build retains the pre-existing warning about the external `/Users/romanmakarenko/package-lock.json`; `npm ls --depth=0` retains pre-existing extraneous `@emnapi/runtime` and `@img/sharp-wasm32`. Do not add the local key to chat or repository files; final human diff review must choose `continue`, `revise` or `HOLD` before any commit/push.
+
+### E-SEA-035 — B-09 final human diff review
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R2-B09-001` v1.0.0; `E-SEA-034`.
+- **Claim under verification:** the bounded B-09 implementation diff was reviewed and accepted for continuation without authorizing commit/push or live provider access.
+- **Source:** user instruction `continue`; complete working-tree diff; `TASK_SPEC.md`; `server/aisstream-reader.ts`; `app/api/snapshot/route.ts`; `tests/snapshot-reader.spec.ts`; `EVIDENCE.md`; `RUNBOOK.md`; final `git diff --check`.
+- **Expected:** only the approved B-09 paths and append-only records changed; no secret content, dependency, unrelated product behavior, B-10–B-13 scope, commit or push is introduced.
+- **Observed:** the review decision was `continue`. The approved B-09 implementation paths and governance records are bounded; `.env.local` remains ignored and its contents were not read; no package manifest, lockfile, UI/map path, existing B-07 test or B-08 file changed. No commit or push was performed.
+- **Timestamp / environment:** 2026-09-23; macOS; branch `sprint2`.
+- **Status:** `PASS` for final bounded diff review; live provider availability, real-key validity and complete R2 user-story acceptance remain `Unknown`/`Needs verification`.
+- **Reviewer / owner:** delivery/technical owner — executor role; user decision `continue`.
+- **Limitations and follow-up:** B-09 is verified only as a local intermediate reader/route slice. A separate authorization is required for live AISStream access, and a separate explicit authorization is required before commit/push.
