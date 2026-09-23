@@ -591,7 +591,7 @@ If the contract is revised or rejected before implementation, inspect the diff a
 # TASK-SEA-R2-B11-001 — PositionReport transformer
 
 - **Version:** `1.1.0`
-- **Status:** `Draft`
+- **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-09-23
@@ -633,20 +633,20 @@ After separate implementation authorization, produce only the pure transformer a
 
 ## Acceptance criteria
 
-- [ ] A valid sample-shaped envelope produces one `Vessel` with `source: "aisstream"`, string `id` from MMSI, trimmed-or-null name, report coordinates, ISO UTC timestamp at millisecond precision, and correctly mapped speed/course.
-- [ ] MMSI accepts only non-negative safe-integer JSON numbers or trimmed ASCII digit-only strings; rejects fractional/negative/unsafe/non-digit/blank input; converts numbers to base-10 strings and preserves digit strings' leading zeros without adding a nine-digit/range rule.
-- [ ] `time_utc` accepts only `YYYY-MM-DD HH:mm:ss[.fraction] +0000 UTC` with 1–9 fractional digits when present; rejects nonzero offsets, conflicting timezone labels, malformed or impossible calendar/clock values; outputs `.sssZ`, pads shorter fractions, and truncates longer fractions without rounding.
-- [ ] Name, timestamp, latitude and longitude follow the field/type rules above; malformed envelope, missing/invalid identity, unparseable time, or invalid position returns `null` rather than throwing or producing a vessel at `0,0`.
-- [ ] Latitude/longitude inclusive bounds and unavailable/out-of-range/non-numeric cases are covered; report coordinates are authoritative even if metadata coordinates differ.
-- [ ] Missing, non-numeric, sentinel and out-of-range speed/course become `null`; valid zero speed/course remain numeric zero and do not reject an otherwise valid vessel.
-- [ ] Unknown optional fields and `TrueHeading` do not alter the mapping or prevent a valid report from being accepted; `Cog`, not `TrueHeading`, supplies course.
-- [ ] Output field names/types match the existing shared `Vessel` structure and input/sample objects remain unchanged.
-- [ ] Focused deterministic tests cover valid mapping; numeric and digit-string MMSI conversion plus invalid MMSI types/boundaries; exact UTC timestamp parsing, fractional padding/truncation, rejected offsets and impossible dates; invalid/malformed required fields; position bounds/sentinels; optional-field null/zero cases; unknown optional fields; and input non-mutation, all without network access or credentials.
-- [ ] At least three output fields are manually compared with `data/samples/position-report.sample.json`; actual comparisons and test output are recorded in evidence after implementation.
-- [ ] No B-09 transport, endpoint, collector, deduplication, 100-vessel limit, UI, dependency, live provider or unrelated path is changed.
-- [ ] Human diff review and separate explicit implementation authorization precede all future B-11 code/test changes; B-12 and later work remain task-gated.
+- [x] A valid sample-shaped envelope produces one `Vessel` with `source: "aisstream"`, string `id` from MMSI, trimmed-or-null name, report coordinates, ISO UTC timestamp at millisecond precision, and correctly mapped speed/course.
+- [x] MMSI accepts only non-negative safe-integer JSON numbers or trimmed ASCII digit-only strings; rejects fractional/negative/unsafe/non-digit/blank input; converts numbers to base-10 strings and preserves digit strings' leading zeros without adding a nine-digit/range rule.
+- [x] `time_utc` accepts only `YYYY-MM-DD HH:mm:ss[.fraction] +0000 UTC` with 1–9 fractional digits when present; rejects nonzero offsets, conflicting timezone labels, malformed or impossible calendar/clock values; outputs `.sssZ`, pads shorter fractions, and truncates longer fractions without rounding.
+- [x] Name, timestamp, latitude and longitude follow the field/type rules above; malformed envelope, missing/invalid identity, unparseable time, or invalid position returns `null` rather than throwing or producing a vessel at `0,0`.
+- [x] Latitude/longitude inclusive bounds and unavailable/out-of-range/non-numeric cases are covered; report coordinates are authoritative even if metadata coordinates differ.
+- [x] Missing, non-numeric, sentinel and out-of-range speed/course become `null`; valid zero speed/course remain numeric zero and do not reject an otherwise valid vessel.
+- [x] Unknown optional fields and `TrueHeading` do not alter the mapping or prevent a valid report from being accepted; `Cog`, not `TrueHeading`, supplies course.
+- [x] Output field names/types match the existing shared `Vessel` structure and input/sample objects remain unchanged.
+- [x] Focused deterministic tests cover valid mapping; numeric and digit-string MMSI conversion plus invalid MMSI types/boundaries; exact UTC timestamp parsing, fractional padding/truncation, rejected offsets and impossible dates; invalid/malformed required fields; position bounds/sentinels; optional-field null/zero cases; unknown optional fields; and input non-mutation, all without network access or credentials.
+- [x] At least three output fields are manually compared with `data/samples/position-report.sample.json`; actual comparisons and test output are recorded in evidence after implementation.
+- [x] No B-09 transport, endpoint, collector, deduplication, 100-vessel limit, UI, dependency, live provider or unrelated path is changed.
+- [x] Human diff review was completed at the user's direction; the separate explicit implementation authorization preceded implementation. B-12 and later work remain task-gated.
 
-**Current acceptance status:** `Draft contract prepared; implementation, tests and B-11 acceptance have not started. Human contract review and separate implementation authorization are required.`
+**Current acceptance status:** `DONE for bounded B-11 scope after final diff review at the user's direction; focused checks and synthetic fixture comparisons passed. E-SEA-043 records implementation checks; E-SEA-044 records final review. Live data, complete R2 acceptance and release readiness are not claimed.`
 
 ## Verification
 
@@ -679,15 +679,35 @@ If the B-11 contract is revised or rejected before implementation, inspect the d
 
 ## Handoff
 
-- **Current changed paths:** this appended B-11 contract and post-check append-only `EVIDENCE.md`/`RUNBOOK.md` records only.
-- **Contract status:** `Draft`; implementation and tests are not authorized by contract preparation.
-- **Evidence:** contract-preparation checks only; no transformer behavior, test pass, live data or B-11 acceptance is claimed.
+- **Current changed paths:** B-11 task contract/status, `server/position-report-transformer.ts`, `tests/position-report-transformer.spec.ts`, and append-only `EVIDENCE.md`/`RUNBOOK.md` records.
+- **Contract status:** `Verified`; B-11 is `DONE` within its bounded local scope after the requested review and user decision to continue.
+- **Evidence:** `E-SEA-043` records implementation checks and synthetic comparisons; `E-SEA-044` records final diff review. No live data is claimed.
 - **Open unknowns:** live provider availability, real-key validity, live receipt, full R2 acceptance and release readiness remain `Unknown`/`Needs verification`.
-- **Next bounded action:** human review of `TASK-SEA-R2-B11-001` and an explicit `continue`/`revise`/`HOLD` decision. Before any implementation, obtain separate explicit authorization. Do not start B-12 or any other later slice.
+- **Next bounded action:** B-12 requires its own task contract, human review and explicit implementation authorization. Do not start B-12 or any later slice under this authorization.
 
 ### B-11 contract clarification — v1.1.0
 
 - **Trigger:** contract review requested explicit MMSI and timestamp rules before approval for delivery.
 - **MMSI rule:** narrowed accepted inputs to non-negative safe-integer JSON numbers or trimmed ASCII digit-only strings; documented string conversion and rejected malformed values without imposing a nine-digit/range rule.
 - **Timestamp rule:** aligned accepted syntax to the UTC form evidenced by the Sprint/example (`+0000 UTC`), defined strict date/clock validation and sub-millisecond padding/truncation, and rejected conflicting offsets/timezone labels.
-- **Status and boundary:** contract remains `Draft`; no transformer, test, live-provider request, secret access, or implementation authorization is included.
+- **Status and boundary at clarification:** contract remained `Draft`; no transformer, test, live-provider request, secret access, or implementation authorization was included.
+
+### Human review and implementation authorization — 2026-09-24
+
+- **Contract decision:** the user reviewed `TASK-SEA-R2-B11-001` v1.1.0 and chose `continue`.
+- **Implementation authorization:** the user separately authorized B-11 implementation. This authorization does not authorize live AISStream access, secret handling, commit, push, B-12, or any later task.
+- **Status at authorization:** `Active`; the requirements above remain unchanged. At that point, implementation, tests, and B-11 acceptance were not yet verified.
+
+### Implementation check checkpoint — 2026-09-24
+
+- **Observed:** focused Playwright spec passed (9 tests); scoped TypeScript check with `--ignoreConfig`, repository `npx tsc --noEmit`, and `npm run build` passed; `git diff --check` and the new-file whitespace check passed. A first scoped TypeScript invocation failed with `TS5112` because TypeScript 6 detected `tsconfig.json`; the corrected invocation passed.
+- **Sample comparison:** MMSI `999000001` → ID `"999000001"`; report coordinates `51.0/1.45` → `51/1.45`; sample UTC timestamp → `2026-09-23T15:00:00.000Z`; `Sog 12.4` → speed `12.4`; `Cog 123.4` → course `123.4`.
+- **Evidence:** `E-SEA-043`. The fixture is synthetic; provider behavior, live receipt, full R2 acceptance and release readiness are not established.
+- **Checkpoint decision:** implementation checks passed locally; stop for human diff review. B-11 remains `Active`, not `DONE`; B-12 is not authorized.
+
+### Final diff review — 2026-09-24
+
+- **Review requested:** the user asked to “review B-11 diff and continue”.
+- **Observed:** final review found no functional or scope findings; implementation and focused tests align with this task contract. No code changes were made during the review.
+- **Decision:** `DONE` for bounded local B-11 scope. Review outcome is `E-SEA-044`; live provider behavior, complete R2 acceptance and release readiness remain unverified.
+- **Next gate:** B-12 remains separately task-gated; its own contract, review and explicit implementation authorization are required.

@@ -1,11 +1,11 @@
 # EVIDENCE.md — фактичний evidence ledger
 
 - **ID:** `EVIDENCE-SEA-001`
-- **Version:** `0.12.0`
+- **Version:** `0.14.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-23
+- **Date:** 2026-09-24
 - **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md)
 
 ## Purpose and boundary
@@ -517,3 +517,28 @@
 - **Status:** `PASS` for contract clarity, bounded documentation review and remote delivery verification; implementation and B-11 acceptance remain unauthorized/unstarted.
 - **Reviewer / owner:** delivery/technical owner — contract review and checks; user explicitly requested commit/push if the clarified contract was ready.
 - **Limitations and follow-up:** these checks establish documentation structure and delivery only. No transformer behavior, tests, live provider observation, real-key validity, complete R2 acceptance or release readiness is established. B-11 contract remains `Draft`; implementation requires separate human `continue` and explicit authorization. B-12 remains task-gated.
+
+### E-SEA-043 — B-11 PositionReport transformer implementation checks
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001` v1.1.0; `TASK-SEA-R2-B11-001` v1.1.0; `SPRINT-SEA-R2-001`; `E-SEA-042`; `DEC-006-R2-SCOPE`.
+- **Claim under verification:** the authorized pure transformer maps valid decoded sample-shaped PositionReport envelopes to the shared `Vessel` shape and rejects invalid required fields, within the local B-11 contract.
+- **Source:** `TASK_SPEC.md`; `server/position-report-transformer.ts`; `tests/position-report-transformer.spec.ts`; `app/vessel-model.ts`; synthetic fixture `data/samples/position-report.sample.json` and `data/samples/PROVENANCE.md`; Playwright and TypeScript command output; Git status/diff checks.
+- **Expected:** deterministic offline mapping and validation; required identity/time/report position failures return `null`; invalid optional motion maps to `null`, zero remains valid; report coordinates are authoritative; input is not mutated; only authorized B-11 paths plus append-only task/evidence/history records change.
+- **Observed:** `npx playwright test tests/position-report-transformer.spec.ts` passed all 9 tests. `npx tsc --noEmit` passed. `npx tsc --ignoreConfig --noEmit --strict --target ES2017 --module esnext --moduleResolution bundler --skipLibCheck --resolveJsonModule --esModuleInterop server/position-report-transformer.ts tests/position-report-transformer.spec.ts` passed. The initial invocation `npx tsc --noEmit --strict --target ES2017 --module esnext --moduleResolution bundler --skipLibCheck --resolveJsonModule --esModuleInterop server/position-report-transformer.ts tests/position-report-transformer.spec.ts` exited nonzero with TypeScript 6.0.3 error `TS5112` because it detected `tsconfig.json`; the corrected command passed. `npm run build` passed (Next.js 16.3.5); its output warned that the parent `/Users/romanmakarenko/package-lock.json` is outside this repository and reported `.env.local` as an environment source. No environment values were printed or manually inspected, and no live AISStream request was made. `git diff --check` passed for tracked changes; a separate Python trailing-whitespace check passed for both new untracked code files.
+- **Manual sample comparison:** sample `MetaData.MMSI` `999000001` maps to `id: "999000001"`; `Message.PositionReport.Latitude/Longitude` `51.0/1.45` map to `lat/lon` `51/1.45`; `MetaData.time_utc` `2026-09-23 15:00:00.000000000 +0000 UTC` maps to `2026-09-23T15:00:00.000Z`; `Sog` `12.4` maps to `speedKnots: 12.4`; `Cog` `123.4` maps to `courseDeg: 123.4`. These compare only to the synthetic fixture.
+- **Timestamp / environment:** 2026-09-24; macOS; local SeaRadar workspace; branch `sprint2`.
+- **Status:** `PASS` for focused local transformer behavior, type checks, build and recorded fixture comparisons; final human diff review and full B-11 acceptance remain pending.
+- **Reviewer / owner:** delivery/technical owner — implementation and local checks.
+- **Limitations and follow-up:** no live observation, provider availability/semantics beyond the approved contract, real-key validity, R2 user-story acceptance or release readiness is established. Preserve the synthetic fixture limitation. Human diff review is required before marking B-11 `DONE`; B-12 remains task-gated.
+
+### E-SEA-044 — B-11 final diff review
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001` v1.1.0; `TASK-SEA-R2-B11-001` v1.1.0; `E-SEA-043`; `DEC-006-R2-SCOPE`.
+- **Claim under verification:** the B-11 transformer/test implementation and associated records conform to the approved bounded task, with no functional blocker found in the final review.
+- **Source:** user instruction “review B-11 diff and continue”; `server/position-report-transformer.ts`; `tests/position-report-transformer.spec.ts`; B-11 section of `TASK_SPEC.md`; E-043 and final changed-path/status inspection.
+- **Expected:** mapping, validation, null/zero behavior, timestamp precision, purity and test coverage match the B-11 contract; no excluded implementation path or B-12 work is introduced; pre-existing deletion and untracked paths remain untouched.
+- **Observed:** review found no functional or scope findings. MMSI parsing preserves digit-string leading zeros and limits numeric input to non-negative safe integers; timestamp grammar and calendar/clock checks match the UTC contract; coordinates come only from the nested report and enforce inclusive ranges; optional Sog/Cog validation preserves zero; unknown fields and `TrueHeading` do not affect mapping; output matches `Vessel` and the transformer leaves input unchanged. The focused suite and checks remain as recorded in `E-SEA-043`. No implementation changes were made during this review. The user directed `continue` after requesting the review.
+- **Timestamp / environment:** 2026-09-24; local SeaRadar workspace; branch `sprint2`.
+- **Status:** `PASS` for final bounded B-11 diff review; B-11 is `DONE` within its local task scope.
+- **Reviewer / owner:** delivery/technical owner — code/diff review; user — instruction to continue.
+- **Limitations and follow-up:** this review does not establish live AISStream observation, provider availability or semantics beyond the task contract, real-key validity, R2 user-story acceptance or release readiness. B-12 requires its own task contract, review and explicit implementation authorization; it was not started.

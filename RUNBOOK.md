@@ -1,11 +1,11 @@
 # RUNBOOK.md — delivery history and handoff
 
 - **ID:** `RUNBOOK-SEA-001`
-- **Version:** `0.12.0`
+- **Version:** `0.14.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-23
+- **Date:** 2026-09-24
 - **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`EVIDENCE.md`](EVIDENCE.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md)
 
 ## Purpose and boundary
@@ -483,3 +483,27 @@ Each entry must include: date/session, goal and scope, changed artifacts, comman
 - **Rollback / recovery:** inspect the delivery commit and revert only the selected B-11 documentation changes if rejected; preserve append-only history, the pre-existing `START.md` deletion and all unrelated untracked paths. Do not reset the shared branch or alter secret files.
 - **Evidence:** `E-SEA-041` records original contract preparation; `E-SEA-042` records the clarification checks and delivery verification.
 - **Handoff:** after verifying remote synchronization, stop. Human contract approval and separate explicit implementation authorization are still required before B-11 implementation; do not start B-12 or use live AISStream access.
+
+### 2026-09-24 — B-11 transformer implementation and local checks
+
+- **Session:** authorized implementation of `TASK-SEA-R2-B11-001` v1.1.0 on branch `sprint2`, after human contract decision `continue` and separate explicit implementation authorization.
+- **Goal and scope:** implement the pure decoded PositionReport-to-`Vessel` mapping and deterministic focused checks only. No live provider request, endpoint/collector/UI wiring, dependency change, secret inspection, commit, push or B-12 work.
+- **Changed artifacts:** updated the B-11 status/current handoff and appended the human approval record in `TASK_SPEC.md`; added `server/position-report-transformer.ts` and `tests/position-report-transformer.spec.ts`; appended `E-SEA-043` to `EVIDENCE.md` and this record. Pre-existing `START.md` deletion and unrelated untracked inputs remain excluded.
+- **Implementation summary:** validates unknown decoded envelopes; normalizes approved MMSI and strict UTC timestamp forms; maps only nested report coordinates and `Sog`/`Cog`; returns `null` for invalid required data and optional motion values; ignores `TrueHeading` and unknown optional fields; does not mutate input.
+- **Commands and status:** `npx playwright test tests/position-report-transformer.spec.ts` — `PASS`, 9 tests; `npx tsc --noEmit --strict --target ES2017 --module esnext --moduleResolution bundler --skipLibCheck --resolveJsonModule --esModuleInterop server/position-report-transformer.ts tests/position-report-transformer.spec.ts` — first invocation failed with `TS5112` because TypeScript 6 detected `tsconfig.json` while file paths were supplied; corrected `npx tsc --ignoreConfig --noEmit --strict --target ES2017 --module esnext --moduleResolution bundler --skipLibCheck --resolveJsonModule --esModuleInterop server/position-report-transformer.ts tests/position-report-transformer.spec.ts` — `PASS`; `npx tsc --noEmit` — `PASS`; `npm run build` — `PASS`; `git diff --check` — `PASS`; Python trailing-whitespace check on both new files — `PASS`. Next.js build output noted an ignored parent package-lock and `.env.local` as an environment source; no environment values were printed or manually inspected.
+- **Manual comparison:** against the synthetic fixture, checked MMSI `999000001` → ID `"999000001"`, report coordinates `51.0/1.45` → `51/1.45`, timestamp `2026-09-23 15:00:00.000000000 +0000 UTC` → `2026-09-23T15:00:00.000Z`, `Sog 12.4` → `speedKnots 12.4`, and `Cog 123.4` → `courseDeg 123.4`.
+- **Decision:** `CONTINUE WITH APPROVAL`; focused local checks passed, but human review of the complete implementation and documentation diff remains pending. B-11 is not declared `DONE`.
+- **Blockers / Unknowns:** provider availability, real-key validity, live receipt, provider semantics beyond the approved contract, complete R2 acceptance and release readiness remain `Unknown`/`Needs verification`. The build automatically reported `.env.local` as loaded; its contents were not viewed or printed. The sample remains synthetic.
+- **Rollback / recovery:** if the B-11 diff is rejected, inspect it and restore only `server/position-report-transformer.ts` and `tests/position-report-transformer.spec.ts` to the verified B-10 baseline; revise the B-11 task status/handoff accordingly. Preserve append-only history, `START.md` deletion, unrelated untracked/generated paths and secret files. Do not reset the branch.
+- **Evidence:** `E-SEA-043`; contract clarification/delivery remains `E-SEA-042`.
+- **Handoff:** review the changed-path list and full B-11 diff; choose `continue`, `revise` or `HOLD`. Do not start B-12, inspect secret files, make live requests, commit or push without separate authorization.
+
+### 2026-09-24 — B-11 final diff review
+
+- **Session:** final bounded review of `TASK-SEA-R2-B11-001` after the user requested “review B-11 diff and continue”.
+- **Review scope:** read the transformer, focused Playwright spec and current B-11 task/evidence/handoff records; checked final Git status and tracked diff paths. Existing `START.md` deletion and pre-existing untracked paths were preserved.
+- **Observed:** no functional or scope findings. The transformer follows the contract for MMSI, strict UTC timestamp/calendar validation, report-coordinate authority and bounds, optional Sog/Cog behavior, null handling, purity, and output shape. The tests cover the core mapping and invalid boundaries; recorded checks and sample comparisons remain `E-SEA-043`. No code changes were made during review.
+- **Decision:** `DONE` for the bounded B-11 local task after the user directed continuation; final review is recorded as `E-SEA-044`. Live provider behavior and broader product acceptance are not claimed.
+- **Unknowns:** live provider availability/receipt, real-key validity, provider semantics beyond the contract, full R2 acceptance and release readiness remain `Unknown`/`Needs verification`.
+- **Recovery:** if the review decision is revised, inspect and restore only the B-11 implementation/test paths to the verified B-10 baseline; preserve append-only evidence/history and all unrelated paths. No commit or push was made.
+- **Handoff:** B-11 local scope is verified. B-12 is not authorized by this decision and requires its own task contract, review and explicit implementation authorization.
