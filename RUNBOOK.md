@@ -1,7 +1,7 @@
 # RUNBOOK.md — delivery history and handoff
 
 - **ID:** `RUNBOOK-SEA-001`
-- **Version:** `0.6.0`
+- **Version:** `0.9.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
@@ -395,3 +395,53 @@ Each entry must include: date/session, goal and scope, changed artifacts, comman
 - **Review result:** approved paths remain limited to `TASK_SPEC.md`, `server/aisstream-reader.ts`, `app/api/snapshot/route.ts`, `tests/snapshot-reader.spec.ts`, append-only evidence/history and the ignored zero-byte `.env.local` preflight artifact. No dependency, unrelated product path, B-10–B-13 behavior, secret content, commit or push was introduced.
 - **Evidence:** `E-SEA-035` and local implementation checks in `E-SEA-034`.
 - **Handoff:** the next action is either a separately authorized live-provider check using the locally stored key or a separately authorized commit/push. Do not paste the key into chat; preserve staged and unrelated untracked paths.
+
+### 2026-09-23 — Sprint 2 decomposition human diff review
+
+- **Session:** documentation-only review of the corrected `SPRINT-02.md` Part C decomposition for `SPRINT-SEA-R2-001`.
+- **Goal and scope:** verify that the B-08…B-13 entries are complete and consistent after correcting metadata, R2/R3 verification wording, dependency boundaries and B-10/B-12 acceptance details. No product implementation or live provider access was in scope.
+- **Changed artifacts:** `SPRINT-02.md` contains the local documentation corrections; `EVIDENCE.md` received `E-SEA-036`; no product source, test, dependency, secret or live-provider path changed. `SPRINT-02.md` remains untracked.
+- **Commands and status:** decomposition metadata/entry/field validator — `PASS`; dependency/provenance/reason-value checks — `PASS`; trailing-whitespace check — `PASS`; `git status --short --branch` — expected pre-existing and local untracked paths only.
+- **Review result:** all six bounded entries now have Goal, Non-goals, Check, Evidence, Acceptance, Dependency boundary, Handoff and Status. The R2 focused deterministic B-12 checks are explicitly separated from the R3 release-level test-suite boundary. B-10 sample fields and provenance classes are explicit.
+- **Decision:** `CONTINUE WITH APPROVAL` for the next documentation/task-contract slice. This does not authorize B-10 implementation, live AISStream access, commit or push.
+- **Blockers / Unknowns:** B-10…B-13 remain gated and unimplemented; live provider availability, real-key validity, full R2 acceptance and release readiness remain `Unknown`/`Needs verification`.
+- **Rollback / recovery:** if the documentation review is rejected, inspect the file and restore only the local `SPRINT-02.md` documentation changes; preserve append-only evidence/history, product code, staged paths and unrelated untracked/generated paths.
+- **Evidence:** `E-SEA-036`.
+- **Handoff:** next bounded action is to prepare and review the separate B-10 sample/provenance task contract. Do not start B-10 implementation until that contract and its human review are complete; do not commit or push without separate authorization.
+
+### 2026-09-23 — B-10 sample/provenance task contract prepared
+
+- **Session:** contract-only preparation of `TASK-SEA-R2-B10-001` / `R2-B10-SAMPLE-PROVENANCE` after `E-SEA-036`.
+- **Goal and scope:** define the sample artifact, allowed sources, provenance, verification, security and lifecycle gates before B-10 implementation; update the next-session handoff. No sample or product behavior was created.
+- **Changed artifacts:** appended B-10 contract to `TASK_SPEC.md`; updated `NEXT_SESSION.md` with restart prompt and current state; appended `E-SEA-037` to `EVIDENCE.md`. `SPRINT-02.md` remains untracked and unchanged in this slice. No product code, `data/samples/` output, test, dependency or secret path was changed/read.
+- **Commands and status:** `git status --short --branch` and `git log -3 --oneline --decorate` — inspected; contract structural validator — `PASS` after correcting an initial validator format/window mismatch; B-10 sample output absence checks — `PASS`; `git diff --check -- TASK_SPEC.md NEXT_SESSION.md EVIDENCE.md RUNBOOK.md` — `PASS` before append-only review records were appended.
+- **Contract boundary:** B-10 defaults to documentation-derived or synthetic data with explicit provenance. Live AISStream access and real-key use require separate explicit authorization; sample retention terms remain `Unknown` until established.
+- **Decision:** `CONTINUE WITH APPROVAL` for human review of the B-10 task contract. This does not authorize implementation, live capture, commit or push.
+- **Blockers / Unknowns:** sample source/retention permission, provider availability, real-key validity, live receipt and complete R2 acceptance remain `Unknown`/`Needs verification`.
+- **Rollback / recovery:** inspect the diff; if rejected, amend/remove only the appended B-10 task section and related current handoff references, preserving append-only history, B-08/B-09 records and all pre-existing staged/untracked/generated paths. No branch reset or secret-file operation.
+- **Evidence:** `E-SEA-037`; preceding decomposition review `E-SEA-036`.
+- **Handoff:** next session must human-review `TASK-SEA-R2-B10-001` against `SPRINT-02.md`, SPEC and DEC-006; record `continue`, `revise` or `HOLD`. Do not create sample files or start B-11 until separately authorized. No commit/push or live request was performed.
+
+### 2026-09-23 — B-10 synthetic sample implementation and checks
+
+- **Session:** bounded B-10 implementation for `TASK-SEA-R2-B10-001` after contract review recommendation and explicit user authorization for a documentation-derived or synthetic sample.
+- **Goal and scope:** create one synthetic PositionReport fixture and its provenance for future B-11 transformer work. No live provider request, secret read, product code, test, dependency or endpoint change.
+- **Changed artifacts:** added `data/samples/position-report.sample.json` and `data/samples/PROVENANCE.md`; updated B-10 status, verified criteria and current handoff in `TASK_SPEC.md`; appended `E-SEA-038` to `EVIDENCE.md`. Other existing staged/untracked paths were not changed.
+- **Sample:** one synthetic `MetaData` / `Message.PositionReport` envelope, with all required fields/casing and matching coordinates within intended Dover bounds. `PROVENANCE.md` labels the data synthetic, describes the contract source and region context, distinguishes the UTC artifact creation date from synthetic `time_utc`, and states what the fixture does not prove.
+- **Commands and status:** Node JSON/schema/provenance assertion — `PASS`; targeted credential-like scan of the two B-10 output files — `PASS` (no matches); Python trailing-whitespace check — `PASS`; `git diff --check` — `PASS`; `git status --short --branch`, `git diff --name-only`, and `find data/samples -maxdepth 1 -type f -print | sort` — inspected; only the two authorized sample outputs exist under `data/samples/`.
+- **Decision:** `CONTINUE WITH APPROVAL`; implementation checks pass, but final human diff review remains pending. No commit or push was performed.
+- **Blockers / Unknowns:** live provider availability, real-key validity, live message receipt, sample retention terms, complete R2 acceptance and release readiness remain `Unknown`/`Needs verification`.
+- **Rollback / recovery:** after inspecting the diff, remove only the two B-10 sample files and restore the B-10 task status if rejected; preserve append-only evidence/history, pre-existing staged/untracked/generated paths and all secret files. Do not reset the branch.
+- **Evidence:** `E-SEA-038`.
+- **Handoff:** perform human diff review of the B-10 sample, provenance, task status and append-only records. B-11, live AISStream access, commit and push each remain separately gated.
+
+### 2026-09-23 — B-10 final diff review
+
+- **Session:** final human review of `TASK-SEA-R2-B10-001` after the synthetic sample checks in `E-SEA-038`.
+- **Review scope:** inspected both B-10 sample outputs, their provenance, the B-10 task acceptance/status and current handoff, the implementation evidence, and the final Git path boundary.
+- **Observed:** the fixture and provenance are consistent with the approved synthetic-data contract; only the two approved sample files are present under `data/samples/`. Targeted JSON/schema/provenance and credential-like checks, whitespace checks and `git diff --check` passed. Pre-existing staged/untracked paths and `START.md` deletion were preserved; no staged paths are present.
+- **Decision:** user chose `continue` for B-10 review. B-10 is `Verified` within its bounded sample/provenance scope; no B-11 or live access authorization is inferred.
+- **Blockers / Unknowns:** live AISStream availability, key validity, live receipt, retention terms, full R2 acceptance and release readiness remain `Unknown`/`Needs verification`.
+- **Recovery:** if the B-10 review is later rejected, inspect the diff and remove only the two B-10 sample files / restore the task status; preserve append-only evidence/history and unrelated paths.
+- **Evidence:** `E-SEA-039` (review); `E-SEA-038` (implementation checks).
+- **Handoff:** stop after B-10. B-11 requires its own bounded task contract and explicit authorization. No live request, commit or push was performed.

@@ -1,7 +1,7 @@
 # EVIDENCE.md — фактичний evidence ledger
 
 - **ID:** `EVIDENCE-SEA-001`
-- **Version:** `0.6.0`
+- **Version:** `0.9.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
@@ -433,3 +433,51 @@
 - **Status:** `PASS` for final bounded diff review; live provider availability, real-key validity and complete R2 user-story acceptance remain `Unknown`/`Needs verification`.
 - **Reviewer / owner:** delivery/technical owner — executor role; user decision `continue`.
 - **Limitations and follow-up:** B-09 is verified only as a local intermediate reader/route slice. A separate authorization is required for live AISStream access, and a separate explicit authorization is required before commit/push.
+
+### E-SEA-036 — Sprint 2 decomposition human diff review
+
+- **Related SPEC/TASK ID:** `SPRINT-SEA-R2-001` v1.0.0; `TASK-SEA-R2-PLAN-001`; `SPRINT-02.md`.
+- **Claim under verification:** the corrected R2 B-08…B-13 decomposition is internally consistent and ready for continued documentation work without authorizing product implementation, live provider access or delivery.
+- **Source:** complete `SPRINT-02.md` review after the requested corrections; metadata/entry/field structural validator; dependency-boundary and contract-text inspection; trailing-whitespace check; `git status --short --branch`.
+- **Expected:** Sprint 2 metadata is present; all six bounded entries contain Goal, Non-goals, Check, Evidence, Acceptance, Dependency boundary, Handoff and Status; B-10 provenance/schema boundary is explicit; B-12 R2 deterministic-check scope is distinguished from the R3 release-level suite; product code, secrets and unrelated paths remain outside the change.
+- **Observed:** all six entries and required fields are present; metadata is complete; dependencies are explicit from B-08 through B-13; B-10 identifies the approved PositionReport fields and live/documentation/synthetic provenance classes; B-12 distinguishes focused deterministic checks from the R3 release-level suite; trailing-whitespace validation passed. `SPRINT-02.md` remains untracked, and no product code, secret content, live request, commit or push was introduced.
+- **Timestamp / environment:** 2026-09-23; macOS; local SeaRadar workspace; branch `sprint2`.
+- **Status:** `PASS` for the bounded documentation review; `CONTINUE WITH APPROVAL` for the next documentation/task-contract slice.
+- **Reviewer / owner:** delivery/technical owner — executor role; review recorded at the user's request.
+- **Limitations and follow-up:** this review proves document structure and consistency only. It does not prove B-10…B-13 implementation, AISStream availability, real-key validity, user-story acceptance or release readiness. B-10 still requires its own task contract and explicit implementation authorization; commit/push remains separately unauthorized.
+
+### E-SEA-037 — B-10 sample/provenance task contract preparation
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001` v1.1.0; `TASK-SEA-R2-B10-001` v1.0.0; `SPRINT-SEA-R2-001`; `DEC-006-R2-SCOPE`.
+- **Claim under verification:** a bounded B-10 contract and next-session handoff are prepared before any sample data or B-10 implementation is created.
+- **Source:** `TASK_SPEC.md` B-10 appended section; `NEXT_SESSION.md`; `SPRINT-02.md` B-10 entry; `SPEC.md`; `DEC-006-r2-scope.md`; `git status --short --branch`; structural contract validator; B-10 output-path absence checks; `git diff --check`.
+- **Expected:** the contract defines goal, authorization gate, allowed/excluded paths, sample source and schema, provenance, acceptance, future checks, stop conditions, rollback and handoff; the sample defaults to documentation-derived or synthetic data and does not authorize a live request or use of a real key.
+- **Observed:** `TASK-SEA-R2-B10-001` was appended with status `Draft`. Structural checks passed for metadata, gate, future output paths, origin classes, security boundary, acceptance, verification, stop/rollback/handoff and separate live authorization. Both future sample paths were absent when checked. `git diff --check` passed. `NEXT_SESSION.md` was updated to identify B-10 contract review as the next bounded task. No product code, sample, dependency, live request or commit/push was performed. An initial ad hoc metadata validator failed because its metadata window/format expectation did not match the document; the corrected validator passed all assertions.
+- **Timestamp / environment:** 2026-09-23; macOS; local SeaRadar workspace; branch `sprint2`.
+- **Status:** `PASS` for contract-preparation structure and path boundary; `PENDING` for human diff review; B-10 implementation remains unauthorized.
+- **Reviewer / owner:** delivery/technical owner — executor role; product-owner/human review pending.
+- **Limitations and follow-up:** this verifies only contract and handoff documentation. It does not prove sample existence, AISStream availability, real-key validity, live receipt, sample retention permission, B-11 readiness, user-story acceptance or release readiness. Review the B-10 contract and explicitly choose `continue`, `revise` or `HOLD`; a separate authorization is still required before implementation or live provider access.
+
+### E-SEA-038 — B-10 synthetic PositionReport sample checks
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001` v1.1.0; `TASK-SEA-R2-B10-001` v1.0.0; `SPRINT-SEA-R2-001`; `DEC-006-R2-SCOPE`.
+- **Claim under verification:** the authorized synthetic B-10 sample and provenance are internally consistent with the approved field contract and do not claim live data.
+- **Source:** user contract-review authorization (“даю дозвіл”) followed by explicit implementation authorization (“Дозволяю реалізацію B-10 на документаційному або синтетичному зразку.”); `data/samples/position-report.sample.json`; `data/samples/PROVENANCE.md`; `TASK_SPEC.md`; `SPRINT-02.md`; Node JSON/schema/provenance assertion; targeted credential-like-value scan; whitespace and Git path checks.
+- **Expected:** one JSON message envelope contains all agreed `MetaData` and `Message.PositionReport` fields with exact casing; paired coordinates agree and lie within the intended Dover bounds; provenance labels the fixture synthetic, distinguishes its synthetic `time_utc` from the artifact creation date, and makes no live-observation claim; only approved B-10 paths change.
+- **Observed:** JSON parsing and assertions passed for one envelope, exact field names/casing and types, matching coordinates within `[[50.75, 0.95], [51.25, 1.95]]`, and required provenance statements. The two B-10 outputs contain no matched credential-like assignments/token pattern. The new `data/samples/` tree contains only the approved sample and provenance files. `git diff --check` and Python trailing-whitespace checks passed. Existing unrelated staged/untracked paths were left untouched; tracked changes remain in existing `TASK_SPEC.md`, `EVIDENCE.md` and `RUNBOOK.md` modifications.
+- **Timestamp / environment:** 2026-09-23; macOS; local SeaRadar workspace; branch `sprint2`.
+- **Status:** `PASS` for sample structure, provenance consistency and bounded path checks; final human diff review remains pending.
+- **Reviewer / owner:** delivery/technical owner — implementation/checks; user authorized synthetic or documentation-derived sample implementation.
+- **Limitations and follow-up:** this proves only local fixture structure and recorded provenance, not vessel identity, AISStream availability, live receipt, provider semantics beyond the task contract, retention terms, or R2 acceptance. Final human diff review must choose `continue`, `revise` or `HOLD` before B-11. Live access, commit and push remain separately unauthorized.
+
+### E-SEA-039 — B-10 final human diff review
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001` v1.1.0; `TASK-SEA-R2-B10-001` v1.0.0; `SPRINT-SEA-R2-001`; `DEC-006-R2-SCOPE`.
+- **Claim under verification:** the completed B-10 sample/provenance diff is bounded, accurately described and accepted for continuation without authorizing B-11 or external/live operations.
+- **Source:** user review decision (“continue B-10 review”); inspected `data/samples/position-report.sample.json`, `data/samples/PROVENANCE.md`, B-10 section of `TASK_SPEC.md`, `E-SEA-038`, latest `RUNBOOK.md` entry; final Git status/path inspection and `git diff --check`.
+- **Expected:** only the two authorized sample outputs plus append-only B-10 task/evidence/history changes are included; fixture/provenance match the contract; pre-existing deletion/untracked inputs remain untouched; no B-11, live request, secret access, commit or push is introduced.
+- **Observed:** the review found the one-envelope synthetic sample, required fields/casing, matching in-bounds coordinates and non-live provenance consistent with B-10. `data/samples/` contains only the approved JSON and provenance files. `git diff --check` passed; tracked worktree modifications are `TASK_SPEC.md`, `EVIDENCE.md`, `RUNBOOK.md` plus the pre-existing `START.md` deletion; no staged paths are present. User decision: `continue`.
+- **Timestamp / environment:** 2026-09-23; macOS; local SeaRadar workspace; branch `sprint2`.
+- **Status:** `PASS`; B-10 is verified within its bounded sample/provenance scope.
+- **Reviewer / owner:** user — final B-10 review decision; delivery/technical owner — checks and recordkeeping.
+- **Limitations and follow-up:** this review does not establish live observation, AISStream availability, real-key validity, sample retention terms, R2 acceptance or release readiness. B-11 needs a separate task contract and explicit authorization; live access, commit and push remain separately gated.

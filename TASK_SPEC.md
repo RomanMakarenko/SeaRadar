@@ -469,3 +469,114 @@ If this contract is rejected, inspect the diff and remove only the appended B-09
 - **Evidence boundary:** local reader/route behavior is supported by deterministic tests and approved diff review; live provider availability, real-key validity and R2 user-story acceptance remain `Unknown`/`Needs verification`.
 - **Open blockers:** no local B-09 blocker remains. Provider availability, real-key validity, live connection/message receipt and complete R2 user-story acceptance remain `Unknown`/`Needs verification`.
 - **Next bounded action:** if desired, separately authorize a sanitized live-provider check with the locally stored key; otherwise keep B-10 through B-13 separately gated. Commit/push still require explicit authorization.
+
+# TASK-SEA-R2-B10-001 — PositionReport sample and provenance
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-23
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), `TASK-SEA-R2-B09-001`, `E-SEA-034`, `E-SEA-035`, `E-SEA-036`.
+
+## Goal and gate
+
+- **Goal:** create one small, inspectable `PositionReport` sample with truthful provenance for B-11 transformer work, without presenting synthetic or documentation-derived data as live AIS data.
+- **Backlog:** `B-10` / `R2-B10-SAMPLE-PROVENANCE`.
+- **SPEC outcome:** `SPEC-SEA-001 / US-05…US-08`; this bounded task does not satisfy any user story by itself.
+- **Predecessors:** verified B-08 secure configuration and bounded B-09 intermediate raw reader. B-09 local evidence does not establish live provider connectivity or receipt of a provider message.
+- **Authorization gate:** this section prepares the contract only. No sample files are created and no B-10 implementation/live capture is authorized until human diff review records `continue` for this contract. Live AISStream access, use of a real key, commit and push each require separate explicit authorization.
+
+## Owner and allowed paths
+
+- **Planning path for this contract:** append-only B-10 section in `TASK_SPEC.md`; do not rewrite R1, R2 planning, B-08 or B-09 history.
+- **Contract-preparation paths:** `TASK_SPEC.md`, `NEXT_SESSION.md`; after structural checks only, append actual contract-preparation facts to `EVIDENCE.md` and `RUNBOOK.md`.
+- **Future B-10 implementation paths, only after contract review and explicit implementation `continue`:**
+  - `data/samples/position-report.sample.json` — one sanitized sample object;
+  - `data/samples/PROVENANCE.md` — provenance and limitations for that exact sample.
+- **Excluded paths:** all `.env*` files, credentials, `server/`, `app/`, `tests/`, `package.json`, `package-lock.json`, `playwright.config.ts`, `.gitignore`, `.claude/`, all map/UI/product paths, B-09 reader/route, `SPEC.md`, `SPRINT-02.md`, decisions, generated files and unrelated/untracked paths. Do not inspect `.env.local` or any secret path.
+
+## Inputs and constraints
+
+- **Read-only inputs:** approved sample/provenance clauses in `SPRINT-02.md`; `TASK-SEA-R2-B09-001`; B-08/B-09 evidence and human-review records; the PositionReport field contract in `SPRINT-02.md`; AISStream documentation if reachable without credentials. Do not read secret files or call the provider.
+- **Permitted sample origin:** use a clearly identified documentation-derived example or a clearly identified synthetic fixture. A locally captured live sample is out of scope unless the user separately authorizes a live request and confirms that retaining the sanitized payload is permitted. Never invent a live capture or claim that a documentation example was received from AISStream.
+- **Sample payload boundary:** one JSON object representing the agreed `PositionReport` message shape with `MetaData` and `Message.PositionReport`; preserve source field names/casing and include fields required by the B-11 contract: `MetaData.MMSI`, `ShipName`, `latitude`, `longitude`, `time_utc`; `Message.PositionReport.Sog`, `Cog`, `TrueHeading`, `Latitude`, `Longitude`. If a source does not provide a field, omit it only when the provenance records that omission and it is consistent with the documented schema; do not manufacture missing provider metadata while labelling the object documentation-derived.
+- **Sanitization:** sample must contain no API key, credential, access token, private local path, or unrelated personal data. Use only a non-sensitive synthetic MMSI for a synthetic example. Do not include raw logs or transport frames beyond the single intended sample object.
+- **Timestamp and coordinates:** provenance states whether timestamps are source-example values or synthetic, and identifies the time/coordinate context without implying actual receipt. It records the configured Dover bounds only as the intended sample context, not as proof that a vessel was observed there.
+- **No implementation expansion:** no transformer, validation runtime, collector, endpoint modification, live request, UI, persistence, dependency or automated release-level test suite is part of B-10.
+
+## Expected output
+
+After this task receives its own implementation authorization, the only B-10 deliverables are:
+
+1. `data/samples/position-report.sample.json` — one parseable JSON sample using the approved `MetaData` / `Message.PositionReport` shape and explicit origin.
+2. `data/samples/PROVENANCE.md` — metadata for the exact sample, including origin class (`live`, `documentation-derived`, or `synthetic`), retrieval/creation UTC timestamp for this artifact (not misrepresented as vessel observation time), source reference when applicable, intended region context, field omissions/normalization, sanitization and limitations.
+3. Append-only factual `EVIDENCE.md` and `RUNBOOK.md` entries after checks and human review; these must distinguish sample artifact checks from live provider evidence.
+
+## Acceptance criteria
+
+- [x] A focused sample exists at the agreed canonical path, parses as JSON, and contains one message object only.
+- [x] The payload preserves exact agreed field names/casing and includes the B-11 input fields, or explicitly documented schema-based omissions; no transformer-derived vessel object is included.
+- [x] Provenance identifies the actual origin as documentation-derived or synthetic unless separately authorized live evidence proves otherwise; it distinguishes artifact creation time from any timestamp inside the example.
+- [x] Provenance explains source, intended region context, field differences/omissions, sanitization, and what the example does not prove.
+- [x] No credential/key, unapproved personal data, unrelated data, raw logs, or claim of live receipt without evidence is present.
+- [x] Human diff review explicitly selected `continue` before B-11; B-11 remains separately task-gated.
+- [x] No B-09 source, product behavior, dependency, endpoint, test framework, live request or secret path is changed/read.
+
+**Current acceptance status:** `Verified; B-10 sample, provenance, targeted checks and final human diff review are complete. B-11, live AISStream access, commit and push remain separately gated.`
+
+## Verification
+
+### Contract preparation checks
+
+1. `git status --short --branch` and current `git log -3 --oneline --decorate` — verify branch and preserve pre-existing paths.
+2. Full review of this appended section and `SPRINT-02.md` B-10 decomposition — verify scope, field list, provenance classes, gates, allowed/excluded paths and rollback.
+3. `git diff --check -- TASK_SPEC.md NEXT_SESSION.md EVIDENCE.md RUNBOOK.md` — Markdown/patch integrity after editing.
+4. Structural validator — verify ID, metadata, Draft gate, outputs, acceptance, paths, checks, stop conditions, rollback and handoff.
+5. Secret boundary — inspect only named non-secret documentation paths; do not enumerate/read/print `.env*` contents or search them.
+
+### Future sample checks (requirements, not observed results)
+
+1. Parse `position-report.sample.json` with a JSON parser and assert exactly one top-level message object and required/cased paths.
+2. For a documentation-derived sample, compare it to its cited AISStream documentation source without claiming live receipt; for a synthetic sample, compare its field names and shape to the approved B-10/B-11 contract. Verify all claimed fields and any omissions.
+3. Review `PROVENANCE.md` against the actual sample origin and inspect both B-10 output files for credential/secret patterns without opening secret files.
+4. Run `git diff --check`; inspect changed paths to confirm only the two B-10 sample files plus post-check append-only records changed.
+5. Do not run `npm run build` or product tests for this documentation/data-only slice unless a future contract specifically makes them relevant.
+
+- **Evidence boundary:** structural/JSON checks prove only the sample artifact and documentation are internally inspectable. They do not prove a live observation, provider availability, vessel identity, field semantics beyond cited docs, R2 acceptance or complete traffic coverage.
+
+## Checkpoint and stop conditions
+
+- **Checkpoint:** first checkpoint is human review of this contract. A second explicit `continue` is required before creating B-10 sample/provenance files. Before B-11, review the completed B-10 diff and evidence separately.
+- **Stop before implementation if:** this contract is not approved; exact example/source or field shape cannot be established; live capture is necessary to meet the intended claim; retention terms are unclear; a secret, credentials, dependency or excluded path would be needed; or sample values could be mistaken for real vessel observations.
+- **Stop after implementation if:** provenance origin is ambiguous; sample is malformed or contains unapproved data; field casing differs from the cited contract; any claim implies unsupported live capture; an unexpected path changes; or a credential/secret appears.
+- **Exit decision:** `DONE` only after authorized sample creation, targeted checks, evidence, and human `continue`; otherwise `CONTINUE WITH APPROVAL` or `HOLD`.
+
+## Rollback / recovery
+
+If the contract is revised or rejected before implementation, inspect the diff and amend/remove only this appended B-10 section; preserve B-08/B-09 history and all pre-existing staged/untracked/generated paths. If a later B-10 sample is rejected, after inspection remove only `data/samples/position-report.sample.json` and `data/samples/PROVENANCE.md` created by this task, then return to the last verified B-09 baseline; do not reset the branch or delete/inspect secret files. The product owner decides whether recovery is accepted, based on the reviewed diff and recorded evidence.
+
+## Handoff
+
+- **Current changed files:** B-10 contract in `TASK_SPEC.md`; synthetic sample `data/samples/position-report.sample.json`; `data/samples/PROVENANCE.md`; append-only `EVIDENCE.md` and `RUNBOOK.md` updates after checks. No product code, test or dependency changed.
+- **Current checks:** sample JSON/schema/provenance assertions, targeted credential-like-value scan, whitespace checks and final changed-path inspection; observed results are recorded in `EVIDENCE.md`.
+- **Unknowns:** live provider availability, real-key validity, live message receipt, sample retention terms, full R2 acceptance and release readiness remain `Unknown`/`Needs verification`.
+- **Next bounded action:** human review of the completed B-10 diff and evidence. Do not begin B-11, make a live request, commit or push without their separate authorization.
+
+### B-10 implementation update — synthetic sample
+
+- **Review and authorization:** user approved continuation of the B-10 contract (`continue`) and explicitly authorized implementation using a documentation-derived or synthetic sample. No live request, secret access, commit or push was authorized.
+- **Changed paths:** `data/samples/position-report.sample.json` and `data/samples/PROVENANCE.md`; this append-only task status update. No product code, tests, dependencies or other implementation paths changed.
+- **Observed:** one synthetic `MetaData` / `Message.PositionReport` fixture was created with the agreed fields/casing, synthetic values, and coordinates matching inside the intended Dover bounds. Provenance distinguishes artifact creation time from the synthetic `time_utc` value and states the fixture is not live or documentation-derived.
+- **Checks:** Node JSON/schema/provenance assertion — `PASS`; credential-like value scan of the two B-10 outputs — `PASS`; `git diff --check` — `PASS` for the selected tracked paths. A final changed-path/diff review is still pending.
+- **Limitations:** this fixture proves only the sample's structural consistency with the agreed task field contract; it proves no live observation, provider behavior, vessel identity, or R2 acceptance.
+- **Decision boundary:** implementation checks passed; final human diff review is recorded below. B-11, live AISStream access, commit and push remain separately gated.
+
+### B-10 final human diff review
+
+- **Review scope:** inspected the sample JSON, provenance, B-10 acceptance/status update, `E-SEA-038`, `RUNBOOK.md` handoff, and the final changed-path boundary.
+- **Observed:** the payload is one synthetic PositionReport envelope with all required field names/casing, matching coordinates within the intended Dover bounds, and no transformer-derived object. Provenance identifies synthetic origin, records UTC creation date at day precision, and disclaims live receipt/observation. The sample directory contains only the two approved B-10 files; no product, test or dependency paths changed.
+- **Checks:** JSON/schema/provenance and credential-like scan — `PASS`; whitespace and `git diff --check` — `PASS`; final Git inspection confirmed the only existing tracked modifications are `EVIDENCE.md`, `RUNBOOK.md`, `TASK_SPEC.md`, and the pre-existing `START.md` deletion; staged paths remain empty.
+- **Decision:** user selected `continue` for the B-10 review. B-10 is `Verified` within this bounded sample/provenance scope. This does not authorize B-11, live provider access, commit or push.
+- **Recovery:** if this review is later rejected, inspect the diff and remove only the two B-10 sample files and revert B-10 task status; preserve append-only evidence/history and all pre-existing staged/untracked paths.
+- **Next action:** stop at B-10. B-11 requires its own bounded task contract and explicit authorization.
