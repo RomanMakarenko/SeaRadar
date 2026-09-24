@@ -1,7 +1,7 @@
 # RUNBOOK.md — delivery history and handoff
 
 - **ID:** `RUNBOOK-SEA-001`
-- **Version:** `0.16.0`
+- **Version:** `0.17.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
@@ -530,3 +530,17 @@ Each entry must include: date/session, goal and scope, changed artifacts, comman
 - **Rollback / recovery:** no rollback was performed. If the decision is later revised, inspect the diff and restore only the five B-12 implementation/test paths to their verified pre-B-12 state; preserve append-only evidence/history, the pre-existing `START.md` deletion and all unrelated untracked paths. Do not reset the branch or touch secret files. Product owner decides recovery acceptance from the diff and evidence.
 - **Evidence:** `E-SEA-046` records implementation checks and limitations; `E-SEA-047` records the user's review decision.
 - **Handoff:** B-12 is `Verified` within its bounded local task scope. Stop here; B-13, live AISStream access, real-key use, commit and push each remain separately gated.
+
+### 2026-09-24 — B-12 commit and remote delivery verification
+
+- **Session:** user-authorized delivery of the reviewed B-12 slice, including the explicit request to add `SPRINT-02.md` to Git.
+- **Goal and scope:** commit and push the five B-12 implementation/test paths and associated task/evidence/runbook records, plus the unchanged Sprint 2 plan. Do not alter unrelated staged/untracked paths or modify `SPRINT-02.md` contents.
+- **Authorization and boundary:** the user requested commit/push and explicitly named the existing `SPRINT-02.md` for Git tracking. Its contents were read after the request and committed as-is; only its tracking status changed. No other excluded path was authorized for staging.
+- **Commit:** `3de88ab2d4099a80abb45f010ec9069ed0ad3c70` — `feat(r2): implement B-12 snapshot collector`.
+- **Commit boundary:** exactly `EVIDENCE.md`, `RUNBOOK.md`, `SPRINT-02.md`, `TASK_SPEC.md`, `app/api/snapshot/route.ts`, `server/aisstream-reader.ts`, `server/snapshot-collector.ts`, `tests/snapshot-collector.spec.ts` and `tests/snapshot-reader.spec.ts`.
+- **Commands and status:** `git diff --check` — `PASS`; staged path inspection and `git diff --cached --check` — `PASS`; `git commit` — `PASS`; `git push origin sprint2` — `PASS`, `bf7cc4e..3de88ab sprint2 -> sprint2`; `git show --format=fuller --stat --oneline HEAD` and `git diff HEAD^ HEAD --name-only` — `PASS` for the nine-path boundary; `git ls-remote origin refs/heads/sprint2` — `PASS`, returned `3de88ab2d4099a80abb45f010ec9069ed0ad3c70`; local `HEAD` and `origin/sprint2` both point to `3de88ab`.
+- **Observed working tree:** `START.md` remains a pre-existing deletion; `.agents/`, `.claude/skills/`, `NEXT_SESSION.md`, `README.pdf`, `reference/` and `skills-lock.json` remain untracked and excluded. No staged paths remained after delivery verification.
+- **Evidence:** `E-SEA-048` records the commit boundary and remote synchronization; `E-SEA-046` and `E-SEA-047` record B-12 local checks and human review.
+- **Limitations / blockers:** the delivery does not establish live AISStream receipt, real-key validity, complete R2 acceptance or release readiness. No live request, deployment, B-13 implementation, secret use or cleanup of unrelated paths occurred.
+- **Rollback / recovery:** do not reset the shared branch. If recovery is requested, inspect the commit and revert only the reviewed B-12 delivery; preserve the now-tracked `SPRINT-02.md`, append-only history, pre-existing `START.md` deletion and unrelated untracked paths. Product owner decides recovery acceptance.
+- **Handoff:** B-12 delivery and the user's request to track `SPRINT-02.md` are complete. Stop; any further implementation, live access or delivery requires its own authorization.

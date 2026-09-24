@@ -1,7 +1,7 @@
 # EVIDENCE.md — фактичний evidence ledger
 
 - **ID:** `EVIDENCE-SEA-001`
-- **Version:** `0.16.0`
+- **Version:** `0.17.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
@@ -578,3 +578,15 @@
 - **Status:** `PASS` for the user's explicit B-12 diff-review decision; live provider behavior, full R2 acceptance and release readiness remain unverified.
 - **Reviewer / owner:** user — final diff-review decision; delivery/technical owner — evidence recording.
 - **Limitations and follow-up:** no commit or push authorization is implied. B-13, live AISStream access, real-key use and overall product acceptance remain separately gated.
+
+### E-SEA-048 — B-12 commit and remote delivery
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R2-B12-001` v1.0.0; `E-SEA-046`; `E-SEA-047`; `SPRINT-SEA-R2-001` v1.0.0.
+- **Claim under verification:** the user-authorized B-12 implementation, records and unchanged `SPRINT-02.md` were committed on `sprint2` and the commit was pushed to `origin/sprint2` without unrelated paths.
+- **Source:** user request to commit/push and include `SPRINT-02.md`; staged path inspection; `git diff --cached --check`; `git commit`; `git push origin sprint2`; `git show --format=fuller --stat --oneline HEAD`; `git diff HEAD^ HEAD --name-only`; `git ls-remote origin refs/heads/sprint2`; `git status --short --branch`.
+- **Expected:** the delivery commit contains exactly the five B-12 implementation/test paths, `TASK_SPEC.md`, `EVIDENCE.md`, `RUNBOOK.md`, and `SPRINT-02.md`; local and remote sprint2 refs agree; the pre-existing `START.md` deletion and other untracked paths remain excluded.
+- **Observed:** commit `3de88ab2d4099a80abb45f010ec9069ed0ad3c70` (`feat(r2): implement B-12 snapshot collector`) contains exactly those nine paths. `git push origin sprint2` completed `bf7cc4e..3de88ab sprint2 -> sprint2`. `git ls-remote origin refs/heads/sprint2` returned `3de88ab2d4099a80abb45f010ec9069ed0ad3c70`; `HEAD` and `origin/sprint2` both point to `3de88ab`. `SPRINT-02.md` was committed as-is and was not edited. `START.md` remains deleted and `.agents/`, `.claude/skills/`, `NEXT_SESSION.md`, `README.pdf`, `reference/` and `skills-lock.json` remain untracked and excluded.
+- **Timestamp / environment:** 2026-09-24; local SeaRadar workspace; branch `sprint2`; remote `origin`.
+- **Status:** `PASS` for exact commit contents, push and remote synchronization.
+- **Reviewer / owner:** delivery/technical owner — commit boundary and remote check; user — explicit commit/push and Sprint-file tracking authorization.
+- **Limitations and follow-up:** delivery does not establish live AISStream receipt, real-key validity, complete R2 acceptance or release readiness. B-13 and live access remain separately gated.
