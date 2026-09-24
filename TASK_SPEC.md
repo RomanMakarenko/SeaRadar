@@ -880,7 +880,8 @@ If this Draft is revised or rejected before implementation, inspect the diff and
 - **Contract / task status:** `Verified` for bounded B-12 local implementation after checks and the user's `continue` decision on 2026-09-24. Contract review, implementation authorization and final diff review are recorded above.
 - **Evidence boundary:** baseline commit `bf7cc4e1cd1a8029ccdaf82155ee45ede055824d` was synchronized with `origin/sprint2`. Deterministic implementation checks and the human review decision are recorded in `E-SEA-046` and `E-SEA-047`; product behavior with AISStream and real-key validity remain unverified.
 - **Open Unknowns/blockers:** live provider availability, real-key validity, live receipt, actual AISStream event semantics, complete R2 user-story acceptance and release readiness remain `Unknown`/`Needs verification`. `CLAUDE.md` and `SPEC.md` still describe B-08 as current; governance-status synchronization is a separate documentation decision and remains outside this task. DEC-007 is `Ready` and resolves the B-12 transport-boundary conflict.
-- **Next bounded action:** deliver the reviewed B-12 implementation and append-only records in a scoped commit/push, including the user-requested unchanged `SPRINT-02.md`. Do not begin B-13, run live AISStream or inspect a real key.
+- **Delivery completed:** commit `3de88ab` (`feat(r2): implement B-12 snapshot collector`) delivered the reviewed implementation and unchanged `SPRINT-02.md`; documentation follow-up `fef4a8f` (`docs(r2): record B-12 remote delivery`) is also synchronized with `origin/sprint2`. `E-SEA-048` records the implementation delivery; the follow-up commit removes the absolute local path from the runbook entry.
+- **Next bounded action:** prepare the B-13 task contract for human review only. B-13 implementation, live AISStream, real-key use and any further commit/push remain separately gated.
 - **Rollback / recovery:** no rollback was performed. If the `continue` decision is revised, inspect the diff and restore only the five B-12 implementation/test paths to their verified pre-B-12 state; preserve append-only records, the pre-existing `START.md` deletion, the now-user-authorized `SPRINT-02.md` path and all unrelated untracked paths. Product owner decides recovery acceptance from the reviewed diff and evidence.
 
 ## Delivery authorization — commit, push and Sprint 2 tracking
@@ -890,7 +891,7 @@ If this Draft is revised or rejected before implementation, inspect the diff and
 - **Exact delivery scope:** commit and push the five B-12 implementation/test paths plus `TASK_SPEC.md`, `EVIDENCE.md`, `RUNBOOK.md`, and the existing `SPRINT-02.md`; no other pre-existing or untracked path is authorized for staging.
 - **Sprint-file boundary:** `SPRINT-02.md` remains content-read-only. The user specifically authorized tracking this existing file as-is; it will not be edited. This is a one-time exception only to its previously excluded staging boundary.
 - **Preservation:** leave the `START.md` deletion and all other unrelated untracked inputs unstaged and unchanged. No live AISStream request, real-key use, B-13 work, or deployment is authorized by this delivery instruction.
-- **Status:** commit/push of the exact paths above is authorized; remote delivery remains unverified until the push and remote-ref check complete.
+- **Status:** completed. Exact authorized paths were committed as `3de88ab` and pushed; the local and remote branch were subsequently verified at `fef4a8f`. No other path was added to that delivery.
 
 # TASK-SEA-R2-DEC007-001 — B-12 transport-boundary decision record
 
@@ -924,3 +925,149 @@ If this Draft is revised or rejected before implementation, inspect the diff and
 - **Observed result:** DEC-007 is `Ready`; the B-12 transport-boundary exception is recorded and indexed. B-12's own task contract remains `Draft` pending its separate review. No implementation, live provider request, secret access, commit or push occurred.
 - **Rollback:** inspect and remove/revise only the appended DEC007 task section and the DEC-007 entry/file. Preserve all historical and pre-existing paths.
 - **Next gate:** human review of `TASK-SEA-R2-B12-001`; implementation remains separately authorized only after that review and explicit user authorization.
+
+# TASK-SEA-R2-HANDOFF-001 — Next-session transfer preparation
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-24
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`NEXT_SESSION.md`](NEXT_SESSION.md), `TASK-SEA-R2-B12-001`, `E-SEA-046`, `E-SEA-047`, `E-SEA-048`.
+
+## Goal and boundary
+
+- **Goal:** refresh the restart handoff after the bounded B-12 implementation and delivery, so the next session can resume from the verified remote baseline without replaying this conversation.
+- **Output:** an accurate `NEXT_SESSION.md` prompt and factual B-12 delivery closure/current next gate in this task record.
+- **Scope:** documentation only. B-13 implementation is not part of this task; the next session may prepare a B-13 task contract for human review only.
+- **Authorization:** the user requested project handoff preparation on 2026-09-24. This does not authorize B-13 implementation, live provider access, secret use, or commit/push.
+
+## Allowed paths and exclusions
+
+- **Allowed:** `TASK_SPEC.md` (this section and current B-12 delivery closure), `NEXT_SESSION.md`, append-only `EVIDENCE.md`, append-only `RUNBOOK.md` after checks.
+- **Read-only:** `CLAUDE.md`, `SPEC.md`, `SPRINT-02.md`, `DEC-006`, `DEC-007`, implementation/tests, current Git history and remote refs.
+- **Excluded:** product/source/test/runtime/configuration paths, `CLAUDE.md`, `SPEC.md`, `SPRINT-02.md`, decision records/index, secrets and all unrelated/pre-existing paths. Do not stage or clean excluded/untracked paths.
+
+## Expected output and acceptance
+
+- [x] `NEXT_SESSION.md` names `fef4a8f` as the delivered baseline and describes B-12 as `Verified`/delivered only within its bounded local scope.
+- [x] The next bounded action is B-13 contract preparation for human review only; B-13 implementation requires a separate reviewed contract and explicit authorization.
+- [x] Live AISStream availability/receipt, real-key validity, complete R2 acceptance, and release readiness remain `Unknown`/unverified.
+- [x] Existing `START.md` deletion and unrelated untracked inputs are preserved; `NEXT_SESSION.md` remains untracked; `SPRINT-02.md` remains unchanged.
+- [x] The stale B-12 delivery gate is closed by the factual delivery record above; append-only evidence/history are extended only after checks.
+- [x] No commit, push, product command, live request, or secret access occurs.
+
+## Verification, stop and recovery
+
+- **Checks:** `HEAD`, local `origin/sprint2`, and remote `refs/heads/sprint2` were verified at `fef4a8fc51c9c0e41a8158e4e541af574f895741`; `git diff --check -- TASK_SPEC.md EVIDENCE.md RUNBOOK.md` passed; focused Python checks confirmed required handoff content, preserved R1 archive and no trailing whitespace; changed-path and staged-path inspection confirmed the documented boundary and no staged paths.
+- **Observed result:** all six acceptance criteria passed. `TASK_SPEC.md`, `EVIDENCE.md`, and `RUNBOOK.md` are locally modified; `NEXT_SESSION.md` remains untracked. Existing `START.md` deletion and other untracked paths remain preserved. Initial structural validator had one mismatched expected phrase; the check was corrected to the actual approved wording and passed. No product tests/build/server/live request/secret access/commit/push occurred.
+- **Stop if:** a ref differs from the recorded baseline, handoff requires changing `SPRINT-02.md`/governance decisions or product behavior, or any secret/live-provider operation is proposed. Record the blocker and ask for a separate decision rather than silently expanding scope.
+- **Recovery:** inspect the documentation diff; restore only the handoff edits in `TASK_SPEC.md` and `NEXT_SESSION.md` if rejected. Never reset the shared branch or alter prior append-only evidence/runbook entries, `START.md`, or unrelated local paths.
+- **Human review:** user confirmed `diff перевірив` and chose `continue` for this handoff diff on 2026-09-24. This accepts the documentation-only handoff checkpoint; it does not authorize commit/push or B-13 implementation. Recorded in `E-SEA-050`.
+- **Exit:** `Verified` for the documentation-only handoff at the local workspace checkpoint; commit/push and B-13 implementation remain unauthorized.
+
+# TASK-SEA-R2-B13-001 — R2 snapshot interface
+
+- **Version:** `1.0.0`
+- **Status:** `Active`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-24
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), [`docs/decisions/DEC-007-r2-b09-streaming-boundary.md`](docs/decisions/DEC-007-r2-b09-streaming-boundary.md), `TASK-SEA-R2-B12-001`, `E-SEA-046`–`E-SEA-051`, [`app/map-shell.tsx`](app/map-shell.tsx), [`app/sea-map.tsx`](app/sea-map.tsx), [`app/vessel-card.tsx`](app/vessel-card.tsx), [`app/api/snapshot/route.ts`](app/api/snapshot/route.ts), [`server/snapshot-collector.ts`](server/snapshot-collector.ts), [`tests/vessel-selection.spec.ts`](tests/vessel-selection.spec.ts), [`tests/snapshot-interface.spec.ts`](tests/snapshot-interface.spec.ts).
+
+## Goal, predecessor and authorization gate
+
+- **Goal:** connect the existing map, demo vessels, shared marker/card behavior and `GET /api/snapshot` to the approved B-13 one-shot interface state flow.
+- **Backlog:** `B-13` / `R2-B13-INTERFACE`.
+- **SPEC outcome:** `SPEC-SEA-001 / US-05…US-08`; this bounded task does not by itself close those user stories or complete R2 acceptance.
+- **Predecessors:** verified B-07 selection behavior, B-08 server-only key accessor, B-09 reader/route boundary, B-11 transformer and B-12 final snapshot response. B-10 remains a synthetic sample and is not live-provider evidence.
+- **Governance:** R2 is authorized by `DEC-006`; B-13 remained individually task-gated. `DEC-007` authorizes only the B-12 transport-boundary exception and did not itself authorize B-13 implementation, live-provider access or delivery. This contract introduced no change to scope, API contract, provider, security boundary or `SPRINT-02.md`.
+- **Gate history:** the user accepted this contract and separately authorized the B-13 implementation on 2026-09-24. The implementation and local checks are recorded below. Live AISStream access, real-key use, deployment and overall R2 acceptance remain outside that authorization. The user separately authorized the code and delivery-record commit/push requests; the final human review of this implementation/documentation diff remains a distinct checkpoint.
+
+## Owner and allowed paths
+
+- **Contract-preparation path:** append this B-13 contract to `TASK_SPEC.md`; retain all prior task and handoff history.
+- **Implementation paths used by the authorized delivery (`17006c6`):**
+  - `app/map-shell.tsx` — one-shot request/state ownership, source/status copy, selection reset and button behavior.
+  - `app/sea-map.tsx` — render the supplied demo or snapshot vessels through the existing Leaflet marker lifecycle; ensure demo motion is stopped while loading and real snapshots remain stationary.
+  - `app/globals.css` — only the minimal existing-panel/status styling needed for the specified states; no visual redesign.
+  - `tests/snapshot-interface.spec.ts` — one focused Playwright spec using intercepted/mocked `GET /api/snapshot` responses; no live network or credentials.
+- **Append-only records after actual checks and final review:** `EVIDENCE.md` and `RUNBOOK.md`.
+- **Read-only inputs:** `CLAUDE.md`, `PROJECT_BRIEF.md`, `SPEC.md`, `SPRINT-02.md`, DEC-006, DEC-007, B-07/B-12 implementation and tests, existing map/card/model/CSS and current dependency/test configuration.
+- **Excluded paths:** all `.env*` files, credentials, `server/`, `app/api/`, `app/vessel-model.ts`, `app/vessel-card.tsx`, B-08/B-09/B-11/B-12 implementation paths, `data/`, package manifests/lockfile, Playwright/test-runner configuration, existing B-07 and B-12 tests, `CLAUDE.md`, `PROJECT_BRIEF.md`, `SPEC.md`, `SPRINT-02.md`, decision records/index, `NEXT_SESSION.md`, `README.pdf`, `.agents/`, `.claude/skills/`, `reference/`, `skills-lock.json`, the pre-existing `START.md` deletion, generated files and all unrelated paths. Do not inspect, modify, stage or clean excluded paths.
+
+## Inputs and behavior contract
+
+- **API boundary:** call only the existing same-origin `GET /api/snapshot`; do not change its URL, request method, headers, response schema, fixed error mappings, Node.js runtime or server/key handling. Do not include a key or credential in browser code, request data, response handling, logs or test fixtures.
+- **Idle demo:** on initial load, preserve the current three moving demo vessels and existing `Демонстраційні дані` source label. Preserve B-07 marker IDs, marker click-to-card mapping, repeated-click persistence and card formatting.
+- **Loading:** clicking the single enabled `Завантажити справжні позиції` button starts one request. While pending, disable the button, stop/unmount demo motion, remove demo markers, clear the selected vessel/card and show `Завантаження…`; retain the base map. Do not allow overlapping requests or stale completion to replace a later state. After an attempt settles, a user may click again to start a new one-shot attempt; there is no automatic retry, polling or history. A page reload returns to the initial demo state; do not persist results.
+- **Successful non-empty snapshot:** render exactly the returned `vessels` as stationary AISStream markers using the existing marker icon and card. Selecting a marker opens its matching card; repeated selection must not switch to another vessel. Show the literal status `AISStream · знімок за 15 с · отримано HH:MM:SS UTC · суден: N · вибірка неповна`, where time is formatted from `collectedAt` in UTC and `N` is the returned `count`. If `truncated` is true, append ` · зупинено на ліміті 100`. The `15` denotes configured window length, not measured elapsed duration. On the first non-empty success only, return the map to its existing initial center/zoom; subsequent successful non-empty attempts must not force a view change. Do not animate or interpolate AIS vessels.
+- **Successful empty snapshot:** represent `ok: true` with zero vessels as `empty`, not as a transport error or proof that no vessels exist. Show the same AISStream status label with `суден: 0` and the exact explanation `За час збору позицій не отримано`; render no vessels/card and keep the base map.
+- **Error:** any fixed B-12 error response results in an empty map state: remove all demo/snapshot markers and the selected card, show source/status `Даних на карті немає`, and show `Не вдалося отримати дані: <message>` using only the fixed response message. For `no_api_key`, the exact UI text is `Не вдалося отримати дані: Ключ AISStream не налаштовано`. Do not preserve an earlier snapshot after a failed new attempt. A page reload restores the demo state.
+- **Rejected/malformed response copy:** Sprint/API contracts specify fixed messages for server error responses but do not define the UI message for browser fetch rejection or an invalid JSON/schema response. For either case, show the fixed text `Не вдалося отримати дані: Сервіс не повернув коректну відповідь`. Do not expose raw response, exception, stack or provider text. The user approved this fallback on 2026-09-24; do not change it without review.
+- **Latest attempt / races:** the loading lock prevents concurrent user attempts; clear the selected vessel on each attempt and on empty/error completion. An attempt that has settled may be followed by a fresh user-initiated request. No public API error code or response shape is added by the UI.
+- **Map boundary:** preserve the existing base map, tile source/attribution, bounds, map interaction and client-only Leaflet import/lifecycle. Do not add a map library, redesign, new region, map persistence or external request beyond existing basemap tiles and the same-origin snapshot request.
+
+## Expected output
+
+1. One button wired to the existing B-12 endpoint and the specified idle/loading/success/empty/error state transitions.
+2. Reuse of the existing shared `Vessel`, marker icon, card, selection and formatting behavior; demo motion exists only in idle-demo and snapshot vessels are stationary.
+3. Minimal deterministic browser coverage of the state transitions and regressions, using mocked endpoint responses and blocked external tile requests; no live AISStream request or real key.
+4. Factual append-only evidence and runbook handoff after the authorized implementation checks and final human diff review.
+
+## Acceptance criteria — implementation checks recorded; final review pending
+
+- [x] Initial page load preserves three demo vessels, their movement, source label, shared card behavior and all existing B-07 assertions.
+- [x] One button triggers one same-origin snapshot request; while pending it is disabled and demo vessels, selection and card are absent while the base map remains.
+- [x] A second click cannot start an overlapping request; a later user-initiated attempt can start only after the previous attempt settles.
+- [x] A non-empty success renders exactly the returned MMSI IDs once each, keeps them stationary, opens the matching existing card and displays the exact status text using response count/time/truncation values.
+- [x] First non-empty success resets the map to the existing initial center/zoom; later success does not reset a user-adjusted view.
+- [x] Empty success renders no vessels/card and displays the exact empty explanation and the success status with count zero; it is distinct from an error.
+- [x] Fixed API error responses render no vessels/card, use `Даних на карті немає`, and show the exact response message; the no-key UI text matches exactly. No prior snapshot is retained.
+- [x] Network rejection and malformed response render no vessels/card and show exactly `Не вдалося отримати дані: Сервіс не повернув коректну відповідь`, without exposing raw details.
+- [x] Reload returns to idle-demo; no UI state is persisted, no automatic retry/polling/history is added, and AIS vessels never move. A later attempt requires a fresh user click after settlement.
+- [x] The unchanged B-07 Playwright test and focused snapshot-interface cases passed with mocked responses and blocked OSM tiles.
+- [ ] A separate security/path review confirms no key, secret, provider/raw error, stack, or unvalidated response payload is exposed, and no excluded server/API/model/card/config/dependency path changed.
+- [ ] Final human diff review chooses `continue`, `revise` or `HOLD`; commit/push require separate authorization.
+
+**Human review:** user chose `continue` for this B-13 contract and approved the generic fallback copy on 2026-09-24. That accepted the task contract, not the later implementation diff. The user separately authorized B-13 implementation and later requested delivery; live AISStream access, real-key use and overall R2 acceptance remain outside this task.
+
+**Current acceptance status:** `Active; the bounded UI implementation and its local automated checks are recorded below. Security/path review and final human diff review remain open; this does not claim full R2 acceptance.`
+
+## Verification plan
+
+### Contract-preparation checks — historical checkpoint, 2026-09-24
+
+1. The B-12 baseline and preservation boundaries were inspected; no paths were staged.
+2. The proposed contract was compared with the R2 scope, decisions, B-12 response shape and current UI/API boundaries.
+3. `git diff --check -- TASK_SPEC.md` and focused structure/content checks passed after correcting a validator expectation.
+4. These checks established only that the proposed contract was bounded and structurally consistent; they did not prove UI behavior, browser acceptance, provider availability, key validity, full R2 acceptance or release readiness.
+
+### Implementation verification — observed 2026-09-24
+
+1. `npx playwright test tests/vessel-selection.spec.ts tests/snapshot-interface.spec.ts` — **PASS**, 16 tests (B-07 and B-13 mocked browser cases; external OSM tile requests blocked by the tests).
+2. `npx tsc --noEmit` — **PASS** (exit success).
+3. `npm run build` — **PASS**; Next.js reported that `/Users/romanmakarenko/package-lock.json` is outside the repository and was ignored.
+4. `git show --format=fuller --stat --oneline HEAD` and `git diff HEAD^ HEAD --name-only` confirmed that B-13 commit `17006c615f7a93e84c7c554c624b8909691828fb` contains exactly the four authorized implementation/test paths. `git rev-parse HEAD`, `git rev-parse origin/sprint2`, and `git ls-remote origin refs/heads/sprint2` agreed on the same commit.
+5. No live AISStream request or real-key inspection/use was performed. The browser tests use deterministic mocked responses; these checks do not establish live provider behavior, overall R2 acceptance or release readiness.
+6. The implementation/security-path review and final human diff decision remain pending; no `DONE` decision is claimed.
+
+## Stop conditions
+
+- **Original implementation gate (satisfied):** contract review and separate explicit user authorization were required before implementation; both were obtained before the B-13 code change.
+- Stop if implementing the approved text/state requires changing the B-12 API response/error contract, server/key handling, shared `Vessel` model/card, B-07 test/config, a dependency, an excluded path or any product scope beyond `SPRINT-02.md`.
+- Stop if the interface cannot stop demo motion while retaining the base map within the allowed paths, if exact copy/empty-vs-error semantics remain ambiguous, or if live access/real-key inspection would be required for an acceptance check.
+- Stop after implementation if overlapping requests are possible, an old result overwrites a newer attempt, error preserves stale vessels, empty is confused with failure, a marker/card mismatch occurs, AIS markers move, demo motion continues during loading, map reset violates the first-success rule, key/provider text leaks, tests fail, or unexpected paths change.
+- **Exit decision:** `DONE` only after authorized implementation, targeted checks, factual evidence and final human `continue`; otherwise `CONTINUE WITH APPROVAL` or `HOLD`.
+
+## Rollback / recovery
+
+No rollback was performed. If recovery is requested, inspect the reviewed diff and revert only `app/map-shell.tsx`, `app/sea-map.tsx`, `app/globals.css` and `tests/snapshot-interface.spec.ts` to the B-12 baseline at `fef4a8f`; do not reset the shared branch, touch secrets, stop unrelated processes, or alter unrelated/untracked paths. The product owner decides recovery acceptance based on the actual diff and evidence.
+
+## Handoff
+
+- **Contract-preparation checkpoint (historical):** the B-13 contract was reviewed and accepted on 2026-09-24; that decision alone did not authorize implementation, live provider access, real-key use, or delivery.
+- **Implementation and checks:** the separately authorized B-13 interface implementation is committed as `17006c615f7a93e84c7c554c624b8909691828fb` (`feat(r2): deliver B-13 snapshot interface`) on `sprint2`. The commit contains exactly `app/globals.css`, `app/map-shell.tsx`, `app/sea-map.tsx`, and `tests/snapshot-interface.spec.ts`. On 2026-09-24, `npx playwright test tests/vessel-selection.spec.ts tests/snapshot-interface.spec.ts` passed all 16 tests; `npx tsc --noEmit` succeeded; `npm run build` succeeded. The build emitted a warning that Next.js ignored `/Users/romanmakarenko/package-lock.json` because it is outside this repository.
+- **Delivery state:** before this documentation closeout, local `HEAD`, `origin/sprint2` and remote `refs/heads/sprint2` were verified at `17006c615f7a93e84c7c554c624b8909691828fb`. Delivery records are being updated under the separately authorized documentation commit/push request; record that delivery only after verifying its outcome.
+- **Open review:** automated checks establish bounded mocked local behavior only. The final human diff review for the implementation/security-path criterion remains open; do not mark the task `DONE` until that review is recorded. No live AISStream request, real-key validity/receipt, full R2 acceptance or release readiness is established.
+- **Next gate:** review the exact delivery-record diff and choose `continue`, `revise` or `HOLD`. Preserve all unrelated changes and paths.

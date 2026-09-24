@@ -1,7 +1,7 @@
 # EVIDENCE.md — фактичний evidence ledger
 
 - **ID:** `EVIDENCE-SEA-001`
-- **Version:** `0.17.0`
+- **Version:** `0.19.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
@@ -590,3 +590,39 @@
 - **Status:** `PASS` for exact commit contents, push and remote synchronization.
 - **Reviewer / owner:** delivery/technical owner — commit boundary and remote check; user — explicit commit/push and Sprint-file tracking authorization.
 - **Limitations and follow-up:** delivery does not establish live AISStream receipt, real-key validity, complete R2 acceptance or release readiness. B-13 and live access remain separately gated.
+
+### E-SEA-049 — B-12 delivery handoff preparation
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R2-HANDOFF-001`; `TASK-SEA-R2-B12-001`; `E-SEA-046`; `E-SEA-047`; `E-SEA-048`.
+- **Claim under verification:** the restart handoff was updated to the delivered B-12 baseline and identifies B-13 contract preparation as the next review-gated action, without authorizing implementation.
+- **Source:** `TASK_SPEC.md`; `NEXT_SESSION.md`; `git status --short --branch`; `git log -3 --oneline --decorate`; `git rev-parse HEAD`; `git rev-parse origin/sprint2`; `git ls-remote origin refs/heads/sprint2`; `git diff --check -- TASK_SPEC.md`; focused Python structure/content check.
+- **Expected:** local, tracking, and remote refs agree at `fef4a8fc51c9c0e41a8158e4e541af574f895741`; B-12 scope/limitations are stated accurately; B-13 remains contract-preparation/review only; historic R1 handoff is retained; unrelated and secret paths remain untouched.
+- **Observed:** local `HEAD`, `origin/sprint2`, and remote `refs/heads/sprint2` were verified at `fef4a8fc51c9c0e41a8158e4e541af574f895741`. `git diff --check -- TASK_SPEC.md` passed and the focused handoff structure/content check passed after correcting an initial validator expectation that did not match the chosen wording. The working tree retained the pre-existing `START.md` deletion and unrelated untracked paths; no staged paths were present. The handoff distinguishes verified local B-12 behavior from unverified live provider/full R2/release claims and keeps B-13 implementation gated.
+- **Timestamp / environment:** 2026-09-24; local SeaRadar workspace; branch `sprint2`.
+- **Status:** `PASS` for the recorded baseline and handoff structure checks. No product tests, build, server, live request, or secret access was performed for this documentation task.
+- **Reviewer / owner:** delivery/technical owner — handoff content and scoped checks.
+- **Limitations and follow-up:** governance status in `CLAUDE.md`/`SPEC.md` and historical plan/decision wording remains inconsistent and was not changed. Handoff records remain local/uncommitted; B-13 contract review and separate implementation authorization remain pending.
+
+### E-SEA-050 — human review of handoff diff
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R2-HANDOFF-001`.
+- **Claim under verification:** the user reviewed the documentation-only handoff diff and accepted it to continue, without authorizing commit/push or B-13 implementation.
+- **Source:** user's messages `diff перевірив` and selected `continue` in the handoff review.
+- **Expected:** record the human review choice narrowly; do not infer authorization beyond the handoff documentation checkpoint.
+- **Observed:** user confirmed `diff перевірив` and selected `continue`. No commit, push, B-13 implementation, live request, or secret access was authorized or performed by this review decision.
+- **Timestamp / environment:** 2026-09-24; local SeaRadar workspace; branch `sprint2`.
+- **Status:** `PASS` for the recorded human review choice only.
+- **Reviewer / owner:** user — handoff diff review and decision.
+- **Limitations and follow-up:** the decision does not approve or verify B-13 contract content, B-13 implementation, commit/push, live provider behavior, complete R2 acceptance, or release readiness.
+
+### E-SEA-051 — B-13 interface implementation checks and code delivery
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001 / US-05…US-08`; `TASK-SEA-R2-B13-001` v1.0.0; `TASK-SEA-R2-B07-001`; `E-SEA-050`.
+- **Claim under verification:** the separately authorized B-13 interface slice passed its bounded local automated checks and its exact four-path implementation commit is synchronized to `origin/sprint2`.
+- **Source:** `npx playwright test tests/vessel-selection.spec.ts tests/snapshot-interface.spec.ts`; `npx tsc --noEmit`; `npm run build`; `git show --format=fuller --stat --oneline HEAD`; `git diff HEAD^ HEAD --name-only`; `git rev-parse HEAD`; `git rev-parse origin/sprint2`; `git ls-remote origin refs/heads/sprint2`.
+- **Expected:** all 16 B-07/snapshot-interface Playwright cases pass using mocked API responses and blocked OSM tiles; TypeScript and production build succeed; commit `17006c615f7a93e84c7c554c624b8909691828fb` contains exactly `app/globals.css`, `app/map-shell.tsx`, `app/sea-map.tsx`, and `tests/snapshot-interface.spec.ts`; local and remote sprint2 refs agree.
+- **Observed:** Playwright reported `16 passed (12.6s)`; `npx tsc --noEmit` exited successfully; `npm run build` completed successfully (Next.js emitted an out-of-repository `package-lock.json` warning). The implementation commit is `17006c615f7a93e84c7c554c624b8909691828fb` (`feat(r2): deliver B-13 snapshot interface`), its path list was exactly the four expected paths, and local `HEAD`, `origin/sprint2`, and remote `refs/heads/sprint2` all resolved to that hash.
+- **Timestamp / environment:** 2026-09-24; local SeaRadar workspace; branch `sprint2`; remote `origin`.
+- **Status:** `PASS` for the bounded mocked UI checks, typecheck, build, and exact code-commit/remote synchronization.
+- **Reviewer / owner:** delivery/technical owner — commands, commit boundary and ref synchronization. No separate human implementation-diff review decision is claimed by this evidence.
+- **Limitations and follow-up:** no live AISStream request or real-key inspection/use occurred. These local checks do not establish provider availability/receipt, key validity, full R2 acceptance, final human implementation-diff acceptance or release readiness. The separately requested delivery-record commit/push is not covered by this code-delivery evidence.

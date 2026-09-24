@@ -1,7 +1,7 @@
 # RUNBOOK.md — delivery history and handoff
 
 - **ID:** `RUNBOOK-SEA-001`
-- **Version:** `0.17.0`
+- **Version:** `0.19.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
@@ -544,3 +544,36 @@ Each entry must include: date/session, goal and scope, changed artifacts, comman
 - **Limitations / blockers:** the delivery does not establish live AISStream receipt, real-key validity, complete R2 acceptance or release readiness. No live request, deployment, B-13 implementation, secret use or cleanup of unrelated paths occurred.
 - **Rollback / recovery:** do not reset the shared branch. If recovery is requested, inspect the commit and revert only the reviewed B-12 delivery; preserve the now-tracked `SPRINT-02.md`, append-only history, pre-existing `START.md` deletion and unrelated untracked paths. Product owner decides recovery acceptance.
 - **Handoff:** B-12 delivery and the user's request to track `SPRINT-02.md` are complete. Stop; any further implementation, live access or delivery requires its own authorization.
+
+### 2026-09-24 — next-session handoff prepared after B-12 delivery
+
+- **Session:** documentation-only restart preparation following the verified B-12 delivery on `sprint2`.
+- **Goal and scope:** replace the obsolete B-12 contract-preparation prompt with a current handoff; clarify that the next bounded action is preparation of a B-13 task contract for human review only. No B-13 implementation or governance synchronization was performed.
+- **Changed artifacts:** updated `TASK_SPEC.md` with the handoff task and B-12 delivery closure; refreshed the current portion of untracked `NEXT_SESSION.md` while retaining the historical R1 archive; appended `E-SEA-049` and this runbook record. `SPRINT-02.md`, `CLAUDE.md`, `SPEC.md`, decision records, source, tests and secret files were not changed or read for secret content.
+- **Baseline and checks:** local `HEAD`, `origin/sprint2`, and remote `refs/heads/sprint2` were verified at `fef4a8fc51c9c0e41a8158e4e541af574f895741`. `git diff --check -- TASK_SPEC.md` — `PASS`; focused Python structure/content check for current handoff and preserved R1 archive — `PASS` after correcting a validator expectation; changed tracked path review showed only `TASK_SPEC.md` at that checkpoint. No build, product test, server, live request or secret access was performed.
+- **Working tree boundary:** preserve pre-existing `START.md` deletion and untracked `.agents/`, `.claude/skills/`, `NEXT_SESSION.md`, `README.pdf`, `reference/`, and `skills-lock.json`. Handoff documentation changes remain local/uncommitted and were not staged.
+- **Open governance issue:** `CLAUDE.md` and `SPEC.md` still identify B-08 as current, while Sprint/decision/index records contain historical wording predating the delivered B-12 state. These were not silently changed; synchronize them only under a separately bounded governance decision.
+- **Evidence:** `E-SEA-049`; B-12 implementation/review/delivery evidence remains `E-SEA-046` through `E-SEA-048`.
+- **Rollback / recovery:** inspect the documentation diff; if the handoff is rejected, restore only this task's edits to `TASK_SPEC.md` and `NEXT_SESSION.md` and preserve append-only evidence/history, `START.md` deletion, and all unrelated untracked paths. Do not reset the shared branch or stage/push this handoff without separate authorization.
+- **Handoff:** next session verifies the baseline and local documentation diff, then prepares `TASK-SEA-R2-B13-001` for human review only. Stop after presenting the contract; implementation requires human `continue` and separate explicit authorization. Live AISStream access, real-key use, full R2 acceptance and release readiness remain unverified.
+
+### 2026-09-24 — B-13 snapshot interface checks and code delivery
+
+- **Session:** bounded B-13 v1.0.0 interface implementation, local verification, and delivery-record closeout.
+- **Goal and scope:** connect the map UI to the existing same-origin snapshot endpoint under the approved B-13 contract. The delivered implementation commit contains exactly `app/globals.css`, `app/map-shell.tsx`, `app/sea-map.tsx`, and `tests/snapshot-interface.spec.ts`; no API/server/model/card/config/dependency or unrelated path was included.
+- **Authorization and boundary:** the user accepted the B-13 contract and separately authorized its implementation; the user later requested commit/push. No live AISStream access, real-key use, deployment, or overall R2 acceptance was authorized or performed. The separate request to retain demo vessels until the first real snapshot was not implemented; it requires its own contract change and authorization.
+- **Commit and remote:** `17006c615f7a93e84c7c554c624b8909691828fb` — `feat(r2): deliver B-13 snapshot interface`. `git diff HEAD^ HEAD --name-only` returned exactly the four paths above. Local `HEAD`, `origin/sprint2`, and remote `refs/heads/sprint2` were verified at this hash.
+- **Commands and status:** `npx playwright test tests/vessel-selection.spec.ts tests/snapshot-interface.spec.ts` — `PASS`, 16 tests; `npx tsc --noEmit` — `PASS`; `npm run build` — `PASS` (Next.js warned that the parent-directory `package-lock.json` is outside the Git repository and was ignored). `git diff --check -- TASK_SPEC.md EVIDENCE.md` and focused TASK_SPEC/EVIDENCE assertions — `PASS`.
+- **Changed documentation:** B-13 verification and delivery facts appended to `EVIDENCE.md` as `E-SEA-051`; B-13 current status, observed checks, code commit boundary and handoff updated in `TASK_SPEC.md`; this runbook entry added. `SPRINT-02.md`, `CLAUDE.md`, `SPEC.md`, decision records, source/tests beyond the existing delivered commit, and secret files were not changed for this documentation slice.
+- **Working-tree boundary:** `START.md` remains deleted; `.agents/`, `.claude/skills/`, `NEXT_SESSION.md`, `README.pdf`, `reference/`, and `skills-lock.json` remain untracked and excluded. Only `TASK_SPEC.md`, `EVIDENCE.md`, and `RUNBOOK.md` are intended for the documentation closeout; no unrelated path is authorized for staging.
+- **Open review / delivery checkpoint:** automated results and existing code-commit synchronization are verified. A separate human review of the exact current diff is still required before marking B-13 `DONE` or delivering this documentation closeout. Commit/push of these records has been explicitly requested; after the human `continue`, record its actual result without changing unrelated paths.
+- **Evidence:** `E-SEA-051` records the B-13 automated checks and code-commit synchronization.
+- **Limitations / blockers:** no live AISStream request or real-key inspection/use occurred. Provider availability/receipt, real-key validity, full R2 acceptance, final human implementation-diff acceptance and release readiness remain `Unknown`/unverified.
+- **Rollback / recovery:** no rollback was performed. If the documentation diff is revised, edit only `TASK_SPEC.md`, `EVIDENCE.md`, and `RUNBOOK.md`; do not reset the branch or alter `START.md`/untracked paths. Recovery of B-13 code, if later requested, is limited to reverting its reviewed four-path commit with product-owner acceptance.
+- **Handoff:** review the exact documentation diff and choose `continue`, `revise`, or `HOLD`. Keep any newer demo-retention behavior separately contract-gated.
+
+### Human review — handoff diff
+
+- **Decision:** on 2026-09-24 the user confirmed `diff перевірив` and chose `continue` for the documentation-only handoff diff.
+- **Boundary:** this decision accepts the handoff checkpoint only; no commit/push or B-13 implementation authorization follows from it. No further product checks, live provider request, or secret access were performed.
+- **Evidence:** `E-SEA-050`.
