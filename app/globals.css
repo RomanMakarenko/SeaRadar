@@ -76,6 +76,17 @@ main {
   pointer-events: none;
 }
 
+.map-error-message,
+.map-empty-message {
+  padding: 0.5rem 0.6rem;
+  border: 1px solid rgb(15 23 42 / 18%);
+  border-radius: 0.35rem;
+  background: rgb(255 255 255 / 95%);
+  color: #0f172a;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
 .vessel-card {
   padding: 0.75rem;
   border: 1px solid rgb(15 23 42 / 18%);
