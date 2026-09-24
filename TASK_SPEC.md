@@ -715,7 +715,7 @@ If the B-11 contract is revised or rejected before implementation, inspect the d
 # TASK-SEA-R2-B12-001 — Bounded snapshot collector
 
 - **Version:** `1.0.0`
-- **Status:** `Ready`
+- **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-09-24
@@ -728,7 +728,7 @@ If the B-11 contract is revised or rejected before implementation, inspect the d
 - **SPEC outcome:** `SPEC-SEA-001 / US-05…US-08`; this bounded task does not satisfy or close a user story by itself.
 - **Predecessors:** verified B-09 intermediate reader/route and B-11 transformer. B-10 remains a synthetic sample; it is not evidence of live provider behavior.
 - **Boundary decision:** on 2026-09-24, the user approved a narrow B-09 transport-boundary extension for B-12 through [`DEC-007-R2-B09-STREAMING-BOUNDARY`](docs/decisions/DEC-007-r2-b09-streaming-boundary.md), now `Ready`. The extension is limited to delivering multiple raw text events during one bounded attempt so the collector can create the final snapshot. It does not reopen or rewrite the historical B-09 acceptance record. DEC-007 is the approved B-12-specific exception to the unchanged `SPRINT-02.md` Part C wording.
-- **Authorization gate:** the task contract is `Ready` after the human review decision `continue` on 2026-09-24. B-12 implementation, tests and endpoint changes still require separate explicit implementation authorization. Approval of DEC-007 resolves the transport-boundary governance conflict but does not authorize implementation. Live AISStream requests, real-key use, commit and push remain separately gated.
+- **Authorization gate:** the task contract is `Ready` after the human review decision `continue` on 2026-09-24. The user explicitly authorized the bounded B-12 implementation on 2026-09-24; this does not authorize live AISStream requests, real-key use, commit or push. DEC-007 resolves the transport-boundary governance conflict without changing the B-09 historical acceptance.
 
 ## Причина зміни межі — пояснення для замовника
 
@@ -791,20 +791,20 @@ If the B-11 contract is revised or rejected before implementation, inspect the d
 
 ## Acceptance criteria
 
-- [ ] The reader sends the exact existing subscription immediately after WebSocket open and forwards multiple text messages in order from the same connection; it does not stop after the first text message.
-- [ ] The total 15-second deadline starts before socket creation and includes connection and subscription time; successful open/subscription with no valid PositionReport by the deadline returns an empty success, while failure to reach subscription by the deadline maps to `connect_failed`.
-- [ ] The collector uses the existing B-11 transformer and existing `Vessel` structure without changing B-11 paths or behavior; invalid transformed reports are not included and no position defaults to `0,0`.
-- [ ] Repeated MMSI produces one vessel; strictly newer timestamp replaces the entire object; older timestamp does not replace it; equal timestamp retains the first accepted object; comparison follows B-11 millisecond precision.
-- [ ] The collection ends at the 15-second window with `reason: 'window_elapsed'`, including the empty-success case, or immediately upon accepting the 100th unique valid vessel with `reason: 'limit_reached'`, `count: 100`, and `truncated: true`.
-- [ ] Provider error, unexpected disconnect, malformed JSON payload, or internal failure after partial input returns the fixed HTTP 502 contract and never exposes the collected partial set, raw provider text, socket details, key or stack.
-- [ ] No-key returns the exact B-09 `no_api_key` response and does not construct a socket. Cancellation returns/rejects without a partial response or new public code.
-- [ ] Reader and collector settle once; timer, listener and socket cleanup occurs exactly once on window, limit, error, disconnect and cancellation; late events do not change the result.
-- [ ] Deterministic fake-event/controlled-clock checks cover: window elapsed; deadline before connection/subscription; limit reached; duplicate MMSI; newer, older and equal timestamps; invalid transformed reports; provider error after partial input; disconnect after partial input; cancellation after partial input; malformed JSON; repeated/late terminal events; exactly-once completion and cleanup; and success/error response shapes.
-- [ ] Existing B-09 guarantees (Node.js Route Handler, exact endpoint/subscription, fixed errors, no-key behavior, secret isolation and cancellation cleanup) remain covered after updating the reader lifecycle tests.
-- [ ] No package/dependency, B-11 transformer, sample, shared model, UI/map/demo, B-13 or unrelated path is changed; no live request or secret access occurs.
-- [ ] Final human diff review explicitly chooses `continue`, `revise` or `HOLD`; commit/push require separate explicit authorization.
+- [x] The reader sends the exact existing subscription immediately after WebSocket open and forwards multiple text messages in order from the same connection; it does not stop after the first text message.
+- [x] The total 15-second deadline starts before socket creation and includes connection and subscription time; successful open/subscription with no valid PositionReport by the deadline returns an empty success, while failure to reach subscription by the deadline maps to `connect_failed`.
+- [x] The collector uses the existing B-11 transformer and existing `Vessel` structure without changing B-11 paths or behavior; invalid transformed reports are not included and no position defaults to `0,0`.
+- [x] Repeated MMSI produces one vessel; strictly newer timestamp replaces the entire object; older timestamp does not replace it; equal timestamp retains the first accepted object; comparison follows B-11 millisecond precision.
+- [x] The collection ends at the 15-second window with `reason: 'window_elapsed'`, including the empty-success case, or immediately upon accepting the 100th unique valid vessel with `reason: 'limit_reached'`, `count: 100`, and `truncated: true`.
+- [x] Provider error, unexpected disconnect, malformed JSON payload, or internal failure after partial input returns the fixed HTTP 502 contract and never exposes the collected partial set, raw provider text, socket details, key or stack.
+- [x] No-key returns the exact B-09 `no_api_key` response and does not construct a socket. Cancellation returns/rejects without a partial response or new public code.
+- [x] Reader and collector settle once; timer, listener and socket cleanup occurs exactly once on window, limit, error, disconnect and cancellation; late events do not change the result.
+- [x] Deterministic fake-event/controlled-clock checks cover: window elapsed; deadline before connection/subscription; limit reached; duplicate MMSI; newer, older and equal timestamps; invalid transformed reports; provider error after partial input; disconnect after partial input; cancellation after partial input; malformed JSON; repeated/late terminal events; exactly-once completion and cleanup; and success/error response shapes.
+- [x] Existing B-09 guarantees (Node.js Route Handler, exact endpoint/subscription, fixed errors, no-key behavior, secret isolation and cancellation cleanup) remain covered after updating the reader lifecycle tests.
+- [x] No package/dependency, B-11 transformer, sample, shared model, UI/map/demo, B-13 or unrelated path is changed; no live request or secret access occurs.
+- [x] Final human diff review explicitly chose `continue`; commit/push remain separately gated.
 
-**Current acceptance status:** `Ready after contract review; all implementation acceptance criteria remain unchecked. No B-12 implementation, test, endpoint change or live request is authorized or claimed.`
+**Current acceptance status:** `Verified` for the bounded B-12 local implementation after targeted checks and the user's final diff-review decision `continue` on 2026-09-24. This does not establish live provider behavior, complete R2 user-story acceptance or release readiness.
 
 ## Verification
 
@@ -849,13 +849,48 @@ If this Draft is revised or rejected before implementation, inspect the diff and
 - **Outcome:** no contract blocker identified. The B-12 implementation acceptance criteria below remain unchecked and are not claimed as satisfied.
 - **Authorization boundary:** this decision approves the contract only. It is not the separate explicit authorization required before changing implementation or test paths, and it does not authorize live AISStream access, real-key use, commit or push.
 
+## Implementation authorization
+
+- **Date:** 2026-09-24.
+- **User authorization:** the user explicitly authorized B-12 implementation with “дозволяю B-12 реалізацію”.
+- **Authorized scope:** only the implementation and deterministic tests in the exact future paths listed above; task acceptance, verification, excluded paths, no-live-provider/no-secret constraints, and separate commit/push gate remain unchanged.
+- **Status:** implementation work may proceed. Final acceptance remains gated by actual checks and a separate human diff review.
+
+## Implementation checkpoint — completed local checks
+
+- **Date:** 2026-09-24.
+- **Implemented paths:** `server/aisstream-reader.ts`, new `server/snapshot-collector.ts`, `app/api/snapshot/route.ts`, `tests/snapshot-reader.spec.ts`, and new `tests/snapshot-collector.spec.ts`. The implementation remained within the authorized B-12 paths; no live provider request, real-key inspection, dependency change, commit or push was performed.
+- **Targeted tests:** `npx playwright test tests/snapshot-reader.spec.ts tests/snapshot-collector.spec.ts` — passed, 17 tests.
+- **Type check:** `npx tsc --noEmit` — passed (exit 0; no diagnostics printed).
+- **Build:** `AISSTREAM_API_KEY= npm run build` — passed. Next.js reported `.env.local` as an environment source; no value was manually inspected or printed, and no live request was made. The build also warned that `/Users/romanmakarenko/package-lock.json` is outside the repository and suggested configuring `turbopack.root`; build completed successfully.
+- **Whitespace check:** `git diff --check` — passed; separate no-index whitespace checks for the two new files produced no diagnostics.
+- **Diagnostics note:** IDE diagnostics requests timed out; the standalone TypeScript check passed.
+- **Acceptance boundary:** the checks establish only the tested local reader/collector/route behavior. Live provider behavior, complete R2 user-story acceptance, demo readiness and release readiness are not established.
+
+## Final human implementation review
+
+- **Date:** 2026-09-24.
+- **Source:** user decision: “diff перевірив, continue”.
+- **Decision:** `continue`; user completed the final diff review and accepted the bounded B-12 implementation for continuation.
+- **Outcome:** B-12 is `Verified` within this task's local scope. This is not commit/push authorization and does not claim live AISStream behavior, complete R2 acceptance or release readiness.
+- **Evidence:** implementation checks are recorded in `E-SEA-046`; final human review is recorded in `E-SEA-047`.
+
 ## Handoff
 
-- **Contract-preparation changes:** this appended B-12 section in `TASK_SPEC.md` only. No B-09/B-11 implementation path, test, endpoint, evidence ledger, runbook, sprint input or handoff file was changed in contract preparation or contract review.
-- **Contract status:** `Ready`; human review decision `continue` recorded on 2026-09-24. B-12 implementation authorization remains absent.
-- **Evidence boundary:** pre-edit Git synchronization was verified at `6bcbfd332dafc8aef7a4fdd01aec06e820c260cf`. No B-12-specific implementation checks or product behavior have been executed.
-- **Open Unknowns/blockers:** live provider availability, real-key validity, live receipt, actual AISStream event semantics, complete R2 user-story acceptance and release readiness remain `Unknown`/`Needs verification`. `CLAUDE.md` and `SPEC.md` still describe B-08 as current; governance-status synchronization is a separate documentation decision and was not changed here. DEC-007 is `Ready` and resolves the B-12 transport-boundary conflict; implementation still requires separate explicit authorization.
-- **Next bounded action:** obtain separate explicit authorization for B-12 implementation before touching any implementation/test path. Do not begin B-13, run live AISStream, inspect a real key, commit or push without their respective separate authorization.
+- **Contract / task status:** `Verified` for bounded B-12 local implementation after checks and the user's `continue` decision on 2026-09-24. Contract review, implementation authorization and final diff review are recorded above.
+- **Evidence boundary:** baseline commit `bf7cc4e1cd1a8029ccdaf82155ee45ede055824d` was synchronized with `origin/sprint2`. Deterministic implementation checks and the human review decision are recorded in `E-SEA-046` and `E-SEA-047`; product behavior with AISStream and real-key validity remain unverified.
+- **Open Unknowns/blockers:** live provider availability, real-key validity, live receipt, actual AISStream event semantics, complete R2 user-story acceptance and release readiness remain `Unknown`/`Needs verification`. `CLAUDE.md` and `SPEC.md` still describe B-08 as current; governance-status synchronization is a separate documentation decision and remains outside this task. DEC-007 is `Ready` and resolves the B-12 transport-boundary conflict.
+- **Next bounded action:** deliver the reviewed B-12 implementation and append-only records in a scoped commit/push, including the user-requested unchanged `SPRINT-02.md`. Do not begin B-13, run live AISStream or inspect a real key.
+- **Rollback / recovery:** no rollback was performed. If the `continue` decision is revised, inspect the diff and restore only the five B-12 implementation/test paths to their verified pre-B-12 state; preserve append-only records, the pre-existing `START.md` deletion, the now-user-authorized `SPRINT-02.md` path and all unrelated untracked paths. Product owner decides recovery acceptance from the reviewed diff and evidence.
+
+## Delivery authorization — commit, push and Sprint 2 tracking
+
+- **Date:** 2026-09-24.
+- **User authorization:** the user requested “давай закомітимо та запушимо, також додай в гіт /Users/romanmakarenko/Documents/code/SeaRadar/SPRINT-02.md”.
+- **Exact delivery scope:** commit and push the five B-12 implementation/test paths plus `TASK_SPEC.md`, `EVIDENCE.md`, `RUNBOOK.md`, and the existing `SPRINT-02.md`; no other pre-existing or untracked path is authorized for staging.
+- **Sprint-file boundary:** `SPRINT-02.md` remains content-read-only. The user specifically authorized tracking this existing file as-is; it will not be edited. This is a one-time exception only to its previously excluded staging boundary.
+- **Preservation:** leave the `START.md` deletion and all other unrelated untracked inputs unstaged and unchanged. No live AISStream request, real-key use, B-13 work, or deployment is authorized by this delivery instruction.
+- **Status:** commit/push of the exact paths above is authorized; remote delivery remains unverified until the push and remote-ref check complete.
 
 # TASK-SEA-R2-DEC007-001 — B-12 transport-boundary decision record
 

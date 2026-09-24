@@ -1,7 +1,7 @@
 # RUNBOOK.md — delivery history and handoff
 
 - **ID:** `RUNBOOK-SEA-001`
-- **Version:** `0.15.0`
+- **Version:** `0.16.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
@@ -517,3 +517,16 @@ Each entry must include: date/session, goal and scope, changed artifacts, comman
 - **Observed working tree:** `START.md` remains a pre-existing deletion; `.agents/`, `.claude/skills/`, `NEXT_SESSION.md`, `README.pdf`, `SPRINT-02.md`, `reference/` and `skills-lock.json` remain untracked and unstaged.
 - **Evidence:** `E-SEA-045` records commit boundary and remote synchronization; `E-SEA-043` and `E-SEA-044` record implementation checks and final review.
 - **Handoff:** B-11 is committed and pushed. B-12 remains task-gated and was not started.
+
+### 2026-09-24 — B-12 snapshot collector verification and review handoff
+
+- **Session:** completion of the separately authorized local implementation for `TASK-SEA-R2-B12-001` on branch `sprint2`, followed by the user's final diff-review decision.
+- **Goal and scope:** finish the bounded B-12 reader/collector/route slice, record actual local checks, and close the human review gate. No live AISStream request, real-key inspection, dependency change, B-13 work, commit or push.
+- **Changed artifacts:** implementation/test changes are limited to `server/aisstream-reader.ts`, `server/snapshot-collector.ts`, `app/api/snapshot/route.ts`, `tests/snapshot-reader.spec.ts` and `tests/snapshot-collector.spec.ts`. Updated B-12 acceptance/handoff in `TASK_SPEC.md`; appended `E-SEA-046` and `E-SEA-047` to `EVIDENCE.md`; appended this delivery record. The pre-existing `START.md` deletion and unrelated untracked paths remain outside B-12.
+- **Implementation summary:** the existing reader now streams ordered text events from one connection; the collector owns the one 15-second window, applies the existing B-11 transformer, deduplicates whole vessels by id/timestamp, stops at 100 unique vessels, discards partial data on failures, and cleans up on terminal events. The route returns the agreed success shape or fixed 502 errors and preserves abort behavior.
+- **Commands and status:** `npx playwright test tests/snapshot-reader.spec.ts tests/snapshot-collector.spec.ts` — `PASS`, 17 tests; `npx tsc --noEmit` — `PASS`; `AISSTREAM_API_KEY= npm run build` — `PASS`; `git diff --check` and separate no-index whitespace checks for the two new files — `PASS`. IDE diagnostics requests timed out; standalone TypeScript validation passed. The build reported `.env.local` as an environment source and warned that `/Users/romanmakarenko/package-lock.json` is outside the repository, suggesting `turbopack.root`; it completed successfully. No environment value was manually inspected or printed and no live request was made.
+- **Human review and decision:** the user stated “diff перевірив, continue”. The B-12 human diff-review gate is closed with decision `continue`; this does not authorize commit/push or live access.
+- **Open Unknowns:** live provider availability, real-key validity, live receipt, actual AISStream event semantics, complete R2 user-story acceptance and release readiness remain `Unknown`/`Needs verification`. IDE diagnostics did not return before timeout.
+- **Rollback / recovery:** no rollback was performed. If the decision is later revised, inspect the diff and restore only the five B-12 implementation/test paths to their verified pre-B-12 state; preserve append-only evidence/history, the pre-existing `START.md` deletion and all unrelated untracked paths. Do not reset the branch or touch secret files. Product owner decides recovery acceptance from the diff and evidence.
+- **Evidence:** `E-SEA-046` records implementation checks and limitations; `E-SEA-047` records the user's review decision.
+- **Handoff:** B-12 is `Verified` within its bounded local task scope. Stop here; B-13, live AISStream access, real-key use, commit and push each remain separately gated.

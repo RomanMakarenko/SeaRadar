@@ -1,5 +1,4 @@
 const AISSTREAM_URL = "wss://stream.aisstream.io/v0/stream";
-const DEFAULT_WINDOW_MS = 15_000;
 const BOUNDING_BOXES = [[[50.75, 0.95], [51.25, 1.95]]] as const;
 const FILTER_MESSAGE_TYPES = ["PositionReport"] as const;
 
@@ -14,10 +13,6 @@ export type SnapshotErrorCode =
   | "provider_error"
   | "disconnected"
   | "internal";
-
-export type SnapshotReadResult =
-  | { ok: true; raw: string | null }
-  | { ok: false; code: SnapshotErrorCode };
 
 export type WebSocketLike = {
   addEventListener(
@@ -42,12 +37,19 @@ export class SnapshotReadCancelled extends Error {
   }
 }
 
-export type ReadSnapshotOptions = {
+export type SnapshotReaderHandlers = {
+  onSubscribed(): void;
+  onText(text: string): void;
+  onError(code: SnapshotErrorCode): void;
+};
+
+export type SnapshotReaderHandle = {
+  stop(): void;
+};
+
+export type StartSnapshotReaderOptions = {
   apiKey: string;
-  signal?: AbortSignal;
   webSocketFactory?: WebSocketFactory;
-  timer?: TimerApi;
-  windowMs?: number;
 };
 
 function createNativeWebSocket(url: string): WebSocketLike {
@@ -66,15 +68,6 @@ function createNativeWebSocket(url: string): WebSocketLike {
   };
 }
 
-const defaultTimer: TimerApi = {
-  setTimeout(callback, delay) {
-    return setTimeout(callback, delay);
-  },
-  clearTimeout(handle) {
-    clearTimeout(handle);
-  },
-};
-
 function createSubscription(apiKey: string): string {
   return JSON.stringify({
     APIKey: apiKey,
@@ -83,145 +76,114 @@ function createSubscription(apiKey: string): string {
   });
 }
 
-export function readAISStreamSnapshot({
-  apiKey,
-  signal,
-  webSocketFactory = createNativeWebSocket,
-  timer = defaultTimer,
-  windowMs = DEFAULT_WINDOW_MS,
-}: ReadSnapshotOptions): Promise<SnapshotReadResult> {
-  return new Promise((resolve, reject) => {
-    let socket: WebSocketLike | null = null;
-    let timeoutHandle: ReturnType<typeof setTimeout> | null = null;
-    let settled = false;
-    let cleanedUp = false;
-    let subscribed = false;
+export function startAISStreamReader(
+  { apiKey, webSocketFactory = createNativeWebSocket }: StartSnapshotReaderOptions,
+  handlers: SnapshotReaderHandlers,
+): SnapshotReaderHandle {
+  let socket: WebSocketLike | null = null;
+  let active = true;
+  let cleanedUp = false;
+  let subscribed = false;
 
-    const cleanup = () => {
-      if (cleanedUp) {
-        return;
-      }
-
-      cleanedUp = true;
-
-      if (timeoutHandle !== null) {
-        timer.clearTimeout(timeoutHandle);
-        timeoutHandle = null;
-      }
-
-      if (socket !== null) {
-        try {
-          socket.close();
-        } catch {
-          // Cleanup must not replace the original result.
-        }
-        socket = null;
-      }
-
-      signal?.removeEventListener("abort", onAbort);
-    };
-
-    const finish = (result: SnapshotReadResult) => {
-      if (settled) {
-        return;
-      }
-
-      settled = true;
-      cleanup();
-      resolve(result);
-    };
-
-    const cancel = () => {
-      if (settled) {
-        return;
-      }
-
-      settled = true;
-      cleanup();
-      reject(new SnapshotReadCancelled());
-    };
-
-    const onAbort = () => {
-      cancel();
-    };
-
-    timeoutHandle = timer.setTimeout(() => {
-      finish(
-        subscribed
-          ? { ok: true, raw: null }
-          : { ok: false, code: "connect_failed" },
-      );
-    }, windowMs);
-
-    signal?.addEventListener("abort", onAbort, { once: true });
-
-    if (signal?.aborted) {
-      cancel();
+  const cleanup = () => {
+    if (cleanedUp) {
       return;
     }
 
-    try {
-      const createdSocket = webSocketFactory(AISSTREAM_URL);
+    cleanedUp = true;
+    const currentSocket = socket;
+    socket = null;
 
-      if (settled) {
-        try {
-          createdSocket.close();
-        } catch {
-          // Cancellation still owns cleanup if construction races with abort.
-        }
+    if (currentSocket !== null) {
+      try {
+        currentSocket.close();
+      } catch {
+        // Cleanup must not replace the original result.
+      }
+    }
+  };
+
+  const stop = () => {
+    if (!active) {
+      return;
+    }
+
+    active = false;
+    cleanup();
+  };
+
+  const fail = (code: SnapshotErrorCode) => {
+    if (!active) {
+      return;
+    }
+
+    active = false;
+    cleanup();
+
+    try {
+      handlers.onError(code);
+    } catch {
+      // An observer must not restart or alter a settled reader.
+    }
+  };
+
+  try {
+    socket = webSocketFactory(AISSTREAM_URL);
+
+    socket.addEventListener("open", () => {
+      if (!active || socket === null || subscribed) {
         return;
       }
 
-      socket = createdSocket;
+      try {
+        socket.send(createSubscription(apiKey));
+        subscribed = true;
+      } catch {
+        fail("connect_failed");
+        return;
+      }
 
-      socket.addEventListener("open", () => {
-        if (settled || socket === null) {
-          return;
-        }
+      try {
+        handlers.onSubscribed();
+      } catch {
+        fail("internal");
+      }
+    });
 
-        try {
-          socket.send(createSubscription(apiKey));
-          subscribed = true;
-        } catch {
-          finish({ ok: false, code: "connect_failed" });
-        }
-      });
+    socket.addEventListener("message", (event) => {
+      if (!active) {
+        return;
+      }
 
-      socket.addEventListener("message", (event) => {
-        if (settled) {
-          return;
-        }
+      if (!subscribed) {
+        fail("connect_failed");
+        return;
+      }
 
-        if (!subscribed) {
-          finish({ ok: false, code: "connect_failed" });
-          return;
-        }
+      if (typeof event.data !== "string") {
+        fail("provider_error");
+        return;
+      }
 
-        if (typeof event.data !== "string") {
-          finish({ ok: false, code: "provider_error" });
-          return;
-        }
+      try {
+        handlers.onText(event.data);
+      } catch {
+        fail("internal");
+      }
+    });
 
-        finish({ ok: true, raw: event.data });
-      });
+    socket.addEventListener("error", () => {
+      fail(subscribed ? "provider_error" : "connect_failed");
+    });
 
-      socket.addEventListener("error", () => {
-        finish({
-          ok: false,
-          code: subscribed ? "provider_error" : "connect_failed",
-        });
-      });
+    socket.addEventListener("close", () => {
+      fail(subscribed ? "disconnected" : "connect_failed");
+    });
+  } catch {
+    fail("connect_failed");
+  }
 
-      socket.addEventListener("close", () => {
-        finish({
-          ok: false,
-          code: subscribed ? "disconnected" : "connect_failed",
-        });
-      });
-    } catch {
-      finish({ ok: false, code: "connect_failed" });
-    }
-  });
+  return { stop };
 }
 
-export { AISSTREAM_URL, DEFAULT_WINDOW_MS };
+export { AISSTREAM_URL };

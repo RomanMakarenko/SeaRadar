@@ -1,6 +1,6 @@
 import { getAISStreamApiKey } from "../../../server/aisstream-config";
+import { collectSnapshot } from "../../../server/snapshot-collector";
 import {
-  readAISStreamSnapshot,
   SnapshotReadCancelled,
   type SnapshotErrorCode,
 } from "../../../server/aisstream-reader";
@@ -42,7 +42,7 @@ export async function GET(request: Request): Promise<Response> {
   }
 
   try {
-    const result = await readAISStreamSnapshot({
+    const result = await collectSnapshot({
       apiKey,
       signal: request.signal,
     });
@@ -51,11 +51,7 @@ export async function GET(request: Request): Promise<Response> {
       return errorResponse(attemptedAt, result.code);
     }
 
-    return Response.json({
-      ok: true,
-      raw: result.raw,
-      collectedAt: new Date().toISOString(),
-    });
+    return Response.json(result);
   } catch (error) {
     if (error instanceof SnapshotReadCancelled || request.signal.aborted) {
       throw error;

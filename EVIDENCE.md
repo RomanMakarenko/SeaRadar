@@ -1,7 +1,7 @@
 # EVIDENCE.md — фактичний evidence ledger
 
 - **ID:** `EVIDENCE-SEA-001`
-- **Version:** `0.15.0`
+- **Version:** `0.16.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
@@ -554,3 +554,27 @@
 - **Status:** `PASS` for scoped commit, push and remote synchronization.
 - **Reviewer / owner:** delivery/technical owner — commit boundary and remote verification; user — explicit commit/push request.
 - **Limitations and follow-up:** delivery does not establish live AISStream receipt, provider availability, real-key validity, complete R2 acceptance or release readiness. B-12 remains separately task-gated.
+
+### E-SEA-046 — B-12 snapshot collector implementation checks
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001` v1.1.0; `TASK-SEA-R2-B12-001` v1.0.0; `DEC-006-R2-SCOPE`; `DEC-007-R2-B09-STREAMING-BOUNDARY`; `E-SEA-034`; `E-SEA-043`.
+- **Claim under verification:** the authorized B-12 reader/collector/route slice follows its local contract under deterministic fake-event and controlled-time checks, without a live AISStream request or real-key inspection.
+- **Source:** `server/aisstream-reader.ts`; `server/snapshot-collector.ts`; `app/api/snapshot/route.ts`; `tests/snapshot-reader.spec.ts`; `tests/snapshot-collector.spec.ts`; `npx playwright test tests/snapshot-reader.spec.ts tests/snapshot-collector.spec.ts`; `npx tsc --noEmit`; `AISSTREAM_API_KEY= npm run build`; `git diff --check`; separate no-index whitespace checks for the two new files.
+- **Expected:** one ordered text-event stream over the approved reader connection; one collector-owned 15-second deadline and 100-unique-vessel limit; deterministic timestamp selection; fixed error responses without partial data; cancellation and exactly-once cleanup; no excluded path or network/key activity.
+- **Observed:** focused Playwright checks passed: `17 passed`. `npx tsc --noEmit` exited successfully with no diagnostics printed. `AISSTREAM_API_KEY= npm run build` passed. `git diff --check` passed; the two new untracked files had no whitespace diagnostics in separate no-index checks. The implementation and tests cover ordered same-socket messages, deadline boundary, empty success, deduplication and timestamp ordering, 100-vessel completion, malformed payloads, post-partial failures, cancellation, late events, cleanup and route response shapes. IDE diagnostics requests timed out; the standalone TypeScript check passed. The build output reported `.env.local` as an environment source and warned that `/Users/romanmakarenko/package-lock.json` is outside the repository and suggested `turbopack.root`; the build completed. No environment value was manually inspected or printed, and no live request was made.
+- **Timestamp / environment:** 2026-09-24; macOS; local SeaRadar workspace; branch `sprint2`.
+- **Status:** `PASS` for the recorded focused local checks; `UNKNOWN`/`Needs verification` for live provider availability, real-key validity, live receipt, actual AISStream event semantics, complete R2 user-story acceptance and release readiness.
+- **Reviewer / owner:** delivery/technical owner — implementation and local checks.
+- **Limitations and follow-up:** test doubles establish behavior only for the exercised event sequences. The automatic `.env.local` source notice is recorded; its contents were not manually read or printed. No live AISStream request, deployment, commit or push was performed. Final human diff-review decision is recorded separately in `E-SEA-047`.
+
+### E-SEA-047 — B-12 final human diff review
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R2-B12-001` v1.0.0; `E-SEA-046`; `DEC-007-R2-B09-STREAMING-BOUNDARY`.
+- **Claim under verification:** the user completed the final B-12 diff review and accepted continuation of the bounded local implementation.
+- **Source:** user message: “diff перевірив, continue”; B-12 implementation diff and changed-path list; `TASK_SPEC.md`; local checks recorded in `E-SEA-046`.
+- **Expected:** record only the user's stated review decision; do not infer authorization for live access, commit/push, B-13, or overall R2 acceptance.
+- **Observed:** the user stated that they reviewed the diff and chose `continue`. The decision closes the B-12 human review gate and accepts the bounded task for local scope. This record does not attribute unstated review findings or authorize external/live operations or delivery.
+- **Timestamp / environment:** 2026-09-24; local SeaRadar workspace; branch `sprint2`.
+- **Status:** `PASS` for the user's explicit B-12 diff-review decision; live provider behavior, full R2 acceptance and release readiness remain unverified.
+- **Reviewer / owner:** user — final diff-review decision; delivery/technical owner — evidence recording.
+- **Limitations and follow-up:** no commit or push authorization is implied. B-13, live AISStream access, real-key use and overall product acceptance remain separately gated.

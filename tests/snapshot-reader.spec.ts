@@ -2,9 +2,9 @@ import { expect, test } from "@playwright/test";
 import { GET } from "../app/api/snapshot/route";
 import {
   AISSTREAM_URL,
-  readAISStreamSnapshot,
-  SnapshotReadCancelled,
-  type TimerApi,
+  startAISStreamReader,
+  type SnapshotErrorCode,
+  type SnapshotReaderHandlers,
   type WebSocketLike,
 } from "../server/aisstream-reader";
 
@@ -15,6 +15,7 @@ type SocketEvent = "open" | "message" | "error" | "close";
 class FakeWebSocket implements WebSocketLike {
   readonly sent: string[] = [];
   closeCount = 0;
+  sendError: Error | null = null;
   private readonly listeners = new Map<SocketEvent, Listener[]>();
 
   addEventListener(type: SocketEvent, listener: Listener): void {
@@ -24,6 +25,9 @@ class FakeWebSocket implements WebSocketLike {
   }
 
   send(data: string): void {
+    if (this.sendError !== null) {
+      throw this.sendError;
+    }
     this.sent.push(data);
   }
 
@@ -38,56 +42,48 @@ class FakeWebSocket implements WebSocketLike {
   }
 }
 
-class FakeTimer implements TimerApi {
-  readonly delays: number[] = [];
-  clearCount = 0;
-  private readonly callbacks = new Map<number, () => void>();
-  private nextId = 0;
-
-  setTimeout(callback: () => void, delay: number): ReturnType<typeof setTimeout> {
-    const id = this.nextId++;
-    this.delays.push(delay);
-    this.callbacks.set(id, callback);
-    return id as unknown as ReturnType<typeof setTimeout>;
-  }
-
-  clearTimeout(handle: ReturnType<typeof setTimeout>): void {
-    this.clearCount += 1;
-    this.callbacks.delete(handle as unknown as number);
-  }
-
-  runNext(): void {
-    const next = this.callbacks.entries().next();
-    if (next.done) {
-      throw new Error("No pending timer");
-    }
-
-    const [id, callback] = next.value;
-    this.callbacks.delete(id);
-    callback();
-  }
-}
-
 function createAttempt() {
   const socket = new FakeWebSocket();
-  const timer = new FakeTimer();
+  const messages: string[] = [];
+  const errors: SnapshotErrorCode[] = [];
   let factoryCalls = 0;
+  let subscribedCount = 0;
 
-  const promise = readAISStreamSnapshot({
-    apiKey: "test-key",
-    timer,
-    webSocketFactory: (url) => {
-      factoryCalls += 1;
-      expect(timer.delays).toEqual([15_000]);
-      expect(url).toBe(AISSTREAM_URL);
-      return socket;
+  const handlers: SnapshotReaderHandlers = {
+    onSubscribed() {
+      subscribedCount += 1;
     },
-  });
+    onText(text) {
+      messages.push(text);
+    },
+    onError(code) {
+      errors.push(code);
+    },
+  };
 
-  return { promise, socket, timer, getFactoryCalls: () => factoryCalls };
+  const reader = startAISStreamReader(
+    {
+      apiKey: "test-key",
+      webSocketFactory: (url) => {
+        factoryCalls += 1;
+        expect(url).toBe(AISSTREAM_URL);
+        return socket;
+      },
+    },
+    handlers,
+  );
+
+  return {
+    reader,
+    socket,
+    messages,
+    errors,
+    getFactoryCalls: () => factoryCalls,
+    getSubscribedCount: () => subscribedCount,
+  };
 }
 
-test("returns the first text message and sends the exact subscription immediately", async () => {
+test("forwards ordered text messages from one socket and sends the exact subscription", () => {
   const attempt = createAttempt();
 
   expect(attempt.getFactoryCalls()).toBe(1);
@@ -101,128 +97,117 @@ test("returns the first text message and sends the exact subscription immediatel
     BoundingBoxes: [[[50.75, 0.95], [51.25, 1.95]]],
     FilterMessageTypes: ["PositionReport"],
   });
+  expect(attempt.getSubscribedCount()).toBe(1);
 
-  attempt.socket.emit("message", { data: '{"MessageType":"PositionReport"}' });
+  attempt.socket.emit("message", { data: "first" });
+  expect(attempt.socket.closeCount).toBe(0);
+  attempt.socket.emit("message", { data: "second" });
 
-  await expect(attempt.promise).resolves.toEqual({
-    ok: true,
-    raw: '{"MessageType":"PositionReport"}',
-  });
+  expect(attempt.messages).toEqual(["first", "second"]);
+  expect(attempt.getFactoryCalls()).toBe(1);
+  expect(attempt.socket.closeCount).toBe(0);
+
+  attempt.reader.stop();
+  attempt.reader.stop();
   expect(attempt.socket.closeCount).toBe(1);
-  expect(attempt.timer.clearCount).toBe(1);
+
+  attempt.socket.emit("message", { data: "late" });
+  expect(attempt.messages).toEqual(["first", "second"]);
 });
 
-test("starts the total deadline before connection and maps a pre-open timeout", async () => {
-  const attempt = createAttempt();
-
-  expect(attempt.timer.delays).toEqual([15_000]);
-  attempt.timer.runNext();
-
-  await expect(attempt.promise).resolves.toEqual({
-    ok: false,
-    code: "connect_failed",
-  });
-  expect(attempt.socket.closeCount).toBe(1);
-  expect(attempt.timer.clearCount).toBe(1);
-});
-
-test("returns raw null after an opened subscription reaches the deadline", async () => {
-  const attempt = createAttempt();
-
-  attempt.socket.emit("open");
-  attempt.timer.runNext();
-
-  await expect(attempt.promise).resolves.toEqual({ ok: true, raw: null });
-  expect(attempt.socket.closeCount).toBe(1);
-  expect(attempt.timer.clearCount).toBe(1);
-});
-
-test("maps connection, provider, disconnect and binary-message failures", async () => {
+test("maps setup, provider, disconnect and binary-message failures", () => {
   const beforeOpen = createAttempt();
   beforeOpen.socket.emit("error");
-  await expect(beforeOpen.promise).resolves.toEqual({
-    ok: false,
-    code: "connect_failed",
-  });
+  beforeOpen.socket.emit("close");
+  expect(beforeOpen.errors).toEqual(["connect_failed"]);
+  expect(beforeOpen.socket.closeCount).toBe(1);
+
+  const messageBeforeOpen = createAttempt();
+  messageBeforeOpen.socket.emit("message", { data: "unexpected" });
+  expect(messageBeforeOpen.errors).toEqual(["connect_failed"]);
 
   const provider = createAttempt();
   provider.socket.emit("open");
   provider.socket.emit("error");
-  await expect(provider.promise).resolves.toEqual({
-    ok: false,
-    code: "provider_error",
-  });
+  expect(provider.errors).toEqual(["provider_error"]);
+  expect(provider.socket.closeCount).toBe(1);
 
   const disconnected = createAttempt();
   disconnected.socket.emit("open");
   disconnected.socket.emit("close");
-  await expect(disconnected.promise).resolves.toEqual({
-    ok: false,
-    code: "disconnected",
-  });
+  expect(disconnected.errors).toEqual(["disconnected"]);
+  expect(disconnected.socket.closeCount).toBe(1);
 
   const binary = createAttempt();
   binary.socket.emit("open");
   binary.socket.emit("message", { data: new ArrayBuffer(0) });
-  await expect(binary.promise).resolves.toEqual({
-    ok: false,
-    code: "provider_error",
-  });
+  expect(binary.errors).toEqual(["provider_error"]);
+  expect(binary.socket.closeCount).toBe(1);
 });
 
-test("cancels with cleanup-only semantics and ignores late events", async () => {
-  const controller = new AbortController();
-  const socket = new FakeWebSocket();
-  const timer = new FakeTimer();
-  const promise = readAISStreamSnapshot({
-    apiKey: "test-key",
-    signal: controller.signal,
-    timer,
-    webSocketFactory: () => socket,
-  });
+test("maps a failed subscription send to connect_failed", () => {
+  const attempt = createAttempt();
+  attempt.socket.sendError = new Error("private socket detail");
+  attempt.socket.emit("open");
 
-  controller.abort();
-
-  await expect(promise).rejects.toBeInstanceOf(SnapshotReadCancelled);
-  expect(socket.closeCount).toBe(1);
-  expect(timer.clearCount).toBe(1);
-
-  socket.emit("open");
-  socket.emit("message", { data: "late" });
-  expect(socket.sent).toEqual([]);
+  expect(attempt.errors).toEqual(["connect_failed"]);
+  expect(attempt.socket.closeCount).toBe(1);
 });
 
-test("closes a socket created during an abort race", async () => {
-  const controller = new AbortController();
-  const socket = new FakeWebSocket();
-  const timer = new FakeTimer();
-  const promise = readAISStreamSnapshot({
-    apiKey: "test-key",
-    signal: controller.signal,
-    timer,
-    webSocketFactory: () => {
-      controller.abort();
-      return socket;
+test("maps socket construction failure to connect_failed", () => {
+  const errors: SnapshotErrorCode[] = [];
+  const reader = startAISStreamReader(
+    {
+      apiKey: "test-key",
+      webSocketFactory() {
+        throw new Error("private socket detail");
+      },
+    },
+    {
+      onSubscribed() {},
+      onText() {},
+      onError(code) {
+        errors.push(code);
+      },
+    },
+  );
+
+  expect(errors).toEqual(["connect_failed"]);
+  expect(() => reader.stop()).not.toThrow();
+});
+
+test("does not construct a socket when the API key is blank", async () => {
+  const previousDescriptor = Object.getOwnPropertyDescriptor(globalThis, "WebSocket");
+  let socketConstructionCount = 0;
+  Object.defineProperty(globalThis, "WebSocket", {
+    configurable: true,
+    writable: true,
+    value: class {
+      constructor() {
+        socketConstructionCount += 1;
+      }
     },
   });
-
-  await expect(promise).rejects.toBeInstanceOf(SnapshotReadCancelled);
-  expect(socket.closeCount).toBe(1);
-  expect(timer.clearCount).toBe(1);
-});
-
-test("does not open a socket when the API key is blank", async () => {
   process.env.AISSTREAM_API_KEY = "";
 
-  const response = await GET(new Request("http://127.0.0.1/api/snapshot"));
-  const body = await response.json();
+  try {
+    const response = await GET(new Request("http://127.0.0.1/api/snapshot"));
+    const body = await response.json();
 
-  expect(response.status).toBe(502);
-  expect(body).toMatchObject({
-    ok: false,
-    error: {
-      code: "no_api_key",
-      message: "Ключ AISStream не налаштовано",
-    },
-  });
+    expect(response.status).toBe(502);
+    expect(body).toMatchObject({
+      ok: false,
+      error: {
+        code: "no_api_key",
+        message: "Ключ AISStream не налаштовано",
+      },
+    });
+    expect(socketConstructionCount).toBe(0);
+  } finally {
+    if (previousDescriptor === undefined) {
+      Reflect.deleteProperty(globalThis, "WebSocket");
+    } else {
+      Object.defineProperty(globalThis, "WebSocket", previousDescriptor);
+    }
+  }
 });
