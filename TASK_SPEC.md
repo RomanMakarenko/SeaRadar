@@ -126,3 +126,1210 @@ Current handoff:
 - **Human decision:** `continue`; the current diff review found no scope, correctness or test-boundary blockers.
 - **Delivery:** verified B-07 commit `c89127f` is pushed to `origin/sprint1`.
 - **Next bounded action:** human review of the delivered commit; no automatic transition to S2/S3.
+
+---
+
+# TASK-SEA-R2-PLAN-001 — Sprint 2 decomposition and safe start
+
+- **Version:** `1.0.0`
+- **Status:** `Active`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-22
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPRINT-02.md`](SPRINT-02.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/README.md`](docs/decisions/README.md), [`docs/checkpoints/CHECKPOINT-01.md`](docs/checkpoints/CHECKPOINT-01.md)
+
+## Goal and boundary
+
+- **Goal:** перетворити наданий `SPRINT-02.md` на послідовність малих bounded sessions із цілями, non-goals, allowed paths, observable acceptance criteria, targeted checks, evidence anchors, stop conditions і rollback/recovery.
+- **Backlog:** `R2-PLANNING`; наступний bounded slice — `TASK-SEA-R2-B08-001`.
+- **SPEC outcome:** `SPEC-SEA-001 / US-05…US-08`.
+- **Current boundary:** цей розділ є planning/governance slice. Product code, endpoint, WebSocket, sample data, UI та secrets не змінюються.
+
+## Governance gate
+
+`SPRINT-02.md` зараз є staged contract input на гілці `sprint2`. Чинні `CLAUDE.md`, `SPEC.md` і `docs/decisions/README.md` все ще позначають Sprint 2 як `Waiting for MVP input`. Тому цей розділ фіксує план, але не підміняє versioned scope decision і не авторизує implementation сам по собі.
+
+До першої implementation-зміни B-08 потрібні:
+
+1. human diff review цього planning slice з рішенням `continue`, `revise` або `HOLD`;
+2. підтвердження, що R2 scope можна авторизувати, або versioned SPEC/decision record за правилами governance;
+3. окремий task contract `TASK-SEA-R2-B08-001`.
+
+До цього моменту заборонені живий AISStream-запит, читання/створення/передача реального ключа, `.env.local`, нові залежності та product implementation.
+
+## Owner and allowed paths
+
+- **Planning path:** цей canonical `TASK_SPEC.md`.
+- **Read-only inputs:** `CLAUDE.md`, `SPEC.md`, `PROJECT_BRIEF.md`, `SPRINT-01.md`, `SPRINT-02.md`, `docs/decisions/README.md`, `docs/checkpoints/CHECKPOINT-01.md`, останні записи `EVIDENCE.md` і `RUNBOOK.md`.
+- **Append-only records after checks:** `EVIDENCE.md`, `RUNBOOK.md`.
+- **No implementation paths in this slice:** `app/`, `components/`, `lib/`, `server/`, `data/`, `app/api/`, `tests/`, `.env*`, `package.json`, `package-lock.json`, `playwright.config.ts`, `.claude/settings.json`, `SPEC.md`, `CLAUDE.md`, `docs/decisions/`.
+- **Excluded local inputs:** `.agents/`, `.claude/`, `reference/`, `skills-lock.json`, `NEXT_SESSION.md`, `README.pdf` and generated files. Do not delete, reset or inspect secrets in excluded paths.
+
+## Sprint 2 bounded decomposition
+
+Це план, а не виконані результати. Кожен рядок стає окремим task contract перед implementation. Наступний slice не поглинається попереднім без нового checkpoint/review.
+
+| Order | Task / goal | Non-goals | Allowed output | Acceptance and evidence |
+|---|---|---|---|---|
+| 0 | `R2-PLANNING`: встановити governance gate, порядок залежностей і handoff. | Scope approval, код, secrets, dependency, live provider access. | Цей розділ `TASK_SPEC.md`; append-only planning evidence/runbook після перевірок. | B-08…B-13 мають окремі межі, checks, stop і rollback; конфлікт статусу S2 явно зафіксований. Structural Git/Markdown check і human diff review. |
+| 1 | `B-08`: безпечна конфігурація та server-only accessor ключа. | WebSocket, route handler, live key, UI, provider request. | `.env.example`, `.gitignore`, окремо авторизовані permission rules, один server-only config module. | `.env.local` не tracked; accessor повертає missing-key без exception; заборонений secret read відхиляється, `.env.example` читається; ключ не в source/output. Evidence — фактичні команди й limitations. |
+| 2 | `B-09`: мінімальний Node.js Route Handler і AISStream reader з intermediate raw form. | Transformer, dedupe, collector, UI, partial success після provider failure. | Server reader, `GET /api/snapshot`, fixed error mapping, injectable event/clock boundary. | Subscription одразу після open; 15 секунд включають connect/subscribe; перше raw message або `raw: null`; ресурси закриті на success/error/cancel; Node runtime; ключ не у response/logs. Evidence окремо розділяє live connection, message receipt і local checks. |
+| 3 | `B-10`: sample і provenance. | Inferred live data, secret, UI, transformer behavior. | `data/samples/position-report.sample.json`, `data/samples/PROVENANCE.md`. | Явно вказано live/documentation/synthetic походження, UTC context і differences; секрету немає. Evidence не називає sample live без фактичного спостереження. |
+| 4 | `B-11`: pure `PositionReport` transformer з validation. | WebSocket lifecycle, collector, endpoint, UI. | Server-safe pure transformer і focused deterministic checks. | MMSI/name/time/position/speed/course відповідають sample; invalid position не стає `0,0`; invalid/sentinel speed/course стають `null`; valid position з unknown optional fields приймається. Evidence містить три ручні field comparisons і actual output. |
+| 5 | `B-12`: bounded collector і final snapshot result. | Інший provider, continuous stream, history, replay, filters, persistence. | Collector з injected source/clock, 15-second/100-vessel constants, dedupe/latest timestamp, one-shot completion, endpoint forms. | Window, limit, provider error, disconnect, cancellation, equal timestamps, stale messages і repeated invocation мають observable results; partial data не стає success після failure; timers/sockets закриваються один раз. Evidence називає реально пройдені та manual/unknown cases. |
+| 6 | `B-13`: R2 UI integration і copy. | Redesign, new map library, AIS movement, persistence, polling. | Одна кнопка, idle/loading/success/empty/error states, shared Vessel/marker/card rendering. | Loading прибирає demo vessels/selection і блокує повтор; copy відповідає контракту; MMSI → marker/card; real vessels не рухаються; failed attempt дає empty explained map, demo повертається після reload; B-07 green. Evidence розділяє browser/manual і automated checks. |
+| 7 | `R2-ACCEPTANCE`: final verification, demo gate, handoff. | Production publish, deployment, archive publication, unapproved commit/push. | Fresh checks, human diff review, append-only evidence/runbook і checkpoint лише за окремим authorization. | Порядок `check → validate → build → targeted tests → demo gate`; blocking/advisory checks і limitations розділені; рішення `DONE`, `CONTINUE WITH APPROVAL` або `HOLD`. |
+
+## Expected output of this planning slice
+
+1. R1 B-07 contract і його evidence/history залишаються без змін; R2 план доданий окремим розділом.
+2. B-08…B-13 мають dependency order і окремі criteria/evidence boundaries.
+3. Server, external provider, client і shared data boundaries явно розділені.
+4. Збережені без додавання правила: 15 секунд, ліміт 100, dedupe/latest timestamp, empty ≠ error, one-shot cleanup.
+5. Реалізація, AISStream availability, sample capture та R2 acceptance не оголошуються виконаними.
+
+## Acceptance criteria
+
+- [x] Перший Sprint task не переписаний; R1 B-07 metadata, acceptance, verification, rollback і handoff збережені.
+- [x] R2 planning має новий ID, власний status і дату.
+- [x] B-08…B-13 декомпозовані в окремі bounded slices з goals, non-goals, allowed output, acceptance та evidence boundary.
+- [x] Secret handling, `.env.local`, live provider access і implementation явно поза межами цього slice.
+- [x] Поточний governance status S2 показаний як gate, а не мовчки змінений.
+- [ ] Human diff review: `continue`, `revise` або `HOLD` — pending.
+- [ ] Окремий B-08 task contract — створюється лише після review і governance authorization.
+
+**Current acceptance status:** `Planning slice prepared; implementation not started; human diff review pending.`
+
+## Verification
+
+### Pre-edit checks
+
+- **Reads / commands:** актуальні `CLAUDE.md`, `SPEC.md`, `PROJECT_BRIEF.md`, `SPRINT-01.md`, staged `SPRINT-02.md`, decision index, checkpoint, latest `EVIDENCE.md`/`RUNBOOK.md`; `git status --short --branch`; staged diff.
+- **Observed:** `sprint2` базується на `01aa336`; staged input — `SPRINT-02.md`; current governance marks S2 `Waiting for MVP input`; R2 implementation paths не змінені.
+
+### Post-edit checks
+
+1. `git diff --check` — patch/whitespace integrity.
+2. `git diff --name-only` і diff inspection — R1 history preserved; no implementation path changed.
+3. Structural Markdown/content check — metadata, new task ID, B-08…B-13, acceptance, evidence, stop and rollback present.
+4. Secret-boundary check — цей slice не містить реального credential і не читає `.env.local` або `.env.*.local`.
+5. Human diff review — explicit `continue`, `revise` або `HOLD` before B-08.
+
+- **Expected:** checks 1–4 pass; check 5 remains pending until human review.
+- **Evidence boundary:** planning evidence proves only document/diff structure; it does not prove product behavior, live provider availability or user acceptance.
+
+## Stop conditions
+
+- R2 implementation запитується без governance decision і окремого B-08 contract.
+- Будь-який check вимагає читання, друку, створення або передачі реального secret.
+- Наступний task потребує неузгодженої dependency, runtime, architecture або path.
+- Staged `SPRINT-02.md` змінюється несподівано або суперечить approved MVP contract.
+- Плановий check видається за evidence без фактичного command/manual observation.
+- Human diff review обирає `revise` або `HOLD`.
+
+## Rollback / recovery
+
+Цей planning slice змінює тільки доданий розділ `TASK_SPEC.md` і, після фактичних checks, append-only evidence/history. Якщо його відхилено, після огляду diff видалити лише доданий R2 section і повернути TASK_SPEC до verified R1 B-07 стану. Не reset-ити branch, не видаляти staged `SPRINT-02.md`, untracked paths або generated files, не зупиняти server і не торкатися secret files.
+
+## Handoff
+
+- **Changed files:** `TASK_SPEC.md` — лише доданий R2 planning section; product/server/data/test/config implementation не змінені.
+- **Checks:** pre-edit artifact/Git inspection виконано; post-edit structural checks і human diff review потрібні перед B-08.
+- **Evidence boundary:** R2 product evidence ще немає; live connection, sample capture і user acceptance — `Unknown`.
+- **Open blockers:** current `SPEC.md`/`CLAUDE.md` S2 gate; human diff review; versioned scope decision якщо product owner підтверджує новий release slice.
+- **Next bounded action:** після `continue` та governance authorization створити `TASK-SEA-R2-B08-001` з allowed paths лише для secure configuration і server-only accessor; B-09 не включати.
+
+## R2 authorization update
+
+- **Decision:** product owner confirmed R2 scope and authorized transition to B-08 in the current session; `DEC-006-R2-SCOPE` and `SPEC.md` v1.1.0 record the governance change.
+- **Boundary:** B-08 is the only active implementation slice. B-09…B-13 remain separately gated; no live AISStream request or real-key handling is authorized by this task.
+- **Review state:** explicit user `continue` applies to this governance transition; implementation remains subject to the B-08 checks and final human diff review.
+
+# TASK-SEA-R2-B08-001 — Secure configuration and server-only key accessor
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-23
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/README.md`](docs/decisions/README.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md)
+
+## Goal and gate
+
+- **Goal:** підготувати безпечну конфігурацію змінної `AISSTREAM_API_KEY` і один server-only accessor для наступного B-09 reader, не відкриваючи ключ і не змінюючи product behavior.
+- **Backlog:** `B-08` / `R2-B08-SECURE-CONFIGURATION`.
+- **SPEC outcome:** `SPEC-SEA-001 / US-05…US-08`; цей task не закриває користувацьку історію самостійно.
+- **Predecessor:** `TASK-SEA-R2-PLAN-001`; R1 B-07 contract і product behavior мають залишатися незмінними.
+- **Governance gate:** R2 scope authorization is now recorded in `SPEC.md` v1.1.0 and `DEC-006-R2-SCOPE`; B-08 is the current task-gated slice. Implementation must remain within this contract, and B-09+ still require separate contracts, checks and human review.
+
+## Owner and allowed paths
+
+- **Planning path:** `TASK_SPEC.md` — цей окремий task contract; R1 розділ вище не переписувати.
+- **Implementation paths:**
+  - `.env.example`
+  - `.gitignore`
+  - `.claude/settings.json` — лише окремо дозволені permission rules для secret-file reads
+  - `server/aisstream-config.ts` — один server-only accessor; directory may be created only for this slice
+- **Append-only records after checks:** `EVIDENCE.md` і `RUNBOOK.md`.
+- **Excluded paths:** `.env`, `.env.local`, `.env.*.local`, `app/`, `components/`, `lib/`, `data/`, `app/api/`, `tests/`, `package.json`, `package-lock.json`, `playwright.config.ts`, `CLAUDE.md`, `SPEC.md`, `SPRINT-02.md`, `docs/decisions/`, `.agents/`, `reference/`, `skills-lock.json`, `NEXT_SESSION.md`, `README.pdf` та generated files.
+
+## Inputs and constraints
+
+- **Inputs:** approved `PROJECT_BRIEF.md`/`SPEC.md` contract, staged `SPRINT-02.md` input, R2 planning section above, and the installed Claude Code permission syntax; no live provider access.
+- **No secret access:** не читати, не створювати, не виводити та не передавати `.env`, `.env.local` або `.env.*.local`; реальний `AISSTREAM_API_KEY` не вводиться в чат і не виводиться в термінал.
+- **No dependency change:** не встановлювати залежності та не змінювати package manifests/lockfile.
+- **Example boundary:** `.env.example` може містити лише порожній placeholder `AISSTREAM_API_KEY=` і не може містити credential-like value.
+- **Accessor boundary:** `server/aisstream-config.ts` може читати тільки `process.env.AISSTREAM_API_KEY`; missing or blank input returns `null` without throwing; the value is not logged, returned from an endpoint, imported by client code or embedded in a response.
+- **Permission boundary:** `.claude/settings.json` may contain only the approved deny rules for reads of `.env`, `.env.local` and `.env.*.local`, using the syntax verified for the installed CLI; no broad unrelated permission changes.
+- **Scope boundary:** B-09 reader/endpoint, WebSocket, transformer, collector, sample data, UI, live request, API response and provider error mapping are excluded.
+
+## Expected output
+
+1. A tracked `.env.example` with an empty `AISSTREAM_API_KEY=` placeholder only.
+2. `.gitignore` that ignores local secret environment files while keeping `.env.example` trackable.
+3. The smallest separately authorized secret-read deny rules in `.claude/settings.json`.
+4. One server-only accessor returning `string | null` for the configured key, without client imports or logging.
+5. No product map, demo vessel, B-07 test, dependency or live-provider change.
+
+## Acceptance criteria
+
+- [x] `.env.example` contains the required empty placeholder and no real or example credential.
+- [x] `git check-ignore` confirms `.env.local` and `.env.*.local` are ignored; `.env.example` is not ignored; no local secret file is tracked.
+- [x] `.claude/settings.json` contains only the verified deny rules for the specified secret-file read patterns; unrelated permissions are unchanged.
+- [x] `server/aisstream-config.ts` is server-only by path/import boundary, returns `null` for missing/blank configuration without exception, and does not log or expose the value.
+- [x] No implementation path outside this contract changes; no dependency or live AISStream request is introduced.
+- [x] Human diff review chooses `continue`, `revise` or `HOLD` before B-09 or any commit/push.
+
+**Current acceptance status:** `DONE; implementation, permission matrix and final diff review passed; the user-authorized commit was pushed to `origin/sprint2`.`
+
+## Verification
+
+### Pre-edit checks
+
+- **Commands/reads:** read current governance artifacts and R2 planning section; inspect `git status --short --branch`, staged/unstaged names and implementation tree; verify no tracked local environment file; verify the B-07 contract remains intact.
+- **Expected:** Sprint 2 remains gated; only this task-contract append is planned; no B-08 implementation paths have changed.
+- **Observed:** current `CLAUDE.md`/`SPEC.md` still say `Waiting for MVP input`; staged paths are `SPRINT-02.md` and pre-existing `START.md`; unstaged paths before this contract are `EVIDENCE.md`, `RUNBOOK.md` and `TASK_SPEC.md`; no tracked `.env*` or `.claude/settings.json` exists; R1 B-07 contract remains present.
+
+### Post-edit checks
+
+1. `git diff --check` — Markdown/patch integrity.
+2. `git diff --name-only` and diff inspection — only the contract append plus append-only evidence/history; no B-08 implementation path changed.
+3. Structural task-contract check — B-08 ID, goal, gate, allowed paths, non-goals, acceptance, checks, stop conditions and rollback are present.
+4. Secret-boundary check — `git ls-files`/text scan finds no tracked local secret file or literal credential; do not create or inspect `.env.local` fixtures.
+5. Human diff review — explicit `continue`, `revise` or `HOLD` before changing implementation paths.
+
+- **Expected result:** checks 1–4 pass; implementation and human review remain pending.
+- **Evidence boundary:** this contract preparation proves only document structure and current repository boundary. It does not prove permission refusal, accessor behavior, provider availability, secret safety under a real key or any R2 user story.
+
+### Implementation attempt observed
+
+- `git diff --check`, ignore/tracking checks, source-boundary checks, direct server TypeScript check with `--ignoreConfig --types node`, normal `npx tsc --noEmit`, `npm run build`, `npm ls --depth=0` and missing/blank accessor assertions were run. Available non-permission checks passed; the build retained the known external package-lock warning and the dependency tree retained pre-existing extraneous packages.
+- `.env.example` and `server/aisstream-config.ts` were added; `.gitignore` was verified unchanged. `.claude/settings.json` was not created because the current configuration-skill action was denied. No secret file, real key or live AISStream request was used.
+- **Observed status:** `HOLD` for incomplete B-08; permission rules, permission matrix and final human diff review remain pending. Evidence: `E-SEA-031`.
+
+### Permission rules and verification update
+
+- The user explicitly authorized creation of `.claude/settings.json` with the three approved deny rules. The file was created without changing `.claude/settings.local.json`.
+- The three secret-path read checks were denied by the active project permission settings; the checked paths were confirmed absent before the checks. `.env.example` remained readable and unchanged.
+- **Observed status:** `CONTINUE WITH APPROVAL`; B-08 implementation and permission checks passed, while final human diff review remains pending. Evidence: `E-SEA-032`.
+
+## Checkpoint and stop conditions
+
+- **Checkpoint:** after implementation checks and human diff review, append only actual B-08 evidence and RUNBOOK handoff; do not create a checkpoint record unless separately authorized.
+- **Stop before implementation if:** governance authorization or human `continue` is absent; permission syntax needs an unapproved broad rule; any check would require reading/creating/displaying a secret file; a dependency, endpoint, client import or unrelated path is required.
+- **Stop after implementation if:** a secret appears in tracked files/output/logs; `.env.example` is ignored or contains a value; local secret paths are not ignored; the accessor throws for missing input, logs/exports the value or becomes client-importable; unexpected paths change.
+- **Exit decision:** `DONE` only after actual checks and human review; otherwise `CONTINUE WITH APPROVAL` or `HOLD`.
+
+## Rollback / recovery
+
+If B-08 is rejected or a check fails, inspect the diff and restore only `.env.example`, `.gitignore`, `.claude/settings.json` and `server/aisstream-config.ts` to their pre-slice state; preserve append-only evidence/history, staged `SPRINT-02.md`, pre-existing `START.md` deletion and excluded untracked/generated paths. Never delete or reset a local secret file. The product owner decides whether recovery is accepted; evidence must show the failed check and restored boundary.
+
+## Handoff
+
+- **Changed files:** governance synchronization plus `.env.example`, `.claude/settings.json` and `server/aisstream-config.ts`; `.gitignore` verified unchanged; append-only `EVIDENCE.md`/`RUNBOOK.md` updated.
+- **Checks:** governance, source/ignore/type/build/accessor and permission-matrix checks passed; final human diff review completed with `continue` authorization for this commit/push.
+- **Evidence:** `E-SEA-030` records R2 authorization; `E-SEA-031` records non-permission B-08 checks; `E-SEA-032` records settings creation and permission matrix; `E-SEA-033` records final review and commit boundary.
+- **Open blockers:** no B-08 blocker remains. Provider availability, real-key validity and R2 user-story acceptance remain `Unknown`; B-09 and later slices remain separately gated. No AISStream registration or key is needed for this slice.
+- **Next bounded action:** after the authorized commit/push, stop before B-09. Any further implementation requires a separate bounded task and review.
+
+# TASK-SEA-R2-B09-001 — AISStream reader and intermediate snapshot route
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-23
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/README.md`](docs/decisions/README.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), predecessor B-08 commits [`b5ef3fb`](https://github.com/RomanMakarenko/SeaRadar/commit/b5ef3fb) and [`2ae10a1`](https://github.com/RomanMakarenko/SeaRadar/commit/2ae10a1)
+
+## Goal and gate
+
+- **Goal:** додати мінімальний server-only AISStream reader і `GET /api/snapshot`, який повертає перше сире повідомлення провайдера або `raw: null` у проміжній формі, не перетворюючи дані на судна і не додаючи partial-success behavior.
+- **Backlog:** `B-09` / `R2-B09-AISSTREAM-READER-ROUTE`.
+- **SPEC outcome:** `SPEC-SEA-001 / US-05…US-08`; цей task не закриває користувацьку історію самостійно.
+- **Predecessor:** `TASK-SEA-R2-B08-001`; B-08 має статус `Verified` / `DONE` у commit `2ae10a1`.
+- **Governance gate:** R2 scope authorization записана у `SPEC.md` v1.1.0 та `DEC-006-R2-SCOPE`. Межі B-09 були переглянуті в approved plan; реалізацію дозволено в межах перелічених paths. Фінальний human diff review після checks може обрати `continue`, `revise` або `HOLD`; commit/push окремо не авторизовані.
+
+## Owner and allowed paths
+
+- **Planning path for this task:** `TASK_SPEC.md` — лише append-only section; R1 B-07, R2 planning та B-08 history не переписувати.
+- **Future B-09 implementation paths after approval:**
+  - `server/aisstream-reader.ts` — server-only reader;
+  - `app/api/snapshot/route.ts` — Next.js Route Handler;
+  - `tests/snapshot-reader.spec.ts` — один focused deterministic spec для reader/route boundary, якщо test implementation authorization збережена в цьому task contract.
+- **Append-only records:** `EVIDENCE.md` і `RUNBOOK.md` можуть оновлюватися лише після фактичних implementation checks; цей contract-preparation slice їх не змінює.
+- **Excluded paths:** `.env`, `.env.*.local` (except the zero-byte root `.env.local` preflight artifact described below), `.env.example`, `.gitignore`, `.claude/settings.json`, `.claude/settings.local.json`, `app/` UI/map/demo paths, `components/`, `lib/`, `data/`, shared vessel model/card paths, `package.json`, `package-lock.json`, `playwright.config.ts`, existing `tests/vessel-selection.spec.ts`, `CLAUDE.md`, `SPEC.md`, `SPRINT-02.md`, `docs/decisions/`, `NEXT_SESSION.md`, `README.pdf`, `.agents/`, `reference/`, `skills-lock.json` and generated files.
+- **Local preflight artifact:** if the root `.env.local` path is absent, create it as a zero-byte ignored file without reading, printing, overwriting or otherwise inspecting its contents. If it already exists, preserve it and do not read it. It contains no key until the owner adds one locally; it is never evidence of provider connectivity.
+
+## Inputs and constraints
+
+- **Inputs:** approved `PROJECT_BRIEF.md`/`SPEC.md`, `SPRINT-02.md` B-09 contract, verified B-08 accessor `getAISStreamApiKey(): string | null` in `server/aisstream-config.ts`, Node.js 22.x baseline, TypeScript strict configuration and Next.js 16.3.5 App Router.
+- **Server boundary:** `app/api/snapshot/route.ts` must explicitly export `runtime = 'nodejs'`; Edge runtime is not allowed. The API key is read only through the B-08 server accessor and never imported by client code.
+- **Transport/dependency boundary:** reuse the approved runtime/provider boundary. No `ws` package, WebSocket dependency, new test runner or unrelated dependency may be added; if Node.js 22's available WebSocket mechanism is insufficient, stop for a separate decision rather than changing package manifests.
+- **Provider boundary:** use the documented AISStream WebSocket endpoint `wss://stream.aisstream.io/v0/stream`. The subscription is sent immediately after open and has exactly the fields `APIKey`, `BoundingBoxes: [[[50.75, 0.95], [51.25, 1.95]]]` and `FilterMessageTypes: ['PositionReport']`. The key is never printed, logged, returned, committed or placed in client-reachable output. The provider documentation requires one complete subscription within three seconds of connecting; B-09 sends it immediately from the open handler.
+- **Timing boundary:** the total 15-second deadline starts before connection and includes connection establishment and subscription transmission. A successful open with no message by the deadline may return `raw: null`; a connection that never reaches the required open/subscription boundary maps to `connect_failed`.
+- **Test boundary:** deterministic tests must be able to inject a fake WebSocket/event source and clock or equivalent lifecycle seams. Tests must not require a live network, real key or provider availability.
+- **Raw-message boundary:** B-09 returns only the first text provider message as the unchanged wire string in the reader's intermediate `raw` field, without JSON parsing, PositionReport transformation, validation, deduplication, collection or merging. A first non-text/binary payload is treated as the fixed `provider_error` path; no provider payload is exposed. Abort cancellation is cleanup-only: the reader closes resources once and prevents a late response, without adding a public error code.
+
+## Expected output
+
+1. `server/aisstream-reader.ts` with one bounded server-side read attempt that opens AISStream, subscribes immediately, observes the first raw message or the no-message deadline, and closes its resources.
+2. `app/api/snapshot/route.ts` with `GET /api/snapshot`, explicit Node.js runtime and the intermediate response forms only:
+
+   ```json
+   { "ok": true, "raw": "<first message or null>", "collectedAt": "<timestamp>" }
+   ```
+
+   ```json
+   { "ok": false, "attemptedAt": "<timestamp>", "error": { "code": "<fixed code>", "message": "<fixed message>" } }
+   ```
+
+3. One focused deterministic test spec covering the reader/route lifecycle without a live AISStream request or real credential.
+4. No transformer, collector, sample, UI or final vessel snapshot behavior.
+
+## Fixed response and error contract
+
+- **No key:** HTTP `502`; code `no_api_key`; message `Ключ AISStream не налаштовано`; no WebSocket is opened.
+- **Connection failure:** HTTP `502`; code `connect_failed`; message `Не вдалося підключитися до джерела`.
+- **Provider error:** HTTP `502`; code `provider_error`; message `Джерело повернуло помилку`.
+- **Unexpected disconnect:** HTTP `502`; code `disconnected`; message `З'єднання з джерелом розірвано`.
+- **Internal failure:** HTTP `502`; code `internal`; message `Внутрішня помилка сервера`.
+- Raw provider error text, socket error text and the API key must not appear in any public message, response, log or client-reachable bundle. No new public error code may be invented in this task.
+
+## Acceptance criteria
+
+- [x] `GET /api/snapshot` is a Node.js Route Handler with an explicit `runtime = 'nodejs'` export and no client import boundary violation.
+- [x] Missing or blank `AISSTREAM_API_KEY` returns HTTP `502` with the exact `no_api_key` response and does not construct or open a WebSocket.
+- [x] The WebSocket subscription is sent immediately after the open event and matches the exact approved shape, including the Dover bounding box and `FilterMessageTypes: ['PositionReport']`.
+- [x] The 15-second deadline is started before connection and includes connect/open/subscription time; it is not restarted after connection.
+- [x] The first text provider message is returned unchanged as a wire string in `raw`; a first binary/non-text payload maps to fixed `provider_error`; an opened and subscribed connection with no message by the deadline returns HTTP `200` with `raw: null`.
+- [x] Connection, provider-error, disconnect and internal failure paths use only the fixed HTTP `502` codes/messages above and do not expose provider text or credentials.
+- [x] Success, error, timeout and `AbortSignal` cancellation close the WebSocket and clear the deadline timer exactly once; late events cannot change a completed result.
+- [x] Deterministic tests cover immediate subscription, total-window timing, first raw/null result, fixed connection/provider/disconnect mappings, cancellation and exactly-once cleanup without network access or a real key.
+- [x] No PositionReport transformer/validation, sample/provenance, collector, dedupe/latest timestamp, 100-vessel limit, final vessel response, partial success, UI, map, demo-vessel, persistence, polling, history, continuous stream, B-10, B-11, B-12 or B-13 behavior is introduced.
+- [x] No package manifest, lockfile, dependency, Playwright configuration, existing B-07 test or B-08 file changes are introduced.
+- [x] Final human diff review completed with decision `continue`; commit/push remain separately unauthorized.
+
+**Current acceptance status:** `Verified; bounded local B-09 implementation is accepted. Live provider availability, real-key validity and complete R2 user-story acceptance remain unverified.`
+
+## Verification
+
+### Pre-edit checks
+
+- **Reads/commands:** current `CLAUDE.md`, `SPEC.md`, `PROJECT_BRIEF.md`, `SPRINT-02.md`, B-08 section of `TASK_SPEC.md`, latest EVIDENCE/RUNBOOK entries, decision index and `DEC-006-R2-SCOPE`; `git status --short --branch`; `git log -3 --oneline --decorate`; remote ancestry for `b5ef3fb` and `2ae10a1`; changed-path inspection.
+- **Expected:** B-08 is `Verified`/`DONE`; `origin/sprint2` contains both B-08 commits; R1 B-07 and R2 planning remain intact; only this new planning section is proposed; pre-existing staged/untracked paths remain excluded; no tracked local secret file exists.
+- **Observed:** these pre-edit checks were completed before this section was appended; current B-08 status and remote ancestry were confirmed, and no B-09 implementation path was changed.
+
+### Post-contract checks
+
+1. `git diff --check` — Markdown/patch integrity.
+2. `git diff --name-only` and full diff inspection — only `TASK_SPEC.md` changes; R1 B-07, R2 planning and B-08 history remain intact; staged `SPRINT-02.md`/`START.md` and untracked paths remain untouched.
+3. Structural/content validation — metadata, B-09 ID, goal/gate, allowed/excluded paths, response/error contract, acceptance, evidence boundary, stop conditions, rollback and handoff are present.
+4. Secret-boundary validation — inspect tracked paths/text only; do not read, create or output `.env`, `.env.local` or `.env.*.local`; confirm no literal credential or key assignment is introduced.
+5. Human diff review — explicit `continue`, `revise` or `HOLD` is required before B-09 implementation.
+
+- **Observed result:** `git diff --check`, structural/content validation, tracked-path secret scan, direct server type-check, normal `npx tsc --noEmit`, `npm run build`, `npm ls --depth=0` and the focused Playwright spec passed. The zero-byte `.env.local` path is ignored and was not read. Human diff review completed with decision `continue`; no commit/push was performed.
+- **Evidence boundary:** these checks and the approved diff prove the local reader/route lifecycle and response boundary only. They do not prove provider availability, real-key validity, live connection/message receipt or any complete R2 user story.
+- **Implementation checks:** direct server type-check used TypeScript 6 with `--ignoreConfig`; the normal application check, production build, dependency inspection, deterministic tests and no-key route check were run. A live connection/open or message receipt remains `Unknown`/`Blocked` unless separately authorized with a locally stored key.
+
+## Checkpoint and stop conditions
+
+- **Checkpoint:** contract review/continue preceded implementation, and final human diff review followed the local checks. No new checkpoint record is required for this bounded slice.
+- **Stop before implementation if:** the contract review/continue is withdrawn; the runtime requires an unapproved dependency; a test seam cannot inject WebSocket/events and time; a live key/request is required; or implementation needs an excluded path beyond the explicitly authorized zero-byte `.env.local` preflight artifact.
+- **Stop after implementation if:** the route runs on Edge; subscription is delayed or malformed; the 15-second window starts after connect; socket/timer cleanup leaks or double-closes; partial data becomes success; provider/raw/key text is exposed; the no-key mapping is wrong; deterministic lifecycle checks fail; unexpected paths change; or B-10…B-13 behavior appears.
+- **Exit decision:** `DONE` for the bounded local B-09 implementation after passing checks and human `continue`. Provider availability, real-key validity and R2 user-story acceptance remain unverified.
+
+## Rollback / recovery
+
+If this contract is rejected, inspect the diff and remove only the appended B-09 section from `TASK_SPEC.md`, restoring the document to the verified B-08 boundary represented by `2ae10a1`. If a later B-09 implementation is rejected, restore only `server/aisstream-reader.ts`, `app/api/snapshot/route.ts`, the focused B-09 test and this B-09 section to the B-08 baseline after inspecting the diff. Preserve append-only evidence/history, staged `SPRINT-02.md`, staged `START.md` deletion, untracked/generated paths and all secret files. Do not reset the branch, delete local secret files or stop unrelated processes.
+
+## Handoff
+
+- **Changed files in this B-09 slice:** `TASK_SPEC.md`, `server/aisstream-reader.ts`, `app/api/snapshot/route.ts`, `tests/snapshot-reader.spec.ts`, plus the ignored zero-byte `.env.local` preflight artifact. No package, UI, map, B-07 test or B-08 file changed.
+- **Checks:** contract structural validation, `git diff --check`, tracked-path secret scan, direct server type-check, `npx tsc --noEmit`, `npm run build`, `npm ls --depth=0`, focused Playwright spec and no-key loopback check passed; final human diff review chose `continue`.
+- **Evidence boundary:** local reader/route behavior is supported by deterministic tests and approved diff review; live provider availability, real-key validity and R2 user-story acceptance remain `Unknown`/`Needs verification`.
+- **Open blockers:** no local B-09 blocker remains. Provider availability, real-key validity, live connection/message receipt and complete R2 user-story acceptance remain `Unknown`/`Needs verification`.
+- **Next bounded action:** if desired, separately authorize a sanitized live-provider check with the locally stored key; otherwise keep B-10 through B-13 separately gated. Commit/push still require explicit authorization.
+
+# TASK-SEA-R2-B10-001 — PositionReport sample and provenance
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-23
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), `TASK-SEA-R2-B09-001`, `E-SEA-034`, `E-SEA-035`, `E-SEA-036`.
+
+## Goal and gate
+
+- **Goal:** create one small, inspectable `PositionReport` sample with truthful provenance for B-11 transformer work, without presenting synthetic or documentation-derived data as live AIS data.
+- **Backlog:** `B-10` / `R2-B10-SAMPLE-PROVENANCE`.
+- **SPEC outcome:** `SPEC-SEA-001 / US-05…US-08`; this bounded task does not satisfy any user story by itself.
+- **Predecessors:** verified B-08 secure configuration and bounded B-09 intermediate raw reader. B-09 local evidence does not establish live provider connectivity or receipt of a provider message.
+- **Authorization gate:** this section prepares the contract only. No sample files are created and no B-10 implementation/live capture is authorized until human diff review records `continue` for this contract. Live AISStream access, use of a real key, commit and push each require separate explicit authorization.
+
+## Owner and allowed paths
+
+- **Planning path for this contract:** append-only B-10 section in `TASK_SPEC.md`; do not rewrite R1, R2 planning, B-08 or B-09 history.
+- **Contract-preparation paths:** `TASK_SPEC.md`, `NEXT_SESSION.md`; after structural checks only, append actual contract-preparation facts to `EVIDENCE.md` and `RUNBOOK.md`.
+- **Future B-10 implementation paths, only after contract review and explicit implementation `continue`:**
+  - `data/samples/position-report.sample.json` — one sanitized sample object;
+  - `data/samples/PROVENANCE.md` — provenance and limitations for that exact sample.
+- **Excluded paths:** all `.env*` files, credentials, `server/`, `app/`, `tests/`, `package.json`, `package-lock.json`, `playwright.config.ts`, `.gitignore`, `.claude/`, all map/UI/product paths, B-09 reader/route, `SPEC.md`, `SPRINT-02.md`, decisions, generated files and unrelated/untracked paths. Do not inspect `.env.local` or any secret path.
+
+## Inputs and constraints
+
+- **Read-only inputs:** approved sample/provenance clauses in `SPRINT-02.md`; `TASK-SEA-R2-B09-001`; B-08/B-09 evidence and human-review records; the PositionReport field contract in `SPRINT-02.md`; AISStream documentation if reachable without credentials. Do not read secret files or call the provider.
+- **Permitted sample origin:** use a clearly identified documentation-derived example or a clearly identified synthetic fixture. A locally captured live sample is out of scope unless the user separately authorizes a live request and confirms that retaining the sanitized payload is permitted. Never invent a live capture or claim that a documentation example was received from AISStream.
+- **Sample payload boundary:** one JSON object representing the agreed `PositionReport` message shape with `MetaData` and `Message.PositionReport`; preserve source field names/casing and include fields required by the B-11 contract: `MetaData.MMSI`, `ShipName`, `latitude`, `longitude`, `time_utc`; `Message.PositionReport.Sog`, `Cog`, `TrueHeading`, `Latitude`, `Longitude`. If a source does not provide a field, omit it only when the provenance records that omission and it is consistent with the documented schema; do not manufacture missing provider metadata while labelling the object documentation-derived.
+- **Sanitization:** sample must contain no API key, credential, access token, private local path, or unrelated personal data. Use only a non-sensitive synthetic MMSI for a synthetic example. Do not include raw logs or transport frames beyond the single intended sample object.
+- **Timestamp and coordinates:** provenance states whether timestamps are source-example values or synthetic, and identifies the time/coordinate context without implying actual receipt. It records the configured Dover bounds only as the intended sample context, not as proof that a vessel was observed there.
+- **No implementation expansion:** no transformer, validation runtime, collector, endpoint modification, live request, UI, persistence, dependency or automated release-level test suite is part of B-10.
+
+## Expected output
+
+After this task receives its own implementation authorization, the only B-10 deliverables are:
+
+1. `data/samples/position-report.sample.json` — one parseable JSON sample using the approved `MetaData` / `Message.PositionReport` shape and explicit origin.
+2. `data/samples/PROVENANCE.md` — metadata for the exact sample, including origin class (`live`, `documentation-derived`, or `synthetic`), retrieval/creation UTC timestamp for this artifact (not misrepresented as vessel observation time), source reference when applicable, intended region context, field omissions/normalization, sanitization and limitations.
+3. Append-only factual `EVIDENCE.md` and `RUNBOOK.md` entries after checks and human review; these must distinguish sample artifact checks from live provider evidence.
+
+## Acceptance criteria
+
+- [x] A focused sample exists at the agreed canonical path, parses as JSON, and contains one message object only.
+- [x] The payload preserves exact agreed field names/casing and includes the B-11 input fields, or explicitly documented schema-based omissions; no transformer-derived vessel object is included.
+- [x] Provenance identifies the actual origin as documentation-derived or synthetic unless separately authorized live evidence proves otherwise; it distinguishes artifact creation time from any timestamp inside the example.
+- [x] Provenance explains source, intended region context, field differences/omissions, sanitization, and what the example does not prove.
+- [x] No credential/key, unapproved personal data, unrelated data, raw logs, or claim of live receipt without evidence is present.
+- [x] Human diff review explicitly selected `continue` before B-11; B-11 remains separately task-gated.
+- [x] No B-09 source, product behavior, dependency, endpoint, test framework, live request or secret path is changed/read.
+
+**Current acceptance status:** `Verified; B-10 sample, provenance, targeted checks and final human diff review are complete. B-11, live AISStream access, commit and push remain separately gated.`
+
+## Verification
+
+### Contract preparation checks
+
+1. `git status --short --branch` and current `git log -3 --oneline --decorate` — verify branch and preserve pre-existing paths.
+2. Full review of this appended section and `SPRINT-02.md` B-10 decomposition — verify scope, field list, provenance classes, gates, allowed/excluded paths and rollback.
+3. `git diff --check -- TASK_SPEC.md NEXT_SESSION.md EVIDENCE.md RUNBOOK.md` — Markdown/patch integrity after editing.
+4. Structural validator — verify ID, metadata, Draft gate, outputs, acceptance, paths, checks, stop conditions, rollback and handoff.
+5. Secret boundary — inspect only named non-secret documentation paths; do not enumerate/read/print `.env*` contents or search them.
+
+### Future sample checks (requirements, not observed results)
+
+1. Parse `position-report.sample.json` with a JSON parser and assert exactly one top-level message object and required/cased paths.
+2. For a documentation-derived sample, compare it to its cited AISStream documentation source without claiming live receipt; for a synthetic sample, compare its field names and shape to the approved B-10/B-11 contract. Verify all claimed fields and any omissions.
+3. Review `PROVENANCE.md` against the actual sample origin and inspect both B-10 output files for credential/secret patterns without opening secret files.
+4. Run `git diff --check`; inspect changed paths to confirm only the two B-10 sample files plus post-check append-only records changed.
+5. Do not run `npm run build` or product tests for this documentation/data-only slice unless a future contract specifically makes them relevant.
+
+- **Evidence boundary:** structural/JSON checks prove only the sample artifact and documentation are internally inspectable. They do not prove a live observation, provider availability, vessel identity, field semantics beyond cited docs, R2 acceptance or complete traffic coverage.
+
+## Checkpoint and stop conditions
+
+- **Checkpoint:** first checkpoint is human review of this contract. A second explicit `continue` is required before creating B-10 sample/provenance files. Before B-11, review the completed B-10 diff and evidence separately.
+- **Stop before implementation if:** this contract is not approved; exact example/source or field shape cannot be established; live capture is necessary to meet the intended claim; retention terms are unclear; a secret, credentials, dependency or excluded path would be needed; or sample values could be mistaken for real vessel observations.
+- **Stop after implementation if:** provenance origin is ambiguous; sample is malformed or contains unapproved data; field casing differs from the cited contract; any claim implies unsupported live capture; an unexpected path changes; or a credential/secret appears.
+- **Exit decision:** `DONE` only after authorized sample creation, targeted checks, evidence, and human `continue`; otherwise `CONTINUE WITH APPROVAL` or `HOLD`.
+
+## Rollback / recovery
+
+If the contract is revised or rejected before implementation, inspect the diff and amend/remove only this appended B-10 section; preserve B-08/B-09 history and all pre-existing staged/untracked/generated paths. If a later B-10 sample is rejected, after inspection remove only `data/samples/position-report.sample.json` and `data/samples/PROVENANCE.md` created by this task, then return to the last verified B-09 baseline; do not reset the branch or delete/inspect secret files. The product owner decides whether recovery is accepted, based on the reviewed diff and recorded evidence.
+
+## Handoff
+
+- **Current changed files:** B-10 contract in `TASK_SPEC.md`; synthetic sample `data/samples/position-report.sample.json`; `data/samples/PROVENANCE.md`; append-only `EVIDENCE.md` and `RUNBOOK.md` updates after checks. No product code, test or dependency changed.
+- **Current checks:** sample JSON/schema/provenance assertions, targeted credential-like-value scan, whitespace checks and final changed-path inspection; observed results are recorded in `EVIDENCE.md`.
+- **Unknowns:** live provider availability, real-key validity, live message receipt, sample retention terms, full R2 acceptance and release readiness remain `Unknown`/`Needs verification`.
+- **Next bounded action:** human review of the completed B-10 diff and evidence. Do not begin B-11, make a live request, commit or push without their separate authorization.
+
+### B-10 implementation update — synthetic sample
+
+- **Review and authorization:** user approved continuation of the B-10 contract (`continue`) and explicitly authorized implementation using a documentation-derived or synthetic sample. No live request, secret access, commit or push was authorized.
+- **Changed paths:** `data/samples/position-report.sample.json` and `data/samples/PROVENANCE.md`; this append-only task status update. No product code, tests, dependencies or other implementation paths changed.
+- **Observed:** one synthetic `MetaData` / `Message.PositionReport` fixture was created with the agreed fields/casing, synthetic values, and coordinates matching inside the intended Dover bounds. Provenance distinguishes artifact creation time from the synthetic `time_utc` value and states the fixture is not live or documentation-derived.
+- **Checks:** Node JSON/schema/provenance assertion — `PASS`; credential-like value scan of the two B-10 outputs — `PASS`; `git diff --check` — `PASS` for the selected tracked paths. A final changed-path/diff review is still pending.
+- **Limitations:** this fixture proves only the sample's structural consistency with the agreed task field contract; it proves no live observation, provider behavior, vessel identity, or R2 acceptance.
+- **Decision boundary:** implementation checks passed; final human diff review is recorded below. B-11, live AISStream access, commit and push remain separately gated.
+
+### B-10 final human diff review
+
+- **Review scope:** inspected the sample JSON, provenance, B-10 acceptance/status update, `E-SEA-038`, `RUNBOOK.md` handoff, and the final changed-path boundary.
+- **Observed:** the payload is one synthetic PositionReport envelope with all required field names/casing, matching coordinates within the intended Dover bounds, and no transformer-derived object. Provenance identifies synthetic origin, records UTC creation date at day precision, and disclaims live receipt/observation. The sample directory contains only the two approved B-10 files; no product, test or dependency paths changed.
+- **Checks:** JSON/schema/provenance and credential-like scan — `PASS`; whitespace and `git diff --check` — `PASS`; final Git inspection confirmed the only existing tracked modifications are `EVIDENCE.md`, `RUNBOOK.md`, `TASK_SPEC.md`, and the pre-existing `START.md` deletion; staged paths remain empty.
+- **Decision:** user selected `continue` for the B-10 review. B-10 is `Verified` within this bounded sample/provenance scope. This does not authorize B-11, live provider access, commit or push.
+- **Recovery:** if this review is later rejected, inspect the diff and remove only the two B-10 sample files and revert B-10 task status; preserve append-only evidence/history and all pre-existing staged/untracked paths.
+- **Next action:** stop at B-10. B-11 requires its own bounded task contract and explicit authorization.
+
+### B-10 post-review delivery update
+
+- **Observed delivery:** commit `72f8b94` (`feat(r2): add B-10 PositionReport sample`) is present at local `HEAD` and `origin/sprint2`; remote ref verified by `git ls-remote origin refs/heads/sprint2` as `72f8b94eb9c88a92d84281be88d7629e458ed0e8`.
+- **Commit boundary:** exactly the B-10 sample, provenance, task, evidence and runbook paths were committed; pre-existing `START.md` deletion and unrelated untracked paths remain excluded.
+- **Delivery status:** B-10 sample/provenance is verified, committed and pushed. This does not authorize live AISStream access or B-11.
+- **Handoff:** stop after B-10. Prepare a separate B-11 bounded contract and obtain explicit authorization before implementation.
+
+# TASK-SEA-R2-B11-001 — PositionReport transformer
+
+- **Version:** `1.1.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-23
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), `TASK-SEA-R2-B10-001`, `E-SEA-038`, `E-SEA-039`, `E-SEA-040`, [`app/vessel-model.ts`](app/vessel-model.ts), [`data/samples/position-report.sample.json`](data/samples/position-report.sample.json), [`data/samples/PROVENANCE.md`](data/samples/PROVENANCE.md).
+
+## Goal and gate
+
+- **Goal:** define a pure, deterministic transformation from one decoded AISStream `PositionReport` envelope to the shared `Vessel` shape, or `null` when required identity, time, or position data is invalid.
+- **Backlog:** `B-11` / `R2-B11-POSITION-TRANSFORMER`.
+- **SPEC outcome:** `SPEC-SEA-001 / US-05…US-08`; this bounded task does not satisfy a user story by itself.
+- **Predecessor:** verified `TASK-SEA-R2-B10-001`; use its canonical sample and provenance as the fixture/source-shape reference. The fixture is synthetic and is not evidence of live provider receipt.
+- **Authorization gate:** this section prepares the contract only. Implementation and tests remain unauthorized until this contract is human-reviewed, the user chooses `continue`, and implementation is explicitly authorized. B-10 review/authorization does not carry forward. Live AISStream access, real-key use, commit and push each remain separately gated.
+
+## Owner and allowed paths
+
+- **Planning path:** append-only B-11 section in `TASK_SPEC.md`; do not rewrite R1, R2 planning, B-08, B-09 or B-10 history.
+- **Read-only inputs:** `SPRINT-02.md` B-11 contract; `app/vessel-model.ts`; `data/samples/position-report.sample.json`; `data/samples/PROVENANCE.md`; verified B-10 evidence and `DEC-006-R2-SCOPE`.
+- **Future implementation paths, only after review and explicit authorization:**
+  - `server/position-report-transformer.ts` — one pure server-side transformer and its input validation.
+  - `tests/position-report-transformer.spec.ts` — focused deterministic transformer checks only.
+- **Append-only records after actual checks:** `EVIDENCE.md` and `RUNBOOK.md`.
+- **Excluded paths:** all other `server/` files; `app/`, including changes to `app/vessel-model.ts`; `app/api/`; `data/`; UI/map components; package manifests/lockfile; Playwright configuration; `.env*`, credentials and `.claude/`; `SPRINT-02.md`; decisions; generated files; unrelated or pre-existing paths. Do not inspect or access secret files.
+
+## Inputs and transformation contract
+
+- **Input boundary:** one already-decoded JSON-like envelope containing `MetaData` and `Message.PositionReport`. This is a pure mapping/validation boundary; no transport, parsing of WebSocket frames or network access is included.
+- **Output boundary:** `Vessel | null` using the existing shape in `app/vessel-model.ts`. The result has `source: "aisstream"`; `id` is a string. Do not add fields to or modify the shared type.
+- **Identity:** map `MetaData.MMSI` to `Vessel.id`. Accept either a JSON non-negative safe integer or a non-empty ASCII digit-only string. Reject missing, fractional, negative, non-finite, unsafe numeric, blank, signed, or other non-digit values. Convert numeric input to its canonical base-10 decimal string; trim surrounding whitespace from string input and preserve its remaining digits, including leading zeros. Do not impose a nine-digit or upper-range restriction not present in the approved Sprint contract.
+- **Name:** map `MetaData.ShipName`, trim surrounding whitespace, and use `null` for missing, non-string, or blank values.
+- **Timestamp:** map `MetaData.time_utc`. Accept only the UTC form shown by the approved Sprint/sample contract: `YYYY-MM-DD HH:mm:ss[.fraction] +0000 UTC`, with an optional fraction of 1–9 digits. Validate the calendar date and clock fields rather than allowing invalid values to normalize; reject other offsets or timezone labels because they conflict with the `time_utc` UTC marker. Return UTC ISO 8601 with exactly millisecond precision (`.sssZ`): right-pad fractions shorter than three digits with zeros and truncate digits after the third without rounding. Missing, malformed, or invalid timestamps reject the vessel.
+- **Position:** use `Message.PositionReport.Latitude` and `Longitude`, not the metadata coordinates. Both must be finite numbers with latitude in `[-90, 90]` and longitude in `[-180, 180]`; unavailable sentinels `91`/`181`, missing values, non-numeric values, and out-of-range values reject the vessel. Never substitute `0,0`. Do not add a requirement that metadata coordinates match the report coordinates.
+- **Optional motion fields:** map `Sog` to `speedKnots`; absent, non-numeric, sentinel `102.3`, or values outside `[0, 102.2]` become `null`. Map `Cog` to `courseDeg`; absent, non-numeric, sentinel `360`, or values outside `[0, 360)` become `null`. Preserve valid numeric zero. Invalid optional fields do not reject a valid position.
+- **Other fields:** `TrueHeading` and unknown optional fields do not affect this transformation; course comes from `Cog`. Unknown extra fields must not prevent a valid report from being transformed.
+- **Purity:** do not mutate the input envelope or saved sample; no module-level mutable state, clock, I/O, logging, WebSocket lifecycle, or environment access.
+
+## Expected output
+
+After separate implementation authorization, produce only the pure transformer and focused deterministic spec at the two future implementation paths above, plus factual append-only evidence/runbook updates after checks. No endpoint wiring, collector, deduplication, vessel limit, UI, dependency, new test runner, live request, or release-level suite is part of B-11.
+
+## Acceptance criteria
+
+- [x] A valid sample-shaped envelope produces one `Vessel` with `source: "aisstream"`, string `id` from MMSI, trimmed-or-null name, report coordinates, ISO UTC timestamp at millisecond precision, and correctly mapped speed/course.
+- [x] MMSI accepts only non-negative safe-integer JSON numbers or trimmed ASCII digit-only strings; rejects fractional/negative/unsafe/non-digit/blank input; converts numbers to base-10 strings and preserves digit strings' leading zeros without adding a nine-digit/range rule.
+- [x] `time_utc` accepts only `YYYY-MM-DD HH:mm:ss[.fraction] +0000 UTC` with 1–9 fractional digits when present; rejects nonzero offsets, conflicting timezone labels, malformed or impossible calendar/clock values; outputs `.sssZ`, pads shorter fractions, and truncates longer fractions without rounding.
+- [x] Name, timestamp, latitude and longitude follow the field/type rules above; malformed envelope, missing/invalid identity, unparseable time, or invalid position returns `null` rather than throwing or producing a vessel at `0,0`.
+- [x] Latitude/longitude inclusive bounds and unavailable/out-of-range/non-numeric cases are covered; report coordinates are authoritative even if metadata coordinates differ.
+- [x] Missing, non-numeric, sentinel and out-of-range speed/course become `null`; valid zero speed/course remain numeric zero and do not reject an otherwise valid vessel.
+- [x] Unknown optional fields and `TrueHeading` do not alter the mapping or prevent a valid report from being accepted; `Cog`, not `TrueHeading`, supplies course.
+- [x] Output field names/types match the existing shared `Vessel` structure and input/sample objects remain unchanged.
+- [x] Focused deterministic tests cover valid mapping; numeric and digit-string MMSI conversion plus invalid MMSI types/boundaries; exact UTC timestamp parsing, fractional padding/truncation, rejected offsets and impossible dates; invalid/malformed required fields; position bounds/sentinels; optional-field null/zero cases; unknown optional fields; and input non-mutation, all without network access or credentials.
+- [x] At least three output fields are manually compared with `data/samples/position-report.sample.json`; actual comparisons and test output are recorded in evidence after implementation.
+- [x] No B-09 transport, endpoint, collector, deduplication, 100-vessel limit, UI, dependency, live provider or unrelated path is changed.
+- [x] Human diff review was completed at the user's direction; the separate explicit implementation authorization preceded implementation. B-12 and later work remain task-gated.
+
+**Current acceptance status:** `DONE for bounded B-11 scope after final diff review at the user's direction; focused checks and synthetic fixture comparisons passed. E-SEA-043 records implementation checks; E-SEA-044 records final review. Live data, complete R2 acceptance and release readiness are not claimed.`
+
+## Verification
+
+### Contract-preparation checks
+
+1. Inspect the B-11 Sprint entry, B-10 contract/sample/provenance, shared `Vessel` type, decision gate, Git status and recent delivered baseline.
+2. Validate this contract's ID/metadata, gate, exact future paths, field mappings, validation ranges/sentinels, acceptance, excluded paths, stop conditions, rollback and handoff.
+3. Run `git diff --check` on `TASK_SPEC.md`, `EVIDENCE.md` and `RUNBOOK.md`; inspect the complete diff and changed-path boundary.
+4. Append factual contract-preparation evidence/runbook only after these checks. Do not claim any transformer/test result or B-11 acceptance.
+
+### Future implementation checks (requirements, not observed results)
+
+1. Add deterministic fixtures/assertions at `tests/position-report-transformer.spec.ts`, with no live network or credential.
+2. Run the focused transformer spec and relevant type check; record the exact command/output and environment.
+3. Manually compare at least three mapped output fields against the saved synthetic sample and record each comparison.
+4. Inspect immutability, invalid-position rejection (including no `0,0` fallback), and optional-field null/zero behavior; run `git diff --check` and verify only the future allowed paths plus post-check records changed.
+
+- **Evidence boundary:** contract structure and review prove only that the task boundary is documented. Future fixture tests/manual comparisons prove only local transformation behavior against the synthetic contract sample; they do not prove live observation, AISStream availability, vessel identity, provider semantics beyond the approved field contract, R2 user-story acceptance, or release readiness.
+
+## Stop conditions
+
+- Stop before implementation if human review does not choose `continue` and explicit implementation authorization is absent.
+- Stop if timestamp syntax/precision or an input-type rule cannot be implemented as written, if the shared output type needs modification, or if an excluded path/dependency, endpoint orchestration, secret, real key or live request appears necessary.
+- Stop after implementation if required invalid inputs produce a vessel, optional unknown values reject a valid position, zero values are lost, `0,0` is used as fallback, output differs from the agreed `Vessel` shape, the input is mutated, checks fail, or unexpected paths change.
+- **Exit decision:** `DONE` only after authorized implementation, focused checks, recorded manual comparison, evidence, and human diff review; otherwise `CONTINUE WITH APPROVAL` or `HOLD`.
+
+## Rollback / recovery
+
+If the B-11 contract is revised or rejected before implementation, inspect the diff and remove only this appended B-11 section; preserve earlier task history, append-only evidence/runbook history and all unrelated staged/untracked/generated paths. If a later authorized B-11 implementation is rejected, inspect the diff and restore only `server/position-report-transformer.ts` and `tests/position-report-transformer.spec.ts` to the verified B-10 baseline; do not reset the shared branch, delete local files, or alter unrelated paths. The product owner decides whether recovery is accepted.
+
+## Handoff
+
+- **Current changed paths:** B-11 task contract/status, `server/position-report-transformer.ts`, `tests/position-report-transformer.spec.ts`, and append-only `EVIDENCE.md`/`RUNBOOK.md` records.
+- **Contract status:** `Verified`; B-11 is `DONE` within its bounded local scope after the requested review and user decision to continue.
+- **Evidence:** `E-SEA-043` records implementation checks and synthetic comparisons; `E-SEA-044` records final diff review. No live data is claimed.
+- **Open unknowns:** live provider availability, real-key validity, live receipt, full R2 acceptance and release readiness remain `Unknown`/`Needs verification`.
+- **Next bounded action:** B-12 requires its own task contract, human review and explicit implementation authorization. Do not start B-12 or any later slice under this authorization.
+
+### B-11 contract clarification — v1.1.0
+
+- **Trigger:** contract review requested explicit MMSI and timestamp rules before approval for delivery.
+- **MMSI rule:** narrowed accepted inputs to non-negative safe-integer JSON numbers or trimmed ASCII digit-only strings; documented string conversion and rejected malformed values without imposing a nine-digit/range rule.
+- **Timestamp rule:** aligned accepted syntax to the UTC form evidenced by the Sprint/example (`+0000 UTC`), defined strict date/clock validation and sub-millisecond padding/truncation, and rejected conflicting offsets/timezone labels.
+- **Status and boundary at clarification:** contract remained `Draft`; no transformer, test, live-provider request, secret access, or implementation authorization was included.
+
+### Human review and implementation authorization — 2026-09-24
+
+- **Contract decision:** the user reviewed `TASK-SEA-R2-B11-001` v1.1.0 and chose `continue`.
+- **Implementation authorization:** the user separately authorized B-11 implementation. This authorization does not authorize live AISStream access, secret handling, commit, push, B-12, or any later task.
+- **Status at authorization:** `Active`; the requirements above remain unchanged. At that point, implementation, tests, and B-11 acceptance were not yet verified.
+
+### Implementation check checkpoint — 2026-09-24
+
+- **Observed:** focused Playwright spec passed (9 tests); scoped TypeScript check with `--ignoreConfig`, repository `npx tsc --noEmit`, and `npm run build` passed; `git diff --check` and the new-file whitespace check passed. A first scoped TypeScript invocation failed with `TS5112` because TypeScript 6 detected `tsconfig.json`; the corrected invocation passed.
+- **Sample comparison:** MMSI `999000001` → ID `"999000001"`; report coordinates `51.0/1.45` → `51/1.45`; sample UTC timestamp → `2026-09-23T15:00:00.000Z`; `Sog 12.4` → speed `12.4`; `Cog 123.4` → course `123.4`.
+- **Evidence:** `E-SEA-043`. The fixture is synthetic; provider behavior, live receipt, full R2 acceptance and release readiness are not established.
+- **Checkpoint decision:** implementation checks passed locally; stop for human diff review. B-11 remains `Active`, not `DONE`; B-12 is not authorized.
+
+### Final diff review — 2026-09-24
+
+- **Review requested:** the user asked to “review B-11 diff and continue”.
+- **Observed:** final review found no functional or scope findings; implementation and focused tests align with this task contract. No code changes were made during the review.
+- **Decision:** `DONE` for bounded local B-11 scope. Review outcome is `E-SEA-044`; live provider behavior, complete R2 acceptance and release readiness remain unverified.
+- **Next gate:** B-12 remains separately task-gated; its own contract, review and explicit implementation authorization are required.
+
+# TASK-SEA-R2-B12-001 — Bounded snapshot collector
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-24
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), [`docs/decisions/DEC-007-r2-b09-streaming-boundary.md`](docs/decisions/DEC-007-r2-b09-streaming-boundary.md), `TASK-SEA-R2-B09-001`, `TASK-SEA-R2-B11-001`, `E-SEA-034`, `E-SEA-043`, `E-SEA-044`, [`server/aisstream-reader.ts`](server/aisstream-reader.ts), [`app/api/snapshot/route.ts`](app/api/snapshot/route.ts), [`server/position-report-transformer.ts`](server/position-report-transformer.ts).
+
+## Goal, predecessor and authorization gate
+
+- **Goal:** collect a bounded set of AISStream `PositionReport` messages and return the approved final snapshot response, using the existing pure B-11 transformer and a deterministic event-source/clock seam.
+- **Backlog:** `B-12` / `R2-B12-SNAPSHOT-COLLECTOR`.
+- **SPEC outcome:** `SPEC-SEA-001 / US-05…US-08`; this bounded task does not satisfy or close a user story by itself.
+- **Predecessors:** verified B-09 intermediate reader/route and B-11 transformer. B-10 remains a synthetic sample; it is not evidence of live provider behavior.
+- **Boundary decision:** on 2026-09-24, the user approved a narrow B-09 transport-boundary extension for B-12 through [`DEC-007-R2-B09-STREAMING-BOUNDARY`](docs/decisions/DEC-007-r2-b09-streaming-boundary.md), now `Ready`. The extension is limited to delivering multiple raw text events during one bounded attempt so the collector can create the final snapshot. It does not reopen or rewrite the historical B-09 acceptance record. DEC-007 is the approved B-12-specific exception to the unchanged `SPRINT-02.md` Part C wording.
+- **Authorization gate:** the task contract is `Ready` after the human review decision `continue` on 2026-09-24. The user explicitly authorized the bounded B-12 implementation on 2026-09-24; this does not authorize live AISStream requests, real-key use, commit or push. DEC-007 resolves the transport-boundary governance conflict without changing the B-09 historical acceptance.
+
+## Причина зміни межі — пояснення для замовника
+
+У B-09 ми навмисно реалізували проміжний крок: сервер відкриває одне з'єднання, надсилає підписку та повертає перше отримане повідомлення як сирий текст. Після цього reader закриває з'єднання. Така поведінка відповідала меті B-09 — перевірити серверну межу читання та проміжний endpoint до появи перетворювача й збирача.
+
+У B-12 мета вже інша: зібрати **знімок**, а не одне повідомлення. За затвердженим контрактом потрібно приймати повідомлення протягом обмеженого вікна до 15 секунд, об'єднати повторні повідомлення за MMSI, залишити останню позицію за часом повідомлення і припинити збір після 100 унікальних суден або завершення вікна. Для цього з'єднання має залишатися відкритим після першої позиції та передавати наступні повідомлення до завершення спроби.
+
+Якби B-12 залишився лише поверх незміненого одноразового reader, він міг би отримати не більше одного повідомлення з одного підключення. Такий результат не відповідав би ані вимозі зібрати кілька суден, ані правилам дедуплікації та вибору найновішої позиції. Альтернатива — відкрити окреме друге WebSocket-з'єднання без повторного використання B-09 reader — створила б дві реалізації одного транспортного lifecycle і ризик розбіжностей у підписці, тайм-ауті, обробці помилок та закритті ресурсів.
+
+Тому запропоноване вузьке розширення змінює лише межу передачі повідомлень: B-09 reader зможе віддати collector-у послідовність сирих текстових подій замість завершення на першій події. Collector залишатиметься окремою відповідальністю: декодує повідомлення, використовує B-11 transformer, веде набір суден і формує одну фінальну відповідь. Зберігаються AISStream, серверне підключення, затверджена підписка та bounding box, 15-секундне загальне вікно, ліміт 100, фіксовані повідомлення про помилки, захист ключа та одноразовий характер запиту. Безперервний моніторинг, історія, зберігання, повторне використання попереднього знімка та зміни інтерфейсу не додаються.
+
+Для замовника практичний наслідок — це не нова функція і не розширення продуктового обсягу, а необхідна технічна зміна між уже прийнятими кроками, щоб кнопка в майбутньому могла отримати саме знімок із кількох суден. Зміна збільшує обсяг локальних перевірок lifecycle reader-а: треба довести, що всі повідомлення в одній спробі передаються collector-у, а з'єднання й таймери закриваються один раз при кожному результаті. Це буде перевірятися фіктивними подіями та контрольованим часом без реального ключа й без мережевого запиту. Такі перевірки доведуть локальну логіку, але не доступність AISStream і не отримання реального трафіку.
+
+## Owner and exact paths
+
+- **Planning path:** цей append-only B-12 section у `TASK_SPEC.md`; не переписувати історію B-08…B-11 та попередні записи.
+- **Future implementation paths — only after both authorization gates:**
+  - `server/aisstream-reader.ts` — вузько розширити reader з first-message completion до доставки послідовності raw text events протягом одного обмеженого lifecycle; зберегти transport/error/security constraints нижче.
+  - `server/snapshot-collector.ts` — новий bounded collector: decode, B-11 transformation, per-MMSI selection, completion and final result.
+  - `app/api/snapshot/route.ts` — замінити проміжну raw-відповідь B-09 на фінальний B-12 response, зберігши шлях endpoint, Node runtime, no-key guard, фіксований error envelope та серверну межу ключа.
+  - `tests/snapshot-reader.spec.ts` — оновити лише focused B-09 reader lifecycle checks, щоб перевірити багатоповідомленнєву межу й зберегти раніше погоджені subscription/error/cancellation гарантії.
+  - `tests/snapshot-collector.spec.ts` — додати focused deterministic collector checks з fake event source та controlled clock.
+- **Append-only records after actual implementation checks and review:** `EVIDENCE.md` and `RUNBOOK.md`.
+- **Excluded paths:** all `.env*` files and credentials; `server/aisstream-config.ts`; `server/position-report-transformer.ts`; B-10 sample/provenance under `data/`; `app/vessel-model.ts`; all UI/map/demo paths and B-13 work; `tests/vessel-selection.spec.ts`; package manifests/lockfile, dependencies, Playwright config and test-runner configuration; `CLAUDE.md`, `SPEC.md`, `PROJECT_BRIEF.md`, `SPRINT-02.md`, `docs/decisions/`; generated files; `NEXT_SESSION.md`, `README.pdf`, `.agents/`, `.claude/skills/`, `reference/`, `skills-lock.json`, the pre-existing `START.md` deletion and all other unrelated paths. Do not inspect, modify, stage or clean excluded paths.
+
+## Inputs and behavioral boundary
+
+- **Read-only inputs:** B-12 Part C in `SPRINT-02.md`; verified B-09 reader and route; verified B-11 transformer and its focused tests; shared `Vessel` shape in `app/vessel-model.ts`; DEC-006 and this task contract. The B-10 fixture is synthetic and may be used only as a shape fixture.
+- **Reader/event-source responsibility:** connect only to the already approved AISStream endpoint and send the exact B-09 subscription immediately after open: `{ APIKey, BoundingBoxes: [[[50.75, 0.95], [51.25, 1.95]]], FilterMessageTypes: ['PositionReport'] }`. Deliver each received text message to the collector in arrival order. The reader does not parse JSON, transform vessels, deduplicate, choose latest timestamps, expose payloads in errors/logs, or create a second connection for the collector.
+- **Reader lifecycle:** the collector owns the single 15,000 ms total deadline, starts it before invoking/constructing the event source (and therefore before WebSocket construction), and includes connect/open/subscription time. The reader/event source has no second independent window timer; it reports whether open/subscription succeeded and forwards subsequent text events. If the deadline fires before successful open/subscription, return `connect_failed`; if it fires after subscription, return the successful `window_elapsed` snapshot. After subscription, provider error maps to `provider_error`, and an unexpected close before normal completion maps to `disconnected`. A non-text/binary message maps to `provider_error`. The collector's deadline or 100-vessel completion stops the reader. Success, failure, timeout and cancellation clear the collector deadline and close/clean reader resources once; events after settlement have no effect.
+- **Collector input:** each reader text event is parsed as one JSON value and passed to `transformPositionReport` from B-11. A valid JSON PositionReport that the B-11 transformer rejects (`null`, including invalid required identity/time/position) is ignored and does not create a vessel or abort the attempt. A text event that is not valid JSON is a provider payload failure and terminates the attempt with the existing fixed `provider_error` mapping. No raw payload is included in a response, message or log.
+- **Identity and updates:** use transformed `Vessel.id` (MMSI string) as the uniqueness key. The first valid vessel for an id is retained until a later valid report for the same id has a strictly newer B-11 normalized millisecond timestamp; then replace the entire vessel object. For equal timestamps retain the first accepted object. Older reports do not replace newer data. Invalid reports do not replace a valid vessel.
+- **Window result:** when the full deadline elapses after the connection has opened and subscription was sent, return a successful snapshot, including an empty snapshot if there are no valid vessels. `reason` is `window_elapsed`, `truncated` is `false`, and `windowSeconds` is `15`.
+- **Limit result:** when the 100th unique valid vessel is accepted, stop immediately and return a successful snapshot with exactly 100 vessels, `reason: 'limit_reached'`, and `truncated: true`. Duplicate messages for existing ids do not increase the count or trigger the limit. The configured limit remains 100; do not accept or return a 101st unique vessel.
+- **Errors and partial data:** any reader/provider failure after zero or more accepted messages returns the fixed HTTP 502 error response and discards all collected vessels; partial data is never returned as success. Use only B-09 code/message pairs: `no_api_key` — `Ключ AISStream не налаштовано`; `connect_failed` — `Не вдалося підключитися до джерела`; `provider_error` — `Джерело повернуло помилку`; `disconnected` — `З'єднання з джерелом розірвано`; `internal` — `Внутрішня помилка сервера`. Do not add a public error code or include provider text, raw payload, key, stack or socket details. `no_api_key` is detected before opening a socket.
+- **Cancellation:** abort stops the reader, clears the collector deadline and rejects/cancels without returning a partial snapshot or adding a public cancellation error code. The route preserves B-09 cancellation behavior for an aborted request; no late event may settle or mutate a completed attempt.
+- **One-shot completion:** the collector produces exactly one terminal result. On every terminal path, the deadline and reader resources are cleaned up exactly once. Any queued/late callback after completion is ignored.
+- **Clock and constants:** inject a clock/timer and a fakeable event-source boundary so deterministic tests control time and events without network access. Production uses the approved 15-second window and 100-vessel limit; no caller-controlled query parameter or UI-configurable limit/window is added. `attemptedAt` is captured at route attempt start and `collectedAt` at successful completion using the server clock; tests use a controlled clock.
+- **Final response contract:** successful HTTP 200 response has exactly the approved fields and values:
+
+  ```json
+  { "ok": true, "vessels": [], "collectedAt": "<timestamp>", "windowSeconds": 15, "count": 0, "truncated": false, "reason": "window_elapsed" }
+  ```
+
+  `vessels` contains the final whole `Vessel` objects, `count` equals `vessels.length`, and `reason` is exactly `window_elapsed` or `limit_reached`. Failure remains HTTP 502:
+
+  ```json
+  { "ok": false, "attemptedAt": "<timestamp>", "error": { "code": "<fixed code>", "message": "<fixed message>" } }
+  ```
+
+  No B-13 UI state/text behavior or additional response field is part of this task.
+
+## Expected output
+
+1. A B-09-compatible, injectable server reader boundary that delivers multiple raw text events during one bounded attempt, retaining the exact approved provider endpoint/subscription, key isolation and fixed error mapping.
+2. One new server-side collector using the B-11 transformer for validation and mapping, with 15-second/100-vessel constants, deterministic deduplication/latest-timestamp behavior, whole-snapshot success and no partial success.
+3. `GET /api/snapshot` updated from the B-09 intermediate raw response to the final B-12 success/error response contract above.
+4. Focused deterministic reader and collector checks. No live provider call, real key, new dependency, UI, persistence, continuous stream, history or release-level suite.
+5. Factual append-only evidence and delivery handoff only after actual checks and final human diff review.
+
+## Acceptance criteria
+
+- [x] The reader sends the exact existing subscription immediately after WebSocket open and forwards multiple text messages in order from the same connection; it does not stop after the first text message.
+- [x] The total 15-second deadline starts before socket creation and includes connection and subscription time; successful open/subscription with no valid PositionReport by the deadline returns an empty success, while failure to reach subscription by the deadline maps to `connect_failed`.
+- [x] The collector uses the existing B-11 transformer and existing `Vessel` structure without changing B-11 paths or behavior; invalid transformed reports are not included and no position defaults to `0,0`.
+- [x] Repeated MMSI produces one vessel; strictly newer timestamp replaces the entire object; older timestamp does not replace it; equal timestamp retains the first accepted object; comparison follows B-11 millisecond precision.
+- [x] The collection ends at the 15-second window with `reason: 'window_elapsed'`, including the empty-success case, or immediately upon accepting the 100th unique valid vessel with `reason: 'limit_reached'`, `count: 100`, and `truncated: true`.
+- [x] Provider error, unexpected disconnect, malformed JSON payload, or internal failure after partial input returns the fixed HTTP 502 contract and never exposes the collected partial set, raw provider text, socket details, key or stack.
+- [x] No-key returns the exact B-09 `no_api_key` response and does not construct a socket. Cancellation returns/rejects without a partial response or new public code.
+- [x] Reader and collector settle once; timer, listener and socket cleanup occurs exactly once on window, limit, error, disconnect and cancellation; late events do not change the result.
+- [x] Deterministic fake-event/controlled-clock checks cover: window elapsed; deadline before connection/subscription; limit reached; duplicate MMSI; newer, older and equal timestamps; invalid transformed reports; provider error after partial input; disconnect after partial input; cancellation after partial input; malformed JSON; repeated/late terminal events; exactly-once completion and cleanup; and success/error response shapes.
+- [x] Existing B-09 guarantees (Node.js Route Handler, exact endpoint/subscription, fixed errors, no-key behavior, secret isolation and cancellation cleanup) remain covered after updating the reader lifecycle tests.
+- [x] No package/dependency, B-11 transformer, sample, shared model, UI/map/demo, B-13 or unrelated path is changed; no live request or secret access occurs.
+- [x] Final human diff review explicitly chose `continue`; commit/push remain separately gated.
+
+**Current acceptance status:** `Verified` for the bounded B-12 local implementation after targeted checks and the user's final diff-review decision `continue` on 2026-09-24. This does not establish live provider behavior, complete R2 user-story acceptance or release readiness.
+
+## Verification
+
+### Contract-preparation checks
+
+1. Verify branch/HEAD/remote baseline and preserve the pre-existing deletion/untracked paths.
+2. Compare the proposed reader extension, exact paths, final response shape, timing, dedupe, failure, cancellation and customer rationale against `SPRINT-02.md` Part A/Part C, B-09, B-11, `SPEC.md` and DEC-006.
+3. Run `git diff --check -- TASK_SPEC.md`; inspect the complete B-12 append and verify the only changed path is `TASK_SPEC.md`.
+4. Validate required metadata, separate authorization gates, the B-09 extension, exact allowed/excluded paths, customer rationale, response/error behavior, acceptance, stop conditions and rollback.
+5. Do not read or scan secret files, run the app/build, call AISStream, append implementation evidence, update the read-only `SPRINT-02.md`, or modify `NEXT_SESSION.md` during contract preparation.
+
+- **Expected:** the contract is structurally complete and ready for human review; all implementation acceptance remains unchecked. This contract-preparation check is not evidence of reader, collector, route or provider behavior.
+
+### Future implementation checks — requirements, not observed results
+
+1. Run `git diff --check` and inspect the complete changed-path boundary.
+2. Run focused `npx playwright test tests/snapshot-reader.spec.ts tests/snapshot-collector.spec.ts` with fake events and controlled time; no network or real key.
+3. Run `npx tsc --noEmit`, the repository's required build check, and relevant direct server type checking if required by the implementation; record exact commands and results. Avoid commands that load local environment files unless required and separately reviewed; never inspect their values.
+4. Verify the final route response shape and all fixed error mappings through deterministic tests. A no-key check must use an injected/missing configuration seam or a safe blank-key setup that does not inspect a secret file.
+5. Inspect that B-09 transport invariants and B-11 transformer behavior are retained; confirm timer/socket cleanup and no partial-success path.
+6. Do not run live AISStream requests, use a real key, add release-level R3 tests, perform B-13 UI checks, or claim live provider availability from these tests.
+
+- **Evidence boundary:** fake-source/controlled-clock checks can establish only local reader/collector/route behavior under the tested event sequences. They cannot establish AISStream availability, real-key validity, actual message receipt, vessel identity, completeness of traffic, complete R2 user-story acceptance or release readiness.
+
+## Stop conditions
+
+- Stop before implementation if this Draft is not human-reviewed with `continue` and a separate explicit B-12 implementation authorization is absent.
+- DEC-007 now resolves the B-12-specific conflict with `SPRINT-02.md` Part C. Stop before implementation if DEC-007 is superseded/revoked or if the proposed B-12 boundary materially changes; keep the Sprint file read-only in this task. Also stop if exact subscription, fixed messages, timing boundary or response semantics conflict with the approved product contract; if any required path beyond the listed future implementation paths is needed; or if a dependency, live provider request, real key or secret-file access appears necessary.
+- Stop if implementation would require changing B-08 key handling or B-11 transformation semantics, modifying UI/shared vessel model, adding public error codes, returning partial data, opening a second parallel provider connection, or introducing continuous/persistent behavior.
+- Stop after implementation if the reader fails to forward later messages, the deadline omits connection time, equal/older timestamps replace the accepted vessel, duplicates consume the unique limit, error/cancellation returns partial success, a key/provider detail is exposed, cleanup or completion occurs more than once, tests fail, or unexpected paths change.
+- **Exit decision:** `DONE` only after separately authorized implementation, focused checks, factual evidence, final human diff review and explicit `continue`; otherwise `CONTINUE WITH APPROVAL` or `HOLD`.
+
+## Rollback / recovery
+
+If this Draft is revised or rejected before implementation, inspect the diff and remove or revise only the appended B-12 section in `TASK_SPEC.md`; preserve verified B-08…B-11 history, append-only evidence/runbook history, the pre-existing `START.md` deletion and all unrelated staged/untracked/generated paths. If a later authorized B-12 implementation is rejected, inspect the diff and restore only `server/aisstream-reader.ts`, `server/snapshot-collector.ts`, `app/api/snapshot/route.ts`, `tests/snapshot-reader.spec.ts` and `tests/snapshot-collector.spec.ts` to their last verified pre-B-12 state. Do not reset the shared branch, delete local files, stop unrelated processes, or inspect/alter secret files. Product owner decides recovery acceptance based on reviewed diff and actual evidence.
+
+## Human contract review
+
+- **Date:** 2026-09-24.
+- **Decision:** `continue` — the task contract and customer-facing rationale are approved as the contract for any future separately authorized implementation.
+- **Review scope:** contract consistency against Sprint 2 Part A/Part C and DEC-007, including response shapes, one-connection boundary, 15-second total window, 100-vessel limit, timestamp deduplication, fixed errors, cancellation, cleanup, deterministic verification and excluded paths.
+- **Outcome:** no contract blocker identified. The B-12 implementation acceptance criteria below remain unchecked and are not claimed as satisfied.
+- **Authorization boundary:** this decision approves the contract only. It is not the separate explicit authorization required before changing implementation or test paths, and it does not authorize live AISStream access, real-key use, commit or push.
+
+## Implementation authorization
+
+- **Date:** 2026-09-24.
+- **User authorization:** the user explicitly authorized B-12 implementation with “дозволяю B-12 реалізацію”.
+- **Authorized scope:** only the implementation and deterministic tests in the exact future paths listed above; task acceptance, verification, excluded paths, no-live-provider/no-secret constraints, and separate commit/push gate remain unchanged.
+- **Status:** implementation work may proceed. Final acceptance remains gated by actual checks and a separate human diff review.
+
+## Implementation checkpoint — completed local checks
+
+- **Date:** 2026-09-24.
+- **Implemented paths:** `server/aisstream-reader.ts`, new `server/snapshot-collector.ts`, `app/api/snapshot/route.ts`, `tests/snapshot-reader.spec.ts`, and new `tests/snapshot-collector.spec.ts`. The implementation remained within the authorized B-12 paths; no live provider request, real-key inspection, dependency change, commit or push was performed.
+- **Targeted tests:** `npx playwright test tests/snapshot-reader.spec.ts tests/snapshot-collector.spec.ts` — passed, 17 tests.
+- **Type check:** `npx tsc --noEmit` — passed (exit 0; no diagnostics printed).
+- **Build:** `AISSTREAM_API_KEY= npm run build` — passed. Next.js reported `.env.local` as an environment source; no value was manually inspected or printed, and no live request was made. The build also warned that `/Users/romanmakarenko/package-lock.json` is outside the repository and suggested configuring `turbopack.root`; build completed successfully.
+- **Whitespace check:** `git diff --check` — passed; separate no-index whitespace checks for the two new files produced no diagnostics.
+- **Diagnostics note:** IDE diagnostics requests timed out; the standalone TypeScript check passed.
+- **Acceptance boundary:** the checks establish only the tested local reader/collector/route behavior. Live provider behavior, complete R2 user-story acceptance, demo readiness and release readiness are not established.
+
+## Final human implementation review
+
+- **Date:** 2026-09-24.
+- **Source:** user decision: “diff перевірив, continue”.
+- **Decision:** `continue`; user completed the final diff review and accepted the bounded B-12 implementation for continuation.
+- **Outcome:** B-12 is `Verified` within this task's local scope. This is not commit/push authorization and does not claim live AISStream behavior, complete R2 acceptance or release readiness.
+- **Evidence:** implementation checks are recorded in `E-SEA-046`; final human review is recorded in `E-SEA-047`.
+
+## Handoff
+
+- **Contract / task status:** `Verified` for bounded B-12 local implementation after checks and the user's `continue` decision on 2026-09-24. Contract review, implementation authorization and final diff review are recorded above.
+- **Evidence boundary:** baseline commit `bf7cc4e1cd1a8029ccdaf82155ee45ede055824d` was synchronized with `origin/sprint2`. Deterministic implementation checks and the human review decision are recorded in `E-SEA-046` and `E-SEA-047`; product behavior with AISStream and real-key validity remain unverified.
+- **Open Unknowns/blockers:** live provider availability, real-key validity, live receipt, actual AISStream event semantics, complete R2 user-story acceptance and release readiness remain `Unknown`/`Needs verification`. `CLAUDE.md` and `SPEC.md` still describe B-08 as current; governance-status synchronization is a separate documentation decision and remains outside this task. DEC-007 is `Ready` and resolves the B-12 transport-boundary conflict.
+- **Delivery completed:** commit `3de88ab` (`feat(r2): implement B-12 snapshot collector`) delivered the reviewed implementation and unchanged `SPRINT-02.md`; documentation follow-up `fef4a8f` (`docs(r2): record B-12 remote delivery`) is also synchronized with `origin/sprint2`. `E-SEA-048` records the implementation delivery; the follow-up commit removes the absolute local path from the runbook entry.
+- **Next bounded action:** prepare the B-13 task contract for human review only. B-13 implementation, live AISStream, real-key use and any further commit/push remain separately gated.
+- **Rollback / recovery:** no rollback was performed. If the `continue` decision is revised, inspect the diff and restore only the five B-12 implementation/test paths to their verified pre-B-12 state; preserve append-only records, the pre-existing `START.md` deletion, the now-user-authorized `SPRINT-02.md` path and all unrelated untracked paths. Product owner decides recovery acceptance from the reviewed diff and evidence.
+
+## Delivery authorization — commit, push and Sprint 2 tracking
+
+- **Date:** 2026-09-24.
+- **User authorization:** the user requested “давай закомітимо та запушимо, також додай в гіт /Users/romanmakarenko/Documents/code/SeaRadar/SPRINT-02.md”.
+- **Exact delivery scope:** commit and push the five B-12 implementation/test paths plus `TASK_SPEC.md`, `EVIDENCE.md`, `RUNBOOK.md`, and the existing `SPRINT-02.md`; no other pre-existing or untracked path is authorized for staging.
+- **Sprint-file boundary:** `SPRINT-02.md` remains content-read-only. The user specifically authorized tracking this existing file as-is; it will not be edited. This is a one-time exception only to its previously excluded staging boundary.
+- **Preservation:** leave the `START.md` deletion and all other unrelated untracked inputs unstaged and unchanged. No live AISStream request, real-key use, B-13 work, or deployment is authorized by this delivery instruction.
+- **Status:** completed. Exact authorized paths were committed as `3de88ab` and pushed; the local and remote branch were subsequently verified at `fef4a8f`. No other path was added to that delivery.
+
+# TASK-SEA-R2-DEC007-001 — B-12 transport-boundary decision record
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-24
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-02.md`](SPRINT-02.md), [`docs/decisions/README.md`](docs/decisions/README.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), `TASK-SEA-R2-B09-001`, `TASK-SEA-R2-B12-001`.
+
+## Goal and boundary
+
+- **Goal:** prepare `DEC-007`, obtain the product owner's approval and update the decision index for the narrowly scoped B-09 reader-boundary extension for B-12.
+- **Approved decision:** one existing B-09 WebSocket attempt forwards multiple ordered raw text messages to B-12's collector; no second connection, transformer change, continuous service or product-scope expansion.
+- **This is documentation only:** it does not approve B-12 implementation, endpoint/test changes, live provider access, secret access, commit or push. Those remain separately gated.
+
+## Owner and allowed paths
+
+- `TASK_SPEC.md` — this bounded preparation contract and the B-12 cross-reference.
+- `docs/decisions/DEC-007-r2-b09-streaming-boundary.md` — the approved B-12 boundary decision record.
+- `docs/decisions/README.md` — register the approved record in the current-decisions index.
+- **Excluded:** `SPRINT-02.md` (read-only); `CLAUDE.md`, `SPEC.md`, implementation/tests, `EVIDENCE.md`, `RUNBOOK.md`, all secrets and all unrelated/pre-existing paths.
+
+## Acceptance and verification
+
+- [x] DEC-007 has the required metadata, context, options, approved decision, rationale, consequences/risks, verification trigger and links to the B-12 task and related evidence/records.
+- [x] The user approved DEC-007 on 2026-09-24; status is `Ready`, and the record does not authorize implementation.
+- [x] The Part C conflict is explicitly resolved for B-12 by DEC-007; the read-only `SPRINT-02.md` remains unchanged.
+- [x] The approved decision is registered in `docs/decisions/README.md`; no sprint, code, test, evidence or runbook path changed.
+- **Targeted checks:** `git diff --check -- TASK_SPEC.md` and the DEC-007 structural check passed. `git diff --no-index --check /dev/null docs/decisions/DEC-007-r2-b09-streaming-boundary.md` emitted no whitespace diagnostics; exit status `1` reflected the expected new-file difference. Full documentation diff and changed-path boundary were inspected.
+- **Observed result:** DEC-007 is `Ready`; the B-12 transport-boundary exception is recorded and indexed. B-12's own task contract remains `Draft` pending its separate review. No implementation, live provider request, secret access, commit or push occurred.
+- **Rollback:** inspect and remove/revise only the appended DEC007 task section and the DEC-007 entry/file. Preserve all historical and pre-existing paths.
+- **Next gate:** human review of `TASK-SEA-R2-B12-001`; implementation remains separately authorized only after that review and explicit user authorization.
+
+# TASK-SEA-R2-HANDOFF-001 — Next-session transfer preparation
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-24
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`NEXT_SESSION.md`](NEXT_SESSION.md), `TASK-SEA-R2-B12-001`, `E-SEA-046`, `E-SEA-047`, `E-SEA-048`.
+
+## Goal and boundary
+
+- **Goal:** refresh the restart handoff after the bounded B-12 implementation and delivery, so the next session can resume from the verified remote baseline without replaying this conversation.
+- **Output:** an accurate `NEXT_SESSION.md` prompt and factual B-12 delivery closure/current next gate in this task record.
+- **Scope:** documentation only. B-13 implementation is not part of this task; the next session may prepare a B-13 task contract for human review only.
+- **Authorization:** the user requested project handoff preparation on 2026-09-24. This does not authorize B-13 implementation, live provider access, secret use, or commit/push.
+
+## Allowed paths and exclusions
+
+- **Allowed:** `TASK_SPEC.md` (this section and current B-12 delivery closure), `NEXT_SESSION.md`, append-only `EVIDENCE.md`, append-only `RUNBOOK.md` after checks.
+- **Read-only:** `CLAUDE.md`, `SPEC.md`, `SPRINT-02.md`, `DEC-006`, `DEC-007`, implementation/tests, current Git history and remote refs.
+- **Excluded:** product/source/test/runtime/configuration paths, `CLAUDE.md`, `SPEC.md`, `SPRINT-02.md`, decision records/index, secrets and all unrelated/pre-existing paths. Do not stage or clean excluded/untracked paths.
+
+## Expected output and acceptance
+
+- [x] `NEXT_SESSION.md` names `fef4a8f` as the delivered baseline and describes B-12 as `Verified`/delivered only within its bounded local scope.
+- [x] The next bounded action is B-13 contract preparation for human review only; B-13 implementation requires a separate reviewed contract and explicit authorization.
+- [x] Live AISStream availability/receipt, real-key validity, complete R2 acceptance, and release readiness remain `Unknown`/unverified.
+- [x] Existing `START.md` deletion and unrelated untracked inputs are preserved; `NEXT_SESSION.md` remains untracked; `SPRINT-02.md` remains unchanged.
+- [x] The stale B-12 delivery gate is closed by the factual delivery record above; append-only evidence/history are extended only after checks.
+- [x] No commit, push, product command, live request, or secret access occurs.
+
+## Verification, stop and recovery
+
+- **Checks:** `HEAD`, local `origin/sprint2`, and remote `refs/heads/sprint2` were verified at `fef4a8fc51c9c0e41a8158e4e541af574f895741`; `git diff --check -- TASK_SPEC.md EVIDENCE.md RUNBOOK.md` passed; focused Python checks confirmed required handoff content, preserved R1 archive and no trailing whitespace; changed-path and staged-path inspection confirmed the documented boundary and no staged paths.
+- **Observed result:** all six acceptance criteria passed. `TASK_SPEC.md`, `EVIDENCE.md`, and `RUNBOOK.md` are locally modified; `NEXT_SESSION.md` remains untracked. Existing `START.md` deletion and other untracked paths remain preserved. Initial structural validator had one mismatched expected phrase; the check was corrected to the actual approved wording and passed. No product tests/build/server/live request/secret access/commit/push occurred.
+- **Stop if:** a ref differs from the recorded baseline, handoff requires changing `SPRINT-02.md`/governance decisions or product behavior, or any secret/live-provider operation is proposed. Record the blocker and ask for a separate decision rather than silently expanding scope.
+- **Recovery:** inspect the documentation diff; restore only the handoff edits in `TASK_SPEC.md` and `NEXT_SESSION.md` if rejected. Never reset the shared branch or alter prior append-only evidence/runbook entries, `START.md`, or unrelated local paths.
+- **Human review:** user confirmed `diff перевірив` and chose `continue` for this handoff diff on 2026-09-24. This accepts the documentation-only handoff checkpoint; it does not authorize commit/push or B-13 implementation. Recorded in `E-SEA-050`.
+- **Exit:** `Verified` for the documentation-only handoff at the local workspace checkpoint; commit/push and B-13 implementation remain unauthorized.
+
+# TASK-SEA-R2-B13-001 — R2 snapshot interface
+
+- **Version:** `1.0.0`
+- **Status:** `Active`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-24
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), [`docs/decisions/DEC-007-r2-b09-streaming-boundary.md`](docs/decisions/DEC-007-r2-b09-streaming-boundary.md), `TASK-SEA-R2-B12-001`, `E-SEA-046`–`E-SEA-051`, [`app/map-shell.tsx`](app/map-shell.tsx), [`app/sea-map.tsx`](app/sea-map.tsx), [`app/vessel-card.tsx`](app/vessel-card.tsx), [`app/api/snapshot/route.ts`](app/api/snapshot/route.ts), [`server/snapshot-collector.ts`](server/snapshot-collector.ts), [`tests/vessel-selection.spec.ts`](tests/vessel-selection.spec.ts), [`tests/snapshot-interface.spec.ts`](tests/snapshot-interface.spec.ts).
+
+## Goal, predecessor and authorization gate
+
+- **Goal:** connect the existing map, demo vessels, shared marker/card behavior and `GET /api/snapshot` to the approved B-13 one-shot interface state flow.
+- **Backlog:** `B-13` / `R2-B13-INTERFACE`.
+- **SPEC outcome:** `SPEC-SEA-001 / US-05…US-08`; this bounded task does not by itself close those user stories or complete R2 acceptance.
+- **Predecessors:** verified B-07 selection behavior, B-08 server-only key accessor, B-09 reader/route boundary, B-11 transformer and B-12 final snapshot response. B-10 remains a synthetic sample and is not live-provider evidence.
+- **Governance:** R2 is authorized by `DEC-006`; B-13 remained individually task-gated. `DEC-007` authorizes only the B-12 transport-boundary exception and did not itself authorize B-13 implementation, live-provider access or delivery. This contract introduced no change to scope, API contract, provider, security boundary or `SPRINT-02.md`.
+- **Gate history:** the user accepted this contract and separately authorized the B-13 implementation on 2026-09-24. The implementation and local checks are recorded below. Live AISStream access, real-key use, deployment and overall R2 acceptance remain outside that authorization. The user separately authorized the code and delivery-record commit/push requests; the final human review of this implementation/documentation diff remains a distinct checkpoint.
+
+## Owner and allowed paths
+
+- **Contract-preparation path:** append this B-13 contract to `TASK_SPEC.md`; retain all prior task and handoff history.
+- **Implementation paths used by the authorized delivery (`17006c6`):**
+  - `app/map-shell.tsx` — one-shot request/state ownership, source/status copy, selection reset and button behavior.
+  - `app/sea-map.tsx` — render the supplied demo or snapshot vessels through the existing Leaflet marker lifecycle; ensure demo motion is stopped while loading and real snapshots remain stationary.
+  - `app/globals.css` — only the minimal existing-panel/status styling needed for the specified states; no visual redesign.
+  - `tests/snapshot-interface.spec.ts` — one focused Playwright spec using intercepted/mocked `GET /api/snapshot` responses; no live network or credentials.
+- **Append-only records after actual checks and final review:** `EVIDENCE.md` and `RUNBOOK.md`.
+- **Read-only inputs:** `CLAUDE.md`, `PROJECT_BRIEF.md`, `SPEC.md`, `SPRINT-02.md`, DEC-006, DEC-007, B-07/B-12 implementation and tests, existing map/card/model/CSS and current dependency/test configuration.
+- **Excluded paths:** all `.env*` files, credentials, `server/`, `app/api/`, `app/vessel-model.ts`, `app/vessel-card.tsx`, B-08/B-09/B-11/B-12 implementation paths, `data/`, package manifests/lockfile, Playwright/test-runner configuration, existing B-07 and B-12 tests, `CLAUDE.md`, `PROJECT_BRIEF.md`, `SPEC.md`, `SPRINT-02.md`, decision records/index, `NEXT_SESSION.md`, `README.pdf`, `.agents/`, `.claude/skills/`, `reference/`, `skills-lock.json`, the pre-existing `START.md` deletion, generated files and all unrelated paths. Do not inspect, modify, stage or clean excluded paths.
+
+## Inputs and behavior contract
+
+- **API boundary:** call only the existing same-origin `GET /api/snapshot`; do not change its URL, request method, headers, response schema, fixed error mappings, Node.js runtime or server/key handling. Do not include a key or credential in browser code, request data, response handling, logs or test fixtures.
+- **Idle demo:** on initial load, preserve the current three moving demo vessels and existing `Демонстраційні дані` source label. Preserve B-07 marker IDs, marker click-to-card mapping, repeated-click persistence and card formatting.
+- **Loading:** clicking the single enabled `Завантажити справжні позиції` button starts one request. While pending, disable the button, stop/unmount demo motion, remove demo markers, clear the selected vessel/card and show `Завантаження…`; retain the base map. Do not allow overlapping requests or stale completion to replace a later state. After an attempt settles, a user may click again to start a new one-shot attempt; there is no automatic retry, polling or history. A page reload returns to the initial demo state; do not persist results.
+- **Successful non-empty snapshot:** render exactly the returned `vessels` as stationary AISStream markers using the existing marker icon and card. Selecting a marker opens its matching card; repeated selection must not switch to another vessel. Show the literal status `AISStream · знімок за 15 с · отримано HH:MM:SS UTC · суден: N · вибірка неповна`, where time is formatted from `collectedAt` in UTC and `N` is the returned `count`. If `truncated` is true, append ` · зупинено на ліміті 100`. The `15` denotes configured window length, not measured elapsed duration. On the first non-empty success only, return the map to its existing initial center/zoom; subsequent successful non-empty attempts must not force a view change. Do not animate or interpolate AIS vessels.
+- **Successful empty snapshot:** represent `ok: true` with zero vessels as `empty`, not as a transport error or proof that no vessels exist. Show the same AISStream status label with `суден: 0` and the exact explanation `За час збору позицій не отримано`; render no vessels/card and keep the base map.
+- **Error:** any fixed B-12 error response results in an empty map state: remove all demo/snapshot markers and the selected card, show source/status `Даних на карті немає`, and show `Не вдалося отримати дані: <message>` using only the fixed response message. For `no_api_key`, the exact UI text is `Не вдалося отримати дані: Ключ AISStream не налаштовано`. Do not preserve an earlier snapshot after a failed new attempt. A page reload restores the demo state.
+- **Rejected/malformed response copy:** Sprint/API contracts specify fixed messages for server error responses but do not define the UI message for browser fetch rejection or an invalid JSON/schema response. For either case, show the fixed text `Не вдалося отримати дані: Сервіс не повернув коректну відповідь`. Do not expose raw response, exception, stack or provider text. The user approved this fallback on 2026-09-24; do not change it without review.
+- **Latest attempt / races:** the loading lock prevents concurrent user attempts; clear the selected vessel on each attempt and on empty/error completion. An attempt that has settled may be followed by a fresh user-initiated request. No public API error code or response shape is added by the UI.
+- **Map boundary:** preserve the existing base map, tile source/attribution, bounds, map interaction and client-only Leaflet import/lifecycle. Do not add a map library, redesign, new region, map persistence or external request beyond existing basemap tiles and the same-origin snapshot request.
+
+## Expected output
+
+1. One button wired to the existing B-12 endpoint and the specified idle/loading/success/empty/error state transitions.
+2. Reuse of the existing shared `Vessel`, marker icon, card, selection and formatting behavior; demo motion exists only in idle-demo and snapshot vessels are stationary.
+3. Minimal deterministic browser coverage of the state transitions and regressions, using mocked endpoint responses and blocked external tile requests; no live AISStream request or real key.
+4. Factual append-only evidence and runbook handoff after the authorized implementation checks and final human diff review.
+
+## Acceptance criteria — implementation checks recorded; final review pending
+
+- [x] Initial page load preserves three demo vessels, their movement, source label, shared card behavior and all existing B-07 assertions.
+- [x] One button triggers one same-origin snapshot request; while pending it is disabled and demo vessels, selection and card are absent while the base map remains.
+- [x] A second click cannot start an overlapping request; a later user-initiated attempt can start only after the previous attempt settles.
+- [x] A non-empty success renders exactly the returned MMSI IDs once each, keeps them stationary, opens the matching existing card and displays the exact status text using response count/time/truncation values.
+- [x] First non-empty success resets the map to the existing initial center/zoom; later success does not reset a user-adjusted view.
+- [x] Empty success renders no vessels/card and displays the exact empty explanation and the success status with count zero; it is distinct from an error.
+- [x] Fixed API error responses render no vessels/card, use `Даних на карті немає`, and show the exact response message; the no-key UI text matches exactly. No prior snapshot is retained.
+- [x] Network rejection and malformed response render no vessels/card and show exactly `Не вдалося отримати дані: Сервіс не повернув коректну відповідь`, without exposing raw details.
+- [x] Reload returns to idle-demo; no UI state is persisted, no automatic retry/polling/history is added, and AIS vessels never move. A later attempt requires a fresh user click after settlement.
+- [x] The unchanged B-07 Playwright test and focused snapshot-interface cases passed with mocked responses and blocked OSM tiles.
+- [ ] A separate security/path review confirms no key, secret, provider/raw error, stack, or unvalidated response payload is exposed, and no excluded server/API/model/card/config/dependency path changed.
+- [ ] Final human diff review chooses `continue`, `revise` or `HOLD`; commit/push require separate authorization.
+
+**Human review:** user chose `continue` for this B-13 contract and approved the generic fallback copy on 2026-09-24. That accepted the task contract, not the later implementation diff. The user separately authorized B-13 implementation and later requested delivery; live AISStream access, real-key use and overall R2 acceptance remain outside this task.
+
+**Current acceptance status:** `Active; the bounded UI implementation and its local automated checks are recorded below. Security/path review and final human diff review remain open; this does not claim full R2 acceptance.`
+
+## Verification plan
+
+### Contract-preparation checks — historical checkpoint, 2026-09-24
+
+1. The B-12 baseline and preservation boundaries were inspected; no paths were staged.
+2. The proposed contract was compared with the R2 scope, decisions, B-12 response shape and current UI/API boundaries.
+3. `git diff --check -- TASK_SPEC.md` and focused structure/content checks passed after correcting a validator expectation.
+4. These checks established only that the proposed contract was bounded and structurally consistent; they did not prove UI behavior, browser acceptance, provider availability, key validity, full R2 acceptance or release readiness.
+
+### Implementation verification — observed 2026-09-24
+
+1. `npx playwright test tests/vessel-selection.spec.ts tests/snapshot-interface.spec.ts` — **PASS**, 16 tests (B-07 and B-13 mocked browser cases; external OSM tile requests blocked by the tests).
+2. `npx tsc --noEmit` — **PASS** (exit success).
+3. `npm run build` — **PASS**; Next.js reported that `/Users/romanmakarenko/package-lock.json` is outside the repository and was ignored.
+4. `git show --format=fuller --stat --oneline HEAD` and `git diff HEAD^ HEAD --name-only` confirmed that B-13 commit `17006c615f7a93e84c7c554c624b8909691828fb` contains exactly the four authorized implementation/test paths. `git rev-parse HEAD`, `git rev-parse origin/sprint2`, and `git ls-remote origin refs/heads/sprint2` agreed on the same commit.
+5. No live AISStream request or real-key inspection/use was performed. The browser tests use deterministic mocked responses; these checks do not establish live provider behavior, overall R2 acceptance or release readiness.
+6. The implementation/security-path review and final human diff decision remain pending; no `DONE` decision is claimed.
+
+## Stop conditions
+
+- **Original implementation gate (satisfied):** contract review and separate explicit user authorization were required before implementation; both were obtained before the B-13 code change.
+- Stop if implementing the approved text/state requires changing the B-12 API response/error contract, server/key handling, shared `Vessel` model/card, B-07 test/config, a dependency, an excluded path or any product scope beyond `SPRINT-02.md`.
+- Stop if the interface cannot stop demo motion while retaining the base map within the allowed paths, if exact copy/empty-vs-error semantics remain ambiguous, or if live access/real-key inspection would be required for an acceptance check.
+- Stop after implementation if overlapping requests are possible, an old result overwrites a newer attempt, error preserves stale vessels, empty is confused with failure, a marker/card mismatch occurs, AIS markers move, demo motion continues during loading, map reset violates the first-success rule, key/provider text leaks, tests fail, or unexpected paths change.
+- **Exit decision:** `DONE` only after authorized implementation, targeted checks, factual evidence and final human `continue`; otherwise `CONTINUE WITH APPROVAL` or `HOLD`.
+
+## Rollback / recovery
+
+No rollback was performed. If recovery is requested, inspect the reviewed diff and revert only `app/map-shell.tsx`, `app/sea-map.tsx`, `app/globals.css` and `tests/snapshot-interface.spec.ts` to the B-12 baseline at `fef4a8f`; do not reset the shared branch, touch secrets, stop unrelated processes, or alter unrelated/untracked paths. The product owner decides recovery acceptance based on the actual diff and evidence.
+
+## Handoff
+
+- **Contract-preparation checkpoint (historical):** the B-13 contract was reviewed and accepted on 2026-09-24; that decision alone did not authorize implementation, live provider access, real-key use, or delivery.
+- **Implementation and checks:** the separately authorized B-13 interface implementation is committed as `17006c615f7a93e84c7c554c624b8909691828fb` (`feat(r2): deliver B-13 snapshot interface`) on `sprint2`. The commit contains exactly `app/globals.css`, `app/map-shell.tsx`, `app/sea-map.tsx`, and `tests/snapshot-interface.spec.ts`. On 2026-09-24, `npx playwright test tests/vessel-selection.spec.ts tests/snapshot-interface.spec.ts` passed all 16 tests; `npx tsc --noEmit` succeeded; `npm run build` succeeded. The build emitted a warning that Next.js ignored `/Users/romanmakarenko/package-lock.json` because it is outside this repository.
+- **Delivery state:** before this documentation closeout, local `HEAD`, `origin/sprint2` and remote `refs/heads/sprint2` were verified at `17006c615f7a93e84c7c554c624b8909691828fb`. Delivery records are being updated under the separately authorized documentation commit/push request; record that delivery only after verifying its outcome.
+- **Open review:** automated checks establish bounded mocked local behavior only. The final human diff review for the implementation/security-path criterion remains open; do not mark the task `DONE` until that review is recorded. No live AISStream request, real-key validity/receipt, full R2 acceptance or release readiness is established.
+- **Next gate:** review the exact delivery-record diff and choose `continue`, `revise` or `HOLD`. Preserve all unrelated changes and paths.
+
+# TASK-SEA-R2-B09B10-LIVE-001 — One live AISStream receipt and provenance
+
+- **Version:** `1.0.0`
+- **Status:** `Active`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-24
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), `TASK-SEA-R2-B09-001`, `TASK-SEA-R2-B10-001`, `E-SEA-031`–`E-SEA-039`, [`server/aisstream-config.ts`](server/aisstream-config.ts), [`server/aisstream-reader.ts`](server/aisstream-reader.ts), [`data/samples/position-report.sample.json`](data/samples/position-report.sample.json), [`data/samples/PROVENANCE.md`](data/samples/PROVENANCE.md).
+
+## Goal and authorization
+
+- **Goal:** make one bounded live attempt through the existing server-side AISStream reader, capture one actual `PositionReport` if received, preserve one sanitized sample with truthful provenance, and record whether the B-08…B-10 evidence supports Sprint 2 checkpoint 03.
+- **Sprint outcome:** `SPRINT-02.md` session 3 expects a live server-received message, a sample with provenance, secure key configuration, and working demo. This task does not claim the checkpoint passes unless each criterion has supporting evidence.
+- **Authorization:** on 2026-09-24 the user explicitly authorized using the locally configured real key for a live check and separately confirmed permission to save one sanitized `PositionReport`. This authorization is limited to this one task; it does not authorize inspecting or printing the key, further attempts, production activity, or broad R2 acceptance.
+- **Capture boundary:** `GET /api/snapshot` and `collectSnapshot` return transformed `Vessel[]`, not the raw provider message. Do not reconstruct or relabel a transformed vessel as a `PositionReport`. For this bounded sample only, the proposed method invokes the existing `getAISStreamApiKey()` accessor and `startAISStreamReader()` directly from a one-shot server-side harness; the harness is not added to the repository and does not change or expose a product route. The Node 22.23.2 preflight successfully imported the existing reader module with built-in type stripping without loading the key or contacting AISStream.
+- **Human gate:** review the exact diff and select `continue`, `revise` or `HOLD` before any environment loading, WebSocket connection, live attempt, sample creation or checkpoint record. The direct reader method is part of the review scope.
+- **Review decision:** on 2026-09-24 the user selected `continue` and authorized this bounded contract. This authorizes only the one attempt and one sanitized sample described here.
+
+## Allowed paths and exclusions
+
+- **Contract preparation now:** only this appended section in `TASK_SPEC.md`.
+- **After contract `continue`, if actual capture succeeds:** `data/samples/live/position-report.sample.json`; `data/samples/live/PROVENANCE.md`; append-only `EVIDENCE.md` and `RUNBOOK.md`; and `docs/checkpoints/CHECKPOINT-03.md` after evidence is recorded.
+- **Read-only inputs:** the B-08 accessor, B-09 reader, B-12 snapshot collector/route, B-10 synthetic fixture/provenance, relevant Sprint 2/checkpoint convention, and existing B-07 demo evidence.
+- **Excluded:** all code, routes, configuration, tests, package files/dependencies, `.env*` contents, credentials, UI/demo-retention behavior, `SPEC.md`, `SPRINT-02.md`, decision records, commit/push/deployment, and all unrelated, deleted or untracked paths. Do not alter or overwrite the existing synthetic B-10 sample or its provenance.
+
+## Inputs and bounded behavior
+
+- **Key handling:** use only the existing server-side accessor to supply the configured key to the reader. Never read, echo, log, copy into command output, artifact, or evidence the key or `.env.local` contents. Do not include raw WebSocket frames or provider error text in output.
+- **One attempt:** one direct server-side reader invocation, one WebSocket connection, one 15-second total deadline including connect/open/subscription, no retry or polling. On the first valid text `PositionReport`, select only that one message, stop the reader, and close resources exactly once. On timeout, connection/provider error, malformed payload, or no suitable message, stop and do not retry.
+- **Sample output:** if and only if one actual valid message arrives, retain a single sanitized JSON object at `data/samples/live/position-report.sample.json`. Preserve the provider field names/casing needed by the B-11 sample contract (`MetaData.MMSI`, `ShipName`, `latitude`, `longitude`, `time_utc`, and `Message.PositionReport.Sog`, `Cog`, `TrueHeading`, `Latitude`, `Longitude`). Retain only those needed fields; record a schema-permitted omission in provenance or do not save if a required field is absent/uncertain. No raw logs, key, credentials, private local path or unrelated fields.
+- **Provenance:** `data/samples/live/PROVENANCE.md` must state origin `live`, retrieval time in UTC (separate from vessel observation time), source as the existing AISStream reader, fields retained/omitted, sanitization, region/filter context, and limits. Never claim more than the single message observed. Do not change the synthetic fixture provenance.
+- **Demo evidence:** the existing B-07 automated demo-selection evidence (`E-SEA-026`) and mocked B-13 interface evidence (`E-SEA-051`) may be referenced as local demo evidence, but must not be presented as live UI/API end-to-end validation. This task does not change demo behavior or implement the separately gated demo-retention request.
+
+## Expected output and acceptance
+
+1. One live attempt is performed only after human `continue`, through the existing server-side reader/accessor; observed result is recorded accurately without exposing the key or raw provider text.
+2. If a valid message is received, exactly one sanitized actual `PositionReport` and matching provenance are saved at the new live sample paths; existing synthetic sample files remain unchanged. If none is received, no sample is fabricated and B-10 live-sample acceptance remains unresolved.
+3. The stored JSON parses, contains one message only, follows the approved field casing/shape, and passes a targeted scan for secret-like values and private paths.
+4. The ignored/untracked status of `.env.local` is checked without reading its contents; it is not tracked or included in any artifact.
+5. Evidence distinguishes existing local demo tests from the live reader result. Checkpoint 03 is created only after the observed outcomes are appended to `EVIDENCE.md`; it is marked passed only if the live-message, sample/provenance, safe-configuration and demo criteria are each supported. A checkpoint file itself is not evidence.
+6. No product code, route, test, dependency, Sprint/decision contract or unrelated working-tree path changes; no commit, push or deployment occurs.
+
+## Verification and stop conditions
+
+- **Before live attempt:** after human `continue`, verify that the installed runtime can execute the one-shot harness without adding a dependency or repository code; verify `.env.local` is ignored and not tracked without viewing contents; prepare the bounded timer/cleanup and sanitized output path. If the safe harness cannot be run as contracted, stop and report the blocker rather than add a route or helper file.
+- **After one attempt:** validate only the sanitized output; check JSON cardinality/shape, provenance consistency, absence of secrets/private paths, exact changed paths, and `git diff --check`. Append factual evidence/runbook records only after observed checks; then create the checkpoint record referencing evidence IDs.
+- **Stop if:** human review does not select `continue`; the environment key is absent (without inspecting it); the one request errors/times out/yields no suitable message; the direct harness requires an unapproved dependency/code/path; sanitization is uncertain; any key/raw provider/error data could be exposed; or unrelated paths change. Never retry in this task.
+- **Exit decision:** `DONE` only for a successful bounded live capture plus sanitized sample/provenance, supported demo and safe-config evidence, factual records, and final human review. Otherwise `CONTINUE WITH APPROVAL` or `HOLD`; do not mark checkpoint 03 passed or claim full R2/release readiness without all criterion-level evidence.
+
+## Rollback / recovery
+
+No live action has been performed for this Draft. If rejected before execution, remove only this appended task section. If a newly created live sample fails sanitization before evidence append, remove only the new `data/samples/live/` artifacts and leave the synthetic fixture unchanged. Evidence and RUNBOOK are append-only; after they are appended, correct any error by a superseding entry, not by rewriting history. Do not reset the branch or alter unrelated/deleted/untracked paths.
+
+# TASK-SEA-R2-B09B10-LIVE-002 — One additional live AISStream receipt attempt
+
+- **Version:** `1.0.0`
+- **Status:** `Active`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-24
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), [`docs/checkpoints/CHECKPOINT-03.md`](docs/checkpoints/CHECKPOINT-03.md), `TASK-SEA-R2-B09B10-LIVE-001`, `E-SEA-052`, [`server/aisstream-config.ts`](server/aisstream-config.ts), [`server/aisstream-reader.ts`](server/aisstream-reader.ts), [`server/position-report-transformer.ts`](server/position-report-transformer.ts).
+
+## Goal and authorization
+
+- **Goal:** after the first authorized attempt ended with the fixed `provider_error`, make at most one additional live attempt through the existing server-side reader; if one valid PositionReport arrives, save the one previously approved sanitized sample and truthful provenance; record the resulting checkpoint status.
+- **User-reported context:** on 2026-09-24 the user asked “спробуй ще раз” and reported that the locally configured `AISSTREAM_API_KEY` worked in Postman. This is user-reported context, not independently verified evidence and not an explanation of the earlier reader error.
+- **Authorization boundary:** the user's request authorizes preparation of this new bounded contract. No second live connection, environment loading, sample creation, or checkpoint update may occur until this exact contract is reviewed and the user selects `continue`. A continued contract authorizes exactly one additional attempt only; no retry or troubleshooting loop.
+- **Retained sample consent:** the prior explicit permission to retain one sanitized PositionReport applies only if the single permitted sample path is still absent; do not create multiple live samples.
+
+## Allowed paths and exclusions
+
+- **Contract preparation:** this appended `TASK_SPEC.md` section only.
+- **After contract `continue`:** if one suitable message is received, create only `data/samples/live/position-report.sample.json` and `data/samples/live/PROVENANCE.md`; append factual records to `EVIDENCE.md` and `RUNBOOK.md`; after evidence is recorded, create `docs/checkpoints/CHECKPOINT-04.md` as a superseding restart record referencing historical `CHECKPOINT-03.md` and the new outcome. If no suitable message is received, create no sample and still append the factual result plus a HOLD checkpoint record.
+- **Read-only inputs:** prior live task and `E-SEA-052`; existing key accessor, reader and transformer; synthetic sample/provenance; Sprint 2 checkpoint criteria; `CHECKPOINT-03.md`; B-08 configuration and existing demo evidence.
+- **Excluded:** product/source code, routes, tests, dependencies, `.env*` contents, credentials, UI/demo behavior, `SPEC.md`, `SPRINT-02.md`, decisions, commit/push/deployment, and all unrelated, deleted or untracked paths. Do not modify or overwrite the synthetic sample/provenance or the prior HOLD checkpoint.
+
+## Bounded behavior and data handling
+
+- **Key handling:** obtain the configured key only through `getAISStreamApiKey()`; use the existing ignored local environment configuration without reading or printing its contents. Never emit the key, raw WebSocket frame, provider error text, stack or other secret detail.
+- **One additional attempt:** one direct `startAISStreamReader()` invocation, one WebSocket connection, one 15-second total deadline including connect/open/subscription, no retries or polling. Stop and close once on the first suitable valid PositionReport, a fixed reader error, malformed/unsuitable first message, or deadline.
+- **Safe diagnostic signal:** the temporary in-memory harness may record only whether `onSubscribed` fired, the reader's fixed error enum, and a final outcome enum. It must not log, persist, parse for display, or expose provider error text or any raw message. The harness is not added to the repository.
+- **Sample:** if and only if one actual valid message arrives and required B-11 fields are present, store one sanitized JSON object at `data/samples/live/position-report.sample.json`, retaining only `MetaData.MMSI`, `ShipName`, `latitude`, `longitude`, `time_utc` and `Message.PositionReport.Sog`, `Cog`, `TrueHeading`, `Latitude`, `Longitude`. Sanitize ShipName conservatively and document normalization. If a required field is absent or uncertain, do not save the sample.
+- **Provenance:** record live origin, UTC retrieval time separately from vessel observation time, existing reader/subscription region context, fields kept/omitted, sanitation and limitations. Never claim more than one message was observed.
+- **Checkpoint:** `CHECKPOINT-03.md` remains an immutable record of the initial HOLD. Create a subsequent canonical `CHECKPOINT-04.md` only after the new evidence is appended; state whether it supersedes the latest checkpoint-03 outcome, and mark Sprint checkpoint 03 passed only if live receipt, sample/provenance, safe configuration and demo criteria all have supported evidence.
+
+## Acceptance and verification
+
+1. Before any live attempt, complete contract review with user `continue`; verify the live sample targets are still absent and `.env.local` remains ignored/untracked without reading its contents; confirm the existing runtime/accessor/reader can run the temporary harness without repository changes.
+2. Perform exactly one additional live attempt with the 15-second total limit and stage-only safe diagnostics. On any error, timeout, malformed/unsuitable message or missing key, stop without retry and save no sample.
+3. If captured, verify the single sanitized sample parses, contains the required exact field casing and one PositionReport, and matches its provenance; do not expose its payload in terminal output.
+4. Append `E-SEA-053` factual evidence and a RUNBOOK record. Distinguish the user's Postman report from the actual reader result and make no causal claim based on either alone.
+5. Create a superseding `CHECKPOINT-04.md` after evidence. Mark overall Sprint checkpoint 03 passed only if each criterion is supported; otherwise record `HOLD` and unmet criteria.
+6. Run `git diff --check`, check the exact allowed-path boundary and preserve all pre-existing deleted/untracked paths. No commit, push, deployment or product-code change.
+
+## Stop conditions and recovery
+
+- Stop before live access unless the exact contract receives `continue`; stop if the key is unavailable, runtime import fails, sample paths unexpectedly exist, a new dependency/path is needed, or any secret/raw provider detail could be exposed.
+- Stop after this one attempt regardless of outcome. No second retry, provider troubleshooting, Postman access, key validation by display, or alternate live route is authorized.
+- If the capture fails, preserve the existing HOLD state and do not fabricate sample data. Append the actual result and a new HOLD checkpoint only.
+- If a newly written sample fails sanitization before evidence append, remove only the two new live sample artifacts. Keep the synthetic fixture and prior checkpoint unchanged. Evidence/RUNBOOK are append-only; correct later errors with superseding entries. Preserve unrelated deleted/untracked paths; do not reset or stage.
+- **Current status:** `Active`; on 2026-09-24 the user reviewed this contract and chose `continue`. Exactly one additional live attempt was performed and is recorded as `E-SEA-053`; result was fixed `provider_error` after `onSubscribed`, with no valid PositionReport and no sample written. No retry occurred; final human review of the evidence/runbook/checkpoint diff remains pending.
+
+# TASK-SEA-R2-B09B10-LIVE-003 — One bounded AISStream event-source diagnostic
+
+- **Version:** `1.0.0`
+- **Status:** `Active`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-24
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/checkpoints/CHECKPOINT-03.md`](docs/checkpoints/CHECKPOINT-03.md), [`docs/checkpoints/CHECKPOINT-04.md`](docs/checkpoints/CHECKPOINT-04.md), `TASK-SEA-R2-B09-001`, `TASK-SEA-R2-B09B10-LIVE-001`, `TASK-SEA-R2-B09B10-LIVE-002`, `E-SEA-052`, `E-SEA-053`, [`server/aisstream-config.ts`](server/aisstream-config.ts), [`server/aisstream-reader.ts`](server/aisstream-reader.ts), [`server/position-report-transformer.ts`](server/position-report-transformer.ts).
+
+## Goal and authorization gate
+
+- **Goal:** make at most one newly authorized live diagnostic attempt through the existing server-side reader and distinguish, using non-sensitive event categories only, which reader event produced a post-subscription `provider_error`. Capture one actual sanitized PositionReport only if one is received and the user authorizes this contract.
+- **Reason:** `E-SEA-053` records `SUBSCRIBED=yes` and the reader's fixed `provider_error`, but does not distinguish a post-subscription WebSocket `error` event from a non-text message. No reproducible local code defect has been established. The user's Postman report remains unverified; this task does not inspect Postman or infer cause from it.
+- **Predecessor status:** `LIVE-001` and `LIVE-002` attempts are exhausted. Their records and the existing `HOLD` checkpoint remain immutable; this contract authorizes no request until its own review gate is satisfied.
+- **Authorization:** a human review decision of `continue` on this exact contract explicitly authorizes exactly one diagnostic invocation, use of the real key only through `getAISStreamApiKey()`, and saving exactly one sanitized live sample/provenance if the valid-message criteria below pass. It does not authorize a retry, provider troubleshooting loop, Postman access, source changes, commit, push or deployment.
+
+## Allowed paths and exclusions
+
+- **Contract preparation:** append only this section to `TASK_SPEC.md`; do not alter earlier task sections.
+- **After this contract receives `continue`, if a valid PositionReport is received:** create only `data/samples/live/position-report.sample.json` and `data/samples/live/PROVENANCE.md`; append factual results to `EVIDENCE.md` and `RUNBOOK.md`; then create `docs/checkpoints/CHECKPOINT-05.md` as the next restart record, retaining checkpoint 03/04 history.
+- **After `continue`, if no valid PositionReport is received:** create no sample; append the observed event category and bounded outcome to `EVIDENCE.md` and `RUNBOOK.md`; create `CHECKPOINT-05.md` with `HOLD` after the evidence entries.
+- **Read-only inputs:** existing key accessor, reader, transformer, approved subscription contract, E-SEA-052/053, B-10 synthetic fixture/provenance and latest checkpoint records.
+- **Excluded:** every source, route, test, config, dependency and UI path; all `.env*` contents and credentials; Postman sessions/data; changes to endpoint, subscription, bounding box, timeout, error mapping or provider; all other sample paths; `SPEC.md`, `SPRINT-02.md`, decision records, commit/push/deployment and unrelated/deleted/untracked paths. Do not inspect, overwrite, stage or clean excluded paths.
+
+## Bounded diagnostic behavior and data handling
+
+- **Key boundary:** invoke the existing `getAISStreamApiKey()` accessor only. Never read, print, log, copy, return or persist the key or `.env.local` contents. Do not run `next dev`, Playwright, the API route, build commands or other tooling that may load local environment files.
+- **One attempt:** one direct `startAISStreamReader()` invocation, one WebSocket connection and one total 15-second deadline including connection/open/subscription. No retry, polling or second route. Stop and clean up exactly once at the first terminal result.
+- **Safe event classification:** use a temporary in-memory WebSocket wrapper/factory around the existing injected reader boundary. It may record only a fixed event-category enum (`pre_subscription_error_event`, `post_subscription_error_event`, `pre_subscription_close`, `post_subscription_close`, `non_text_message`, `text_message`, or `none`), the reader's fixed error enum, and whether local `onSubscribed` fired. If a close event occurs, the close code may be recorded as a number only; never record close reason. The final outcome must be one of `position_report_captured`, `no_valid_position_report`, `reader_error`, `timeout`, `key_missing`, or `harness_failure`. Do not access or output raw frame contents, error objects/messages, provider payloads, stack traces or headers. If this classification cannot be implemented without a product-path change or inspecting event contents beyond type, stop.
+- **Message handling:** parse text frames as JSON in memory and pass only the parsed value to the existing B-11 transformer. If a valid PositionReport with the required sample fields arrives, stop after that one message and write one sanitized sample with matching provenance under the allowed paths. Do not print or persist the raw frame. If JSON parsing fails, transformation rejects the message, or required sample fields are absent, save no sample and stop without retry.
+- **Sanitization/provenance:** retain only the agreed B-10/B-11 fields: `MetaData.MMSI`, `ShipName`, `latitude`, `longitude`, `time_utc`, and `Message.PositionReport.Sog`, `Cog`, `TrueHeading`, `Latitude`, `Longitude`. Record live origin, UTC retrieval time separately from observation time, the exact one-message limit, fields omitted/normalized, sanitization and limitations. Preserve the existing synthetic fixture/provenance unchanged.
+- **No causal overclaim:** event category can distinguish reader branches only; it does not prove why the provider/transport emitted an event, validate the key, or establish provider acceptance. A local `onSubscribed` remains evidence only of local send.
+
+## Expected output and acceptance
+
+1. Exactly one bounded attempt is run only after explicit `continue` for this contract; the actual fixed outcome and sanitized event category are recorded without secrets/raw provider data.
+2. If a valid PositionReport arrives, one and only one sanitized sample and matching provenance are created. Otherwise no sample is fabricated or saved.
+3. All resources close once; no retry, polling, Postman inspection, product code/test/config/dependency change or unexpected path change occurs.
+4. Evidence and checkpoint distinguish event observation from provider cause, key validity, provider acknowledgment, complete Sprint acceptance and release readiness. Checkpoint 03 remains `HOLD` unless the full Sprint criteria gain supported evidence; a checkpoint record is not evidence.
+5. The final diff is reviewed and the user chooses `continue`, `revise` or `HOLD` for the documentation/evidence result. This review does not authorize another live attempt.
+
+## Verification and stop conditions
+
+- **Before attempt:** after contract `continue`, verify `.env.local` ignore/tracking status and the live sample targets' absence without reading env-file contents; verify the runtime imports needed modules without loading env files or starting the app; prepare the one-shot timer, cleanup and event-category-only output. If any check requires reading a secret or starting Next/Playwright, stop.
+- **After attempt:** validate the sanitized sample/provenance if created without printing its payload; verify exact changed paths, one-attempt bound, append-only evidence, checkpoint links and `git diff --check`. No app tests/build or provider-side diagnosis is included.
+- **Stop before attempt if:** this exact contract is not reviewed with `continue`; key is missing; the harness/runtime cannot meet the boundaries; sample targets unexpectedly exist; classification needs logging event contents; or any new dependency/path is required.
+- **Stop after the single attempt regardless of outcome.** Do not troubleshoot the provider, inspect Postman, retry, test another key, modify product code or declare the cause known. A confirmed source defect requires a separate fix contract and deterministic test.
+
+## Rollback / recovery
+
+Before execution, revise/remove only this appended Draft section if rejected; preserve all prior records and working-tree state. If a newly created sample fails sanitization before evidence is appended, remove only the two new live sample artifacts. After EVIDENCE/RUNBOOK append, correct factual mistakes with a superseding append-only record rather than rewriting history. Never reset the branch, alter secrets, touch unrelated/deleted/untracked paths, or change CHECKPOINT-03/04.
+
+## Current status and handoff
+
+- **Status:** `Draft`; contract-preparation approval is not a live-attempt authorization. No new key use, provider request, sample, evidence entry or checkpoint update has occurred under this contract.
+- **Known blocker:** exact cause of the two fixed `provider_error` results remains `Unknown`; current evidence does not justify a source patch.
+- **Next action:** human review of this exact contract. If approved, perform exactly one bounded diagnostic attempt; if revised or held, do not access AISStream. A failed-to-isolate result leaves the cause unknown and checkpoint 03 on `HOLD`.
+
+### Human contract review and authorization — 2026-09-24
+
+- **Decision:** after receiving the contract summary, the user instructed: “зроби, твоя задача зараз що б запрацювало”. This is treated as `continue` for exactly `TASK-SEA-R2-B09B10-LIVE-003`.
+- **Authorization boundary:** exactly one diagnostic invocation as specified above, with key consumption only through `getAISStreamApiKey()`; no retry, source change, Postman access, commit, push or deployment.
+- **Status:** `Active`; at the time of this record, preflight and the single attempt have not yet run.
+
+### Preflight stop — key unavailable to the invoking process — 2026-09-24
+
+- **Observed:** ignore/tracking and live-sample-target preflight checks passed. A Node.js v22.23.2 process directly imported `getAISStreamApiKey()` without loading local env files; the accessor returned `null`, reported only as `KEY_CONFIGURED=no`. The guarded command exited 4 as intended.
+- **Boundary:** no `.env.local` content or key value was read, printed or loaded. No reader invocation, WebSocket connection, provider request, sample, evidence entry or checkpoint was created by the attempt; the single live-attempt allowance remains unused.
+- **Status:** `BLOCKED before provider attempt`. The current contract prohibits loading local env files, so the key stored there is not available in the inherited Node process. Any next attempt requires a reviewed contract revision that expressly authorizes a safe in-memory environment-loading method, followed by the one bounded reader call. Until then, stop; checkpoint 03 remains `HOLD`.
+
+### Authorization amendment — in-memory environment loading — 2026-09-24
+
+- **User authorization:** the user explicitly stated: “дозволяю програмі читати ключ”. This authorizes resolving the LIVE-003 preflight blocker for the already-authorized, still-unused single reader attempt; it does not authorize a second attempt.
+- **Method:** use the installed `@next/env` `loadEnvConfig(process.cwd())` loader documented by this repository's Next.js guide at `node_modules/next/dist/docs/01-app/02-guides/environment-variables.md` (the guide describes loading `.env*` into `process.env` outside the Next.js runtime). Do not start `next dev`, build, Playwright, the API route or any application server.
+- **Secret boundary:** the loader may populate environment values in memory. Do not print, log, inspect, copy or persist `.env*` values. Only `getAISStreamApiKey()` may obtain the AISStream value, and only that returned value may be passed to the existing reader. Do not access or use other loaded values.
+- **Attempt boundary:** if the accessor still returns no key, stop before network access. Otherwise run exactly one existing-reader invocation, one WebSocket connection, 15-second total connection/reader deadline, fixed event categories only, and the previously specified sample sanitization. No retry or provider troubleshooting.
+- **Post-attempt records:** preserve E-SEA-054 and CHECKPOINT-05 as the preflight-stop record. After the one attempt, append the factual outcome to `EVIDENCE.md` and `RUNBOOK.md`; if no valid PositionReport is received, create no sample. Create `docs/checkpoints/CHECKPOINT-06.md` as the next restart record, retaining all earlier checkpoint history. No other paths are authorized.
+- **Status:** this amendment supersedes only the former prohibition on in-memory env loading for this one bounded LIVE-003 attempt. All other scope, stop conditions, exclusions and human diff-review requirements remain in force. Sprint checkpoint 03 remains `HOLD` unless supported evidence closes its acceptance criteria.
+
+### LIVE-003 bounded attempt outcome — 2026-09-24
+
+- **Environment preflight:** an initial ESM named import of the CommonJS `@next/env` package failed before the loader ran or any key was loaded. The corrected `require("@next/env")` preflight loaded the environment in memory, and the accessor reported only `KEY_CONFIGURED=yes`; runtime imports passed. No key value or `.env*` content was emitted or inspected.
+- **Attempt:** exactly one reader invocation opened one WebSocket, locally sent the subscription (`SUBSCRIBED=yes`), then observed a message event whose `data` type was non-string. The reader returned its fixed `provider_error`; wrapper output was `EVENT_CATEGORY=non_text_message`, `READER_ERROR=provider_error`, `OUTCOME=reader_error`. Exit status was 1. The harness inspected only `typeof event.data`; it did not decode, print or persist frame contents.
+- **Sample / retry:** no valid PositionReport was received; no sample or provenance was created; both live sample targets were absent after the attempt. No retry or provider troubleshooting occurred. The single LIVE-003 attempt allowance is now exhausted.
+- **Outcome and boundary:** the event category identifies the reader branch responsible for this attempt's fixed error, but does not establish the contents or origin of the non-string data, key validity, provider cause or provider acceptance. Do not change product code under LIVE-003; a possible reader compatibility fix requires a separate reviewed task contract and deterministic test.
+- **Handoff:** `E-SEA-055`, the appended RUNBOOK record and `CHECKPOINT-06.md` capture this attempt. Sprint checkpoint 03 remains `HOLD`; final human review of the complete documentation diff remains pending.
+
+# TASK-SEA-R2-B09B10-FIX-001 — WebSocket UTF-8 binary JSON compatibility
+
+- **Version:** `1.0.0`
+- **Status:** `Active`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-25
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), `TASK-SEA-R2-B12-001`, `TASK-SEA-R2-B09B10-LIVE-003`, `E-SEA-055`, [`server/aisstream-reader.ts`](server/aisstream-reader.ts), [`tests/snapshot-reader.spec.ts`](tests/snapshot-reader.spec.ts), [`tests/snapshot-collector.spec.ts`](tests/snapshot-collector.spec.ts).
+
+## Goal and bounded outcome
+
+Amend the B-12 reader input boundary so the existing snapshot flow can accept a WebSocket binary frame only when it is valid UTF-8 JSON, while retaining the existing endpoint, subscription, collector behavior, fixed errors, 15-second window, 100-vessel limit, one-shot lifecycle, and response/UI contracts. This is a local compatibility fix; it does not establish that the LIVE-003 frame contained JSON or a PositionReport, or that AISStream accepted the subscription.
+
+## Authorization gates
+
+- **Current decision:** this section is `Draft`. Approval of the preceding implementation plan authorized preparation of this contract only; it did not authorize source changes, live-provider access, or use of the real key.
+- **Implementation gate:** do not edit implementation or test paths until the user reviews this exact contract and explicitly chooses `continue`.
+- **Live gate:** no provider connection or real-key use is included. A new live verification needs a separate bounded contract and explicit authorization after the local fix is reviewed.
+
+## Owner and exact paths
+
+- **Planning path:** this append-only section in `TASK_SPEC.md`; preserve the historical B-09, B-12, and LIVE-003 records.
+- **Implementation paths after `continue`:**
+  - `server/aisstream-reader.ts` — configure the native Node WebSocket's `binaryType` as `arraybuffer`; forward text data unchanged and strictly decode `ArrayBuffer` data as UTF-8 text.
+  - `tests/snapshot-reader.spec.ts` — deterministic reader tests for text/binary data, decode failures, error mapping, and one-time lifecycle cleanup.
+  - `tests/snapshot-collector.spec.ts` — route/collector regression proving a valid UTF-8 JSON binary fixture reaches the existing snapshot transformation/response path.
+- **Append-only records after checks and final human review:** `EVIDENCE.md` and `RUNBOOK.md`.
+- **Excluded:** `.env*`, credentials, Postman, provider calls, sample/provenance paths, `server/snapshot-collector.ts`, `app/api/snapshot/route.ts`, `app/map-shell.tsx`, `app/sea-map.tsx`, dependencies/manifests, test-runner configuration, decision records, checkpoint history, and all unrelated or pre-existing changed/deleted/untracked paths.
+
+## Inputs and behavior
+
+- Node.js 22 WebSocket types in the installed runtime expose `binaryType` values `blob` and `arraybuffer`; standard text frames arrive as strings and binary frames use the configured representation. Confirm the installed runtime's applicable documentation/types before implementation.
+- The native reader must set `binaryType = "arraybuffer"` before message delivery. A string is passed to the collector unchanged. An `ArrayBuffer` is decoded with `TextDecoder("utf-8", { fatal: true })` and passed to the collector as text.
+- Any other runtime data type, invalid UTF-8, or decode failure maps to the existing fixed `provider_error`; do not stringify arbitrary objects, inspect/log raw bytes, include payload or decoder details in errors, or retain decoded live data.
+- The existing collector remains responsible for JSON parsing and PositionReport transformation. Malformed JSON continues to map to `provider_error`; valid JSON that is not a recognized PositionReport continues to follow the existing collector behavior. No API/UI response shape changes and no partial success are introduced.
+- Preserve event order, exactly-once completion/cleanup, ignored late events, exact subscription, and one WebSocket per snapshot. Do not add a decoder dependency or a second transport path.
+
+## Acceptance criteria
+
+- [ ] Native WebSocket binary delivery is configured to `arraybuffer`; ordinary string messages still pass through unchanged.
+- [ ] A valid UTF-8 `ArrayBuffer` is decoded to the expected text and delivered once to the collector boundary.
+- [ ] Invalid UTF-8, unsupported data types, and decoder exceptions map to one fixed `provider_error`, with exactly-once cleanup and no late delivery.
+- [ ] A deterministic route/collector test sends a valid UTF-8 JSON `ArrayBuffer` PositionReport fixture and verifies the existing successful snapshot envelope and vessel mapping.
+- [ ] Existing provider-error, disconnect, cancellation, no-key, partial-data, and B-13 mocked UI behavior remain unchanged and covered by focused checks.
+- [ ] No real key, `.env*` file contents, provider connection, raw live frame, or new sample/provenance is accessed or created.
+- [ ] The implementation stays within the exact paths above; append-only evidence/handoff is added only after checks and human diff review.
+- [ ] Human diff review chooses `continue`, `revise`, or `HOLD` before any further task. A live-provider retry remains separately gated.
+
+## Verification — requirements, not observed results
+
+1. Run focused `npx playwright test tests/snapshot-reader.spec.ts tests/snapshot-collector.spec.ts tests/snapshot-interface.spec.ts`, `npx tsc --noEmit`, and the repository build check after implementation authorization. Use a non-secret test-only `AISSTREAM_API_KEY` environment value for commands that may load Next environment configuration; never expose or use the real key.
+2. Verify unchanged fixed API error/success shapes, binary decode behavior, test cleanup, no partial success, and exact changed paths. Run `git diff --check`.
+3. No live AISStream request is part of these checks. Local fixtures/build cannot establish provider acceptance, real frame format, live PositionReport receipt, or live UI/API success.
+
+## Stop conditions and recovery
+
+Stop if the installed runtime does not deliver `ArrayBuffer` after the native socket is configured, if a required frame is not strict UTF-8, if supporting it would require guessing provider-specific framing, if a new dependency/path is needed, or if raw frame inspection/logging is proposed. Do not fall back to `Blob`/arbitrary-object stringification under this contract; prepare a separate reviewed amendment if runtime evidence requires another representation. On rejection, restore only this appended draft section before implementation; after authorized implementation, recovery may touch only its allowed paths and must preserve all pre-existing work. Do not reset, clean, commit, push, deploy, retry AISStream, or rewrite append-only history.
+
+## Human contract review and implementation authorization — 2026-09-25
+
+- **Decision:** after reviewing this exact bounded contract, the user instructed: “continue, зроби вже проект робочим”. This is `continue` and authorizes the implementation paths and local checks listed above.
+- **Boundary:** this does not authorize a live AISStream request, real-key access, raw-frame inspection, sample creation, commit, push, or deployment. A separate live-verification contract and explicit authorization remain required.
+- **Status:** `Active`; local implementation/checks are recorded below; final human diff review remains pending.
+
+## Observed implementation and local checks — 2026-09-25
+
+- **Implementation:** `server/aisstream-reader.ts` sets native WebSocket `binaryType = "arraybuffer"`, forwards string messages unchanged, and strictly decodes UTF-8 `ArrayBuffer` messages. Unsupported types and invalid UTF-8 map to the fixed `provider_error`. Reader/collector tests cover decoding, route success, failures and cleanup.
+- **Commands and status:** `AISSTREAM_API_KEY=test-only-no-secret npx playwright test tests/snapshot-reader.spec.ts tests/snapshot-collector.spec.ts tests/snapshot-interface.spec.ts` — `PASS`, 33 tests; `AISSTREAM_API_KEY=test-only-no-secret npx tsc --noEmit` — `PASS`; `AISSTREAM_API_KEY=test-only-no-secret npm run build` — `PASS`; scoped `git diff --check` — `PASS`.
+- **Build environment limitation:** Next.js output reported `.env.local` as an environment source. No value was printed, but this task cannot claim that the file or its contents were not loaded by the build environment.
+- **User-reported context:** the user said “стій, запрацювало”. The observation is recorded as user-reported only; no post-fix live provider attempt, raw frame, PositionReport, sample or provenance was captured independently in this task.
+- **Acceptance boundary:** local compatibility behavior and deterministic checks are supported by the results above. Provider acceptance, live receipt, live UI/API end-to-end success, key validity, and the original LIVE-003 frame contents remain `Unknown` / `Needs verification`. Sprint checkpoint 03 remains `HOLD`.
+- **Next gate:** keep task status `Active` pending final human diff review. No live request, real-key inspection, commit, push or deployment is authorized by this record.

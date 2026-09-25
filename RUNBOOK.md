@@ -1,11 +1,11 @@
 # RUNBOOK.md — delivery history and handoff
 
 - **ID:** `RUNBOOK-SEA-001`
-- **Version:** `0.5.0`
+- **Version:** `0.20.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-22
+- **Date:** 2026-09-25
 - **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`EVIDENCE.md`](EVIDENCE.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md)
 
 ## Purpose and boundary
@@ -303,3 +303,330 @@ Each entry must include: date/session, goal and scope, changed artifacts, comman
 - **Decision:** B-01 through B-07 are accepted; Sprint 1 status is `DONE` / `Verified`. Accepted limitations are the lack of direct timer/listener instrumentation for unmount cleanup, the known external package-lock warning and pre-existing extraneous dependency entries. No S2/S3 scope was started or inferred.
 - **Evidence:** `E-SEA-027` plus the preceding implementation, check, review and Node.js 22 records through `E-SEA-026`.
 - **Delivery:** prepare one bounded commit containing the approved tracked baseline/documentation changes and the new `DEC-005` record; preserve all pre-existing untracked paths; push only to `origin/sprint1`.
+
+### 2026-09-22 — Sprint 2 planning decomposition and safe-start handoff
+
+- **Task:** `TASK-SEA-R2-PLAN-001`.
+- **Input:** staged `SPRINT-02.md` on branch `sprint2`; verified R1 baseline at `01aa336`.
+- **Change:** appended a separate R2 planning section to `TASK_SPEC.md`; the completed R1 B-07 contract was not overwritten. The plan names bounded slices for R2 planning, B-08 secure configuration, B-09 reader/endpoint, B-10 sample/provenance, B-11 transformer, B-12 collector, B-13 UI and final acceptance.
+- **Checks:** `git diff --check` — `PASS`; structural task-contract validator — `PASS`; tracked secret-env scan — `PASS` with no tracked `.env` or `.env.*.local` files. No product implementation command, live provider request or secret read was run.
+- **Evidence:** `E-SEA-028`.
+- **Blockers:** current `CLAUDE.md` and `SPEC.md` still mark Sprint 2 as `Waiting for MVP input`; human diff review is pending. The staged `SPRINT-02.md` and pre-existing staged `START.md` changes were not modified.
+- **Rollback:** remove only the appended R2 section from `TASK_SPEC.md` after inspecting the diff if rejected; preserve R1 task history, append-only evidence/history, staged sprint input and unrelated untracked paths.
+- **Handoff:** do not implement B-08 yet. After `continue` and governance authorization, create `TASK-SEA-R2-B08-001` with secure-configuration-only allowed paths. No commit or push was performed.
+
+### 2026-09-23 — B-08 secure-configuration contract preparation
+
+- **Session:** continuation from `HANDOFF-SEA-R2-PLAN-001`; bounded contract-only preparation for `TASK-SEA-R2-B08-001` / `R2-B08-SECURE-CONFIGURATION`.
+- **Goal and scope:** define the next secure-configuration slice before any implementation; limit future changes to `.env.example`, `.gitignore`, separately authorized `.claude/settings.json` permission rules and `server/aisstream-config.ts`. B-09 through B-13 remain excluded.
+- **Changed artifacts:** appended the B-08 draft contract to `TASK_SPEC.md`; appended `E-SEA-029` to `EVIDENCE.md`. No `.env.example`, `.gitignore`, `.claude/settings.json`, server, product, test or package path was changed.
+- **Commands and status:** `git diff --check` — `PASS`; changed-path inspection — `PASS`; structural task-contract validator — `PASS`; tracked local-secret-path scan — `PASS` with none found; tracked HEAD non-empty `AISSTREAM_API_KEY` assignment scan — `PASS` with none found. No `.env.local` or `.env.*.local` file was created or read.
+- **Governance and decisions:** the contract is intentionally `Draft`; current `CLAUDE.md` and `SPEC.md` still mark Sprint 2 `Waiting for MVP input`. The contract does not authorize implementation, live AISStream access, secret use, permission-file changes or B-09.
+- **Blockers / Unknowns:** human review of the R2 planning slice and B-08 draft is pending; R2 scope authorization/decision record is pending; accessor behavior, permission refusal, live provider availability and R2 acceptance remain `Unknown`. A local secret-fixture refusal test remains unrun because creating or reading such files is prohibited by the handoff.
+- **Rollback / recovery:** if the draft is rejected, remove only the appended B-08 contract from `TASK_SPEC.md` after inspecting the diff; preserve R1 task history, E-SEA-029, prior runbook history, staged `SPRINT-02.md`, pre-existing `START.md` deletion and excluded untracked/generated paths. Do not touch secret files.
+- **Evidence:** `E-SEA-029` records the observed contract structure and secret-boundary scan; it does not claim B-08 implementation or runtime behavior.
+- **Handoff:** obtain explicit human `continue` and R2 scope authorization. Then implement only the B-08 paths in `TASK-SEA-R2-B08-001`, run targeted checks and human diff review; do not start B-09. No commit or push was performed.
+
+### 2026-09-23 — R2 scope authorization and governance synchronization
+
+- **Session:** authorized continuation from `HANDOFF-SEA-R2-PLAN-001`; governance prelude for `TASK-SEA-R2-B08-001`.
+- **Goal and scope:** record the product-owner R2/B-08 authorization and synchronize versioned governance artifacts before B-08 implementation. AISStream registration, real-key access and live provider requests remain deferred.
+- **Changed artifacts:** added `docs/decisions/DEC-006-r2-scope.md`; updated `CLAUDE.md`, `SPEC.md`, `docs/decisions/README.md`, `TASK_SPEC.md`; appended `E-SEA-030`. The staged `SPRINT-02.md` and pre-existing staged `START.md` deletion were not modified. No B-08 implementation path was changed in this step.
+- **Commands and status:** `git diff --check` — `PASS`; governance structural validator — `PASS`; staged/unstaged path inspection — `PASS`; no secret file was read or created; no dependency, product, server or permission-file implementation change was made.
+- **Decision:** user confirmation “Підтверджую scope R2 і дозволяю перейти до B-08” is recorded by `DEC-006-R2-SCOPE`. R2 is authorized but task-gated; B-08 is the only current implementation slice; B-09…B-13 and Sprint 3 remain separately gated.
+- **Blockers / Unknowns:** the B-08 permission settings change is still pending explicit configuration permission from the current Claude Code session; accessor behavior, permission refusal, provider availability, key validity and R2 acceptance remain `Unknown`. No AISStream registration is required for B-08.
+- **Rollback / recovery:** if governance is rejected, restore only the newly changed governance paths after inspecting the diff; preserve append-only evidence/history, staged inputs, pre-existing deletion and excluded untracked/generated paths. Do not touch local secret files.
+- **Evidence:** `E-SEA-030` records the actual authorization and artifact synchronization; it does not claim B-08 implementation or live provider behavior.
+- **Handoff:** proceed with B-08 implementation only. The user does not need to register AISStream or provide a key for this slice; any future key must be placed locally and never sent in chat. No commit or push was performed.
+
+### 2026-09-23 — B-08 partial implementation and verification hold
+
+- **Session:** bounded implementation continuation for `TASK-SEA-R2-B08-001` after `DEC-006-R2-SCOPE` authorization.
+- **Goal and scope:** implement and check the non-permission B-08 paths only; do not access a real key, contact AISStream or start B-09.
+- **Changed artifacts:** added `.env.example` and `server/aisstream-config.ts`; verified `.gitignore` without changing it; appended `E-SEA-031`. `.claude/settings.json` was not created because the current session denied the configuration-skill action required for that permission change. No app, package, test, route, WebSocket, sample or UI path changed.
+- **Commands and status:** `git diff --check` — `PASS`; changed-path/source validators — `PASS` for available paths; `git check-ignore --no-index` and tracked-env scan — `PASS`; corrected direct TypeScript check with `--ignoreConfig --types node` — `PASS`; normal `npx tsc --noEmit` — `PASS`; `npm run build` — `PASS` with the known external package-lock warning; `npm ls --depth=0` — completed with pre-existing extraneous packages; Node 22 missing/blank accessor assertions — `PASS`. The initial direct tsc invocation failed with TS5112 and the follow-up without Node types failed with TS2591; both were corrected without changing project files.
+- **Observed behavior:** accessor reads only `process.env.AISSTREAM_API_KEY`, trims it and returns `null` for missing/whitespace values. No logging, network access, client import or dependency change was observed. `.env.example` contains only the empty placeholder.
+- **Blockers / Unknowns:** project permission rules are absent because the configuration action was denied; permission refusal/allowance checks, final human diff review and B-08 acceptance remain pending. No real AISStream registration or key is needed for B-08.
+- **Rollback / recovery:** restore only `.env.example` and `server/aisstream-config.ts` plus governance paths after inspecting the diff if the task is rejected; preserve append-only records, staged `SPRINT-02.md`, `START.md` deletion and all excluded untracked/generated paths. Never touch local secret files.
+- **Evidence:** `E-SEA-031`; governance synchronization is `E-SEA-030`.
+- **Handoff:** status is `HOLD` until the user explicitly permits the project `.claude/settings.json` deny-rule change in a session where the configuration action is allowed. Then create only that settings file, run the permission matrix and final checks, perform human diff review, and stop before B-09. No commit or push was performed.
+
+### 2026-09-23 — B-08 permission rules completed; review pending
+
+- **Session:** continuation for `TASK-SEA-R2-B08-001` after explicit user authorization for the exact project settings change.
+- **Goal and scope:** create only `.claude/settings.json` with the three approved local-secret read deny rules; leave `.claude/settings.local.json` unchanged; verify the refusal matrix without reading secret content.
+- **Changed artifacts:** added `.claude/settings.json`; updated `TASK_SPEC.md` acceptance/current status; appended `E-SEA-032` to `EVIDENCE.md`. No app, package, test, route, WebSocket, sample, UI or secret file changed.
+- **Commands and status:** `git diff --check` — `PASS`; `.env`, `.env.local` and `.env.test.local` existence checks — `PASS` (all absent); read attempts for those paths — denied by project settings as expected; `.env.example` read allowance — `PASS`; `.claude/settings.local.json` inspection — unchanged.
+- **Observed behavior:** the project settings file contains only the three authorized deny rules. The permission matrix blocks the specified secret paths while allowing `.env.example`. No secret content, real AISStream key or live provider request was accessed.
+- **Blockers / Unknowns:** final human diff review remains pending; provider availability, real-key validity and R2 user-story acceptance remain `Unknown`. B-09 remains out of scope.
+- **Rollback / recovery:** remove only the newly added `.claude/settings.json` after inspecting the diff if the settings change is rejected; preserve `.env.example`, accessor, append-only evidence/history, staged inputs and unrelated paths. Do not touch secret files. Product owner decides recovery acceptance.
+- **Evidence:** `E-SEA-032`; prior non-permission checks are recorded in `E-SEA-031`.
+- **Handoff:** perform human diff review and choose `continue`, `revise` or `HOLD`; if `continue`, stop before B-09 and do not commit or push without separate authorization.
+
+### 2026-09-23 — B-08 final diff review and commit authorization
+
+- **Session:** final review for `TASK-SEA-R2-B08-001` on branch `sprint2`.
+- **Goal and scope:** review the complete B-08/governance boundary, correct review findings, and prepare only the selected paths for the user-authorized commit/push.
+- **Review findings and corrections:** the stale current B-08 handoff in `TASK_SPEC.md` was updated; `SPEC.md`, `EVIDENCE.md` and `RUNBOOK.md` metadata dates/versions were aligned with the 2026-09-23 changes. Historical entries were preserved.
+- **Commands and status:** `git diff --check` — `PASS`; `npx tsc --noEmit` — `PASS`; `npm run build` — `PASS` with the known external package-lock warning; final path and secret-fixture checks — `PASS`; prior permission matrix and accessor checks — `PASS`.
+- **Decision:** final diff review is `PASS`; user explicitly authorized commit and push on `sprint2`. Only B-08/governance paths may be staged; pre-existing staged `SPRINT-02.md`/`START.md` and unrelated untracked paths must remain excluded.
+- **Blockers / Unknowns:** R2 runtime acceptance, provider availability, real-key validity and B-09 readiness remain `Unknown` or separately gated.
+- **Rollback / recovery:** if commit/push is rejected, preserve the working tree and revert only the selected B-08/governance commit after inspecting its contents; do not reset or delete pre-existing staged/untracked paths or secret files.
+- **Evidence:** `E-SEA-033`; prior implementation and permission evidence are `E-SEA-031` and `E-SEA-032`.
+- **Handoff:** commit and push only the selected B-08/governance paths, then stop before B-09. No production or live-provider action is authorized.
+
+### 2026-09-23 — B-09 reader and intermediate route local verification
+
+- **Session:** bounded implementation continuation for `TASK-SEA-R2-B09-001` on branch `sprint2` after contract review/continue.
+- **Goal and scope:** add only the server-only AISStream reader, intermediate `GET /api/snapshot`, deterministic lifecycle tests and the requested empty local key-file placeholder. Do not add B-10–B-13 behavior, a live request, a real key, dependencies, UI, collector or transformer.
+- **Changed artifacts:** updated the appended B-09 section in `TASK_SPEC.md`; added `server/aisstream-reader.ts`, `app/api/snapshot/route.ts` and `tests/snapshot-reader.spec.ts`; created a zero-byte ignored `.env.local` without reading or overwriting its contents. No package manifest, lockfile, Playwright configuration, existing B-07 test or B-08 path changed.
+- **Commands and status:** official AISStream documentation fetch — endpoint/subscription requirements confirmed; `git diff --check` — `PASS`; B-09 structural validator — `PASS`; tracked secret-path/assignment scan — `PASS`; ignored zero-byte env-file metadata check — `PASS`; direct server TypeScript check — `PASS`; `npx tsc --noEmit` — `PASS`; `npm run build` — `PASS` with the known external package-lock warning; `npm ls --depth=0` — completed with pre-existing extraneous packages; `npx playwright test tests/snapshot-reader.spec.ts` — `PASS`, 7 tests; sanitized loopback no-key `curl` check — `PASS` against the existing local server.
+- **Observed behavior:** fake WebSocket tests confirmed immediate exact subscription, a deadline starting before construction, pre-open `connect_failed`, post-subscription `raw: null` timeout, text raw success, binary/provider error, post-subscription disconnect, cancellation cleanup including a socket-created-during-abort race, and late-event suppression. The no-key route check returned HTTP 502 with the exact fixed Ukrainian message both in the focused test and over loopback. The built route is listed as a dynamic Node.js `/api/snapshot` handler.
+- **Decision:** `CONTINUE WITH APPROVAL`; local checks pass, but final human diff review remains required. No commit or push was performed.
+- **Blockers / Unknowns:** live provider availability, real-key validity, live connection/message receipt and complete R2 user-story acceptance remain `Unknown`/`Blocked`. Provider error semantics beyond the bounded WebSocket/message boundary are not live-verified.
+- **Rollback / recovery:** inspect the complete diff, then remove only the three B-09 implementation files and the appended B-09 task section if rejected; preserve the verified B-08 baseline, append-only records, pre-existing staged/untracked/generated paths and any local secret file. Do not reset the branch or delete `.env.local`.
+- **Evidence:** `E-SEA-034`; B-08 evidence remains `E-SEA-033` and earlier entries.
+- **Handoff:** perform final human diff review and choose `continue`, `revise` or `HOLD`. If `continue`, a separate authorization is still required before any commit/push; the owner may now add the real key locally to `.env.local` but must never send it in chat or commit it. No live AISStream request has been run.
+
+### 2026-09-23 — B-09 final human diff review
+
+- **Session:** final bounded review for `TASK-SEA-R2-B09-001` on branch `sprint2`.
+- **Decision:** user chose `continue`; B-09 local implementation is `DONE`/`Verified` within its approved boundary. This does not claim live provider availability, real-key validity or complete R2 acceptance.
+- **Review result:** approved paths remain limited to `TASK_SPEC.md`, `server/aisstream-reader.ts`, `app/api/snapshot/route.ts`, `tests/snapshot-reader.spec.ts`, append-only evidence/history and the ignored zero-byte `.env.local` preflight artifact. No dependency, unrelated product path, B-10–B-13 behavior, secret content, commit or push was introduced.
+- **Evidence:** `E-SEA-035` and local implementation checks in `E-SEA-034`.
+- **Handoff:** the next action is either a separately authorized live-provider check using the locally stored key or a separately authorized commit/push. Do not paste the key into chat; preserve staged and unrelated untracked paths.
+
+### 2026-09-23 — Sprint 2 decomposition human diff review
+
+- **Session:** documentation-only review of the corrected `SPRINT-02.md` Part C decomposition for `SPRINT-SEA-R2-001`.
+- **Goal and scope:** verify that the B-08…B-13 entries are complete and consistent after correcting metadata, R2/R3 verification wording, dependency boundaries and B-10/B-12 acceptance details. No product implementation or live provider access was in scope.
+- **Changed artifacts:** `SPRINT-02.md` contains the local documentation corrections; `EVIDENCE.md` received `E-SEA-036`; no product source, test, dependency, secret or live-provider path changed. `SPRINT-02.md` remains untracked.
+- **Commands and status:** decomposition metadata/entry/field validator — `PASS`; dependency/provenance/reason-value checks — `PASS`; trailing-whitespace check — `PASS`; `git status --short --branch` — expected pre-existing and local untracked paths only.
+- **Review result:** all six bounded entries now have Goal, Non-goals, Check, Evidence, Acceptance, Dependency boundary, Handoff and Status. The R2 focused deterministic B-12 checks are explicitly separated from the R3 release-level test-suite boundary. B-10 sample fields and provenance classes are explicit.
+- **Decision:** `CONTINUE WITH APPROVAL` for the next documentation/task-contract slice. This does not authorize B-10 implementation, live AISStream access, commit or push.
+- **Blockers / Unknowns:** B-10…B-13 remain gated and unimplemented; live provider availability, real-key validity, full R2 acceptance and release readiness remain `Unknown`/`Needs verification`.
+- **Rollback / recovery:** if the documentation review is rejected, inspect the file and restore only the local `SPRINT-02.md` documentation changes; preserve append-only evidence/history, product code, staged paths and unrelated untracked/generated paths.
+- **Evidence:** `E-SEA-036`.
+- **Handoff:** next bounded action is to prepare and review the separate B-10 sample/provenance task contract. Do not start B-10 implementation until that contract and its human review are complete; do not commit or push without separate authorization.
+
+### 2026-09-23 — B-10 sample/provenance task contract prepared
+
+- **Session:** contract-only preparation of `TASK-SEA-R2-B10-001` / `R2-B10-SAMPLE-PROVENANCE` after `E-SEA-036`.
+- **Goal and scope:** define the sample artifact, allowed sources, provenance, verification, security and lifecycle gates before B-10 implementation; update the next-session handoff. No sample or product behavior was created.
+- **Changed artifacts:** appended B-10 contract to `TASK_SPEC.md`; updated `NEXT_SESSION.md` with restart prompt and current state; appended `E-SEA-037` to `EVIDENCE.md`. `SPRINT-02.md` remains untracked and unchanged in this slice. No product code, `data/samples/` output, test, dependency or secret path was changed/read.
+- **Commands and status:** `git status --short --branch` and `git log -3 --oneline --decorate` — inspected; contract structural validator — `PASS` after correcting an initial validator format/window mismatch; B-10 sample output absence checks — `PASS`; `git diff --check -- TASK_SPEC.md NEXT_SESSION.md EVIDENCE.md RUNBOOK.md` — `PASS` before append-only review records were appended.
+- **Contract boundary:** B-10 defaults to documentation-derived or synthetic data with explicit provenance. Live AISStream access and real-key use require separate explicit authorization; sample retention terms remain `Unknown` until established.
+- **Decision:** `CONTINUE WITH APPROVAL` for human review of the B-10 task contract. This does not authorize implementation, live capture, commit or push.
+- **Blockers / Unknowns:** sample source/retention permission, provider availability, real-key validity, live receipt and complete R2 acceptance remain `Unknown`/`Needs verification`.
+- **Rollback / recovery:** inspect the diff; if rejected, amend/remove only the appended B-10 task section and related current handoff references, preserving append-only history, B-08/B-09 records and all pre-existing staged/untracked/generated paths. No branch reset or secret-file operation.
+- **Evidence:** `E-SEA-037`; preceding decomposition review `E-SEA-036`.
+- **Handoff:** next session must human-review `TASK-SEA-R2-B10-001` against `SPRINT-02.md`, SPEC and DEC-006; record `continue`, `revise` or `HOLD`. Do not create sample files or start B-11 until separately authorized. No commit/push or live request was performed.
+
+### 2026-09-23 — B-10 synthetic sample implementation and checks
+
+- **Session:** bounded B-10 implementation for `TASK-SEA-R2-B10-001` after contract review recommendation and explicit user authorization for a documentation-derived or synthetic sample.
+- **Goal and scope:** create one synthetic PositionReport fixture and its provenance for future B-11 transformer work. No live provider request, secret read, product code, test, dependency or endpoint change.
+- **Changed artifacts:** added `data/samples/position-report.sample.json` and `data/samples/PROVENANCE.md`; updated B-10 status, verified criteria and current handoff in `TASK_SPEC.md`; appended `E-SEA-038` to `EVIDENCE.md`. Other existing staged/untracked paths were not changed.
+- **Sample:** one synthetic `MetaData` / `Message.PositionReport` envelope, with all required fields/casing and matching coordinates within intended Dover bounds. `PROVENANCE.md` labels the data synthetic, describes the contract source and region context, distinguishes the UTC artifact creation date from synthetic `time_utc`, and states what the fixture does not prove.
+- **Commands and status:** Node JSON/schema/provenance assertion — `PASS`; targeted credential-like scan of the two B-10 output files — `PASS` (no matches); Python trailing-whitespace check — `PASS`; `git diff --check` — `PASS`; `git status --short --branch`, `git diff --name-only`, and `find data/samples -maxdepth 1 -type f -print | sort` — inspected; only the two authorized sample outputs exist under `data/samples/`.
+- **Decision:** `CONTINUE WITH APPROVAL`; implementation checks pass, but final human diff review remains pending. No commit or push was performed.
+- **Blockers / Unknowns:** live provider availability, real-key validity, live message receipt, sample retention terms, complete R2 acceptance and release readiness remain `Unknown`/`Needs verification`.
+- **Rollback / recovery:** after inspecting the diff, remove only the two B-10 sample files and restore the B-10 task status if rejected; preserve append-only evidence/history, pre-existing staged/untracked/generated paths and all secret files. Do not reset the branch.
+- **Evidence:** `E-SEA-038`.
+- **Handoff:** perform human diff review of the B-10 sample, provenance, task status and append-only records. B-11, live AISStream access, commit and push each remain separately gated.
+
+### 2026-09-23 — B-10 final diff review
+
+- **Session:** final human review of `TASK-SEA-R2-B10-001` after the synthetic sample checks in `E-SEA-038`.
+- **Review scope:** inspected both B-10 sample outputs, their provenance, the B-10 task acceptance/status and current handoff, the implementation evidence, and the final Git path boundary.
+- **Observed:** the fixture and provenance are consistent with the approved synthetic-data contract; only the two approved sample files are present under `data/samples/`. Targeted JSON/schema/provenance and credential-like checks, whitespace checks and `git diff --check` passed. Pre-existing staged/untracked paths and `START.md` deletion were preserved; no staged paths are present.
+- **Decision:** user chose `continue` for B-10 review. B-10 is `Verified` within its bounded sample/provenance scope; no B-11 or live access authorization is inferred.
+- **Blockers / Unknowns:** live AISStream availability, key validity, live receipt, retention terms, full R2 acceptance and release readiness remain `Unknown`/`Needs verification`.
+- **Recovery:** if the B-10 review is later rejected, inspect the diff and remove only the two B-10 sample files / restore the task status; preserve append-only evidence/history and unrelated paths.
+- **Evidence:** `E-SEA-039` (review); `E-SEA-038` (implementation checks).
+- **Handoff:** stop after B-10. B-11 requires its own bounded task contract and explicit authorization. No live request, commit or push was performed.
+
+### 2026-09-23 — B-10 remote delivery verification
+
+- **Session:** post-push delivery verification for `TASK-SEA-R2-B10-001` on branch `sprint2`.
+- **Goal and scope:** verify the user-authorized B-10 commit is synchronized to the remote and record the actual delivery state; no new product/sample changes, live request or secret access.
+- **Delivery:** commit `72f8b94` (`feat(r2): add B-10 PositionReport sample`) is at local `HEAD` and `origin/sprint2`; `git ls-remote origin refs/heads/sprint2` returned `72f8b94eb9c88a92d84281be88d7629e458ed0e8`.
+- **Commit boundary:** exactly `EVIDENCE.md`, `RUNBOOK.md`, `TASK_SPEC.md`, `data/samples/PROVENANCE.md` and `data/samples/position-report.sample.json`. `START.md` deletion and unrelated untracked inputs remain excluded.
+- **Commands and status:** `git ls-remote origin refs/heads/sprint2`, `git status --short --branch`, `git log -1 --oneline --decorate` and `git show --format=fuller --stat --oneline HEAD` — `PASS` for the observed remote hash, local/remote refs, commit summary and preserved excluded paths.
+- **Evidence:** `E-SEA-040` records the remote delivery check; `E-SEA-038` and `E-SEA-039` record the sample checks and human review.
+- **Limitations / blockers:** no live AISStream request, real-key access, sample retention ruling, R2 acceptance or release readiness is established. B-11 remains separately gated.
+- **Rollback / recovery:** inspect `git show 72f8b94`; if the delivered B-10 slice is rejected, product owner decides recovery. Do not reset the shared branch or alter excluded pre-existing paths.
+- **Handoff:** B-10 is committed and pushed. Stop here; B-11 requires its own bounded task contract and explicit authorization.
+
+### 2026-09-23 — B-11 PositionReport transformer contract
+
+- **Session:** bounded contract preparation for `TASK-SEA-R2-B11-001` after verified B-10 delivery at `755c021`.
+- **Goal and scope:** define a future pure PositionReport-to-`Vessel` transformer and focused deterministic checks; do not implement product or test code, access secrets, contact AISStream, or begin B-12.
+- **Changed artifacts:** appended the B-11 contract to `TASK_SPEC.md`; appended `E-SEA-041` to `EVIDENCE.md`; appended this factual handoff. Updated EVIDENCE/RUNBOOK metadata versions to `0.11.0`. No transformer, test, sample, route, package, dependency, or pre-existing unrelated path changed.
+- **Contract boundary:** status is `Draft`; future implementation paths are `server/position-report-transformer.ts` and `tests/position-report-transformer.spec.ts`. Input mapping, validation ranges/sentinels, null/zero handling, timestamp precision, immutability, exclusions, acceptance, stop conditions, rollback, and separate approval gates are recorded in `TASK_SPEC.md`.
+- **Commands and status:** focused structural/content validator — initially `FAIL` on its own exact-string expectations, then `PASS` after correcting the validator to the actual equivalent contract wording; `git diff --check -- TASK_SPEC.md` — `PASS`; Git status/log/remote inspection — `PASS` for the observed baseline and preserved unrelated paths.
+- **Evidence:** `E-SEA-041` records contract structure and formatting only; B-10 sample checks/review/delivery remain `E-SEA-038` through `E-SEA-040`.
+- **Blockers / Unknowns:** no transformer behavior, test result, live observation, provider availability, real-key validity, full R2 acceptance, or release readiness is established. Human B-11 contract review and explicit implementation authorization remain pending.
+- **Rollback / recovery:** if the contract is rejected before implementation, inspect the diff and remove only the appended B-11 section; preserve append-only history and all pre-existing unrelated paths. Do not reset the branch or alter secret files.
+- **Handoff:** request human review of `TASK-SEA-R2-B11-001` and a `continue`, `revise`, or `HOLD` decision. Do not implement B-11, begin B-12, use live AISStream access, or commit/push without separate explicit authorization.
+
+### 2026-09-23 — B-11 contract clarification and remote delivery
+
+- **Session:** review and delivery of the clarified `TASK-SEA-R2-B11-001` v1.1.0 contract on branch `sprint2`.
+- **Goal and scope:** resolve MMSI and timestamp ambiguities in the draft; verify the documentation diff; commit and push only if the result is ready. No transformer/test implementation, live AISStream access or secret access.
+- **Changed artifacts:** revised the appended B-11 contract in `TASK_SPEC.md`; appended `E-SEA-042` to `EVIDENCE.md`; appended this handoff. Evidence and runbook metadata are now v0.12.0. The pre-existing `START.md` deletion and unrelated untracked paths are excluded.
+- **Clarifications:** MMSI accepts a non-negative safe-integer JSON number or trimmed ASCII digit-only string; numeric values become canonical decimal text, while digit strings preserve leading zeros. No nine-digit/range restriction was added. Timestamp accepts only `YYYY-MM-DD HH:mm:ss[.fraction] +0000 UTC`; calendar/clock values are strict, fractions are padded or truncated to milliseconds without rounding, and conflicting offsets/timezone labels are rejected.
+- **Commands and status:** focused structural/content validator — `PASS`; final `git diff --check -- TASK_SPEC.md EVIDENCE.md RUNBOOK.md` and staged patch check — `PASS`; complete selected-file diff review — `PASS` for scope and contract boundary; `git push origin sprint2` — `PASS`; `git ls-remote origin refs/heads/sprint2` — `PASS`, remote at `863a57d7eb552c3e600438bfa3a6af50567813af`.
+- **Delivery:** commit `863a57d` (`docs(r2): clarify B-11 transformer contract`) contains exactly `EVIDENCE.md`, `RUNBOOK.md` and `TASK_SPEC.md`; push completed `755c021..863a57d sprint2 -> sprint2`. The pre-existing `START.md` deletion and unrelated untracked paths remain outside the commit.
+- **Decision and authorization:** the user requested “if everything is ready, commit and push”; review found no documentation-scope blocker. This authorizes delivery of the reviewed contract/documentation slice only; B-11 implementation remains unauthorized.
+- **Blockers / Unknowns:** transformer behavior, tests, live provider availability, real-key validity, complete R2 acceptance and release readiness remain unverified. Contract status remains `Draft`; B-12 remains gated.
+- **Rollback / recovery:** inspect the delivery commit and revert only the selected B-11 documentation changes if rejected; preserve append-only history, the pre-existing `START.md` deletion and all unrelated untracked paths. Do not reset the shared branch or alter secret files.
+- **Evidence:** `E-SEA-041` records original contract preparation; `E-SEA-042` records the clarification checks and delivery verification.
+- **Handoff:** after verifying remote synchronization, stop. Human contract approval and separate explicit implementation authorization are still required before B-11 implementation; do not start B-12 or use live AISStream access.
+
+### 2026-09-24 — B-11 transformer implementation and local checks
+
+- **Session:** authorized implementation of `TASK-SEA-R2-B11-001` v1.1.0 on branch `sprint2`, after human contract decision `continue` and separate explicit implementation authorization.
+- **Goal and scope:** implement the pure decoded PositionReport-to-`Vessel` mapping and deterministic focused checks only. No live provider request, endpoint/collector/UI wiring, dependency change, secret inspection, commit, push or B-12 work.
+- **Changed artifacts:** updated the B-11 status/current handoff and appended the human approval record in `TASK_SPEC.md`; added `server/position-report-transformer.ts` and `tests/position-report-transformer.spec.ts`; appended `E-SEA-043` to `EVIDENCE.md` and this record. Pre-existing `START.md` deletion and unrelated untracked inputs remain excluded.
+- **Implementation summary:** validates unknown decoded envelopes; normalizes approved MMSI and strict UTC timestamp forms; maps only nested report coordinates and `Sog`/`Cog`; returns `null` for invalid required data and optional motion values; ignores `TrueHeading` and unknown optional fields; does not mutate input.
+- **Commands and status:** `npx playwright test tests/position-report-transformer.spec.ts` — `PASS`, 9 tests; `npx tsc --noEmit --strict --target ES2017 --module esnext --moduleResolution bundler --skipLibCheck --resolveJsonModule --esModuleInterop server/position-report-transformer.ts tests/position-report-transformer.spec.ts` — first invocation failed with `TS5112` because TypeScript 6 detected `tsconfig.json` while file paths were supplied; corrected `npx tsc --ignoreConfig --noEmit --strict --target ES2017 --module esnext --moduleResolution bundler --skipLibCheck --resolveJsonModule --esModuleInterop server/position-report-transformer.ts tests/position-report-transformer.spec.ts` — `PASS`; `npx tsc --noEmit` — `PASS`; `npm run build` — `PASS`; `git diff --check` — `PASS`; Python trailing-whitespace check on both new files — `PASS`. Next.js build output noted an ignored parent package-lock and `.env.local` as an environment source; no environment values were printed or manually inspected.
+- **Manual comparison:** against the synthetic fixture, checked MMSI `999000001` → ID `"999000001"`, report coordinates `51.0/1.45` → `51/1.45`, timestamp `2026-09-23 15:00:00.000000000 +0000 UTC` → `2026-09-23T15:00:00.000Z`, `Sog 12.4` → `speedKnots 12.4`, and `Cog 123.4` → `courseDeg 123.4`.
+- **Decision:** `CONTINUE WITH APPROVAL`; focused local checks passed, but human review of the complete implementation and documentation diff remains pending. B-11 is not declared `DONE`.
+- **Blockers / Unknowns:** provider availability, real-key validity, live receipt, provider semantics beyond the approved contract, complete R2 acceptance and release readiness remain `Unknown`/`Needs verification`. The build automatically reported `.env.local` as loaded; its contents were not viewed or printed. The sample remains synthetic.
+- **Rollback / recovery:** if the B-11 diff is rejected, inspect it and restore only `server/position-report-transformer.ts` and `tests/position-report-transformer.spec.ts` to the verified B-10 baseline; revise the B-11 task status/handoff accordingly. Preserve append-only history, `START.md` deletion, unrelated untracked/generated paths and secret files. Do not reset the branch.
+- **Evidence:** `E-SEA-043`; contract clarification/delivery remains `E-SEA-042`.
+- **Handoff:** review the changed-path list and full B-11 diff; choose `continue`, `revise` or `HOLD`. Do not start B-12, inspect secret files, make live requests, commit or push without separate authorization.
+
+### 2026-09-24 — B-11 final diff review
+
+- **Session:** final bounded review of `TASK-SEA-R2-B11-001` after the user requested “review B-11 diff and continue”.
+- **Review scope:** read the transformer, focused Playwright spec and current B-11 task/evidence/handoff records; checked final Git status and tracked diff paths. Existing `START.md` deletion and pre-existing untracked paths were preserved.
+- **Observed:** no functional or scope findings. The transformer follows the contract for MMSI, strict UTC timestamp/calendar validation, report-coordinate authority and bounds, optional Sog/Cog behavior, null handling, purity, and output shape. The tests cover the core mapping and invalid boundaries; recorded checks and sample comparisons remain `E-SEA-043`. No code changes were made during review.
+- **Decision:** `DONE` for the bounded B-11 local task after the user directed continuation; final review is recorded as `E-SEA-044`. Live provider behavior and broader product acceptance are not claimed.
+- **Unknowns:** live provider availability/receipt, real-key validity, provider semantics beyond the contract, full R2 acceptance and release readiness remain `Unknown`/`Needs verification`.
+- **Recovery:** if the review decision is revised, inspect and restore only the B-11 implementation/test paths to the verified B-10 baseline; preserve append-only evidence/history and all unrelated paths. No commit or push was made.
+- **Handoff:** B-11 local scope is verified. B-12 is not authorized by this decision and requires its own task contract, review and explicit implementation authorization.
+
+### 2026-09-24 — B-11 commit and push verification
+
+- **Session:** user-authorized commit and push of the reviewed B-11 implementation on `sprint2`.
+- **Commit:** `9f1dc6a3d593165f77f6d55dd8fbffa8ccad8abd` — `feat(r2): implement B-11 PositionReport transformer`.
+- **Commit boundary:** exactly `EVIDENCE.md`, `RUNBOOK.md`, `TASK_SPEC.md`, `server/position-report-transformer.ts` and `tests/position-report-transformer.spec.ts`; no unrelated path was staged.
+- **Commands and status:** `git diff --cached --check` — `PASS`; `git commit` — `PASS`; `git push origin sprint2` — `PASS`; `git show --format=fuller --stat --oneline HEAD` — `PASS` for five-path scope; `git status --short --branch` and `git log -1 --oneline --decorate` — `PASS`; `git ls-remote origin refs/heads/sprint2` — `PASS`, remote hash matches local HEAD.
+- **Observed working tree:** `START.md` remains a pre-existing deletion; `.agents/`, `.claude/skills/`, `NEXT_SESSION.md`, `README.pdf`, `SPRINT-02.md`, `reference/` and `skills-lock.json` remain untracked and unstaged.
+- **Evidence:** `E-SEA-045` records commit boundary and remote synchronization; `E-SEA-043` and `E-SEA-044` record implementation checks and final review.
+- **Handoff:** B-11 is committed and pushed. B-12 remains task-gated and was not started.
+
+### 2026-09-24 — B-12 snapshot collector verification and review handoff
+
+- **Session:** completion of the separately authorized local implementation for `TASK-SEA-R2-B12-001` on branch `sprint2`, followed by the user's final diff-review decision.
+- **Goal and scope:** finish the bounded B-12 reader/collector/route slice, record actual local checks, and close the human review gate. No live AISStream request, real-key inspection, dependency change, B-13 work, commit or push.
+- **Changed artifacts:** implementation/test changes are limited to `server/aisstream-reader.ts`, `server/snapshot-collector.ts`, `app/api/snapshot/route.ts`, `tests/snapshot-reader.spec.ts` and `tests/snapshot-collector.spec.ts`. Updated B-12 acceptance/handoff in `TASK_SPEC.md`; appended `E-SEA-046` and `E-SEA-047` to `EVIDENCE.md`; appended this delivery record. The pre-existing `START.md` deletion and unrelated untracked paths remain outside B-12.
+- **Implementation summary:** the existing reader now streams ordered text events from one connection; the collector owns the one 15-second window, applies the existing B-11 transformer, deduplicates whole vessels by id/timestamp, stops at 100 unique vessels, discards partial data on failures, and cleans up on terminal events. The route returns the agreed success shape or fixed 502 errors and preserves abort behavior.
+- **Commands and status:** `npx playwright test tests/snapshot-reader.spec.ts tests/snapshot-collector.spec.ts` — `PASS`, 17 tests; `npx tsc --noEmit` — `PASS`; `AISSTREAM_API_KEY= npm run build` — `PASS`; `git diff --check` and separate no-index whitespace checks for the two new files — `PASS`. IDE diagnostics requests timed out; standalone TypeScript validation passed. The build reported `.env.local` as an environment source and warned that `/Users/romanmakarenko/package-lock.json` is outside the repository, suggesting `turbopack.root`; it completed successfully. No environment value was manually inspected or printed and no live request was made.
+- **Human review and decision:** the user stated “diff перевірив, continue”. The B-12 human diff-review gate is closed with decision `continue`; this does not authorize commit/push or live access.
+- **Open Unknowns:** live provider availability, real-key validity, live receipt, actual AISStream event semantics, complete R2 user-story acceptance and release readiness remain `Unknown`/`Needs verification`. IDE diagnostics did not return before timeout.
+- **Rollback / recovery:** no rollback was performed. If the decision is later revised, inspect the diff and restore only the five B-12 implementation/test paths to their verified pre-B-12 state; preserve append-only evidence/history, the pre-existing `START.md` deletion and all unrelated untracked paths. Do not reset the branch or touch secret files. Product owner decides recovery acceptance from the diff and evidence.
+- **Evidence:** `E-SEA-046` records implementation checks and limitations; `E-SEA-047` records the user's review decision.
+- **Handoff:** B-12 is `Verified` within its bounded local task scope. Stop here; B-13, live AISStream access, real-key use, commit and push each remain separately gated.
+
+### 2026-09-24 — B-12 commit and remote delivery verification
+
+- **Session:** user-authorized delivery of the reviewed B-12 slice, including the explicit request to add `SPRINT-02.md` to Git.
+- **Goal and scope:** commit and push the five B-12 implementation/test paths and associated task/evidence/runbook records, plus the unchanged Sprint 2 plan. Do not alter unrelated staged/untracked paths or modify `SPRINT-02.md` contents.
+- **Authorization and boundary:** the user requested commit/push and explicitly named the existing `SPRINT-02.md` for Git tracking. Its contents were read after the request and committed as-is; only its tracking status changed. No other excluded path was authorized for staging.
+- **Commit:** `3de88ab2d4099a80abb45f010ec9069ed0ad3c70` — `feat(r2): implement B-12 snapshot collector`.
+- **Commit boundary:** exactly `EVIDENCE.md`, `RUNBOOK.md`, `SPRINT-02.md`, `TASK_SPEC.md`, `app/api/snapshot/route.ts`, `server/aisstream-reader.ts`, `server/snapshot-collector.ts`, `tests/snapshot-collector.spec.ts` and `tests/snapshot-reader.spec.ts`.
+- **Commands and status:** `git diff --check` — `PASS`; staged path inspection and `git diff --cached --check` — `PASS`; `git commit` — `PASS`; `git push origin sprint2` — `PASS`, `bf7cc4e..3de88ab sprint2 -> sprint2`; `git show --format=fuller --stat --oneline HEAD` and `git diff HEAD^ HEAD --name-only` — `PASS` for the nine-path boundary; `git ls-remote origin refs/heads/sprint2` — `PASS`, returned `3de88ab2d4099a80abb45f010ec9069ed0ad3c70`; local `HEAD` and `origin/sprint2` both point to `3de88ab`.
+- **Observed working tree:** `START.md` remains a pre-existing deletion; `.agents/`, `.claude/skills/`, `NEXT_SESSION.md`, `README.pdf`, `reference/` and `skills-lock.json` remain untracked and excluded. No staged paths remained after delivery verification.
+- **Evidence:** `E-SEA-048` records the commit boundary and remote synchronization; `E-SEA-046` and `E-SEA-047` record B-12 local checks and human review.
+- **Limitations / blockers:** the delivery does not establish live AISStream receipt, real-key validity, complete R2 acceptance or release readiness. No live request, deployment, B-13 implementation, secret use or cleanup of unrelated paths occurred.
+- **Rollback / recovery:** do not reset the shared branch. If recovery is requested, inspect the commit and revert only the reviewed B-12 delivery; preserve the now-tracked `SPRINT-02.md`, append-only history, pre-existing `START.md` deletion and unrelated untracked paths. Product owner decides recovery acceptance.
+- **Handoff:** B-12 delivery and the user's request to track `SPRINT-02.md` are complete. Stop; any further implementation, live access or delivery requires its own authorization.
+
+### 2026-09-24 — next-session handoff prepared after B-12 delivery
+
+- **Session:** documentation-only restart preparation following the verified B-12 delivery on `sprint2`.
+- **Goal and scope:** replace the obsolete B-12 contract-preparation prompt with a current handoff; clarify that the next bounded action is preparation of a B-13 task contract for human review only. No B-13 implementation or governance synchronization was performed.
+- **Changed artifacts:** updated `TASK_SPEC.md` with the handoff task and B-12 delivery closure; refreshed the current portion of untracked `NEXT_SESSION.md` while retaining the historical R1 archive; appended `E-SEA-049` and this runbook record. `SPRINT-02.md`, `CLAUDE.md`, `SPEC.md`, decision records, source, tests and secret files were not changed or read for secret content.
+- **Baseline and checks:** local `HEAD`, `origin/sprint2`, and remote `refs/heads/sprint2` were verified at `fef4a8fc51c9c0e41a8158e4e541af574f895741`. `git diff --check -- TASK_SPEC.md` — `PASS`; focused Python structure/content check for current handoff and preserved R1 archive — `PASS` after correcting a validator expectation; changed tracked path review showed only `TASK_SPEC.md` at that checkpoint. No build, product test, server, live request or secret access was performed.
+- **Working tree boundary:** preserve pre-existing `START.md` deletion and untracked `.agents/`, `.claude/skills/`, `NEXT_SESSION.md`, `README.pdf`, `reference/`, and `skills-lock.json`. Handoff documentation changes remain local/uncommitted and were not staged.
+- **Open governance issue:** `CLAUDE.md` and `SPEC.md` still identify B-08 as current, while Sprint/decision/index records contain historical wording predating the delivered B-12 state. These were not silently changed; synchronize them only under a separately bounded governance decision.
+- **Evidence:** `E-SEA-049`; B-12 implementation/review/delivery evidence remains `E-SEA-046` through `E-SEA-048`.
+- **Rollback / recovery:** inspect the documentation diff; if the handoff is rejected, restore only this task's edits to `TASK_SPEC.md` and `NEXT_SESSION.md` and preserve append-only evidence/history, `START.md` deletion, and all unrelated untracked paths. Do not reset the shared branch or stage/push this handoff without separate authorization.
+- **Handoff:** next session verifies the baseline and local documentation diff, then prepares `TASK-SEA-R2-B13-001` for human review only. Stop after presenting the contract; implementation requires human `continue` and separate explicit authorization. Live AISStream access, real-key use, full R2 acceptance and release readiness remain unverified.
+
+### 2026-09-24 — B-13 snapshot interface checks and code delivery
+
+- **Session:** bounded B-13 v1.0.0 interface implementation, local verification, and delivery-record closeout.
+- **Goal and scope:** connect the map UI to the existing same-origin snapshot endpoint under the approved B-13 contract. The delivered implementation commit contains exactly `app/globals.css`, `app/map-shell.tsx`, `app/sea-map.tsx`, and `tests/snapshot-interface.spec.ts`; no API/server/model/card/config/dependency or unrelated path was included.
+- **Authorization and boundary:** the user accepted the B-13 contract and separately authorized its implementation; the user later requested commit/push. No live AISStream access, real-key use, deployment, or overall R2 acceptance was authorized or performed. The separate request to retain demo vessels until the first real snapshot was not implemented; it requires its own contract change and authorization.
+- **Commit and remote:** `17006c615f7a93e84c7c554c624b8909691828fb` — `feat(r2): deliver B-13 snapshot interface`. `git diff HEAD^ HEAD --name-only` returned exactly the four paths above. Local `HEAD`, `origin/sprint2`, and remote `refs/heads/sprint2` were verified at this hash.
+- **Commands and status:** `npx playwright test tests/vessel-selection.spec.ts tests/snapshot-interface.spec.ts` — `PASS`, 16 tests; `npx tsc --noEmit` — `PASS`; `npm run build` — `PASS` (Next.js warned that the parent-directory `package-lock.json` is outside the Git repository and was ignored). `git diff --check -- TASK_SPEC.md EVIDENCE.md` and focused TASK_SPEC/EVIDENCE assertions — `PASS`.
+- **Changed documentation:** B-13 verification and delivery facts appended to `EVIDENCE.md` as `E-SEA-051`; B-13 current status, observed checks, code commit boundary and handoff updated in `TASK_SPEC.md`; this runbook entry added. `SPRINT-02.md`, `CLAUDE.md`, `SPEC.md`, decision records, source/tests beyond the existing delivered commit, and secret files were not changed for this documentation slice.
+- **Working-tree boundary:** `START.md` remains deleted; `.agents/`, `.claude/skills/`, `NEXT_SESSION.md`, `README.pdf`, `reference/`, and `skills-lock.json` remain untracked and excluded. Only `TASK_SPEC.md`, `EVIDENCE.md`, and `RUNBOOK.md` are intended for the documentation closeout; no unrelated path is authorized for staging.
+- **Open review / delivery checkpoint:** automated results and existing code-commit synchronization are verified. A separate human review of the exact current diff is still required before marking B-13 `DONE` or delivering this documentation closeout. Commit/push of these records has been explicitly requested; after the human `continue`, record its actual result without changing unrelated paths.
+- **Evidence:** `E-SEA-051` records the B-13 automated checks and code-commit synchronization.
+- **Limitations / blockers:** no live AISStream request or real-key inspection/use occurred. Provider availability/receipt, real-key validity, full R2 acceptance, final human implementation-diff acceptance and release readiness remain `Unknown`/unverified.
+- **Rollback / recovery:** no rollback was performed. If the documentation diff is revised, edit only `TASK_SPEC.md`, `EVIDENCE.md`, and `RUNBOOK.md`; do not reset the branch or alter `START.md`/untracked paths. Recovery of B-13 code, if later requested, is limited to reverting its reviewed four-path commit with product-owner acceptance.
+- **Handoff:** review the exact documentation diff and choose `continue`, `revise`, or `HOLD`. Keep any newer demo-retention behavior separately contract-gated.
+
+### Human review — handoff diff
+
+- **Decision:** on 2026-09-24 the user confirmed `diff перевірив` and chose `continue` for the documentation-only handoff diff.
+- **Boundary:** this decision accepts the handoff checkpoint only; no commit/push or B-13 implementation authorization follows from it. No further product checks, live provider request, or secret access were performed.
+- **Evidence:** `E-SEA-050`.
+
+### 2026-09-24 — one bounded live AISStream attempt
+
+- **Session / task:** `TASK-SEA-R2-B09B10-LIVE-001`; one user-authorized live attempt to verify receipt and, only if suitable data arrived, save one sanitized sample.
+- **Boundary:** used only the existing server-side `getAISStreamApiKey()` accessor, `startAISStreamReader()` and the B-11 transformer. The attempt had one 15-second deadline and no retry. The key value and `.env.local` contents were not printed or manually inspected; no raw provider payload or error detail was saved. No repository harness, route, test, dependency, or UI behavior was added.
+- **Commands and status:** one preliminary Node harness evaluation — `FAIL` at JavaScript parse time before reader startup/network activity; corrected harness invocation — `FAIL`, fixed reader result `provider_error`, exit 1; path check (`git check-ignore`, `git ls-files`, live-target absence) — `PASS`; `git diff --check` — `PASS`. Node.js `v22.23.2`.
+- **Observed result:** the single live invocation received no suitable PositionReport. No sample/provenance files were created and no retry was performed. The existing synthetic B-10 sample/provenance remain unchanged. `.env.local` is ignored and untracked; its contents were not inspected.
+- **Evidence:** `E-SEA-052` records the exact bounded outcome. `E-SEA-031`–`E-SEA-033` remain the existing B-08 configuration-boundary evidence; `E-SEA-026` and `E-SEA-051` remain local/mock demo evidence, not live UI/API end-to-end proof.
+- **Checkpoint / status:** checkpoint 03 is recorded separately as `HOLD`, not passed. Live receipt and live sample/provenance criteria are unmet; the fixed `provider_error` does not establish its underlying cause. The task's one-attempt authorization is exhausted.
+- **Open Unknowns:** provider availability, real-key validity, cause of the fixed reader error, live receipt, and full R2 acceptance remain unverified. No commit, push, deployment or further live request occurred.
+- **Recovery / next action:** preserve all existing deleted/untracked paths. Do not retry under this task. Any further live investigation requires a new bounded contract and explicit authorization; first review the evidence, runbook and checkpoint diff.
+
+### 2026-09-24 — additional live AISStream attempt under LIVE-002
+
+- **Task / authorization:** `TASK-SEA-R2-B09B10-LIVE-002`; the user reviewed the bounded contract and selected `continue`. Exactly one additional attempt was authorized; no retries.
+- **User-reported context:** the user reported that the configured key worked in Postman. This was not independently verified; no Postman session or key value was inspected.
+- **Preflight:** Node.js v22.23.2 imports of the existing accessor, reader and transformer — `PASS`; `.env.local` ignored and untracked — `PASS` without reading its contents; both live sample paths absent — `PASS`; initial `git diff --check` — `PASS`.
+- **Live attempt:** used the existing accessor/reader from a temporary in-memory harness with one connection and a 15-second total deadline. Output was `SUBSCRIBED=yes` followed by `RESULT=reader_error_provider_error` (exit 1). This records that the local reader sent its subscription, not that the provider acknowledged it. No suitable PositionReport was received; raw payload, provider error text and key were not exposed. No sample/provenance was written; no retry occurred.
+- **Post-attempt checks:** both live sample paths remained absent; `git diff --check` — `PASS`. No source, route, test, dependency, or UI path changed.
+- **Evidence:** `E-SEA-053` records the observed outcome; `E-SEA-052` records the initial attempt. B-08 configuration and local/mock demo evidence remain separate and do not resolve the live reader failure.
+- **Checkpoint / status:** new `CHECKPOINT-04.md` records the second fixed `provider_error` outcome and keeps Sprint checkpoint 03 at `HOLD`, not passed. The underlying cause remains unknown. The one additional attempt is exhausted.
+- **Limitations / next action:** provider availability, key validity, provider acknowledgment, live message receipt, live sample/provenance and full R2 acceptance remain unverified. No further live request, troubleshooting, commit, push or deployment is authorized. Review the E-053/RUNBOOK/checkpoint diff; any future attempt needs a new bounded contract and explicit authorization.
+
+### 2026-09-24 — LIVE-003 stopped at key preflight
+
+- **Task / authorization:** `TASK-SEA-R2-B09B10-LIVE-003`; the user instructed to proceed after receiving the bounded diagnostic summary. Exactly one attempt was authorized subject to its stop conditions.
+- **Preflight:** `.env.local` ignore/tracking checks passed; both live sample targets were absent. Node.js v22.23.2 imported the existing accessor without loading env files; it returned no configured key in the inherited process (`KEY_CONFIGURED=no`, guarded exit 4).
+- **Stop:** no reader invocation, socket, provider request, sample, evidence/checkpoint artifact or retry occurred. No key value or `.env.local` content was read, loaded or displayed. The one live-attempt allowance remains unused.
+- **Status / next action:** `BLOCKED` before provider access; the current contract prohibits loading local env files, so the key in `.env.local` was unavailable to this direct Node process. Any future attempt requires a reviewed contract revision explicitly allowing safe in-memory environment loading, then a separate bounded reader invocation. Checkpoint 03 remains `HOLD`.
+
+### 2026-09-24 — LIVE-003 bounded reader attempt
+
+- **Authorization amendment:** the user stated “дозволяю програмі читати ключ”. `TASK_SPEC.md` records this as permission to use the installed Next.js `@next/env` loader in memory and then obtain the AISStream key only through the existing accessor, for LIVE-003's already-authorized unused attempt. No app server was started.
+- **Preflight:** the first ESM named import of CommonJS `@next/env` failed before loading the environment; no key was loaded and no network call occurred. The corrected `require` path succeeded; output was `KEY_CONFIGURED=yes`, with no value exposed. Reader and transformer imports passed. The `.env.local` ignore/tracking checks and sample-target absence checks passed.
+- **Attempt:** exactly one `startAISStreamReader()` invocation opened one WebSocket and sent the local subscription (`SUBSCRIBED=yes`). The wrapper observed a message event with non-string `data`, recording only `EVENT_CATEGORY=non_text_message`; the reader returned fixed `provider_error`. Final status: `READER_ERROR=provider_error`, `OUTCOME=reader_error` (exit 1). The event data was not decoded, displayed or saved. The 15-second timeout bounded the invocation; no retry occurred.
+- **Sample / checks:** no valid PositionReport was received, so no live sample/provenance was created. Post-attempt checks confirmed both live sample targets remain absent. `E-SEA-055` records the event observation and limitations.
+- **Checkpoint / status:** `CHECKPOINT-06.md` records the new outcome and preserves Sprint checkpoint 03 at `HOLD`; checkpoint 05 remains the preflight-stop record. The one LIVE-003 attempt is exhausted.
+- **Limitations / next action:** the event category identifies why this reader call mapped to its fixed error, but does not establish what the frame contained or why its data was non-string. Do not patch source or retry under LIVE-003. A possible reader compatibility fix requires a separate task contract, deterministic test, and human review. No commit, push or deployment occurred.
+
+### 2026-09-25 — reader compatibility fix and restart handoff
+
+- **Session / task:** local implementation and handoff for `TASK-SEA-R2-B09B10-FIX-001` after the user authorized `continue`; no live-provider action was included.
+- **Goal and scope:** normalize valid UTF-8 WebSocket `ArrayBuffer` frames at the existing reader boundary, preserve fixed failure mapping and lifecycle behavior, record observed local checks, and prepare a restartable handoff. No collector/API/UI behavior, dependency, sample, provider request, commit, push or deployment was added in this task.
+- **Implementation paths already present at handoff start:** `server/aisstream-reader.ts`, `tests/snapshot-reader.spec.ts`, `tests/snapshot-collector.spec.ts`. The reader sets native `binaryType = "arraybuffer"`, forwards strings unchanged, strictly decodes UTF-8 `ArrayBuffer`, and maps unsupported types/invalid UTF-8 to `provider_error`. These diffs were already present when this documentation/handoff work began; no code or test file was edited in this handoff task.
+- **Commands and status:** `AISSTREAM_API_KEY=test-only-no-secret npx playwright test tests/snapshot-reader.spec.ts tests/snapshot-collector.spec.ts tests/snapshot-interface.spec.ts` — `PASS`, 33 tests; `AISSTREAM_API_KEY=test-only-no-secret npx tsc --noEmit` — `PASS`; `AISSTREAM_API_KEY=test-only-no-secret npm run build` — `PASS`; scoped `git diff --check` — `PASS`. These are results from the implementation work; the build output reported `.env.local` as an environment source. No values were printed, but we cannot claim that file contents were not loaded by the build environment.
+- **Handoff-documentation checks:** final `git diff --check` — `PASS`; Python trailing-whitespace checks for the current task/handoff/checkpoint documents — `PASS`; focused assertions for task/evidence/checkpoint IDs, preserved historical R1 archive and Sprint checkpoint 03 `HOLD` — `PASS`.
+- **User report and provider boundary:** the user said “стій, запрацювало”; this is user-reported context, not an independently verified post-fix provider result. No new AISStream attempt, raw frame, valid live PositionReport, live sample or provenance was captured after the change. LIVE-003's earlier `SUBSCRIBED=yes` / non-text event / fixed `provider_error` observation is unchanged and does not reveal the frame contents or provider acceptance.
+- **Evidence / checkpoint:** `E-SEA-056` records local implementation checks; `E-SEA-057` records the user report with its limitation. `CHECKPOINT-07.md` (`CHECKPOINT-SEA-R2-007`) is the new restart record; CHECKPOINT-03 through CHECKPOINT-06 remain unchanged. Sprint checkpoint 03 remains **HOLD / not passed** pending live receipt and sample/provenance evidence.
+- **Git boundary:** at handoff preparation, branch is `sprint2`, `HEAD` and `origin/sprint2` both resolve to `4c8dea20b0ce471fbb1d126784ed665dd77aaf64`. `sprint-2.png` was already staged. `START.md` was already deleted; `EVIDENCE.md`, `RUNBOOK.md`, and `TASK_SPEC.md` were already modified before this documentation update; existing untracked handoff/checkpoint and other user files remain preserved. No staging, commit, push, reset, clean or deployment was performed.
+- **Future commit preparation:** likely implementation candidates are the reader and two test paths plus the reviewed documentation records. Do not stage `EVIDENCE.md`, `RUNBOOK.md`, or `TASK_SPEC.md` wholesale without reviewing/separating their pre-existing changes. Keep the already-staged image, `START.md` deletion, old untracked paths and unrelated material out unless separately reviewed and explicitly requested. The exact future commit manifest remains subject to a fresh diff review and user decision.
+- **Unknowns / blockers:** provider acceptance, live receipt, key validity, the content of the LIVE-003 non-text frame, live UI/API end-to-end behavior, full R2 acceptance and release readiness remain `Unknown` / `Needs verification`. Human review of this complete code-and-documentation state remains the next gate.
+- **Recovery:** preserve all existing modifications, staged/untracked/deleted paths and local environment files. Revise only the FIX-001 status/handoff portion if rejected; correct append-only records with a superseding factual entry rather than rewriting history. Do not reset or clean the branch.
+- **Handoff:** next session should read `CHECKPOINT-07.md`, `E-SEA-056`/`E-SEA-057`, the FIX-001 section and the current portion of `NEXT_SESSION.md`; verify the actual Git state, review exact diffs, then ask for `continue`, `revise` or `HOLD`. No further provider attempt, commit or push is authorized by this entry.
