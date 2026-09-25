@@ -1,12 +1,12 @@
 # SeaRadar — правила роботи з проєктом
 
 - **ID:** `GOV-SEA-001`
-- **Version:** `1.3.0`
+- **Version:** `1.4.0`
 - **Status:** `Ready`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-23
-- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md)
+- **Date:** 2026-09-25
+- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), [`docs/decisions/DEC-009-r2-current-task-status.md`](docs/decisions/DEC-009-r2-current-task-status.md)
 
 ## 1. Статус baseline
 
@@ -15,10 +15,10 @@
 - **Product / MVP:** `Ready — approved PROJECT_BRIEF.md / SPEC.md baseline; changes require a version bump and decision record`
 - **Stack / architecture:** `Ready for R1 only — current stack is recorded in DEC-005; architecture beyond R1 is Unknown`
 - **Sprint 1 / R1:** `Verified — delivered baseline; historical limitations remain recorded`
-- **Sprint 2 / R2:** `Ready — scope authorized by DEC-006; implementation remains task-gated, current task B-08`
+- **Sprint 2 / R2:** `Ready — scope authorized by DEC-006; implementation remains task-gated; no R2 technical task is currently authorized (DEC-009)`
 - **Sprint 3:** `Waiting for MVP input — no plans or requirements are authorized`
 - **Sprint dates:** `Unknown`
-- **Current phase:** R2 governance authorized; B-08 implementation remains bounded and task-gated
+- **Current phase:** R2 governance authorized; no current R2 technical task is authorized pending a separately reviewed bounded contract and explicit approval (DEC-009)
 
 Не вигадувати поведінку SeaRadar, користувачів, метрики, архітектуру поза авторизованим R2, тести, deployment, production readiness або user validation. Підтверджені зміни до brief, scope або stack оформлювати новою версією та пов'язаним decision record до реалізації.
 

@@ -1,12 +1,12 @@
 # Decision records
 
 - **ID:** `DECISIONS-GOV-001`
-- **Version:** `0.6.0`
+- **Version:** `0.7.0`
 - **Status:** `Ready`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-23
-- **Related artifacts:** [`../../CLAUDE.md`](../../CLAUDE.md), [`../../SPEC.md`](../../SPEC.md), [`../../TASK_SPEC.md`](../../TASK_SPEC.md), [`../../EVIDENCE.md`](../../EVIDENCE.md), [`../../RUNBOOK.md`](../../RUNBOOK.md), [`../checkpoints/CHECKPOINT-01.md`](../checkpoints/CHECKPOINT-01.md), [`DEC-001-mvp-contract.md`](DEC-001-mvp-contract.md), [`DEC-002-r1-stack.md`](DEC-002-r1-stack.md), [`DEC-003-r1-handoff.md`](DEC-003-r1-handoff.md), [`DEC-004-checkpoint-convention.md`](DEC-004-checkpoint-convention.md), [`DEC-005-r1-node22.md`](DEC-005-r1-node22.md), [`DEC-006-r2-scope.md`](DEC-006-r2-scope.md)
+- **Date:** 2026-09-25
+- **Related artifacts:** [`../../CLAUDE.md`](../../CLAUDE.md), [`../../SPEC.md`](../../SPEC.md), [`../../TASK_SPEC.md`](../../TASK_SPEC.md), [`../../EVIDENCE.md`](../../EVIDENCE.md), [`../../RUNBOOK.md`](../../RUNBOOK.md), [`../checkpoints/CHECKPOINT-01.md`](../checkpoints/CHECKPOINT-01.md), [`DEC-001-mvp-contract.md`](DEC-001-mvp-contract.md), [`DEC-002-r1-stack.md`](DEC-002-r1-stack.md), [`DEC-003-r1-handoff.md`](DEC-003-r1-handoff.md), [`DEC-004-checkpoint-convention.md`](DEC-004-checkpoint-convention.md), [`DEC-005-r1-node22.md`](DEC-005-r1-node22.md), [`DEC-006-r2-scope.md`](DEC-006-r2-scope.md), [`DEC-009-r2-current-task-status.md`](DEC-009-r2-current-task-status.md)
 
 ## Decision record format
 
@@ -33,6 +33,7 @@ A catalog entry or chat statement is not a decision. Do not select a technology 
 | [`DEC-005-r1-node22.md`](DEC-005-r1-node22.md) | `Ready` | Current R1 runtime baseline: Node.js 22.x |
 | [`DEC-006-r2-scope.md`](DEC-006-r2-scope.md) | `Ready` | R2 scope authorized; B-08 was the bounded implementation slice authorized by this decision |
 | [`DEC-007-r2-b09-streaming-boundary.md`](DEC-007-r2-b09-streaming-boundary.md) | `Ready` | B-12 may extend the B-09 reader to forward multiple ordered messages over one bounded connection; B-12 implementation remains separately gated |
+| [`DEC-009-r2-current-task-status.md`](DEC-009-r2-current-task-status.md) | `Ready` | B-08 remains historical under DEC-006; no R2 technical task is currently authorized pending a separately reviewed bounded contract and explicit approval |
 
 ## Pending decisions
 

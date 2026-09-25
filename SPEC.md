@@ -1,12 +1,12 @@
 # SPEC.md — SeaRadar project contract
 
 - **ID:** `SPEC-SEA-001`
-- **Version:** `1.1.0`
+- **Version:** `1.2.0`
 - **Status:** `Ready`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-23
-- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`SPRINT-02.md`](SPRINT-02.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-003-r1-handoff.md`](docs/decisions/DEC-003-r1-handoff.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md)
+- **Date:** 2026-09-25
+- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`SPRINT-02.md`](SPRINT-02.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-003-r1-handoff.md`](docs/decisions/DEC-003-r1-handoff.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), [`docs/decisions/DEC-009-r2-current-task-status.md`](docs/decisions/DEC-009-r2-current-task-status.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md)
 
 > Це поточна затверджена MVP-база, перенесена з `PROJECT_BRIEF.md`. Вона може змінюватися: зміна контракту потребує нової версії цього документа та пов'язаного decision record до початку роботи за зміненим scope.
 
@@ -66,7 +66,7 @@
 ### In scope
 
 - **R1 / verified baseline:** US-01…US-04 — карта, демонстраційне судно, значок, вибір і картка.
-- **R2 / authorized next release slice:** US-05…US-08 — справжні судна за кнопкою, підписи та повідомлення про помилки; R2 деталізований у `SPRINT-02.md`, а поточний bounded task — B-08 secure configuration.
+- **R2 / authorized release slice:** US-05…US-08 — справжні судна за кнопкою, підписи та повідомлення про помилки; R2 деталізований у `SPRINT-02.md`; DEC-006 historically selected B-08 as its bounded task, but no R2 technical task is currently authorized (DEC-009).
 - **Final planned acceptance:** US-09 — відтворювані перевірки цілісності даних; US-10 — фінальна інструкція встановлення. Їхня implementation acceptance не заявляється виконаною.
 - Локальний запуск на `http://localhost:3000` loopback.
 - Один фіксований район: Дуврська протока.
@@ -81,7 +81,7 @@
 
 ## Release slice
 
-`R1 — карта й демонстраційні судна` деталізований у `SPRINT-01.md` і є verified baseline. `R2 — знімок справжніх позицій` авторизований decision record `DEC-006-R2-SCOPE` і деталізований у `SPRINT-02.md`; implementation залишається task-gated, а поточний bounded task — `TASK-SEA-R2-B08-001`. `R2` не означає автоматичне приймання B-09…B-13. Sprint 3 та архітектура поза R2 залишаються `Waiting for MVP input`/`Unknown`.
+`R1 — карта й демонстраційні судна` деталізований у `SPRINT-01.md` і є verified baseline. `R2 — знімок справжніх позицій` авторизований decision record `DEC-006-R2-SCOPE` і деталізований у `SPRINT-02.md`; B-08 був bounded task, історично вибраним DEC-006. Відповідно до DEC-009, зараз жодна R2 technical task не авторизована; наступна потребує окремого bounded contract та явного approval. `R2` не означає автоматичне приймання B-09…B-13. Sprint 3 та архітектура поза R2 залишаються `Waiting for MVP input`/`Unknown`.
 
 ## Acceptance criteria
 
@@ -102,18 +102,18 @@
 
 ## Assumptions and Unknowns
 
-- **Confirmed:** `PROJECT_BRIEF.md` затверджений як поточна MVP-база; R1 verified; R2 scope та B-08 transition авторизовані `DEC-006-R2-SCOPE`; stack із `SPRINT-01.md` прийнятий як поточний R1 baseline.
+- **Confirmed:** `PROJECT_BRIEF.md` затверджений як поточна MVP-база; R1 verified; R2 scope та історичний вибір B-08 авторизовані `DEC-006-R2-SCOPE`; за `DEC-009` наразі немає авторизованої R2 technical task; stack із `SPRINT-01.md` прийнятий як поточний R1 baseline.
 - **Needs verification:** умови безкоштовного AISStream, стабільність джерела, фактична кількість суден і поведінка джерела при обриві зв'язку.
 - **Unknown:** точні baseline/target/observation window метрики, дати sprint-ів, деталізація Sprint 3, architecture beyond R2, implementation/runtime evidence.
 
 ## Open decisions
 
 - Архітектурна деталізація поза R1 — `Unknown`.
-- R2 scope та outcome US-05…US-08 — авторизовані `DEC-006-R2-SCOPE`; B-08 є поточним task-gated slice, B-09…B-13 потребують окремих contracts/reviews.
+- R2 scope та outcome US-05…US-08 — авторизовані `DEC-006-R2-SCOPE`; B-08 був історичним task-gated slice, а жодна R2 technical task наразі не авторизована за `DEC-009`; будь-який наступний task потребує окремого contract/review/approval.
 - Межі та outcome Sprint 3 — `Waiting for MVP input`.
 - Точні metric baseline, target та observation window — `Needs verification`.
 - Будь-яка зміна approved brief, scope або R1 stack — новий versioned decision record і версія SPEC.
 
 ## Change-control gate
 
-Для поточного R2 scope product owner підтвердив перехід до B-08; це зафіксовано у `SPEC.md` v1.1.0 та `DEC-006-R2-SCOPE`. Подальші зміни approved brief, scope або stack потребують нової версії `PROJECT_BRIEF.md`/`SPEC.md`, пов'язаного decision record і bounded task contract. Delivery/technical owner фіксує зміни, evidence та handoff; product owner приймає продуктові зміни.
+`DEC-006-R2-SCOPE` історично авторизував R2 scope та вибрав B-08 як bounded task; `DEC-009-R2-CURRENT-TASK-STATUS` уточнює, що зараз жодна R2 technical task не авторизована. Будь-яка наступна R2 implementation або diagnostic task потребує окремого reviewed bounded task contract і explicit approval. Подальші зміни approved brief, scope або stack потребують нової версії `PROJECT_BRIEF.md`/`SPEC.md`, пов'язаного decision record і bounded task contract. Delivery/technical owner фіксує зміни, evidence та handoff; product owner приймає продуктові зміни.

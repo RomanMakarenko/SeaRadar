@@ -1333,3 +1333,616 @@ Stop if the installed runtime does not deliver `ArrayBuffer` after the native so
 - **User-reported context:** the user said “стій, запрацювало”. The observation is recorded as user-reported only; no post-fix live provider attempt, raw frame, PositionReport, sample or provenance was captured independently in this task.
 - **Acceptance boundary:** local compatibility behavior and deterministic checks are supported by the results above. Provider acceptance, live receipt, live UI/API end-to-end success, key validity, and the original LIVE-003 frame contents remain `Unknown` / `Needs verification`. Sprint checkpoint 03 remains `HOLD`.
 - **Next gate:** keep task status `Active` pending final human diff review. No live request, real-key inspection, commit, push or deployment is authorized by this record.
+
+# TASK-SEA-R2-B09B10-LIVE-004 — One post-fix live PositionReport sample
+
+- **Version:** `1.0.0`
+- **Status:** `Active`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-25
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), [`docs/checkpoints/CHECKPOINT-07.md`](docs/checkpoints/CHECKPOINT-07.md), `TASK-SEA-R2-B09B10-LIVE-003`, `TASK-SEA-R2-B09B10-FIX-001`, `E-SEA-055`–`E-SEA-057`, [`server/aisstream-config.ts`](server/aisstream-config.ts), [`server/aisstream-reader.ts`](server/aisstream-reader.ts), [`server/position-report-transformer.ts`](server/position-report-transformer.ts), [`data/samples/position-report.sample.json`](data/samples/position-report.sample.json), [`data/samples/PROVENANCE.md`](data/samples/PROVENANCE.md).
+
+## Goal and authorization
+
+- **Goal:** perform exactly one post-fix bounded AISStream reader attempt; if it receives one valid real `PositionReport`, retain one sanitized sample and matching provenance to close only the live-receipt/sample evidence gap.
+- **Predecessor boundary:** the LIVE-001, LIVE-002 and LIVE-003 attempt allowances are exhausted. This task authorizes a new attempt only after review of this exact contract; it does not reuse or reinterpret prior events or the operator-provided UI screenshot as a raw sample.
+- **Operator authorization:** on 2026-09-25, the operator authorized obtaining one live sample, confirmed that one sanitized sample and provenance may be saved, and approved retaining the actual `MMSI` and `ShipName`. That authorization does not waive this contract's review gate and does not authorize retry, code changes, commit, push, deployment, or full Sprint 2 acceptance.
+- **Human gate:** before loading local environment configuration, connecting to AISStream, creating sample files, or appending outcome records, the operator must review this exact contract and explicitly choose `continue`. This `Draft` preparation alone is not a live-request authorization.
+
+## Allowed paths and exclusions
+
+- **Contract preparation:** this appended section in `TASK_SPEC.md` only.
+- **After explicit `continue`:** if a suitable live message is received, create only `data/samples/live/position-report.sample.json` and `data/samples/live/PROVENANCE.md`; append factual results to `EVIDENCE.md` and `RUNBOOK.md`; after evidence is appended, create `docs/checkpoints/CHECKPOINT-08.md` as the next restart record. If no suitable message is received, create no sample, append only the verified outcome, and create the checkpoint with `HOLD`.
+- **Read-only inputs:** existing key accessor, reader, transformer, synthetic sample/provenance, LIVE-003/FIX-001 records, current checkpoint, Sprint 2 checkpoint criteria and checkpoint convention.
+- **Excluded:** product/source code, routes, tests, dependencies, configuration, all `.env*` contents and credentials, UI/demo behavior, existing synthetic sample/provenance, `SPEC.md`, `SPRINT-02.md`, decision records, historical checkpoints, commit, push, deployment, and every unrelated, staged, deleted or untracked path. Do not inspect, overwrite, stage, reset, or clean excluded paths.
+
+## One-attempt boundary and data handling
+
+- **Preflight:** after `continue`, verify the two live sample targets do not already exist and `.env.local` is ignored and untracked without reading its contents. Do not start Next.js, run the API route, build, Playwright, or print environment values. If a target exists or the safe direct reader harness cannot be prepared without an unapproved path/dependency, stop before network access.
+- **Key access:** use `@next/env` `loadEnvConfig(process.cwd())` to load existing local environment configuration into process memory, then obtain the AISStream key only through `getAISStreamApiKey()` and pass it only to `startAISStreamReader()`. Do not inspect, print, log, copy, persist, or otherwise expose the key or any other loaded environment value. If no key is returned, stop before network access.
+- **Attempt:** one direct server-side reader invocation; one WebSocket; one total 15-second deadline including connect, open and subscription; no retry, polling, second route, or provider troubleshooting. Stop and clean up once at the first valid report, error, malformed/unsuitable message, or deadline. Capture through the reader's decoded `onText` callback; do not use `/api/snapshot`, which returns transformed vessels rather than the original PositionReport.
+- **Eligibility and retained fields:** only save if one actual decoded JSON message is a valid `PositionReport` accepted by the existing B-11 transformer and contains all agreed sample fields with expected primitive types: `MetaData.MMSI`, `MetaData.ShipName`, `MetaData.latitude`, `MetaData.longitude`, `MetaData.time_utc`, `Message.PositionReport.Sog`, `Cog`, `TrueHeading`, `Latitude`, and `Longitude`. Preserve the actual `MMSI` and `ShipName` as received, as explicitly authorized; retain only the listed fields and do not invent, normalize, or fill missing values. If a required field is absent, malformed, or uncertain, save no sample and stop.
+- **Sanitization:** parse and select the approved fields in memory, then persist only the single sanitized JSON object. Never print or persist the raw frame, API key, provider error detail, stack, private path, or unrelated fields. Do not expose sample payload in terminal output or chat.
+- **Provenance:** identify origin as one live AISStream reader capture; state UTC artifact retrieval time separately from `MetaData.time_utc`; record the configured reader subscription/bounding-box context, the exact retained fields, that MMSI/ShipName were retained unmodified, the one-message limit, and limitations. Do not claim provider endorsement, vessel identity beyond the received fields, traffic completeness, or more than this one message.
+
+## Expected outcome and acceptance
+
+1. The new task receives explicit human `continue` before any environment loading or provider request.
+2. Preflight confirms allowed sample targets are absent and the ignored/untracked state of `.env.local` without opening it; the temporary harness adds no repository path.
+3. Exactly one post-fix reader attempt occurs with a 15-second total bound and no retry. Its outcome is recorded without secrets or raw payload. On error, timeout, malformed/unsuitable message, or missing key/fields, no sample is written.
+4. On successful receipt, exactly one valid sanitized `PositionReport` is written to the live sample path with matching provenance; JSON cardinality, field casing/types, provenance, secret/path scan, and changed-path boundary are checked. Existing synthetic files remain unchanged.
+5. Append-only evidence records only observed facts and limitations. Create `CHECKPOINT-08.md` after evidence; leave the historical checkpoint files unchanged and keep Sprint checkpoint 03 `HOLD` unless every criterion has supported evidence (live receipt, matching sample/provenance, bounded safe configuration, and working demo).
+6. Run `git diff --check`; no product code, route, test, dependency, configuration, unrelated path, commit, push, or deployment changes occur.
+
+## Verification and stop conditions
+
+- **Before attempt:** after contract `continue`, verify the allowed path boundary and missing live-sample targets; confirm `.env.local` ignore/tracking status without reading contents; use only the approved in-memory loader/accessor/reader path. If runtime loading, the key, paths, or safe one-shot lifecycle is not as contracted, stop before opening a socket.
+- **After attempt:** if a sample exists, parse it without printing its payload; assert one message envelope and required exact fields/types; compare provenance to the actual capture; run a targeted secret-like/private-path check on the two new outputs, inspect changed paths, and run `git diff --check`. Append evidence/runbook/checkpoint only after these observations.
+- **Stop:** no contract `continue`; missing key; pre-existing sample target; timeout/error/malformed/unsuitable message; uncertain sanitization; unexpected path; or any need to modify code, add a dependency, inspect a secret, expose raw content, or exceed one attempt. Never retry under this task.
+- **Exit decision:** `DONE` only for the bounded capture if the required live sample and provenance plus checks and final human diff review pass. Otherwise `HOLD`. This task cannot by itself close Sprint 2 or declare full R2 acceptance.
+
+## Rollback / recovery
+
+Before execution, revise or remove only this appended draft section if rejected. If a new live sample is created but fails validation before evidence is appended, remove only the two new live sample files and preserve the synthetic fixture. Evidence and RUNBOOK are append-only; after recording, correct errors only through a superseding factual entry. Do not reset the branch or alter any pre-existing staged, deleted, modified or untracked path.
+
+## Human review and observed attempt outcome — 2026-09-25
+
+- **Contract review:** after reviewing this exact bounded contract, the user said `продовжуй`, authorizing exactly the attempt and boundaries recorded above.
+- **Observed outcome:** the single post-fix invocation ended after 1,747 ms with `CAPTURE_OUTCOME=unsuitable_message` (exit 1). No sample/provenance was written; both target paths were confirmed absent after the attempt. `E-SEA-058` and `CHECKPOINT-08.md` record the observed result and limitations.
+- **Disposition:** the one LIVE-004 attempt is exhausted. No retry, provider troubleshooting, code change, commit, push, or deployment is authorized. Sprint checkpoint 03 remains `HOLD`.
+- **Status:** `Active` pending final human diff review of the task/evidence/runbook/checkpoint records; the live receipt/sample acceptance criterion was not met.
+
+# TASK-SEA-R2-B09B10-LIVE-005 — Bounded live PositionReport capture batch
+
+- **Version:** `1.0.0`
+- **Status:** `Draft`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-25
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), [`docs/checkpoints/CHECKPOINT-08.md`](docs/checkpoints/CHECKPOINT-08.md), `TASK-SEA-R2-B09B10-LIVE-004`, `E-SEA-058`, [`server/aisstream-config.ts`](server/aisstream-config.ts), [`server/aisstream-reader.ts`](server/aisstream-reader.ts), [`server/position-report-transformer.ts`](server/position-report-transformer.ts), [`data/samples/position-report.sample.json`](data/samples/position-report.sample.json), [`data/samples/PROVENANCE.md`](data/samples/PROVENANCE.md).
+
+## Goal and authorization
+
+- **Goal:** obtain at most one eligible live AISStream `PositionReport` sample with matching provenance, stopping the batch immediately after the first successful capture. This task addresses only the live receipt/sample gap; it does not establish full Sprint 2 acceptance.
+- **Predecessor boundary:** LIVE-004's one attempt is exhausted and cannot be repeated under that contract. This is a new batch of at most ten attempts; it does not reuse or reinterpret earlier events, screenshots, or synthetic fixtures as a live sample.
+- **Operator authorization:** on 2026-09-25 the operator said: “повтори, даю апрув на 10 спроб, але одразу закінчи при першому успішному результату”. The prior approval to retain one sanitized sample with actual `MMSI` and `ShipName` remains limited to the fields and handling below. This authorization does not waive review of this exact contract and does not authorize code changes, provider troubleshooting beyond this bound, commit, push, deployment, or full Sprint 2 acceptance.
+- **Human gate:** before loading environment configuration, accessing the key, connecting, creating sample files, or appending attempt outcomes, the operator must review this exact contract and explicitly choose `continue`. This `Draft` preparation is not authorization to access the provider.
+
+## Allowed paths and exclusions
+
+- **Contract preparation:** this appended section in `TASK_SPEC.md` only.
+- **After explicit `continue`:** on the first eligible message only, create `data/samples/live/position-report.sample.json` and `data/samples/live/PROVENANCE.md`; append factual outcomes to `EVIDENCE.md` and `RUNBOOK.md`; then create `docs/checkpoints/CHECKPOINT-09.md`. If the batch ends without an eligible sample, create no sample files, append only verified outcomes to `EVIDENCE.md` and `RUNBOOK.md`, then create the checkpoint with `HOLD`.
+- **Read-only inputs:** existing key accessor, reader, transformer, synthetic sample/provenance, LIVE-004 and earlier task records, CHECKPOINT-08, Sprint 2 checkpoint criteria, and checkpoint convention.
+- **Excluded:** product/source code, routes, tests, dependencies, configuration, all `.env*` contents and credentials, UI/demo behavior, existing synthetic sample/provenance, `SPEC.md`, `SPRINT-02.md`, decision records, historical checkpoints, commit, push, deployment, and every unrelated, staged, deleted, or untracked path. Do not inspect, overwrite, stage, reset, or clean excluded paths.
+
+## Bounded attempt policy and data handling
+
+- **Preflight:** only after `continue`, confirm both live sample targets are absent and `.env.local` is ignored and untracked without reading its contents. Do not start Next.js, call `/api/snapshot`, run a build/test suite, or print environment values. If a target exists or the safe in-memory harness needs an unapproved path/dependency, stop before network access.
+- **Key access:** use `@next/env` `loadEnvConfig(process.cwd())` to load configured environment values into process memory, then obtain the AISStream key only through `getAISStreamApiKey()` and pass it only to `startAISStreamReader()`. Do not inspect, print, log, copy, persist, or otherwise expose the key or any loaded environment value. If no key is returned, stop the batch before network access.
+- **Attempt definition:** one attempt is one direct `startAISStreamReader()` invocation and one WebSocket. No concurrent sockets or reconnect within an attempt. Start its 15-second wall-clock deadline immediately before reader invocation; the deadline covers connect, open, subscription, and message eligibility handling. On timeout or reader error, stop and clean up that reader before any next attempt.
+- **Maximum and pacing:** at most ten new attempts in this batch. Between unsuccessful attempts, wait exactly 60 seconds before the next connection; no parallel attempts, extra retry, polling, or provider troubleshooting. This fixed delay is a conservative task safety bound, not a verified AISStream rate-limit requirement; no provider quota is asserted. Maximum bounded waiting is 10 × 15 seconds plus 9 × 60 seconds (10 minutes 30 seconds), excluding setup and teardown. Stop early on preflight/harness failure or the first successful sample.
+- **Message handling:** process decoded text only through the reader's `onText` callback. For malformed JSON, non-eligible messages, or messages rejected by sample checks, retain no payload and continue listening within the same attempt until an eligible message, reader error, or deadline. Keep any eligibility state/counters in memory; do not record payload-derived values or provider error details.
+- **Success eligibility:** require both `transformPositionReport(message) !== null` and the following exact fields with expected primitive types: `MetaData.MMSI`, `MetaData.ShipName`, `MetaData.latitude`, `MetaData.longitude`, `MetaData.time_utc`, `Message.PositionReport.Sog`, `Cog`, `TrueHeading`, `Latitude`, and `Longitude`. The transformer alone does not guarantee all capture-specific fields. Missing, malformed, or uncertain fields do not qualify.
+- **First-success stop:** on the first eligible decoded message, immediately stop the reader and deadline timer and end the entire batch—no additional message processing or connection. Select only the approved fields in memory, preserving actual `MMSI` and `ShipName` unmodified under the prior operator approval, and write exactly one sanitized sample plus matching provenance. If writing or validating that success fails, stop and record the failure; do not make another attempt.
+- **Sanitization and provenance:** never print or persist the raw frame, key, provider error text, stack, private path, or unrelated fields. Provenance must distinguish artifact capture time in UTC from `MetaData.time_utc`, identify the source as this direct live AISStream reader capture, state the actual configured subscription/bounding-box context, list retained fields, note unmodified MMSI/ShipName retention and the one-message limit, and record limitations. Do not claim provider endorsement, vessel identity beyond the received fields, or traffic completeness.
+- **Outcome recording:** record only attempt number, elapsed time, and fixed non-sensitive categories such as `deadline_no_eligible`, `reader_error`, `eligible_sample`, or `preflight_blocked`, plus totals. Never retain or log rejected event content or raw provider error details.
+
+## Expected outcome and acceptance
+
+1. The operator reviews this exact contract and explicitly says `continue` before environment loading or any provider access.
+2. Preflight confirms both sample targets absent and `.env.local` ignored/untracked without opening it; the temporary harness creates no repository file.
+3. No more than ten sequential reader invocations occur, each bounded by 15 seconds, with 60 seconds between failed attempts. Ineligible events do not prematurely end an otherwise healthy attempt. The batch stops immediately at first success; no retry follows success.
+4. On success, exactly one live sanitized sample and matching provenance exist, with required exact fields/types and no raw frame/key/unrelated data. Existing synthetic sample files remain unchanged.
+5. On exhaustion or preflight/runtime failure, no sample/provenance is created; only observed bounded outcomes are appended and CHECKPOINT-09 remains `HOLD`.
+6. Evidence, runbook, and checkpoint are appended/created only after observed outcomes; `git diff --check` passes. No code, route, test, dependency, configuration, unrelated path, commit, push, or deployment changes occur.
+
+## Verification and stop conditions
+
+- **Before first attempt:** after `continue`, verify allowed paths and absent sample targets, confirm `.env.local` ignore/tracking status without reading contents, and verify the in-memory reader/transformer harness. If key/configuration, runtime, paths, or safe lifecycle is not as contracted, stop before opening a socket.
+- **During the batch:** enforce the per-attempt deadline and 60-second cooldown in the caller; stop/clean up the reader and timer on success, error, or deadline. Do not exceed ten attempts or continue after the first success.
+- **After success:** parse/validate without printing sample contents; assert one envelope and all required exact fields/types; verify provenance against the captured source/time; check only the allowed paths and `git diff --check`. Append evidence/runbook/checkpoint only after these observations.
+- **After exhaustion/failure:** verify no sample was created, append only observed fixed outcomes, and keep Sprint checkpoint 03 at `HOLD`. Stop if an unexpected path, unsafe data handling, unclear provider state, or any need for out-of-scope changes arises.
+- **Exit decision:** `DONE` only for this bounded capture if the sample, provenance, verification, and final human diff review pass; otherwise `HOLD`. LIVE-005 alone cannot close Sprint 2.
+
+## Rollback / recovery
+
+Before execution, revise or remove only this appended draft section if rejected. If a new sample is created but fails validation before outcome records are appended, remove only the two new live sample files and preserve synthetic fixtures. Once recorded, EVIDENCE and RUNBOOK remain append-only; correct errors with a superseding factual entry. Do not reset the branch or alter any pre-existing staged, deleted, modified, or untracked path.
+
+# TASK-SEA-R2-B09B10-LIVE-006 — Replacement bounded live PositionReport capture batch
+
+- **Version:** `1.0.0`
+- **Status:** `Draft`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-25
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), [`docs/checkpoints/CHECKPOINT-09.md`](docs/checkpoints/CHECKPOINT-09.md), `TASK-SEA-R2-B09B10-LIVE-005`, `E-SEA-059`, [`server/aisstream-config.ts`](server/aisstream-config.ts), [`server/aisstream-reader.ts`](server/aisstream-reader.ts), [`server/position-report-transformer.ts`](server/position-report-transformer.ts), [`data/samples/position-report.sample.json`](data/samples/position-report.sample.json), [`data/samples/PROVENANCE.md`](data/samples/PROVENANCE.md).
+
+## Goal and authorization
+
+- **Goal:** obtain at most one eligible live AISStream `PositionReport` sample with matching provenance; stop the complete batch immediately after the first successful capture. This task addresses only the live receipt/sample gap and does not establish full Sprint 2 acceptance.
+- **Predecessor boundary:** LIVE-005 stopped before attempt 1 because its inline JavaScript harness failed parsing. No provider call or attempt occurred under LIVE-005. This replacement batch is independently bounded and does not reuse prior events, screenshots, or synthetic fixtures as a live sample.
+- **Operator request:** on 2026-09-25 the user said “виконуй 10 спроб”. The earlier instruction remains in force: stop at the first successful result. Existing approval covers retaining one sanitized sample with actual `MMSI` and `ShipName`, limited to the handling and fields below. This request does not waive review of this exact replacement contract or authorize code changes, extra provider troubleshooting, commit, push, deployment, or full Sprint 2 acceptance.
+- **Human gate:** before loading environment configuration, accessing the key, connecting, creating sample files, or appending outcome records, the operator must review this exact LIVE-006 contract and explicitly choose `continue`. No provider or secret access is authorized by this draft or by the earlier LIVE-005 `continue`.
+
+## Allowed paths and exclusions
+
+- **Contract preparation:** this appended LIVE-006 section in `TASK_SPEC.md` only.
+- **After explicit LIVE-006 `continue`:** on the first eligible message only, create `data/samples/live/position-report.sample.json` and `data/samples/live/PROVENANCE.md`; append factual outcomes to `EVIDENCE.md` and `RUNBOOK.md`; then create `docs/checkpoints/CHECKPOINT-10.md`. If the batch ends without an eligible sample or is blocked before a reader attempt, create no sample files, append only verified outcomes to `EVIDENCE.md` and `RUNBOOK.md`, then create CHECKPOINT-10 with `HOLD`.
+- **Read-only inputs:** existing key accessor, reader, transformer, synthetic sample/provenance, LIVE-004/LIVE-005 and earlier records, CHECKPOINT-09, Sprint 2 checkpoint criteria, and checkpoint convention.
+- **Excluded:** product/source code, routes, tests, dependencies, configuration, all `.env*` contents and credentials, UI/demo behavior, existing synthetic sample/provenance, `SPEC.md`, `SPRINT-02.md`, decision records, historical checkpoints, commit, push, deployment, and every unrelated, staged, deleted, or untracked path. Do not inspect, overwrite, stage, reset, or clean excluded paths.
+
+## Bounded attempt policy and data handling
+
+- **Preflight order:** after LIVE-006 `continue`, first verify both live sample targets are absent and `.env.local` is ignored/untracked without reading its contents. Prepare the complete inline harness without loading environment values. Syntax-check that exact harness with Node's syntax-check mode; syntax validation must not evaluate imports or run code. If syntax check fails, stop before environment loading and do not repair/retry within this contract. Only after syntax validation passes may the harness load environment configuration in memory.
+- **Key access:** use `@next/env` `loadEnvConfig(process.cwd())`, then obtain the AISStream key only through `getAISStreamApiKey()` and pass it only to `startAISStreamReader()`. Do not inspect, print, log, copy, persist, or expose the key or any loaded environment value. If no key is returned, stop the batch before network access.
+- **Attempt definition:** one attempt is one direct `startAISStreamReader()` invocation and one WebSocket. No concurrent sockets or reconnect within an attempt. Start its 15-second wall-clock deadline immediately before reader invocation; it covers connect, open, subscription, and message eligibility handling. Stop and clean up the reader at timeout, reader error, or success before any next attempt.
+- **Maximum and pacing:** at most ten sequential attempts in this batch. Between unsuccessful attempts, wait exactly 60 seconds before the next connection; no parallel attempts, extra retry, polling, or provider troubleshooting. The pause is a conservative task safety bound, not a verified AISStream rate-limit requirement. Maximum bounded waiting is 10 × 15 seconds plus 9 × 60 seconds (10 minutes 30 seconds), excluding setup/teardown. Stop early on preflight/harness failure or first successful sample.
+- **Message handling:** process decoded text only through the reader's `onText` callback. For malformed JSON, non-eligible messages, or sample-check failures, retain no payload and continue listening within that same attempt until an eligible message, reader error, or deadline. Keep eligibility state/counters only in memory; do not record payload-derived values or provider error details.
+- **Success eligibility:** require both `transformPositionReport(message) !== null` and these exact fields with expected primitive types: `MetaData.MMSI`, `MetaData.ShipName`, `MetaData.latitude`, `MetaData.longitude`, `MetaData.time_utc`, `Message.PositionReport.Sog`, `Cog`, `TrueHeading`, `Latitude`, and `Longitude`. The transformer alone does not validate all sample fields. Missing, malformed, or uncertain fields do not qualify.
+- **First-success stop:** on the first eligible message, immediately stop the reader and timer and end the batch. Select only the approved fields in memory, preserve actual `MMSI` and `ShipName` unmodified under existing operator approval, and write exactly one sanitized sample plus matching provenance. If writing or validation fails, stop and record the failure; do not attempt another connection.
+- **Sanitization and provenance:** never print or persist raw frames, the key, provider error text, stack, private path, or unrelated fields. Provenance must distinguish artifact capture time in UTC from the sample's `MetaData.time_utc`; identify the source as this direct AISStream reader capture; state the configured subscription/bounding-box context; list retained fields; note actual unmodified MMSI/ShipName retention and the one-message limit; and state limitations. Do not claim provider endorsement, identity beyond received fields, or traffic completeness.
+- **Outcome recording:** record only attempt number, elapsed time, and fixed non-sensitive categories such as `deadline_no_eligible`, `reader_error`, `eligible_sample`, `preflight_blocked`, or `harness_syntax_blocked`, plus totals. Never retain/log rejected event contents or raw provider error details.
+
+## Expected outcome and acceptance
+
+1. The operator reviews the exact LIVE-006 contract and explicitly says `continue` before environment loading or any provider access.
+2. Target absence and `.env.local` ignore/tracking status are confirmed without reading its contents. The exact inline harness passes syntax-only validation before any environment loading; a failure ends the task before a reader invocation.
+3. No more than ten sequential reader invocations occur, each bounded to 15 seconds, with 60 seconds between failed attempts. Ineligible events do not end a healthy attempt. The batch stops immediately after the first eligible sample, with no later connection.
+4. On success, exactly one live sanitized sample and matching provenance exist with all required fields/types and no raw frame, key, or unrelated data. Existing synthetic files remain unchanged.
+5. On exhaustion or preflight/runtime failure, no sample/provenance is created; only observed outcomes are appended and CHECKPOINT-10 remains `HOLD`.
+6. Evidence, runbook, and checkpoint are appended/created only after observed outcomes; `git diff --check` passes. No source, route, test, dependency, configuration, unrelated path, commit, push, or deployment changes occur.
+
+## Verification and stop conditions
+
+- **Before first attempt:** after LIVE-006 `continue`, verify allowed paths and absent sample targets; confirm `.env.local` ignore/tracking state without reading contents; syntax-check the exact harness without executing it or evaluating imports. Any syntax/runtime-preflight, key/configuration, path, or lifecycle failure stops before network access.
+- **During the batch:** enforce the per-attempt deadline and 60-second cooldown in the caller; stop/clean up the reader and timer on success, error, or deadline. Never exceed ten attempts or continue after success.
+- **After success:** validate the sample without printing its payload; assert one envelope and every required field/type; compare provenance with captured source/time; inspect only allowed paths and run `git diff --check`. Append evidence/runbook/checkpoint only after these checks.
+- **After exhaustion/failure:** verify no sample was created, append only observed fixed outcomes, and leave Sprint checkpoint 03 at `HOLD`. Stop if any unexpected path, unsafe handling, unclear provider state, or out-of-scope change is needed.
+- **Exit decision:** `DONE` only if the bounded sample, provenance, checks, and final human review pass; otherwise `HOLD`. LIVE-006 alone cannot close Sprint 2.
+
+## Rollback / recovery
+
+Before execution, revise or remove only this appended draft section if rejected. If a new sample exists but fails validation before outcome records are appended, remove only the two new live sample files and preserve synthetic fixtures. EVIDENCE and RUNBOOK are append-only; correct recorded facts only with a superseding entry. Do not reset the branch or alter any pre-existing staged, deleted, modified, or untracked path.
+
+# TASK-SEA-R2-B09B10-DIAG-001 — In-memory AISStream configuration preflight diagnosis
+
+- **Version:** `1.0.0`
+- **Status:** `Draft`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-25
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), [`docs/checkpoints/CHECKPOINT-10.md`](docs/checkpoints/CHECKPOINT-10.md), `TASK-SEA-R2-B09B10-LIVE-006`, `E-SEA-060`, [`server/aisstream-config.ts`](server/aisstream-config.ts).
+
+## Goal and authorization
+
+- **Goal:** identify which local configuration preflight stage blocked LIVE-006 without displaying, logging, copying, or persisting any credential and without making a network connection.
+- **Predecessor boundary:** LIVE-006 stopped before its first reader invocation with fixed outcome `preflight_blocked`; its harness intentionally did not distinguish an environment-loader exception from a missing value returned by the key accessor. This diagnostic does not resume or authorize any LIVE-006 attempt.
+- **Operator request:** on 2026-09-25 the user asked to prepare a bounded task to diagnose the preflight cause, without displaying the key and without network access, then confirmed `так`. That authorizes preparation of this draft only; the exact diagnostic still requires review and explicit `continue`.
+- **Human gate:** before loading local environment configuration or accessing the key accessor, the operator must review this exact contract and explicitly choose `continue`.
+
+## Allowed paths and exclusions
+
+- **Contract preparation:** this appended section in `TASK_SPEC.md` only.
+- **After explicit `continue`:** run one temporary in-memory diagnostic only; append factual results to `EVIDENCE.md` and `RUNBOOK.md`; then create `docs/checkpoints/CHECKPOINT-11.md` with Sprint checkpoint 03 remaining `HOLD`.
+- **Read-only inputs:** `@next/env` package API, `getAISStreamApiKey()` implementation, current LIVE-006 outcome and checkpoint convention.
+- **Excluded:** all `.env*` file contents read by the operator, key values or other environment values in output/logs, any WebSocket/HTTP/DNS/network request, `startAISStreamReader()`, provider troubleshooting, sample/provenance access or creation, product/source code, tests, dependencies, configuration, unrelated paths, historical records, commit, push, and deployment.
+
+## Single-run diagnostic policy and data handling
+
+- **Preflight:** after `continue`, verify the current branch/worktree boundary and `.env.local` ignored/untracked status without opening the file. Use one in-memory Node invocation only; do not create a script or artifact file.
+- **Module diagnosis:** dynamically import `@next/env` and `server/aisstream-config.ts` in separate guarded stages. If either import fails, emit only a fixed category (`loader_module_import_failed` or `accessor_module_import_failed`) and stop.
+- **Presence snapshot:** call only `getAISStreamApiKey()` and convert its result immediately to a boolean (`present_before_load`). Do not retain or output the returned string. If the accessor throws, emit `accessor_failed_before_load` and stop.
+- **Environment loader:** invoke `loadEnvConfig(process.cwd(), false, silentLogger)` once to load configured values into process memory. Do not read `.env*` contents directly; do not print loader details or returned objects. If it throws, emit `env_loader_failed` with only the already computed boolean and stop.
+- **Post-load accessor:** call the accessor once more, immediately convert the result to a boolean (`present_after_load`), and discard the string. If it throws, emit `accessor_failed_after_load` with the pre-load boolean only. Otherwise emit `diagnostic_complete` with the two presence booleans only; never output the key, length, hash, prefix/suffix, source value, or any unrelated environment value.
+- **One-shot boundary:** exactly one diagnostic invocation, no retries, no reader, no provider call, no sample. The observation can distinguish import failure, loader failure, and accessor presence only; it does not establish credential validity or provider acceptance. Even `present_after_load: true` does not authorize a live connection.
+- **Output and timing:** emit a fixed JSON object containing only a diagnostic category, elapsed milliseconds, and the approved boolean presence indicators where available. Suppress logger output and raw exception details. Never display local file paths, stack traces, loaded environment objects, or secret-derived values other than presence booleans.
+
+## Expected outcome and acceptance
+
+1. The user reviews this exact diagnostic scope and explicitly says `continue` before environment loading or accessor use.
+2. One Node invocation returns a fixed category identifying module import, accessor, or environment-loader outcome; when the accessor can be called safely, only its pre/post presence booleans are reported.
+3. No network APIs, reader, sample files, or provider connection are used; no credential value or unrelated environment value appears in output or saved records.
+4. Only observed fixed categories/booleans, command status, and timestamp are appended to evidence/runbook; CHECKPOINT-11 keeps Sprint checkpoint 03 at `HOLD`.
+5. `git diff --check` passes and no source, test, dependency, configuration, sample, or unrelated path changes occur.
+
+## Verification and stop conditions
+
+- **Before run:** validate this contract, confirm `.env.local` ignore/tracking status without reading its contents, and inspect the installed `@next/env` type signature only if needed. Do not start an application or use any network-capable API.
+- **During run:** execute the diagnostic exactly once with a silent logger and guarded stages. Emit only the fixed result schema. If a stage fails, stop immediately; do not add debugging output or repeat the loader/accessor call.
+- **After run:** verify output contains only approved category/booleans and elapsed time; verify no sample path was created; append EVIDENCE/RUNBOOK and create CHECKPOINT-11 only after observation; run `git diff --check`.
+- **Exit decision:** `DONE` only when one diagnostic result is recorded with no credential disclosure and no network access; otherwise `HOLD`. This diagnostic does not authorize any live AISStream attempt.
+
+## Rollback / recovery
+
+Before execution, revise or remove only this appended draft if rejected. The one-shot diagnostic creates no persistent output except append-only evidence/runbook/checkpoint records. Correct recorded factual errors with a superseding entry; do not reset the branch, inspect environment files, or alter any pre-existing staged, deleted, modified, or untracked path.
+
+# TASK-SEA-R2-B09B10-DIAG-002 — Sanitized environment-loader error classification
+
+- **Version:** `1.0.0`
+- **Status:** `Active`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-25
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), [`docs/checkpoints/CHECKPOINT-11.md`](docs/checkpoints/CHECKPOINT-11.md), `TASK-SEA-R2-B09B10-DIAG-001`, `E-SEA-061`, [`node_modules/@next/env/dist/index.js`](node_modules/@next/env/dist/index.js), [`node_modules/@next/env/dist/index.d.ts`](node_modules/@next/env/dist/index.d.ts).
+
+## Goal and authorization
+
+- **Goal:** safely classify why the single `loadEnvConfig()` call in DIAG-001 failed, using only error class/code categories and no raw exception text, paths, environment values, credentials, or network access.
+- **Predecessor boundary:** DIAG-001 observed `env_loader_failed` after successful module imports and `presentBeforeLoad: false`; raw exception details were suppressed. DIAG-001 is complete; this task neither repeats nor extends its diagnostic.
+- **Operator request:** on 2026-09-25 the user said `продовжуй` after being asked whether to prepare a separate bounded task to investigate the loader failure without network access or secret disclosure. This authorizes drafting this contract only. Explicit review and `continue` are still required before running the loader.
+- **Human gate:** before importing/running `@next/env` or calling `loadEnvConfig()`, the operator must review this exact contract and explicitly choose `continue`.
+
+## Allowed paths and exclusions
+
+- **Contract preparation:** this appended DIAG-002 section in `TASK_SPEC.md` only.
+- **After explicit `continue`:** run one in-memory loader classification only; append observed facts to `EVIDENCE.md` and `RUNBOOK.md`; create `docs/checkpoints/CHECKPOINT-12.md`, keeping Sprint checkpoint 03 at `HOLD`.
+- **Read-only inputs:** installed `@next/env` implementation/type signature, prior DIAG-001 outcome, and checkpoint convention.
+- **Excluded:** all direct reads of `.env*` file contents; the key accessor and credential values; `startAISStreamReader()`; any WebSocket/HTTP/DNS/network request; provider troubleshooting; sample/provenance files; product/source code, tests, dependencies, configuration, unrelated paths, historical records, commit, push, and deployment.
+
+## One-shot error-classification policy
+
+- **Preflight:** after `continue`, verify the worktree boundary and `.env.local` ignored/untracked status without opening it. Use one in-memory Node invocation; create no script or artifact file.
+- **Loader call:** dynamically import `@next/env`, then call `loadEnvConfig(process.cwd(), false, safeLogger)` exactly once. Do not call `getAISStreamApiKey()` or inspect `process.env`. Do not print/retain loader return values or any environment data.
+- **Safe logger:** provide `info()` as a no-op. In `error(...args)`, ignore all message/string arguments entirely; only if an argument is an actual `Error`, immediately map its `name` to `Error`, `TypeError`, `RangeError`, `SyntaxError`, `ReferenceError`, or `OtherError`, and map its `code` to a fixed allowlist (`ENOENT`, `EACCES`, `EPERM`, `EIO`, `EINVAL`, `EISDIR`, `ENOTDIR`, `ELOOP`, `ERR_INVALID_ARG_TYPE`, `ERR_INVALID_ARG_VALUE`, `ERR_OUT_OF_RANGE`, or `OtherCode`). Store only category counts in memory. The logger must not stringify or retain raw arguments.
+- **Thrown exception:** catch any exception from import or the single loader call. Report only a fixed stage (`module_import_failed` or `loader_threw`), sanitized error-name category, and whitelisted error-code category. Do not output exception messages, stacks, causes, paths, environment contents, or values. If the loader returns while calling the logger, report `loader_returned_with_log_errors` and only the safe category counts; otherwise report `loader_returned_no_log_errors`.
+- **One-shot boundary:** exactly one loader call; no accessor, retry, `NODE_ENV` change, environment reset, reader, provider call, sample, or further debugging. This classification may identify an error class/code, but does not authorize changing environment files or making a provider request.
+- **Output:** fixed JSON only: outcome category, elapsed milliseconds, sanitized `name`/`code` categories where applicable, and counts. Never output raw logger text or any local path.
+
+## Expected outcome and acceptance
+
+1. The operator reviews the exact DIAG-002 contract and explicitly says `continue` before the loader runs.
+2. One inline Node invocation imports the installed loader and calls it once with the safe logger; any thrown or logged errors are reduced to fixed categories/allowlisted codes.
+3. No accessor/key access, environment value output, direct `.env*` read, network request, reader, provider connection, or sample/provenance access occurs.
+4. EVIDENCE/RUNBOOK record only the fixed result, category counts, command status, timestamp, and limitations; CHECKPOINT-12 keeps Sprint checkpoint 03 at `HOLD`.
+5. `git diff --check` passes and no source, test, dependency, configuration, sample, or unrelated path changes occur.
+
+## Verification and stop conditions
+
+- **Before run:** validate this contract and `.env.local` ignore/tracking status without opening the file. Do not start Next.js or any network-capable API.
+- **During run:** make exactly one loader call. Ensure the logger never exposes its arguments and catches only fixed metadata. If module import fails, report its safe category and stop without retry.
+- **After run:** validate the output against the fixed schema; verify no credential/value/path/message appears; verify no sample paths were created; append evidence/runbook/checkpoint only after observation; run `git diff --check`.
+- **Exit decision:** `DONE` only when the single run is recorded with no secret disclosure or network access; otherwise `HOLD`. DIAG-002 does not authorize a live AISStream attempt.
+
+## Rollback / recovery
+
+Before execution, revise or remove only this appended draft if rejected. The one-shot classification creates no persistent output except the append-only evidence/runbook/checkpoint records. Correct recorded factual errors only with a superseding entry. Do not retry, change `.env*`, reset the branch, or alter any pre-existing staged, deleted, modified, or untracked path.
+
+# TASK-SEA-R2-B09B10-DIAG-003 — Bounded import/loader classification retries
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-25
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), [`docs/checkpoints/CHECKPOINT-12.md`](docs/checkpoints/CHECKPOINT-12.md), `TASK-SEA-R2-B09B10-DIAG-002`, `E-SEA-062`, [`node_modules/@next/env/dist/index.js`](node_modules/@next/env/dist/index.js), [`node_modules/@next/env/dist/index.d.ts`](node_modules/@next/env/dist/index.d.ts).
+
+## Goal and authorization
+
+- **Goal:** determine whether the sanitized `@next/env` import failure from DIAG-002 is transient across fresh local Node processes and, on the first successful import only, capture the sanitized outcome of one `loadEnvConfig()` call.
+- **Predecessor boundary:** DIAG-002 attempted one dynamic import and observed `module_import_failed` / `OtherError` / `OtherCode`; it did not call `loadEnvConfig()`. This contract does not claim that repeating the import will reveal the hidden cause.
+- **Operator request:** on 2026-09-25 the user said `даю 10 шот контракт` after DIAG-002 stopped at import and clarified `15 секунд на процес`. This authorizes preparing a contract for at most ten new local attempts, with a 15-second process timeout per attempt. It does not authorize execution before review of this exact contract and a separate explicit `continue`.
+- **Human gate:** the operator must review this exact DIAG-003 contract and explicitly say `continue` before any new import or loader call.
+
+## Allowed paths and exclusions
+
+- **Contract preparation:** this appended DIAG-003 section in `TASK_SPEC.md` only.
+- **After explicit `continue`:** run the bounded local diagnostic only; append observed facts to `EVIDENCE.md` and `RUNBOOK.md`; create `docs/checkpoints/CHECKPOINT-13.md`, keeping Sprint checkpoint 03 at `HOLD`.
+- **Read-only inputs:** installed `@next/env` implementation/type signature and DIAG-002/E-SEA-062 outcome.
+- **Excluded:** direct reads of `.env*` file contents; key accessor or credential-value inspection; changes to `NODE_ENV`, environment, files, or dependencies; `startAISStreamReader()`; WebSocket/HTTP/DNS/network/provider requests; sample/provenance access; product/source/test changes; unrelated paths; commit, push, and deployment.
+
+## Bounded attempt policy
+
+- **Preflight:** after `continue`, verify branch/worktree boundary, that both live sample targets remain absent, and `.env.local` is ignored/untracked without opening it. Use no Next.js server or network-capable API.
+- **Attempts:** at most ten new, sequential child-process attempts, each in a fresh Node process. Each child has a 15-second process timeout (maximum 150 seconds of child execution time total; parent orchestration overhead excluded). No concurrent attempts and no retries inside a child. The parent may pass through the existing process environment to the child but must not inspect, print, or mutate it.
+- **Per-child operation:** dynamically import `@next/env`. If import succeeds, call `loadEnvConfig(process.cwd(), false, safeLogger)` exactly once in that child and stop the entire batch after that child reports its sanitized result, whether the loader returns or throws. If import fails, emit only its sanitized category and proceed to the next child, unless the process timed out or the harness output is invalid; either of those conditions stops the entire batch immediately.
+- **Safe logger and exception handling:** use a no-op `info()`. In `error(...args)`, ignore all strings/message arguments; for actual `Error` objects immediately retain only a safe name category (`Error`, `TypeError`, `RangeError`, `SyntaxError`, `ReferenceError`, `OtherError`) and fixed code allowlist (`ENOENT`, `EACCES`, `EPERM`, `EIO`, `EINVAL`, `EISDIR`, `ENOTDIR`, `ELOOP`, `ERR_INVALID_ARG_TYPE`, `ERR_INVALID_ARG_VALUE`, `ERR_OUT_OF_RANGE`, `OtherCode`). Catch import/loader errors and emit fixed stage/outcome plus safe categories only. Never stringify, persist, or display raw exception/logger arguments, stderr, stacks, causes, paths, or values.
+- **Stop rules:** stop on the first successful module import after its single loader call; stop immediately on loader return/throw, timeout, invalid harness output, or other harness failure. If all ten imports fail, stop at ten. No further attempts or diagnosis under this contract.
+- **Output:** fixed JSON with attempt number, outcome category, elapsed milliseconds, and safe error-name/code categories or logger category counts only. No raw child stdout/stderr is relayed; reject any child output that does not match the fixed schema without displaying it.
+- **No secrets/network:** do not call the key accessor or inspect `process.env`; the approved loader may internally load environment configuration into memory, but its return values and environment contents must not be read or emitted. No environment file is opened directly by the harness.
+
+## Expected outcome and acceptance
+
+1. The operator explicitly approves this exact contract with `continue` before execution.
+2. No more than ten fresh sequential child processes run; each is bounded to fifteen seconds (at most 150 seconds of child execution time total, excluding parent orchestration overhead). No parallelism, retries inside a child, or extra loader calls occur.
+3. The batch stops on the first successful import after at most one loader call, or earlier on timeout/invalid output/harness failure; if all imports fail, it stops after attempt ten.
+4. Only schema-valid fixed JSON categories are reported. No secret, environment value, raw message, path, stack, stderr, or provider payload is disclosed or persisted.
+5. Evidence, runbook, and checkpoint record the observed attempts and limitations only; checkpoint 03 remains `HOLD`; `git diff --check` passes.
+
+## Verification and stop conditions
+
+- **Before run:** verify approved paths and preflight facts without opening `.env*`; validate this contract and run `git diff --check`.
+- **During run:** count each child process; enforce its timeout; discard stderr; validate only safe JSON output. Stop exactly under the rules above. Do not attempt corrective imports, installs, file edits, environment resets, or loader retries after a loader outcome.
+- **After run:** record only observed fixed categories, counts, command status, UTC timestamp, and limitations. Verify no sample/provenance or unrelated paths changed; run `git diff --check`.
+- **Exit decision:** `DONE` only for the bounded diagnostic record with no secret disclosure or network access; outcome may still be `BLOCKED` and the original import/loader cause may remain unknown. DIAG-003 does not authorize another diagnostic or any live AISStream attempt.
+
+## Rollback / recovery
+
+Before execution, revise or remove only this appended draft if rejected. The diagnostic creates no persistent output except append-only evidence/runbook/checkpoint records. Preserve historical evidence and every pre-existing staged, deleted, modified, and untracked path. Do not change `.env*`, reset the branch, or repeat attempts after the stop condition; any further work needs another bounded contract and explicit authorization.
+
+# TASK-SEA-R2-B09B10-DIAG-004 — Second bounded import/loader classification batch
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-25
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), [`docs/checkpoints/CHECKPOINT-13.md`](docs/checkpoints/CHECKPOINT-13.md), `TASK-SEA-R2-B09B10-DIAG-003`, `E-SEA-063`, [`node_modules/@next/env/dist/index.js`](node_modules/@next/env/dist/index.js), [`node_modules/@next/env/dist/index.d.ts`](node_modules/@next/env/dist/index.d.ts).
+
+## Goal and authorization
+
+- **Goal:** make one further bounded check for transient `@next/env` import behavior across fresh local Node processes and, on the first successful import only, obtain the sanitized result of one `loadEnvConfig()` call.
+- **Predecessor boundary:** DIAG-003 used ten fresh processes with a 15-second timeout; all imports failed with `OtherError` / `OtherCode`, and the loader was never called. DIAG-004 is a distinct batch of up to ten new attempts; it does not alter or repeat DIAG-003's historical record and is not expected to reveal hidden error details by repetition alone.
+- **Operator request:** on 2026-09-25 the user said `продовжуй даю ще 10 спроб по 30 секунд` after DIAG-003 was recorded. This authorizes preparing this second contract for up to ten new attempts, each with a 30-second process timeout. Execution still requires review of this exact contract and a separate explicit `continue`.
+- **Human gate:** do not start a child process, import `@next/env`, or call `loadEnvConfig()` until the operator explicitly says `continue` for DIAG-004.
+
+## Allowed paths and exclusions
+
+- **Contract preparation:** this appended DIAG-004 section in `TASK_SPEC.md` only.
+- **After explicit `continue`:** execute the bounded local batch only; append observed facts to `EVIDENCE.md` and `RUNBOOK.md`; create `docs/checkpoints/CHECKPOINT-14.md`, keeping Sprint checkpoint 03 at `HOLD`.
+- **Read-only inputs:** installed `@next/env` implementation/type signature and DIAG-003/E-SEA-063 result.
+- **Excluded:** direct reads of `.env*` file contents; key accessor or credential-value inspection; changes to `NODE_ENV`, environment, files, dependencies, or configuration; `startAISStreamReader()`; any WebSocket/HTTP/DNS/network/provider request; sample/provenance access; product/source/test changes; unrelated paths; commit, push, and deployment.
+
+## Bounded attempt policy
+
+- **Preflight:** after `continue`, verify the worktree/branch boundary, both live sample targets absent, and `.env.local` ignored/untracked without opening it. Use no Next.js server or network-capable API.
+- **Attempts:** at most ten new sequential child-process attempts, each in a fresh Node process with a 30-second process timeout (maximum 300 seconds of child execution time total; parent orchestration overhead excluded). No concurrent attempts or retries within a child. The parent may pass through the existing process environment but must not inspect, print, or mutate it.
+- **Per-child operation:** dynamically import `@next/env`. If import succeeds, call `loadEnvConfig(process.cwd(), false, safeLogger)` exactly once in that child and stop the batch once that child returns its sanitized outcome, whether the loader returns or throws. If import fails, emit only safe categories and continue to the next attempt, unless the child times out, exits unexpectedly, or produces output outside the fixed schema; any such harness failure stops the batch immediately.
+- **Safe logger and exception handling:** `info()` is a no-op. In `error(...args)`, ignore all strings/message arguments; for actual `Error` objects retain only a safe name category (`Error`, `TypeError`, `RangeError`, `SyntaxError`, `ReferenceError`, `OtherError`) and fixed code allowlist (`ENOENT`, `EACCES`, `EPERM`, `EIO`, `EINVAL`, `EISDIR`, `ENOTDIR`, `ELOOP`, `ERR_INVALID_ARG_TYPE`, `ERR_INVALID_ARG_VALUE`, `ERR_OUT_OF_RANGE`, `OtherCode`). Catch import/loader errors and report fixed stage/outcome plus safe categories only. Never stringify, persist, or display raw logger/exception arguments, stderr, stacks, causes, paths, or values.
+- **Stop rules:** stop on first successful import after its single loader call; stop immediately on loader return/throw, timeout, invalid output, or other harness failure. If every import fails, stop after attempt ten. No follow-up troubleshooting or attempts are authorized by this contract.
+- **Output:** fixed JSON only: attempt number, outcome, elapsed milliseconds, and safe categories/counts. The parent discards child stderr and never relays raw child output; invalid output is reduced to a fixed harness-failure category without display.
+- **No secrets/network:** do not call the key accessor or inspect `process.env`. The approved loader may internally read environment configuration into memory only if a module import succeeds; do not inspect or emit its return values or environment contents. The harness must not directly open environment files.
+
+## Expected outcome and acceptance
+
+1. The operator explicitly approves this exact DIAG-004 contract with `continue` before execution.
+2. No more than ten fresh sequential Node child processes run, each with a 30-second timeout (at most 300 seconds child execution time total, excluding parent orchestration overhead).
+3. The batch stops after the first successful import and at most one loader call, after ten import failures, or earlier on timeout/invalid output/harness failure.
+4. Only fixed schema-valid JSON categories are reported; no secret, environment value, raw error text, path, stack, stderr, or provider payload is disclosed or persisted.
+5. EVIDENCE/RUNBOOK/CHECKPOINT-14 record observed facts only; checkpoint 03 remains `HOLD`; `git diff --check` passes.
+
+## Verification and stop conditions
+
+- **Before run:** verify the approved paths and preflight facts without opening `.env*`; validate this contract and run `git diff --check`.
+- **During run:** count each fresh process, enforce its 30-second timeout, discard stderr, validate safe output, and obey stop rules exactly. Do not repair imports, install packages, edit files, reset environment, or retry after a loader outcome.
+- **After run:** record observed categories/counts, per-attempt and total elapsed time, command status, UTC timestamp, and limitations. Verify no sample/provenance or unrelated path changed; run `git diff --check`.
+- **Exit decision:** record `DONE` for completing the bounded batch safely, even if its result remains `BLOCKED`; the underlying import or loader cause may remain unknown. DIAG-004 authorizes no further diagnostic or live AISStream request.
+
+## Rollback / recovery
+
+Before execution, revise or remove only this appended draft if rejected. The batch creates no persistent output except append-only evidence/runbook/checkpoint records. Preserve historical evidence and all pre-existing staged, deleted, modified, and untracked paths. Do not change `.env*`, reset the branch, or continue after a stop condition; further work requires another bounded contract and explicit authorization.
+
+# TASK-SEA-R2-B09B10-DIAG-005 — Safe module-resolution comparison
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-25
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), [`docs/checkpoints/CHECKPOINT-14.md`](docs/checkpoints/CHECKPOINT-14.md), `TASK-SEA-R2-B09B10-DIAG-004`, `E-SEA-064`, [`node_modules/@next/env/dist/index.d.ts`](node_modules/@next/env/dist/index.d.ts).
+
+## Goal and authorization
+
+- **Goal:** distinguish package-resolution failure from module-evaluation failure by comparing CommonJS resolution, ESM resolution, and one dynamic import of `@next/env`, while emitting only fixed status flags and allowlisted error categories.
+- **Predecessor boundary:** DIAG-003 and DIAG-004 each observed ten fresh-process import failures as `OtherError` / `OtherCode`. Neither batch called `loadEnvConfig()`. Repeating attempts is exhausted; DIAG-005 is one comparison run, not another retry batch.
+- **Operator request:** on 2026-09-25 the user said `тоді продовжимо` after being told the next useful step was a bounded safe resolution/import comparison. This authorizes drafting this contract only. Execution requires the user's explicit `continue DIAG-005` after reviewing this exact contract.
+- **Human gate:** do not run resolution checks or import `@next/env` until the operator explicitly approves DIAG-005.
+
+## Allowed paths and exclusions
+
+- **Contract preparation:** this appended DIAG-005 section in `TASK_SPEC.md` only.
+- **After explicit approval:** perform one inline Node.js comparison; append observed facts to `EVIDENCE.md` and `RUNBOOK.md`; create `docs/checkpoints/CHECKPOINT-15.md`, keeping Sprint checkpoint 03 at `HOLD`.
+- **Read-only inputs:** DIAG-004/E-SEA-064 and Node.js module-resolution APIs.
+- **Excluded:** `loadEnvConfig()`; direct reads of `.env*` contents; key accessor or credential/environment-value inspection; reader, WebSocket, HTTP, DNS, network/provider requests; package installation or edits to dependencies/configuration/source/tests; sample/provenance access; unrelated paths; commit, push, and deployment.
+
+## One-shot diagnostic policy
+
+- **Preflight:** after approval, confirm worktree boundary, live sample/provenance targets absent, and `.env.local` ignored/untracked without opening it. Use one Node.js v22 inline invocation from the repository root. No Next.js server or network-capable API.
+- **Resolution checks:** in the same process, perform exactly one `createRequire(import.meta.url).resolve("@next/env")` check and exactly one `import.meta.resolve("@next/env")` check. Retain only `resolved` / `failed` flags and sanitized error categories; do not print, persist, or report resolved paths/URLs.
+- **Import check:** attempt exactly one `await import("@next/env")`, regardless of resolution-check outcomes. Report only `import_succeeded` or `import_failed`, plus a boolean for whether the expected `loadEnvConfig` export exists. Do not call the export.
+- **Safe error classification:** never access message, stack, cause, path, or arbitrary properties beyond guarded `name` and `code`. Map names only to `Error`, `TypeError`, `RangeError`, `SyntaxError`, `ReferenceError`, `AggregateError`, or `OtherError`. Map codes only to `ERR_MODULE_NOT_FOUND`, `MODULE_NOT_FOUND`, `ERR_PACKAGE_PATH_NOT_EXPORTED`, `ERR_PACKAGE_IMPORT_NOT_DEFINED`, `ERR_UNSUPPORTED_DIR_IMPORT`, `ERR_REQUIRE_ESM`, `ERR_UNKNOWN_FILE_EXTENSION`, `ERR_INVALID_PACKAGE_CONFIG`, `ERR_UNSUPPORTED_RESOLVE_REQUEST`, `ERR_INVALID_ARG_TYPE`, `ERR_INVALID_ARG_VALUE`, `ENOENT`, `EACCES`, `EPERM`, or `OtherCode`. A thrown value that is not an `Error` maps to `OtherError` / `OtherCode`.
+- **Output:** one fixed JSON object containing the three resolution/import flags, export-presence boolean if import succeeds, elapsed milliseconds, and safe name/code categories for failed checks. No raw exception, resolved path/URL, environment data, or child stderr is output or persisted.
+- **Stop boundary:** one invocation only, no retries. If the harness cannot guarantee the fixed output schema or detects unexpected output, stop and report only `harness_failure`; do not rerun or debug under DIAG-005.
+- **No environment/provider access:** do not inspect `process.env`, call the key accessor or loader, open environment files directly, or contact any network/provider. Importing the package is the only module evaluation authorized.
+
+## Expected outcome and acceptance
+
+1. The operator explicitly approves this exact DIAG-005 contract before the Node invocation.
+2. One inline invocation performs one CommonJS resolution check, one ESM resolution check, and one dynamic import at most; no loader call or retries occur.
+3. Output contains only fixed statuses, allowlisted error categories, and elapsed time; no paths, raw errors, secrets, environment values, or network data appear.
+4. EVIDENCE/RUNBOOK/CHECKPOINT-15 record observed facts only and keep checkpoint 03 at `HOLD`.
+5. `git diff --check` passes and no dependency, source, configuration, test, sample, or unrelated path changes occur.
+
+## Verification and stop conditions
+
+- **Before run:** validate allowed paths and preflight facts without opening `.env*`; review the exact contract; run `git diff --check`.
+- **During run:** perform only the two resolution checks and one dynamic import. No error strings or resolved locations may reach output. Stop on unexpected harness behavior; no retries.
+- **After run:** validate the output against the fixed schema, record UTC timestamp and command status, confirm no sample/provenance or unrelated path changed, and run `git diff --check`.
+- **Exit decision:** mark only the observed comparison as verified; the root cause may remain unknown. DIAG-005 authorizes no loader call, further diagnosis, or live AISStream request.
+
+## Rollback / recovery
+
+Before execution, revise or remove only this appended draft if rejected. The one-shot check creates no persistent output except append-only evidence/runbook/checkpoint records. Preserve historical evidence and all pre-existing staged, deleted, modified, and untracked paths. Do not edit dependencies, inspect environment files, or repeat the diagnostic; further work requires a new bounded contract and explicit authorization.
+
+# TASK-SEA-R2-B09B10-DIAG-006 — Inspect the package default export safely
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-25
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), [`docs/checkpoints/CHECKPOINT-15.md`](docs/checkpoints/CHECKPOINT-15.md), `TASK-SEA-R2-B09B10-DIAG-005`, `E-SEA-065`, [`node_modules/@next/env/dist/index.d.ts`](node_modules/@next/env/dist/index.d.ts).
+
+## Goal and authorization
+
+- **Goal:** determine whether the `@next/env` dynamic-import namespace exposes `loadEnvConfig` through its `default` export, without invoking the export or reading environment configuration.
+- **Predecessor boundary:** DIAG-005 observed successful CommonJS resolution, ESM resolution, and dynamic import, while `typeof namespace.loadEnvConfig` was false. DIAG-005 did not inspect `namespace.default`. This diagnostic checks only export shape; it does not explain the earlier `loadEnvConfig()` exception.
+- **Operator request:** on 2026-09-25 the user requested checking the `default` export in a new bounded contract after DIAG-005. This authorizes preparing this contract only. Execution requires a separate explicit `continue DIAG-006` after reviewing this exact contract.
+- **Human gate:** do not import `@next/env` or inspect its exports until the operator explicitly approves DIAG-006.
+
+## Allowed paths and exclusions
+
+- **Contract preparation:** this appended DIAG-006 section in `TASK_SPEC.md` only.
+- **After explicit approval:** perform one inline Node.js export-shape inspection; append observed facts to `EVIDENCE.md` and `RUNBOOK.md`; create `docs/checkpoints/CHECKPOINT-16.md`, keeping Sprint checkpoint 03 at `HOLD`.
+- **Read-only inputs:** DIAG-005/E-SEA-065 and the installed package's observed import shape.
+- **Excluded:** calling `loadEnvConfig()` or any other package function; direct reads of `.env*` contents; key accessor or credential/environment-value inspection; reader, WebSocket, HTTP, DNS, network/provider requests; package installation or edits to dependencies/configuration/source/tests; sample/provenance access; unrelated paths; commit, push, and deployment.
+
+## One-shot export-shape policy
+
+- **Preflight:** after approval, confirm worktree boundary, live sample/provenance targets absent, and `.env.local` ignored/untracked without opening it. Use one Node.js v22 inline invocation from the repository root; no Next.js server or network-capable API.
+- **Import:** perform exactly one `await import("@next/env")`. On import failure, emit only `import_failed` and safe name/code categories; do not retry.
+- **Named/default metadata:** on import success, report only whether the namespace has a callable named `loadEnvConfig` property, the `default` value's fixed type category (`undefined`, `null`, `object`, `function`, or `primitive`), and a fixed descriptor category for its own `loadEnvConfig` property (`absent`, `data_function`, `data_non_function`, or `accessor`). Do not enumerate namespace/default keys, serialize either object, call a getter, or invoke any function. Use `Object.getOwnPropertyDescriptor` to classify the default property's descriptor without invoking it.
+- **Safe error classification:** never access message, stack, cause, path, or arbitrary properties beyond guarded `name` and `code`. Map names only to `Error`, `TypeError`, `RangeError`, `SyntaxError`, `ReferenceError`, `AggregateError`, or `OtherError`. Map codes only to `ERR_MODULE_NOT_FOUND`, `MODULE_NOT_FOUND`, `ERR_PACKAGE_PATH_NOT_EXPORTED`, `ERR_PACKAGE_IMPORT_NOT_DEFINED`, `ERR_UNSUPPORTED_DIR_IMPORT`, `ERR_REQUIRE_ESM`, `ERR_UNKNOWN_FILE_EXTENSION`, `ERR_INVALID_PACKAGE_CONFIG`, `ERR_UNSUPPORTED_RESOLVE_REQUEST`, `ERR_INVALID_ARG_TYPE`, `ERR_INVALID_ARG_VALUE`, `ENOENT`, `EACCES`, `EPERM`, or `OtherCode`. Non-Error thrown values map to `OtherError` / `OtherCode`.
+- **Output:** one fixed JSON object with import status, named-export boolean, default-type/descriptor categories when import succeeds, elapsed milliseconds, and sanitized error categories if import fails. No raw exception, namespace/default contents, resolved paths, environment data, or stderr.
+- **No environment/provider access:** do not inspect `process.env`, call the key accessor or loader, open environment files directly, or contact any network/provider. Importing the package is the only module evaluation authorized.
+- **Stop boundary:** one invocation, one import, no retries. If a fixed output cannot be guaranteed or unexpected output occurs, report only `harness_failure`; do not rerun or debug under DIAG-006.
+
+## Expected outcome and acceptance
+
+1. The operator explicitly approves this exact DIAG-006 contract with `continue DIAG-006` before execution.
+2. One dynamic import is attempted; only approved export-shape metadata is inspected; no package function or getter is invoked.
+3. Output contains only fixed categories, booleans, and elapsed time; no raw errors, paths, secrets, environment values, or network data appear.
+4. EVIDENCE/RUNBOOK/CHECKPOINT-16 record observed facts only and keep checkpoint 03 at `HOLD`.
+5. `git diff --check` passes; no dependency, source, configuration, test, sample, or unrelated path changes occur.
+
+## Verification and stop conditions
+
+- **Before run:** validate allowed paths and preflight facts without opening `.env*`; review this exact contract; run `git diff --check`.
+- **During run:** perform one import and fixed metadata checks only. Do not invoke or evaluate a getter; do not access environment values. Stop on unexpected harness behavior without retry.
+- **After run:** validate output schema, record UTC timestamp and command status, confirm no sample/provenance or unrelated path changed, and run `git diff --check`.
+- **Exit decision:** mark only the observed export shape as verified; whether any callable is safely usable and the original loader failure cause may remain unknown. DIAG-006 authorizes no loader call, further diagnosis, or live AISStream request.
+
+## Rollback / recovery
+
+Before execution, revise or remove only this appended draft if rejected. The one-shot inspection creates no persistent output except append-only evidence/runbook/checkpoint records. Preserve historical evidence and every pre-existing staged, deleted, modified, and untracked path. Do not inspect environment files, invoke exports, or repeat the diagnostic; further work requires a new bounded contract and explicit authorization.
+
+# TASK-SEA-R2-HANDOFF-002 — Refresh the next-session handoff
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-25
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`NEXT_SESSION.md`](NEXT_SESSION.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/checkpoints/CHECKPOINT-16.md`](docs/checkpoints/CHECKPOINT-16.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), `E-SEA-066`.
+
+## Goal and constraints
+
+- **Goal:** replace the stale active FIX-001 next-session handoff with an accurate, restartable handoff to the current verified documentation checkpoint, without changing product behavior or reopening diagnostics.
+- **Scope alignment:** this handoff documents the currently observed R2 state and does not claim R2 acceptance; Sprint checkpoint 03 remains `HOLD` because the live PositionReport and matching sample/provenance criteria are unmet.
+- **Governance discrepancy:** `CLAUDE.md` and `SPEC.md` still name B-08 as the current task. Do not silently amend those baselines here; flag the discrepancy and require separate approved change control before correction.
+- **Authorization:** documentation handoff only. No accessor evaluation, loader invocation, environment inspection, live provider/network request, sample/provenance access, build/test, stage, commit, push, or deployment is authorized.
+
+## Allowed paths and preservation boundary
+
+- `TASK_SPEC.md`: append this contract and update only its status after checks.
+- `NEXT_SESSION.md`: replace only the active section above `## Історичний R1 handoff`; preserve the R1 archive byte-for-byte.
+- `EVIDENCE.md`: append one factual handoff verification record after checks.
+- `RUNBOOK.md`: append one factual operational handoff record after checks.
+- **Read-only anchors:** `CLAUDE.md`, `SPEC.md`, `docs/checkpoints/CHECKPOINT-16.md`, DIAG-006/E-SEA-066 records, and DEC-004.
+- Preserve every pre-existing staged, modified, deleted, and untracked path. Do not stage, reset, clean, remove, or overwrite unrelated paths.
+
+## Handoff acceptance and verification
+
+1. `NEXT_SESSION.md` identifies CHECKPOINT-16 as the canonical restart summary, links E-SEA-066 and the latest RUNBOOK record, and states the exact DIAG-006 result and its limits.
+2. The handoff states Sprint checkpoint 03 `HOLD`, the missing live receipt/sample/provenance, unresolved getter/loader cause, and the explicit authorization boundary for any future work.
+3. The next-session prompt begins with read-only Git status/path/ref checks and review of canonical records; it does not direct implementation or live access.
+4. The governance mismatch is disclosed without changing `CLAUDE.md` or `SPEC.md`; the historical R1 archive remains unchanged.
+5. After checks, append E-SEA-067 and a RUNBOOK entry using observed results only; do not edit CHECKPOINT-16 unless a factual defect is verified.
+6. Run `git diff --check`, a scoped trailing-whitespace check, validate handoff links/claims, inspect the scoped diff and final Git boundary. No build/test is relevant or authorized.
+
+## Stop conditions and recovery
+
+Stop and request human direction if the Git boundary materially differs from the preflight, the R1 archive cannot be preserved, or factual consistency requires changing a governance baseline. If rejected, revise only the task-specific appended contract, active handoff section, and this task's append-only records; preserve all pre-existing Git state and historical evidence. No rollback of product code is applicable.
+
+# TASK-SEA-R2-GOV-003 — Draft current-task governance reconciliation
+
+- **Version:** `1.0.0`
+- **Status:** `Active`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-25
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`NEXT_SESSION.md`](NEXT_SESSION.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/README.md`](docs/decisions/README.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), [`docs/decisions/DEC-007-r2-b09-streaming-boundary.md`](docs/decisions/DEC-007-r2-b09-streaming-boundary.md), [`docs/checkpoints/CHECKPOINT-16.md`](docs/checkpoints/CHECKPOINT-16.md), `E-SEA-066`, `E-SEA-067`.
+
+## Goal and decision boundary
+
+- **Goal:** prepare a non-authoritative, reviewable Draft decision proposal addressing stale canonical wording that still identifies B-08 as the current R2 task, without selecting a new authorized implementation task or changing any canonical baseline.
+- **Observed context:** `CLAUDE.md` v1.3.0 and `SPEC.md` v1.1.0 identify B-08 as current. Later task-specific records document separately bounded work through DIAG-006 and HANDOFF-002. CHECKPOINT-16 and `NEXT_SESSION.md` disclose the discrepancy and require separate change control. DEC-006 authorized R2 and B-08; later activity does not by itself make a completed task the currently authorized next task.
+- **Approval boundary:** the user authorized preparation of a Draft proposal only. This task does not approve the proposed decision, update canonical status, authorize a successor task, or authorize any technical/provider work. A separate explicit human decision is required before accepting the proposal or synchronizing baselines.
+- **Acceptance state:** Sprint checkpoint 03 remains `HOLD / not passed`; this task makes no R2 acceptance, live receipt, sample/provenance, or release-readiness claim.
+
+## Allowed paths and preservation boundary
+
+- `TASK_SPEC.md`: append this bounded contract only.
+- `docs/decisions/DEC-008-r2-current-task-status.md`: create a new `Draft` proposal only if the path is absent; never overwrite an existing file.
+- `EVIDENCE.md` and `RUNBOOK.md`: append factual preparation/check results only after the checks have actually run.
+- **Read-only inputs:** `CLAUDE.md`, `SPEC.md`, `NEXT_SESSION.md`, `docs/decisions/README.md`, DEC-006, DEC-007, `docs/README.md`, `docs/sprints/README.md`, `SPRINT-02.md`, CHECKPOINT-03, CHECKPOINT-16, relevant `TASK_SPEC.md` records, E-SEA-066/E-SEA-067, and corresponding RUNBOOK entries.
+- **Excluded:** edits to `CLAUDE.md`, `SPEC.md`, `docs/decisions/README.md`, `docs/README.md`, `docs/sprints/README.md`, `SPRINT-02.md`, DEC-006/DEC-007, prior task contracts, historical checkpoints, and existing append-only history except the allowed factual append after checks; all product/source/test/dependency/configuration paths; `.env*`, credentials, reader/loader/accessor/provider/network activity; stage/reset/clean/remove, commit, push, deployment; all pre-existing unrelated paths.
+- Preserve every pre-existing staged, modified, deleted, and untracked path. Do not infer that the latest checkpoint's task label is a new standing authorization.
+
+## Draft proposal requirements
+
+1. The new record follows `docs/decisions/README.md` and contains ID, version, date, status, owner, context/constraints, options including rejected alternatives, proposed choice/rationale, consequences/risks/deferred work, a review/verification trigger, and links to relevant SPEC/TASK/EVIDENCE/RUNBOOK records.
+2. Mark the record `Draft` and explicitly state it is not an approved decision and has no effect on canonical baselines.
+3. Present a conservative proposed resolution: do not identify any R2 technical task as currently authorized until the product owner selects and approves a new bounded task; distinguish governance review as a next action from authorization to implement. The product owner may reject or revise this proposal.
+4. Options must distinguish at least: (a) retain B-08 as the historical task authorized by DEC-006 but remove the stale implication that it remains current; (b) explicitly name another bounded task only after its own contract and approval; (c) leave the existing wording unchanged. Explain why option (c) risks misleading operators given the recorded later task history, without treating that history as proof of new standing authorization.
+5. Identify the impact surface for later review: direct stale claims in `CLAUDE.md` and `SPEC.md`; other Sprint-2 status statements in `docs/README.md` and `docs/sprints/README.md`; and the separately controlled `SPRINT-02.md`/DEC-007 relationship. Do not silently expand this task to synchronize any of those files.
+6. Keep DEC-006 and DEC-007 historical records intact; do not mark either superseded. The decision index is not updated until the proposal is approved and the resulting record verified.
+
+## Verification, checkpoint, and stop conditions
+
+- Before creating DEC-008, verify the fresh Git boundary/ref values and that the exact target path does not exist; preserve all pre-existing paths.
+- Validate decision metadata, Draft/non-authoritative language, options, proposed choice, approval/revisit trigger, record links, checkpoint HOLD statement, and exclusion of technical/provider activity against the read-only source records.
+- Run `git diff --check` on the authorized documentation paths; inspect the complete diff and confirm no excluded path changed. Run only documentation/Git structural checks; do not run product build/tests.
+- Stop if DEC-008 already exists, the decision requires guessing an approved successor task, any baseline must be edited to express the proposal, the Git boundary changes unexpectedly, or a check would require secret/environment/provider access.
+- Append EVIDENCE/RUNBOOK only with observed facts after verification. Human review must choose `continue`, `revise`, or `HOLD` for the proposal before it is treated as an approved decision or used to update other canonical artifacts.
+
+## Rollback / recovery
+
+If this draft-preparation slice is rejected, inspect the diff and revise/remove only the newly appended `TASK-SEA-R2-GOV-003` section and the new DEC-008 proposal. Correct factual evidence/runbook errors only through superseding append-only entries. Preserve all pre-existing staged, modified, deleted, and untracked paths; do not reset, clean, stage, or remove them. No product rollback applies.
+
+# TASK-SEA-R2-GOV-004 — Authorize current-task decision and baseline correction
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-25
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`docs/decisions/README.md`](docs/decisions/README.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), [`docs/decisions/DEC-008-r2-current-task-status.md`](docs/decisions/DEC-008-r2-current-task-status.md), [`NEXT_SESSION.md`](NEXT_SESSION.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/checkpoints/CHECKPOINT-16.md`](docs/checkpoints/CHECKPOINT-16.md), `E-SEA-068`.
+
+## Goal and approval boundary
+
+- **Goal:** define an explicitly reviewable, documentation-only task to record the proposed R2 current-task governance resolution and correct only direct stale B-08-current claims in the canonical baselines.
+- **Proposed resolution:** B-08 remains the historical bounded task selected by DEC-006; no R2 technical task is currently authorized until a new bounded task is separately reviewed and explicitly approved. This does not change authorized R2 scope and does not establish Sprint 2 acceptance.
+- **User decision recorded:** the user selected `continue` on the DEC-008 proposal and selected direct stale claims only as the synchronization scope. This is not treated as product-owner signoff unless the product owner explicitly confirms that decision; do not infer approval identity or authority.
+- **Human gate:** this contract is `Draft`. Do not create an approved decision record, update the decision index, or edit canonical baselines until the product owner explicitly approves this exact task contract and the planned decision record. A separate diff review is required after execution.
+- **Acceptance boundary:** Sprint checkpoint 03 remains `HOLD / not passed`. This task must not claim R2 acceptance, live provider receipt, matching sample/provenance, release readiness, or authorize implementation/diagnostics.
+
+## Allowed paths and preservation boundary
+
+- `TASK_SPEC.md`: append this contract; update its status only after the approval/execution gates are satisfied.
+- After explicit product-owner approval of this exact task and decision text: create `docs/decisions/DEC-009-r2-current-task-status.md` as the approved versioned decision; update `docs/decisions/README.md` with the verified DEC-009 entry and required index metadata/version; update only the current-task statements and required metadata/related links in `CLAUDE.md` and `SPEC.md`.
+- `EVIDENCE.md` and `RUNBOOK.md`: append factual outcomes only after verification; never rewrite prior entries.
+- **Read-only inputs:** DEC-006, DEC-007, DEC-008, `docs/decisions/README.md`, `NEXT_SESSION.md`, CHECKPOINT-16, the relevant B-08 and later task records, E-SEA-066…E-SEA-068, and corresponding RUNBOOK entries.
+- **Excluded:** `docs/README.md`, `docs/sprints/README.md`, `SPRINT-02.md`, DEC-006/007/008 content, historical task contracts/checkpoints, all product/source/test/dependency/configuration paths, environment/secrets, provider/network activity, build/tests, staging/reset/clean/remove, commit, push, deployment, and unrelated pre-existing paths.
+- Preserve every pre-existing staged, modified, deleted, and untracked path. Do not alter the new or existing untracked paths except the specifically allowed new DEC-009 after approval.
+
+## Proposed decision record and baseline wording
+
+1. Create a new approved decision record at the verified-absent path `docs/decisions/DEC-009-r2-current-task-status.md` rather than overwrite DEC-008. The new record must link DEC-008 as its Draft proposal/source, preserve DEC-006's historical authorization, present the accepted current authorization boundary, and explicitly state that no successor task or Sprint 2 acceptance is authorized/inferred.
+2. Keep DEC-008 unchanged as a historical Draft proposal; do not label it approved or superseded. Add DEC-009 to the index only after DEC-009's approval/status and links have been verified. Apply the decision-index version/date update only after inspecting and recording the exact version in the reviewed diff; do not assume a generic increment rule.
+3. In `CLAUDE.md` §1, replace only wording that implies B-08 remains the current task. Preserve that DEC-006 authorized R2 and B-08 historically, and state that no R2 technical task is currently authorized pending separate bounded-task approval. Add the DEC-009 link and bump the document version/date according to inspected convention.
+4. In `SPEC.md` Scope, Release slice, Open decisions, and Change-control gate, correct only B-08-as-current implications. Preserve R2 scope, B-08's historical DEC-006 authorization, and individual gates on later tasks. Add the DEC-009 link and bump version/date according to inspected convention.
+5. Proposed version targets for review: new DEC-009 `1.0.0`, decision index `0.7.0`, `CLAUDE.md` `1.4.0`, and `SPEC.md` `1.2.0`. These targets are proposals, not established repository rules; confirm each against the existing convention and obtain approval before using different values or changing this list.
+
+## Verification, checkpoint, and stop conditions
+
+- Before execution, confirm a fresh Git boundary/ref snapshot, exact allowed paths, DEC-009 path absence, explicit product-owner approval, and approved wording/version targets. Never overwrite a pre-existing DEC-009.
+- Verify the DEC-009 metadata/status, decision choice, links, historical boundary, index consistency, and matched current-task wording across CLAUDE.md and SPEC.md. Confirm no direct claim remains that B-08 is currently authorized, except explicitly historical wording.
+- Confirm checkpoint 03 remains `HOLD / not passed`, and no implementation, provider, live-receipt, sample/provenance, acceptance, or release-readiness claim appears.
+- Run only documentation/Git structural checks: `git diff --check` on changed paths, local-link/content/version checks, full diff review, and final changed-path boundary review. Do not run build/tests or inspect environment/secrets.
+- Stop without canonical edits if the product owner has not approved the contract and exact decision text, the decision-index/version convention remains unresolved, the boundary changed unexpectedly, or replacement wording requires guessing.
+
+## Checkpoint and recovery
+
+- **Checkpoint:** after contract review, before any canonical edit; then after verified decision/index changes, before baseline synchronization; finally inspect the complete diff for human `continue`, `revise`, or `HOLD`.
+- **Rollback/recovery:** if rejected before execution, revise only this appended Draft contract. If later canonical changes are rejected, inspect and revise only the authorized paths through a new versioned change record; do not reset or erase pre-existing staged, modified, deleted, or untracked state, and do not rewrite append-only evidence/history. No product rollback applies.

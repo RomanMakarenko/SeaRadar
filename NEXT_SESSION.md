@@ -1,42 +1,42 @@
-# NEXT_SESSION.md — FIX-001 implementation handoff
+# NEXT_SESSION.md — DIAG-006 handoff and review checkpoint
 
-- **ID:** `HANDOFF-SEA-R2-FIX-001`
+- **ID:** `HANDOFF-SEA-R2-DIAG-006`
 - **Version:** `1.0.0`
 - **Status:** `Ready`
 - **Owner:** виконавець проєкту
 - **Date:** 2026-09-25
-- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/checkpoints/CHECKPOINT-07.md`](docs/checkpoints/CHECKPOINT-07.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), `TASK-SEA-R2-B09B10-FIX-001`, `E-SEA-056`, `E-SEA-057`
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/checkpoints/CHECKPOINT-16.md`](docs/checkpoints/CHECKPOINT-16.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), `TASK-SEA-R2-B09B10-DIAG-006`, `TASK-SEA-R2-HANDOFF-002`, `E-SEA-066`
 
-> FIX-001 has a local WebSocket binary-frame compatibility change and passing deterministic checks. The user reported “стій, запрацювало”; this is not independently verified live-provider evidence. This handoff replaces the obsolete B-13 contract-preparation prompt while preserving the historical R1 archive. `RUNBOOK.md` is the operational history; `EVIDENCE.md` records facts and their limitations. No live retry, commit, push or deployment is authorized here.
+> **Restart from CHECKPOINT-16.** DIAG-006 completed one approved dynamic import of `@next/env`: `hasNamedLoadEnvConfig=false`, `defaultType="object"`, `defaultLoadEnvConfigProperty="accessor"`. The accessor descriptor was inspected without evaluating its getter or calling a package function. This is export-shape evidence only; the getter result and DIAG-001 loader failure cause remain unknown. `EVIDENCE.md` is factual evidence, and `RUNBOOK.md` is append-only operational history. No further diagnostic, provider request, commit, push, or deployment is authorized by this handoff.
 
 ## Поточний стан
 
-- **Verified baseline:** branch `sprint2`; current `HEAD` and local `origin/sprint2` both resolve to `4c8dea20b0ce471fbb1d126784ed665dd77aaf64` (`docs(r2): record B-13 interface delivery`). Recheck refs/status before any future delivery; the remote was not queried in this handoff task.
-- **FIX-001 status:** `server/aisstream-reader.ts` configures `binaryType = "arraybuffer"` and strictly decodes UTF-8 `ArrayBuffer` frames. The recorded focused Playwright command passed 33 tests; recorded TypeScript, build and scoped whitespace checks passed. See `E-SEA-056`; these are local checks, not proof of live AISStream behavior. Final human diff review remains pending.
-- **User report:** “стій, запрацювало” is preserved in `E-SEA-057` as a user-reported observation only. The assistant did not independently observe a post-fix live result or receive a raw frame/sample.
-- **Current local Git state:** nothing was staged by this handoff work. `sprint-2.png` was already staged. `EVIDENCE.md`, `RUNBOOK.md`, `TASK_SPEC.md`, reader and two test files were modified; `START.md` was already deleted; `NEXT_SESSION.md` and checkpoint files 03–06 were already untracked. Other existing untracked paths include `.agents/`, `.claude/skills/`, `README.pdf`, `reference/`, and `skills-lock.json`. Preserve all of them; do not stage/clean/overwrite broadly.
-- **Build boundary:** the successful build output reported `.env.local` as an environment source. No value was printed, but do not claim the file or its contents were not loaded by the build environment. Do not inspect `.env.local` or real key contents.
-- **Open Unknowns:** provider acceptance, key validity, live AISStream receipt, LIVE-003 frame contents, live UI/API end-to-end behavior, full R2 acceptance, and release readiness remain `Unknown` / `Needs verification`. Sprint checkpoint 03 remains **HOLD / not passed**; no sample/provenance was created.
+- **Canonical restart record:** [`docs/checkpoints/CHECKPOINT-16.md`](docs/checkpoints/CHECKPOINT-16.md), under DEC-004. See [`E-SEA-066`](EVIDENCE.md#e-sea-066--diag-006-default-export-shape-inspected) for the observed result and limitations and the latest DIAG-006 entry in [`RUNBOOK.md`](RUNBOOK.md).
+- **Verified bounded result:** branch `sprint2`; at the recorded DIAG-006 checkpoint, `HEAD` was `2147d93` (`fix(r2): decode websocket binary frames`) and matched local `origin/sprint2`. A single dynamic import succeeded. The imported namespace had no callable named `loadEnvConfig`; the default was an object with an own `loadEnvConfig` accessor descriptor. The getter was not evaluated. Recheck the worktree and refs before any action; this handoff did not query the remote.
+- **Unresolved:** the accessor's returned value and the cause of DIAG-001's earlier loader failure remain unknown. DIAG-006 did not call the loader/key accessor, inspect `process.env`, or access any provider/network API.
+- **Sprint status:** checkpoint 03 remains **HOLD / not passed**. No eligible server-received AISStream `PositionReport` and no matching live sample/provenance were established. The existing B-10 sample is synthetic; the user-supplied screenshot is not independent verification of live UI/API behavior. Do not infer R2 acceptance or release readiness.
+- **Governance mismatch:** `CLAUDE.md` and `SPEC.md` still identify B-08 as the current task, while later task/evidence/checkpoint records document subsequent bounded R2 work. This handoff does not silently change either baseline; correction needs separate approved change control. Use current task-specific contracts and checkpoint records for restart facts, and surface the mismatch for human review.
+- **Git preservation boundary:** the recorded pre-handoff state had modified `EVIDENCE.md`, `RUNBOOK.md`, and `TASK_SPEC.md`; deleted `START.md`; staged `sprint-2.png`; and untracked `.agents/`, `.claude/skills/`, `README.pdf`, checkpoint files 08–16, `reference/`, and `skills-lock.json`. Preserve all paths and recheck status before action; do not stage, reset, clean, or remove them.
 
 ## Наступний bounded крок
 
-Review the full current diff and this handoff; then choose `continue`, `revise` or `HOLD` for the local FIX-001 implementation and documentation. Keep Sprint checkpoint 03 at `HOLD`. Do not make a live-provider request, inspect `.env.local`/the real key, create a sample, stage, commit, push or deploy without separate explicit authorization.
+First perform a read-only Git boundary/ref check, then review this handoff and the complete current diff. Human reviewer should choose `continue`, `revise`, or `HOLD`. Do not start another diagnostic or provider request under this handoff. Any follow-up needs its own bounded task contract and explicit user authorization.
 
 ## Актуальний prompt для наступної сесії
 
 ```text
-Продовжуй SeaRadar із поточного стану. Почни з read-only перевірки `git status --short --branch`, `git diff --name-only`, `git diff --cached --name-only`, `git rev-parse HEAD` і `git rev-parse origin/sprint2`; не припускай, що refs лишилися без змін.
+Продовжуй SeaRadar з canonical restart record `docs/checkpoints/CHECKPOINT-16.md`. Почни тільки з read-only перевірки `git status --short --branch`, `git diff --name-only`, `git diff --cached --name-only`, `git rev-parse HEAD` і `git rev-parse origin/sprint2`; збережи всі staged, modified, deleted та untracked paths і не роби stage/reset/clean/remove.
 
-Прочитай `CLAUDE.md`, `SPEC.md`, `TASK_SPEC.md` розділ `TASK-SEA-R2-B09B10-FIX-001`, `EVIDENCE.md` записи E-SEA-055—057, `RUNBOOK.md` останні записи та `docs/checkpoints/CHECKPOINT-07.md`. Переглянь повний diff і перевір exact path boundary перед рішенням `continue`, `revise` або `HOLD`.
+Прочитай `CLAUDE.md`, `SPEC.md`, поточні task записи в `TASK_SPEC.md`, E-SEA-066 у `EVIDENCE.md`, останній DIAG-006 запис у `RUNBOOK.md`, CHECKPOINT-16 і цей handoff. Переглянь повний diff, звір exact path boundary та фактичні claims, після чого зупинись для людського рішення `continue`, `revise` або `HOLD`.
 
-Факти: reader задає native WebSocket `binaryType = "arraybuffer"`, рядки передає незмінно, а `ArrayBuffer` декодує strict UTF-8; invalid UTF-8/unsupported types -> `provider_error`. Записано 33 focused Playwright tests, TypeScript, build і scoped `git diff --check` як PASS. Build output повідомив `.env.local` як environment source; не стверджуй, що він не завантажив її. Користувач сказав “стій, запрацювало”, але це лише user-reported observation; асистент не виконував post-fix live attempt. Sprint checkpoint 03 залишається HOLD; live receipt/sample/provenance не підтверджені.
+DIAG-006 спостерігав: одна dynamic import успішна; `hasNamedLoadEnvConfig=false`; `defaultType=object`; `defaultLoadEnvConfigProperty=accessor`; getter і package functions не викликались. Результат getter та причина DIAG-001 loader failure невідомі. Sprint checkpoint 03 залишається HOLD/not passed: eligible live AISStream PositionReport і відповідні live sample/provenance відсутні. Governance-файли CLAUDE.md та SPEC.md іще називають B-08 current task; не виправляй їх у цьому handoff.
 
-Не читай/друкуй/копіюй `.env.local` або реальний ключ. Не роби live AISStream-запит, sample capture, commit, push, deploy, reset чи clean без окремої явної авторизації. Не stage широкі шляхи: `sprint-2.png` уже staged; `START.md` уже deleted; `TASK_SPEC.md`, `EVIDENCE.md`, `RUNBOOK.md` мали попередні зміни; збережи всі pre-existing untracked paths. Підготуй точний candidate commit manifest тільки після повного diff review і явного рішення користувача.
+Не читай/друкуй `.env*` чи ключі, не оцінюй accessor, не викликай loader/key accessor, не перевіряй `process.env`, не роби AISStream/provider/network request і не створюй sample/provenance. Не запускай build/tests. Не роби commit/push/deploy. Подальша діагностика потребує нового bounded contract і окремої явної авторизації. Після review повідом changed files, реально виконані checks, unresolved Unknowns, preservation/recovery state і наступну дію.
 ```
 
 ## Handoff boundary
 
-FIX-001 implementation and local checks are recorded; no post-fix live result has been independently verified. The current handoff is for human diff review and decision only. Preserve Sprint checkpoint 03 as `HOLD`. No commit, push, deployment, live-provider access or real-key inspection is authorized by this handoff.
+This document directs restart and human review only. CHECKPOINT-16 remains the canonical checkpoint; it is a summary, not evidence. Sprint checkpoint 03 stays `HOLD`. No accessor evaluation, loader diagnosis, live-provider access, build/test, commit, push, or deployment is authorized here.
 
 ## Історичний R1 handoff
 
