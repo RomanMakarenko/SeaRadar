@@ -1,11 +1,11 @@
 # RUNBOOK.md — delivery history and handoff
 
 - **ID:** `RUNBOOK-SEA-001`
-- **Version:** `0.19.0`
+- **Version:** `0.20.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-24
+- **Date:** 2026-09-25
 - **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`EVIDENCE.md`](EVIDENCE.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md)
 
 ## Purpose and boundary
@@ -577,3 +577,56 @@ Each entry must include: date/session, goal and scope, changed artifacts, comman
 - **Decision:** on 2026-09-24 the user confirmed `diff перевірив` and chose `continue` for the documentation-only handoff diff.
 - **Boundary:** this decision accepts the handoff checkpoint only; no commit/push or B-13 implementation authorization follows from it. No further product checks, live provider request, or secret access were performed.
 - **Evidence:** `E-SEA-050`.
+
+### 2026-09-24 — one bounded live AISStream attempt
+
+- **Session / task:** `TASK-SEA-R2-B09B10-LIVE-001`; one user-authorized live attempt to verify receipt and, only if suitable data arrived, save one sanitized sample.
+- **Boundary:** used only the existing server-side `getAISStreamApiKey()` accessor, `startAISStreamReader()` and the B-11 transformer. The attempt had one 15-second deadline and no retry. The key value and `.env.local` contents were not printed or manually inspected; no raw provider payload or error detail was saved. No repository harness, route, test, dependency, or UI behavior was added.
+- **Commands and status:** one preliminary Node harness evaluation — `FAIL` at JavaScript parse time before reader startup/network activity; corrected harness invocation — `FAIL`, fixed reader result `provider_error`, exit 1; path check (`git check-ignore`, `git ls-files`, live-target absence) — `PASS`; `git diff --check` — `PASS`. Node.js `v22.23.2`.
+- **Observed result:** the single live invocation received no suitable PositionReport. No sample/provenance files were created and no retry was performed. The existing synthetic B-10 sample/provenance remain unchanged. `.env.local` is ignored and untracked; its contents were not inspected.
+- **Evidence:** `E-SEA-052` records the exact bounded outcome. `E-SEA-031`–`E-SEA-033` remain the existing B-08 configuration-boundary evidence; `E-SEA-026` and `E-SEA-051` remain local/mock demo evidence, not live UI/API end-to-end proof.
+- **Checkpoint / status:** checkpoint 03 is recorded separately as `HOLD`, not passed. Live receipt and live sample/provenance criteria are unmet; the fixed `provider_error` does not establish its underlying cause. The task's one-attempt authorization is exhausted.
+- **Open Unknowns:** provider availability, real-key validity, cause of the fixed reader error, live receipt, and full R2 acceptance remain unverified. No commit, push, deployment or further live request occurred.
+- **Recovery / next action:** preserve all existing deleted/untracked paths. Do not retry under this task. Any further live investigation requires a new bounded contract and explicit authorization; first review the evidence, runbook and checkpoint diff.
+
+### 2026-09-24 — additional live AISStream attempt under LIVE-002
+
+- **Task / authorization:** `TASK-SEA-R2-B09B10-LIVE-002`; the user reviewed the bounded contract and selected `continue`. Exactly one additional attempt was authorized; no retries.
+- **User-reported context:** the user reported that the configured key worked in Postman. This was not independently verified; no Postman session or key value was inspected.
+- **Preflight:** Node.js v22.23.2 imports of the existing accessor, reader and transformer — `PASS`; `.env.local` ignored and untracked — `PASS` without reading its contents; both live sample paths absent — `PASS`; initial `git diff --check` — `PASS`.
+- **Live attempt:** used the existing accessor/reader from a temporary in-memory harness with one connection and a 15-second total deadline. Output was `SUBSCRIBED=yes` followed by `RESULT=reader_error_provider_error` (exit 1). This records that the local reader sent its subscription, not that the provider acknowledged it. No suitable PositionReport was received; raw payload, provider error text and key were not exposed. No sample/provenance was written; no retry occurred.
+- **Post-attempt checks:** both live sample paths remained absent; `git diff --check` — `PASS`. No source, route, test, dependency, or UI path changed.
+- **Evidence:** `E-SEA-053` records the observed outcome; `E-SEA-052` records the initial attempt. B-08 configuration and local/mock demo evidence remain separate and do not resolve the live reader failure.
+- **Checkpoint / status:** new `CHECKPOINT-04.md` records the second fixed `provider_error` outcome and keeps Sprint checkpoint 03 at `HOLD`, not passed. The underlying cause remains unknown. The one additional attempt is exhausted.
+- **Limitations / next action:** provider availability, key validity, provider acknowledgment, live message receipt, live sample/provenance and full R2 acceptance remain unverified. No further live request, troubleshooting, commit, push or deployment is authorized. Review the E-053/RUNBOOK/checkpoint diff; any future attempt needs a new bounded contract and explicit authorization.
+
+### 2026-09-24 — LIVE-003 stopped at key preflight
+
+- **Task / authorization:** `TASK-SEA-R2-B09B10-LIVE-003`; the user instructed to proceed after receiving the bounded diagnostic summary. Exactly one attempt was authorized subject to its stop conditions.
+- **Preflight:** `.env.local` ignore/tracking checks passed; both live sample targets were absent. Node.js v22.23.2 imported the existing accessor without loading env files; it returned no configured key in the inherited process (`KEY_CONFIGURED=no`, guarded exit 4).
+- **Stop:** no reader invocation, socket, provider request, sample, evidence/checkpoint artifact or retry occurred. No key value or `.env.local` content was read, loaded or displayed. The one live-attempt allowance remains unused.
+- **Status / next action:** `BLOCKED` before provider access; the current contract prohibits loading local env files, so the key in `.env.local` was unavailable to this direct Node process. Any future attempt requires a reviewed contract revision explicitly allowing safe in-memory environment loading, then a separate bounded reader invocation. Checkpoint 03 remains `HOLD`.
+
+### 2026-09-24 — LIVE-003 bounded reader attempt
+
+- **Authorization amendment:** the user stated “дозволяю програмі читати ключ”. `TASK_SPEC.md` records this as permission to use the installed Next.js `@next/env` loader in memory and then obtain the AISStream key only through the existing accessor, for LIVE-003's already-authorized unused attempt. No app server was started.
+- **Preflight:** the first ESM named import of CommonJS `@next/env` failed before loading the environment; no key was loaded and no network call occurred. The corrected `require` path succeeded; output was `KEY_CONFIGURED=yes`, with no value exposed. Reader and transformer imports passed. The `.env.local` ignore/tracking checks and sample-target absence checks passed.
+- **Attempt:** exactly one `startAISStreamReader()` invocation opened one WebSocket and sent the local subscription (`SUBSCRIBED=yes`). The wrapper observed a message event with non-string `data`, recording only `EVENT_CATEGORY=non_text_message`; the reader returned fixed `provider_error`. Final status: `READER_ERROR=provider_error`, `OUTCOME=reader_error` (exit 1). The event data was not decoded, displayed or saved. The 15-second timeout bounded the invocation; no retry occurred.
+- **Sample / checks:** no valid PositionReport was received, so no live sample/provenance was created. Post-attempt checks confirmed both live sample targets remain absent. `E-SEA-055` records the event observation and limitations.
+- **Checkpoint / status:** `CHECKPOINT-06.md` records the new outcome and preserves Sprint checkpoint 03 at `HOLD`; checkpoint 05 remains the preflight-stop record. The one LIVE-003 attempt is exhausted.
+- **Limitations / next action:** the event category identifies why this reader call mapped to its fixed error, but does not establish what the frame contained or why its data was non-string. Do not patch source or retry under LIVE-003. A possible reader compatibility fix requires a separate task contract, deterministic test, and human review. No commit, push or deployment occurred.
+
+### 2026-09-25 — reader compatibility fix and restart handoff
+
+- **Session / task:** local implementation and handoff for `TASK-SEA-R2-B09B10-FIX-001` after the user authorized `continue`; no live-provider action was included.
+- **Goal and scope:** normalize valid UTF-8 WebSocket `ArrayBuffer` frames at the existing reader boundary, preserve fixed failure mapping and lifecycle behavior, record observed local checks, and prepare a restartable handoff. No collector/API/UI behavior, dependency, sample, provider request, commit, push or deployment was added in this task.
+- **Implementation paths already present at handoff start:** `server/aisstream-reader.ts`, `tests/snapshot-reader.spec.ts`, `tests/snapshot-collector.spec.ts`. The reader sets native `binaryType = "arraybuffer"`, forwards strings unchanged, strictly decodes UTF-8 `ArrayBuffer`, and maps unsupported types/invalid UTF-8 to `provider_error`. These diffs were already present when this documentation/handoff work began; no code or test file was edited in this handoff task.
+- **Commands and status:** `AISSTREAM_API_KEY=test-only-no-secret npx playwright test tests/snapshot-reader.spec.ts tests/snapshot-collector.spec.ts tests/snapshot-interface.spec.ts` — `PASS`, 33 tests; `AISSTREAM_API_KEY=test-only-no-secret npx tsc --noEmit` — `PASS`; `AISSTREAM_API_KEY=test-only-no-secret npm run build` — `PASS`; scoped `git diff --check` — `PASS`. These are results from the implementation work; the build output reported `.env.local` as an environment source. No values were printed, but we cannot claim that file contents were not loaded by the build environment.
+- **Handoff-documentation checks:** final `git diff --check` — `PASS`; Python trailing-whitespace checks for the current task/handoff/checkpoint documents — `PASS`; focused assertions for task/evidence/checkpoint IDs, preserved historical R1 archive and Sprint checkpoint 03 `HOLD` — `PASS`.
+- **User report and provider boundary:** the user said “стій, запрацювало”; this is user-reported context, not an independently verified post-fix provider result. No new AISStream attempt, raw frame, valid live PositionReport, live sample or provenance was captured after the change. LIVE-003's earlier `SUBSCRIBED=yes` / non-text event / fixed `provider_error` observation is unchanged and does not reveal the frame contents or provider acceptance.
+- **Evidence / checkpoint:** `E-SEA-056` records local implementation checks; `E-SEA-057` records the user report with its limitation. `CHECKPOINT-07.md` (`CHECKPOINT-SEA-R2-007`) is the new restart record; CHECKPOINT-03 through CHECKPOINT-06 remain unchanged. Sprint checkpoint 03 remains **HOLD / not passed** pending live receipt and sample/provenance evidence.
+- **Git boundary:** at handoff preparation, branch is `sprint2`, `HEAD` and `origin/sprint2` both resolve to `4c8dea20b0ce471fbb1d126784ed665dd77aaf64`. `sprint-2.png` was already staged. `START.md` was already deleted; `EVIDENCE.md`, `RUNBOOK.md`, and `TASK_SPEC.md` were already modified before this documentation update; existing untracked handoff/checkpoint and other user files remain preserved. No staging, commit, push, reset, clean or deployment was performed.
+- **Future commit preparation:** likely implementation candidates are the reader and two test paths plus the reviewed documentation records. Do not stage `EVIDENCE.md`, `RUNBOOK.md`, or `TASK_SPEC.md` wholesale without reviewing/separating their pre-existing changes. Keep the already-staged image, `START.md` deletion, old untracked paths and unrelated material out unless separately reviewed and explicitly requested. The exact future commit manifest remains subject to a fresh diff review and user decision.
+- **Unknowns / blockers:** provider acceptance, live receipt, key validity, the content of the LIVE-003 non-text frame, live UI/API end-to-end behavior, full R2 acceptance and release readiness remain `Unknown` / `Needs verification`. Human review of this complete code-and-documentation state remains the next gate.
+- **Recovery:** preserve all existing modifications, staged/untracked/deleted paths and local environment files. Revise only the FIX-001 status/handoff portion if rejected; correct append-only records with a superseding factual entry rather than rewriting history. Do not reset or clean the branch.
+- **Handoff:** next session should read `CHECKPOINT-07.md`, `E-SEA-056`/`E-SEA-057`, the FIX-001 section and the current portion of `NEXT_SESSION.md`; verify the actual Git state, review exact diffs, then ask for `continue`, `revise` or `HOLD`. No further provider attempt, commit or push is authorized by this entry.

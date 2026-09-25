@@ -115,6 +115,20 @@ test("forwards ordered text messages from one socket and sends the exact subscri
   expect(attempt.messages).toEqual(["first", "second"]);
 });
 
+test("decodes valid UTF-8 ArrayBuffer messages", () => {
+  const attempt = createAttempt();
+  attempt.socket.emit("open");
+  const text = JSON.stringify({ MessageType: "PositionReport" });
+  const bytes = new TextEncoder().encode(text);
+
+  attempt.socket.emit("message", { data: bytes.buffer });
+
+  expect(attempt.messages).toEqual([text]);
+  expect(attempt.errors).toEqual([]);
+  attempt.reader.stop();
+  expect(attempt.socket.closeCount).toBe(1);
+});
+
 test("maps setup, provider, disconnect and binary-message failures", () => {
   const beforeOpen = createAttempt();
   beforeOpen.socket.emit("error");
@@ -138,11 +152,21 @@ test("maps setup, provider, disconnect and binary-message failures", () => {
   expect(disconnected.errors).toEqual(["disconnected"]);
   expect(disconnected.socket.closeCount).toBe(1);
 
-  const binary = createAttempt();
-  binary.socket.emit("open");
-  binary.socket.emit("message", { data: new ArrayBuffer(0) });
-  expect(binary.errors).toEqual(["provider_error"]);
-  expect(binary.socket.closeCount).toBe(1);
+  const unsupported = createAttempt();
+  unsupported.socket.emit("open");
+  unsupported.socket.emit("message", { data: new Uint8Array(0) });
+  expect(unsupported.errors).toEqual(["provider_error"]);
+  expect(unsupported.socket.closeCount).toBe(1);
+  unsupported.socket.emit("message", { data: "late" });
+  expect(unsupported.errors).toEqual(["provider_error"]);
+  expect(unsupported.messages).toEqual([]);
+  expect(unsupported.socket.closeCount).toBe(1);
+
+  const invalidUtf8 = createAttempt();
+  invalidUtf8.socket.emit("open");
+  invalidUtf8.socket.emit("message", { data: new Uint8Array([0xff]).buffer });
+  expect(invalidUtf8.errors).toEqual(["provider_error"]);
+  expect(invalidUtf8.socket.closeCount).toBe(1);
 });
 
 test("maps a failed subscription send to connect_failed", () => {

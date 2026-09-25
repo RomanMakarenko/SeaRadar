@@ -54,6 +54,7 @@ export type StartSnapshotReaderOptions = {
 
 function createNativeWebSocket(url: string): WebSocketLike {
   const socket = new globalThis.WebSocket(url);
+  socket.binaryType = "arraybuffer";
 
   return {
     addEventListener(type, listener) {
@@ -74,6 +75,22 @@ function createSubscription(apiKey: string): string {
     BoundingBoxes: BOUNDING_BOXES,
     FilterMessageTypes: FILTER_MESSAGE_TYPES,
   });
+}
+
+function decodeMessageData(data: unknown): string | null {
+  if (typeof data === "string") {
+    return data;
+  }
+
+  if (!(data instanceof ArrayBuffer)) {
+    return null;
+  }
+
+  try {
+    return new TextDecoder("utf-8", { fatal: true }).decode(data);
+  } catch {
+    return null;
+  }
 }
 
 export function startAISStreamReader(
@@ -160,13 +177,14 @@ export function startAISStreamReader(
         return;
       }
 
-      if (typeof event.data !== "string") {
+      const text = decodeMessageData(event.data);
+      if (text === null) {
         fail("provider_error");
         return;
       }
 
       try {
-        handlers.onText(event.data);
+        handlers.onText(text);
       } catch {
         fail("internal");
       }

@@ -1071,3 +1071,265 @@ No rollback was performed. If recovery is requested, inspect the reviewed diff a
 - **Delivery state:** before this documentation closeout, local `HEAD`, `origin/sprint2` and remote `refs/heads/sprint2` were verified at `17006c615f7a93e84c7c554c624b8909691828fb`. Delivery records are being updated under the separately authorized documentation commit/push request; record that delivery only after verifying its outcome.
 - **Open review:** automated checks establish bounded mocked local behavior only. The final human diff review for the implementation/security-path criterion remains open; do not mark the task `DONE` until that review is recorded. No live AISStream request, real-key validity/receipt, full R2 acceptance or release readiness is established.
 - **Next gate:** review the exact delivery-record diff and choose `continue`, `revise` or `HOLD`. Preserve all unrelated changes and paths.
+
+# TASK-SEA-R2-B09B10-LIVE-001 — One live AISStream receipt and provenance
+
+- **Version:** `1.0.0`
+- **Status:** `Active`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-24
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), `TASK-SEA-R2-B09-001`, `TASK-SEA-R2-B10-001`, `E-SEA-031`–`E-SEA-039`, [`server/aisstream-config.ts`](server/aisstream-config.ts), [`server/aisstream-reader.ts`](server/aisstream-reader.ts), [`data/samples/position-report.sample.json`](data/samples/position-report.sample.json), [`data/samples/PROVENANCE.md`](data/samples/PROVENANCE.md).
+
+## Goal and authorization
+
+- **Goal:** make one bounded live attempt through the existing server-side AISStream reader, capture one actual `PositionReport` if received, preserve one sanitized sample with truthful provenance, and record whether the B-08…B-10 evidence supports Sprint 2 checkpoint 03.
+- **Sprint outcome:** `SPRINT-02.md` session 3 expects a live server-received message, a sample with provenance, secure key configuration, and working demo. This task does not claim the checkpoint passes unless each criterion has supporting evidence.
+- **Authorization:** on 2026-09-24 the user explicitly authorized using the locally configured real key for a live check and separately confirmed permission to save one sanitized `PositionReport`. This authorization is limited to this one task; it does not authorize inspecting or printing the key, further attempts, production activity, or broad R2 acceptance.
+- **Capture boundary:** `GET /api/snapshot` and `collectSnapshot` return transformed `Vessel[]`, not the raw provider message. Do not reconstruct or relabel a transformed vessel as a `PositionReport`. For this bounded sample only, the proposed method invokes the existing `getAISStreamApiKey()` accessor and `startAISStreamReader()` directly from a one-shot server-side harness; the harness is not added to the repository and does not change or expose a product route. The Node 22.23.2 preflight successfully imported the existing reader module with built-in type stripping without loading the key or contacting AISStream.
+- **Human gate:** review the exact diff and select `continue`, `revise` or `HOLD` before any environment loading, WebSocket connection, live attempt, sample creation or checkpoint record. The direct reader method is part of the review scope.
+- **Review decision:** on 2026-09-24 the user selected `continue` and authorized this bounded contract. This authorizes only the one attempt and one sanitized sample described here.
+
+## Allowed paths and exclusions
+
+- **Contract preparation now:** only this appended section in `TASK_SPEC.md`.
+- **After contract `continue`, if actual capture succeeds:** `data/samples/live/position-report.sample.json`; `data/samples/live/PROVENANCE.md`; append-only `EVIDENCE.md` and `RUNBOOK.md`; and `docs/checkpoints/CHECKPOINT-03.md` after evidence is recorded.
+- **Read-only inputs:** the B-08 accessor, B-09 reader, B-12 snapshot collector/route, B-10 synthetic fixture/provenance, relevant Sprint 2/checkpoint convention, and existing B-07 demo evidence.
+- **Excluded:** all code, routes, configuration, tests, package files/dependencies, `.env*` contents, credentials, UI/demo-retention behavior, `SPEC.md`, `SPRINT-02.md`, decision records, commit/push/deployment, and all unrelated, deleted or untracked paths. Do not alter or overwrite the existing synthetic B-10 sample or its provenance.
+
+## Inputs and bounded behavior
+
+- **Key handling:** use only the existing server-side accessor to supply the configured key to the reader. Never read, echo, log, copy into command output, artifact, or evidence the key or `.env.local` contents. Do not include raw WebSocket frames or provider error text in output.
+- **One attempt:** one direct server-side reader invocation, one WebSocket connection, one 15-second total deadline including connect/open/subscription, no retry or polling. On the first valid text `PositionReport`, select only that one message, stop the reader, and close resources exactly once. On timeout, connection/provider error, malformed payload, or no suitable message, stop and do not retry.
+- **Sample output:** if and only if one actual valid message arrives, retain a single sanitized JSON object at `data/samples/live/position-report.sample.json`. Preserve the provider field names/casing needed by the B-11 sample contract (`MetaData.MMSI`, `ShipName`, `latitude`, `longitude`, `time_utc`, and `Message.PositionReport.Sog`, `Cog`, `TrueHeading`, `Latitude`, `Longitude`). Retain only those needed fields; record a schema-permitted omission in provenance or do not save if a required field is absent/uncertain. No raw logs, key, credentials, private local path or unrelated fields.
+- **Provenance:** `data/samples/live/PROVENANCE.md` must state origin `live`, retrieval time in UTC (separate from vessel observation time), source as the existing AISStream reader, fields retained/omitted, sanitization, region/filter context, and limits. Never claim more than the single message observed. Do not change the synthetic fixture provenance.
+- **Demo evidence:** the existing B-07 automated demo-selection evidence (`E-SEA-026`) and mocked B-13 interface evidence (`E-SEA-051`) may be referenced as local demo evidence, but must not be presented as live UI/API end-to-end validation. This task does not change demo behavior or implement the separately gated demo-retention request.
+
+## Expected output and acceptance
+
+1. One live attempt is performed only after human `continue`, through the existing server-side reader/accessor; observed result is recorded accurately without exposing the key or raw provider text.
+2. If a valid message is received, exactly one sanitized actual `PositionReport` and matching provenance are saved at the new live sample paths; existing synthetic sample files remain unchanged. If none is received, no sample is fabricated and B-10 live-sample acceptance remains unresolved.
+3. The stored JSON parses, contains one message only, follows the approved field casing/shape, and passes a targeted scan for secret-like values and private paths.
+4. The ignored/untracked status of `.env.local` is checked without reading its contents; it is not tracked or included in any artifact.
+5. Evidence distinguishes existing local demo tests from the live reader result. Checkpoint 03 is created only after the observed outcomes are appended to `EVIDENCE.md`; it is marked passed only if the live-message, sample/provenance, safe-configuration and demo criteria are each supported. A checkpoint file itself is not evidence.
+6. No product code, route, test, dependency, Sprint/decision contract or unrelated working-tree path changes; no commit, push or deployment occurs.
+
+## Verification and stop conditions
+
+- **Before live attempt:** after human `continue`, verify that the installed runtime can execute the one-shot harness without adding a dependency or repository code; verify `.env.local` is ignored and not tracked without viewing contents; prepare the bounded timer/cleanup and sanitized output path. If the safe harness cannot be run as contracted, stop and report the blocker rather than add a route or helper file.
+- **After one attempt:** validate only the sanitized output; check JSON cardinality/shape, provenance consistency, absence of secrets/private paths, exact changed paths, and `git diff --check`. Append factual evidence/runbook records only after observed checks; then create the checkpoint record referencing evidence IDs.
+- **Stop if:** human review does not select `continue`; the environment key is absent (without inspecting it); the one request errors/times out/yields no suitable message; the direct harness requires an unapproved dependency/code/path; sanitization is uncertain; any key/raw provider/error data could be exposed; or unrelated paths change. Never retry in this task.
+- **Exit decision:** `DONE` only for a successful bounded live capture plus sanitized sample/provenance, supported demo and safe-config evidence, factual records, and final human review. Otherwise `CONTINUE WITH APPROVAL` or `HOLD`; do not mark checkpoint 03 passed or claim full R2/release readiness without all criterion-level evidence.
+
+## Rollback / recovery
+
+No live action has been performed for this Draft. If rejected before execution, remove only this appended task section. If a newly created live sample fails sanitization before evidence append, remove only the new `data/samples/live/` artifacts and leave the synthetic fixture unchanged. Evidence and RUNBOOK are append-only; after they are appended, correct any error by a superseding entry, not by rewriting history. Do not reset the branch or alter unrelated/deleted/untracked paths.
+
+# TASK-SEA-R2-B09B10-LIVE-002 — One additional live AISStream receipt attempt
+
+- **Version:** `1.0.0`
+- **Status:** `Active`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-24
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), [`docs/checkpoints/CHECKPOINT-03.md`](docs/checkpoints/CHECKPOINT-03.md), `TASK-SEA-R2-B09B10-LIVE-001`, `E-SEA-052`, [`server/aisstream-config.ts`](server/aisstream-config.ts), [`server/aisstream-reader.ts`](server/aisstream-reader.ts), [`server/position-report-transformer.ts`](server/position-report-transformer.ts).
+
+## Goal and authorization
+
+- **Goal:** after the first authorized attempt ended with the fixed `provider_error`, make at most one additional live attempt through the existing server-side reader; if one valid PositionReport arrives, save the one previously approved sanitized sample and truthful provenance; record the resulting checkpoint status.
+- **User-reported context:** on 2026-09-24 the user asked “спробуй ще раз” and reported that the locally configured `AISSTREAM_API_KEY` worked in Postman. This is user-reported context, not independently verified evidence and not an explanation of the earlier reader error.
+- **Authorization boundary:** the user's request authorizes preparation of this new bounded contract. No second live connection, environment loading, sample creation, or checkpoint update may occur until this exact contract is reviewed and the user selects `continue`. A continued contract authorizes exactly one additional attempt only; no retry or troubleshooting loop.
+- **Retained sample consent:** the prior explicit permission to retain one sanitized PositionReport applies only if the single permitted sample path is still absent; do not create multiple live samples.
+
+## Allowed paths and exclusions
+
+- **Contract preparation:** this appended `TASK_SPEC.md` section only.
+- **After contract `continue`:** if one suitable message is received, create only `data/samples/live/position-report.sample.json` and `data/samples/live/PROVENANCE.md`; append factual records to `EVIDENCE.md` and `RUNBOOK.md`; after evidence is recorded, create `docs/checkpoints/CHECKPOINT-04.md` as a superseding restart record referencing historical `CHECKPOINT-03.md` and the new outcome. If no suitable message is received, create no sample and still append the factual result plus a HOLD checkpoint record.
+- **Read-only inputs:** prior live task and `E-SEA-052`; existing key accessor, reader and transformer; synthetic sample/provenance; Sprint 2 checkpoint criteria; `CHECKPOINT-03.md`; B-08 configuration and existing demo evidence.
+- **Excluded:** product/source code, routes, tests, dependencies, `.env*` contents, credentials, UI/demo behavior, `SPEC.md`, `SPRINT-02.md`, decisions, commit/push/deployment, and all unrelated, deleted or untracked paths. Do not modify or overwrite the synthetic sample/provenance or the prior HOLD checkpoint.
+
+## Bounded behavior and data handling
+
+- **Key handling:** obtain the configured key only through `getAISStreamApiKey()`; use the existing ignored local environment configuration without reading or printing its contents. Never emit the key, raw WebSocket frame, provider error text, stack or other secret detail.
+- **One additional attempt:** one direct `startAISStreamReader()` invocation, one WebSocket connection, one 15-second total deadline including connect/open/subscription, no retries or polling. Stop and close once on the first suitable valid PositionReport, a fixed reader error, malformed/unsuitable first message, or deadline.
+- **Safe diagnostic signal:** the temporary in-memory harness may record only whether `onSubscribed` fired, the reader's fixed error enum, and a final outcome enum. It must not log, persist, parse for display, or expose provider error text or any raw message. The harness is not added to the repository.
+- **Sample:** if and only if one actual valid message arrives and required B-11 fields are present, store one sanitized JSON object at `data/samples/live/position-report.sample.json`, retaining only `MetaData.MMSI`, `ShipName`, `latitude`, `longitude`, `time_utc` and `Message.PositionReport.Sog`, `Cog`, `TrueHeading`, `Latitude`, `Longitude`. Sanitize ShipName conservatively and document normalization. If a required field is absent or uncertain, do not save the sample.
+- **Provenance:** record live origin, UTC retrieval time separately from vessel observation time, existing reader/subscription region context, fields kept/omitted, sanitation and limitations. Never claim more than one message was observed.
+- **Checkpoint:** `CHECKPOINT-03.md` remains an immutable record of the initial HOLD. Create a subsequent canonical `CHECKPOINT-04.md` only after the new evidence is appended; state whether it supersedes the latest checkpoint-03 outcome, and mark Sprint checkpoint 03 passed only if live receipt, sample/provenance, safe configuration and demo criteria all have supported evidence.
+
+## Acceptance and verification
+
+1. Before any live attempt, complete contract review with user `continue`; verify the live sample targets are still absent and `.env.local` remains ignored/untracked without reading its contents; confirm the existing runtime/accessor/reader can run the temporary harness without repository changes.
+2. Perform exactly one additional live attempt with the 15-second total limit and stage-only safe diagnostics. On any error, timeout, malformed/unsuitable message or missing key, stop without retry and save no sample.
+3. If captured, verify the single sanitized sample parses, contains the required exact field casing and one PositionReport, and matches its provenance; do not expose its payload in terminal output.
+4. Append `E-SEA-053` factual evidence and a RUNBOOK record. Distinguish the user's Postman report from the actual reader result and make no causal claim based on either alone.
+5. Create a superseding `CHECKPOINT-04.md` after evidence. Mark overall Sprint checkpoint 03 passed only if each criterion is supported; otherwise record `HOLD` and unmet criteria.
+6. Run `git diff --check`, check the exact allowed-path boundary and preserve all pre-existing deleted/untracked paths. No commit, push, deployment or product-code change.
+
+## Stop conditions and recovery
+
+- Stop before live access unless the exact contract receives `continue`; stop if the key is unavailable, runtime import fails, sample paths unexpectedly exist, a new dependency/path is needed, or any secret/raw provider detail could be exposed.
+- Stop after this one attempt regardless of outcome. No second retry, provider troubleshooting, Postman access, key validation by display, or alternate live route is authorized.
+- If the capture fails, preserve the existing HOLD state and do not fabricate sample data. Append the actual result and a new HOLD checkpoint only.
+- If a newly written sample fails sanitization before evidence append, remove only the two new live sample artifacts. Keep the synthetic fixture and prior checkpoint unchanged. Evidence/RUNBOOK are append-only; correct later errors with superseding entries. Preserve unrelated deleted/untracked paths; do not reset or stage.
+- **Current status:** `Active`; on 2026-09-24 the user reviewed this contract and chose `continue`. Exactly one additional live attempt was performed and is recorded as `E-SEA-053`; result was fixed `provider_error` after `onSubscribed`, with no valid PositionReport and no sample written. No retry occurred; final human review of the evidence/runbook/checkpoint diff remains pending.
+
+# TASK-SEA-R2-B09B10-LIVE-003 — One bounded AISStream event-source diagnostic
+
+- **Version:** `1.0.0`
+- **Status:** `Active`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-24
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/checkpoints/CHECKPOINT-03.md`](docs/checkpoints/CHECKPOINT-03.md), [`docs/checkpoints/CHECKPOINT-04.md`](docs/checkpoints/CHECKPOINT-04.md), `TASK-SEA-R2-B09-001`, `TASK-SEA-R2-B09B10-LIVE-001`, `TASK-SEA-R2-B09B10-LIVE-002`, `E-SEA-052`, `E-SEA-053`, [`server/aisstream-config.ts`](server/aisstream-config.ts), [`server/aisstream-reader.ts`](server/aisstream-reader.ts), [`server/position-report-transformer.ts`](server/position-report-transformer.ts).
+
+## Goal and authorization gate
+
+- **Goal:** make at most one newly authorized live diagnostic attempt through the existing server-side reader and distinguish, using non-sensitive event categories only, which reader event produced a post-subscription `provider_error`. Capture one actual sanitized PositionReport only if one is received and the user authorizes this contract.
+- **Reason:** `E-SEA-053` records `SUBSCRIBED=yes` and the reader's fixed `provider_error`, but does not distinguish a post-subscription WebSocket `error` event from a non-text message. No reproducible local code defect has been established. The user's Postman report remains unverified; this task does not inspect Postman or infer cause from it.
+- **Predecessor status:** `LIVE-001` and `LIVE-002` attempts are exhausted. Their records and the existing `HOLD` checkpoint remain immutable; this contract authorizes no request until its own review gate is satisfied.
+- **Authorization:** a human review decision of `continue` on this exact contract explicitly authorizes exactly one diagnostic invocation, use of the real key only through `getAISStreamApiKey()`, and saving exactly one sanitized live sample/provenance if the valid-message criteria below pass. It does not authorize a retry, provider troubleshooting loop, Postman access, source changes, commit, push or deployment.
+
+## Allowed paths and exclusions
+
+- **Contract preparation:** append only this section to `TASK_SPEC.md`; do not alter earlier task sections.
+- **After this contract receives `continue`, if a valid PositionReport is received:** create only `data/samples/live/position-report.sample.json` and `data/samples/live/PROVENANCE.md`; append factual results to `EVIDENCE.md` and `RUNBOOK.md`; then create `docs/checkpoints/CHECKPOINT-05.md` as the next restart record, retaining checkpoint 03/04 history.
+- **After `continue`, if no valid PositionReport is received:** create no sample; append the observed event category and bounded outcome to `EVIDENCE.md` and `RUNBOOK.md`; create `CHECKPOINT-05.md` with `HOLD` after the evidence entries.
+- **Read-only inputs:** existing key accessor, reader, transformer, approved subscription contract, E-SEA-052/053, B-10 synthetic fixture/provenance and latest checkpoint records.
+- **Excluded:** every source, route, test, config, dependency and UI path; all `.env*` contents and credentials; Postman sessions/data; changes to endpoint, subscription, bounding box, timeout, error mapping or provider; all other sample paths; `SPEC.md`, `SPRINT-02.md`, decision records, commit/push/deployment and unrelated/deleted/untracked paths. Do not inspect, overwrite, stage or clean excluded paths.
+
+## Bounded diagnostic behavior and data handling
+
+- **Key boundary:** invoke the existing `getAISStreamApiKey()` accessor only. Never read, print, log, copy, return or persist the key or `.env.local` contents. Do not run `next dev`, Playwright, the API route, build commands or other tooling that may load local environment files.
+- **One attempt:** one direct `startAISStreamReader()` invocation, one WebSocket connection and one total 15-second deadline including connection/open/subscription. No retry, polling or second route. Stop and clean up exactly once at the first terminal result.
+- **Safe event classification:** use a temporary in-memory WebSocket wrapper/factory around the existing injected reader boundary. It may record only a fixed event-category enum (`pre_subscription_error_event`, `post_subscription_error_event`, `pre_subscription_close`, `post_subscription_close`, `non_text_message`, `text_message`, or `none`), the reader's fixed error enum, and whether local `onSubscribed` fired. If a close event occurs, the close code may be recorded as a number only; never record close reason. The final outcome must be one of `position_report_captured`, `no_valid_position_report`, `reader_error`, `timeout`, `key_missing`, or `harness_failure`. Do not access or output raw frame contents, error objects/messages, provider payloads, stack traces or headers. If this classification cannot be implemented without a product-path change or inspecting event contents beyond type, stop.
+- **Message handling:** parse text frames as JSON in memory and pass only the parsed value to the existing B-11 transformer. If a valid PositionReport with the required sample fields arrives, stop after that one message and write one sanitized sample with matching provenance under the allowed paths. Do not print or persist the raw frame. If JSON parsing fails, transformation rejects the message, or required sample fields are absent, save no sample and stop without retry.
+- **Sanitization/provenance:** retain only the agreed B-10/B-11 fields: `MetaData.MMSI`, `ShipName`, `latitude`, `longitude`, `time_utc`, and `Message.PositionReport.Sog`, `Cog`, `TrueHeading`, `Latitude`, `Longitude`. Record live origin, UTC retrieval time separately from observation time, the exact one-message limit, fields omitted/normalized, sanitization and limitations. Preserve the existing synthetic fixture/provenance unchanged.
+- **No causal overclaim:** event category can distinguish reader branches only; it does not prove why the provider/transport emitted an event, validate the key, or establish provider acceptance. A local `onSubscribed` remains evidence only of local send.
+
+## Expected output and acceptance
+
+1. Exactly one bounded attempt is run only after explicit `continue` for this contract; the actual fixed outcome and sanitized event category are recorded without secrets/raw provider data.
+2. If a valid PositionReport arrives, one and only one sanitized sample and matching provenance are created. Otherwise no sample is fabricated or saved.
+3. All resources close once; no retry, polling, Postman inspection, product code/test/config/dependency change or unexpected path change occurs.
+4. Evidence and checkpoint distinguish event observation from provider cause, key validity, provider acknowledgment, complete Sprint acceptance and release readiness. Checkpoint 03 remains `HOLD` unless the full Sprint criteria gain supported evidence; a checkpoint record is not evidence.
+5. The final diff is reviewed and the user chooses `continue`, `revise` or `HOLD` for the documentation/evidence result. This review does not authorize another live attempt.
+
+## Verification and stop conditions
+
+- **Before attempt:** after contract `continue`, verify `.env.local` ignore/tracking status and the live sample targets' absence without reading env-file contents; verify the runtime imports needed modules without loading env files or starting the app; prepare the one-shot timer, cleanup and event-category-only output. If any check requires reading a secret or starting Next/Playwright, stop.
+- **After attempt:** validate the sanitized sample/provenance if created without printing its payload; verify exact changed paths, one-attempt bound, append-only evidence, checkpoint links and `git diff --check`. No app tests/build or provider-side diagnosis is included.
+- **Stop before attempt if:** this exact contract is not reviewed with `continue`; key is missing; the harness/runtime cannot meet the boundaries; sample targets unexpectedly exist; classification needs logging event contents; or any new dependency/path is required.
+- **Stop after the single attempt regardless of outcome.** Do not troubleshoot the provider, inspect Postman, retry, test another key, modify product code or declare the cause known. A confirmed source defect requires a separate fix contract and deterministic test.
+
+## Rollback / recovery
+
+Before execution, revise/remove only this appended Draft section if rejected; preserve all prior records and working-tree state. If a newly created sample fails sanitization before evidence is appended, remove only the two new live sample artifacts. After EVIDENCE/RUNBOOK append, correct factual mistakes with a superseding append-only record rather than rewriting history. Never reset the branch, alter secrets, touch unrelated/deleted/untracked paths, or change CHECKPOINT-03/04.
+
+## Current status and handoff
+
+- **Status:** `Draft`; contract-preparation approval is not a live-attempt authorization. No new key use, provider request, sample, evidence entry or checkpoint update has occurred under this contract.
+- **Known blocker:** exact cause of the two fixed `provider_error` results remains `Unknown`; current evidence does not justify a source patch.
+- **Next action:** human review of this exact contract. If approved, perform exactly one bounded diagnostic attempt; if revised or held, do not access AISStream. A failed-to-isolate result leaves the cause unknown and checkpoint 03 on `HOLD`.
+
+### Human contract review and authorization — 2026-09-24
+
+- **Decision:** after receiving the contract summary, the user instructed: “зроби, твоя задача зараз що б запрацювало”. This is treated as `continue` for exactly `TASK-SEA-R2-B09B10-LIVE-003`.
+- **Authorization boundary:** exactly one diagnostic invocation as specified above, with key consumption only through `getAISStreamApiKey()`; no retry, source change, Postman access, commit, push or deployment.
+- **Status:** `Active`; at the time of this record, preflight and the single attempt have not yet run.
+
+### Preflight stop — key unavailable to the invoking process — 2026-09-24
+
+- **Observed:** ignore/tracking and live-sample-target preflight checks passed. A Node.js v22.23.2 process directly imported `getAISStreamApiKey()` without loading local env files; the accessor returned `null`, reported only as `KEY_CONFIGURED=no`. The guarded command exited 4 as intended.
+- **Boundary:** no `.env.local` content or key value was read, printed or loaded. No reader invocation, WebSocket connection, provider request, sample, evidence entry or checkpoint was created by the attempt; the single live-attempt allowance remains unused.
+- **Status:** `BLOCKED before provider attempt`. The current contract prohibits loading local env files, so the key stored there is not available in the inherited Node process. Any next attempt requires a reviewed contract revision that expressly authorizes a safe in-memory environment-loading method, followed by the one bounded reader call. Until then, stop; checkpoint 03 remains `HOLD`.
+
+### Authorization amendment — in-memory environment loading — 2026-09-24
+
+- **User authorization:** the user explicitly stated: “дозволяю програмі читати ключ”. This authorizes resolving the LIVE-003 preflight blocker for the already-authorized, still-unused single reader attempt; it does not authorize a second attempt.
+- **Method:** use the installed `@next/env` `loadEnvConfig(process.cwd())` loader documented by this repository's Next.js guide at `node_modules/next/dist/docs/01-app/02-guides/environment-variables.md` (the guide describes loading `.env*` into `process.env` outside the Next.js runtime). Do not start `next dev`, build, Playwright, the API route or any application server.
+- **Secret boundary:** the loader may populate environment values in memory. Do not print, log, inspect, copy or persist `.env*` values. Only `getAISStreamApiKey()` may obtain the AISStream value, and only that returned value may be passed to the existing reader. Do not access or use other loaded values.
+- **Attempt boundary:** if the accessor still returns no key, stop before network access. Otherwise run exactly one existing-reader invocation, one WebSocket connection, 15-second total connection/reader deadline, fixed event categories only, and the previously specified sample sanitization. No retry or provider troubleshooting.
+- **Post-attempt records:** preserve E-SEA-054 and CHECKPOINT-05 as the preflight-stop record. After the one attempt, append the factual outcome to `EVIDENCE.md` and `RUNBOOK.md`; if no valid PositionReport is received, create no sample. Create `docs/checkpoints/CHECKPOINT-06.md` as the next restart record, retaining all earlier checkpoint history. No other paths are authorized.
+- **Status:** this amendment supersedes only the former prohibition on in-memory env loading for this one bounded LIVE-003 attempt. All other scope, stop conditions, exclusions and human diff-review requirements remain in force. Sprint checkpoint 03 remains `HOLD` unless supported evidence closes its acceptance criteria.
+
+### LIVE-003 bounded attempt outcome — 2026-09-24
+
+- **Environment preflight:** an initial ESM named import of the CommonJS `@next/env` package failed before the loader ran or any key was loaded. The corrected `require("@next/env")` preflight loaded the environment in memory, and the accessor reported only `KEY_CONFIGURED=yes`; runtime imports passed. No key value or `.env*` content was emitted or inspected.
+- **Attempt:** exactly one reader invocation opened one WebSocket, locally sent the subscription (`SUBSCRIBED=yes`), then observed a message event whose `data` type was non-string. The reader returned its fixed `provider_error`; wrapper output was `EVENT_CATEGORY=non_text_message`, `READER_ERROR=provider_error`, `OUTCOME=reader_error`. Exit status was 1. The harness inspected only `typeof event.data`; it did not decode, print or persist frame contents.
+- **Sample / retry:** no valid PositionReport was received; no sample or provenance was created; both live sample targets were absent after the attempt. No retry or provider troubleshooting occurred. The single LIVE-003 attempt allowance is now exhausted.
+- **Outcome and boundary:** the event category identifies the reader branch responsible for this attempt's fixed error, but does not establish the contents or origin of the non-string data, key validity, provider cause or provider acceptance. Do not change product code under LIVE-003; a possible reader compatibility fix requires a separate reviewed task contract and deterministic test.
+- **Handoff:** `E-SEA-055`, the appended RUNBOOK record and `CHECKPOINT-06.md` capture this attempt. Sprint checkpoint 03 remains `HOLD`; final human review of the complete documentation diff remains pending.
+
+# TASK-SEA-R2-B09B10-FIX-001 — WebSocket UTF-8 binary JSON compatibility
+
+- **Version:** `1.0.0`
+- **Status:** `Active`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-25
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), `TASK-SEA-R2-B12-001`, `TASK-SEA-R2-B09B10-LIVE-003`, `E-SEA-055`, [`server/aisstream-reader.ts`](server/aisstream-reader.ts), [`tests/snapshot-reader.spec.ts`](tests/snapshot-reader.spec.ts), [`tests/snapshot-collector.spec.ts`](tests/snapshot-collector.spec.ts).
+
+## Goal and bounded outcome
+
+Amend the B-12 reader input boundary so the existing snapshot flow can accept a WebSocket binary frame only when it is valid UTF-8 JSON, while retaining the existing endpoint, subscription, collector behavior, fixed errors, 15-second window, 100-vessel limit, one-shot lifecycle, and response/UI contracts. This is a local compatibility fix; it does not establish that the LIVE-003 frame contained JSON or a PositionReport, or that AISStream accepted the subscription.
+
+## Authorization gates
+
+- **Current decision:** this section is `Draft`. Approval of the preceding implementation plan authorized preparation of this contract only; it did not authorize source changes, live-provider access, or use of the real key.
+- **Implementation gate:** do not edit implementation or test paths until the user reviews this exact contract and explicitly chooses `continue`.
+- **Live gate:** no provider connection or real-key use is included. A new live verification needs a separate bounded contract and explicit authorization after the local fix is reviewed.
+
+## Owner and exact paths
+
+- **Planning path:** this append-only section in `TASK_SPEC.md`; preserve the historical B-09, B-12, and LIVE-003 records.
+- **Implementation paths after `continue`:**
+  - `server/aisstream-reader.ts` — configure the native Node WebSocket's `binaryType` as `arraybuffer`; forward text data unchanged and strictly decode `ArrayBuffer` data as UTF-8 text.
+  - `tests/snapshot-reader.spec.ts` — deterministic reader tests for text/binary data, decode failures, error mapping, and one-time lifecycle cleanup.
+  - `tests/snapshot-collector.spec.ts` — route/collector regression proving a valid UTF-8 JSON binary fixture reaches the existing snapshot transformation/response path.
+- **Append-only records after checks and final human review:** `EVIDENCE.md` and `RUNBOOK.md`.
+- **Excluded:** `.env*`, credentials, Postman, provider calls, sample/provenance paths, `server/snapshot-collector.ts`, `app/api/snapshot/route.ts`, `app/map-shell.tsx`, `app/sea-map.tsx`, dependencies/manifests, test-runner configuration, decision records, checkpoint history, and all unrelated or pre-existing changed/deleted/untracked paths.
+
+## Inputs and behavior
+
+- Node.js 22 WebSocket types in the installed runtime expose `binaryType` values `blob` and `arraybuffer`; standard text frames arrive as strings and binary frames use the configured representation. Confirm the installed runtime's applicable documentation/types before implementation.
+- The native reader must set `binaryType = "arraybuffer"` before message delivery. A string is passed to the collector unchanged. An `ArrayBuffer` is decoded with `TextDecoder("utf-8", { fatal: true })` and passed to the collector as text.
+- Any other runtime data type, invalid UTF-8, or decode failure maps to the existing fixed `provider_error`; do not stringify arbitrary objects, inspect/log raw bytes, include payload or decoder details in errors, or retain decoded live data.
+- The existing collector remains responsible for JSON parsing and PositionReport transformation. Malformed JSON continues to map to `provider_error`; valid JSON that is not a recognized PositionReport continues to follow the existing collector behavior. No API/UI response shape changes and no partial success are introduced.
+- Preserve event order, exactly-once completion/cleanup, ignored late events, exact subscription, and one WebSocket per snapshot. Do not add a decoder dependency or a second transport path.
+
+## Acceptance criteria
+
+- [ ] Native WebSocket binary delivery is configured to `arraybuffer`; ordinary string messages still pass through unchanged.
+- [ ] A valid UTF-8 `ArrayBuffer` is decoded to the expected text and delivered once to the collector boundary.
+- [ ] Invalid UTF-8, unsupported data types, and decoder exceptions map to one fixed `provider_error`, with exactly-once cleanup and no late delivery.
+- [ ] A deterministic route/collector test sends a valid UTF-8 JSON `ArrayBuffer` PositionReport fixture and verifies the existing successful snapshot envelope and vessel mapping.
+- [ ] Existing provider-error, disconnect, cancellation, no-key, partial-data, and B-13 mocked UI behavior remain unchanged and covered by focused checks.
+- [ ] No real key, `.env*` file contents, provider connection, raw live frame, or new sample/provenance is accessed or created.
+- [ ] The implementation stays within the exact paths above; append-only evidence/handoff is added only after checks and human diff review.
+- [ ] Human diff review chooses `continue`, `revise`, or `HOLD` before any further task. A live-provider retry remains separately gated.
+
+## Verification — requirements, not observed results
+
+1. Run focused `npx playwright test tests/snapshot-reader.spec.ts tests/snapshot-collector.spec.ts tests/snapshot-interface.spec.ts`, `npx tsc --noEmit`, and the repository build check after implementation authorization. Use a non-secret test-only `AISSTREAM_API_KEY` environment value for commands that may load Next environment configuration; never expose or use the real key.
+2. Verify unchanged fixed API error/success shapes, binary decode behavior, test cleanup, no partial success, and exact changed paths. Run `git diff --check`.
+3. No live AISStream request is part of these checks. Local fixtures/build cannot establish provider acceptance, real frame format, live PositionReport receipt, or live UI/API success.
+
+## Stop conditions and recovery
+
+Stop if the installed runtime does not deliver `ArrayBuffer` after the native socket is configured, if a required frame is not strict UTF-8, if supporting it would require guessing provider-specific framing, if a new dependency/path is needed, or if raw frame inspection/logging is proposed. Do not fall back to `Blob`/arbitrary-object stringification under this contract; prepare a separate reviewed amendment if runtime evidence requires another representation. On rejection, restore only this appended draft section before implementation; after authorized implementation, recovery may touch only its allowed paths and must preserve all pre-existing work. Do not reset, clean, commit, push, deploy, retry AISStream, or rewrite append-only history.
+
+## Human contract review and implementation authorization — 2026-09-25
+
+- **Decision:** after reviewing this exact bounded contract, the user instructed: “continue, зроби вже проект робочим”. This is `continue` and authorizes the implementation paths and local checks listed above.
+- **Boundary:** this does not authorize a live AISStream request, real-key access, raw-frame inspection, sample creation, commit, push, or deployment. A separate live-verification contract and explicit authorization remain required.
+- **Status:** `Active`; local implementation/checks are recorded below; final human diff review remains pending.
+
+## Observed implementation and local checks — 2026-09-25
+
+- **Implementation:** `server/aisstream-reader.ts` sets native WebSocket `binaryType = "arraybuffer"`, forwards string messages unchanged, and strictly decodes UTF-8 `ArrayBuffer` messages. Unsupported types and invalid UTF-8 map to the fixed `provider_error`. Reader/collector tests cover decoding, route success, failures and cleanup.
+- **Commands and status:** `AISSTREAM_API_KEY=test-only-no-secret npx playwright test tests/snapshot-reader.spec.ts tests/snapshot-collector.spec.ts tests/snapshot-interface.spec.ts` — `PASS`, 33 tests; `AISSTREAM_API_KEY=test-only-no-secret npx tsc --noEmit` — `PASS`; `AISSTREAM_API_KEY=test-only-no-secret npm run build` — `PASS`; scoped `git diff --check` — `PASS`.
+- **Build environment limitation:** Next.js output reported `.env.local` as an environment source. No value was printed, but this task cannot claim that the file or its contents were not loaded by the build environment.
+- **User-reported context:** the user said “стій, запрацювало”. The observation is recorded as user-reported only; no post-fix live provider attempt, raw frame, PositionReport, sample or provenance was captured independently in this task.
+- **Acceptance boundary:** local compatibility behavior and deterministic checks are supported by the results above. Provider acceptance, live receipt, live UI/API end-to-end success, key validity, and the original LIVE-003 frame contents remain `Unknown` / `Needs verification`. Sprint checkpoint 03 remains `HOLD`.
+- **Next gate:** keep task status `Active` pending final human diff review. No live request, real-key inspection, commit, push or deployment is authorized by this record.

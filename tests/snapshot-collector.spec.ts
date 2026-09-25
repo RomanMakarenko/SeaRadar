@@ -339,6 +339,7 @@ test("settles and cleans up once when terminal events arrive late or repeatedly"
 });
 
 class RouteWebSocket implements WebSocketLike {
+  binaryType: "blob" | "arraybuffer" = "blob";
   private listeners = new Map<string, ((event: { data?: unknown }) => void)[]>();
 
   constructor(url: string) {
@@ -360,11 +361,14 @@ class RouteWebSocket implements WebSocketLike {
       APIKey: "test-key",
       FilterMessageTypes: ["PositionReport"],
     });
+    expect(this.binaryType).toBe("arraybuffer");
     queueMicrotask(() => {
       for (let index = 0; index < SNAPSHOT_VESSEL_LIMIT; index += 1) {
-        this.emit("message", {
-          data: positionReport({ mmsi: String(200000000 + index) }),
-        });
+        const report = positionReport({ mmsi: String(200000000 + index) });
+        const data = index === 0
+          ? new TextEncoder().encode(report).buffer
+          : report;
+        this.emit("message", { data });
       }
     });
   }

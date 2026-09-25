@@ -1,11 +1,11 @@
 # EVIDENCE.md — фактичний evidence ledger
 
 - **ID:** `EVIDENCE-SEA-001`
-- **Version:** `0.19.0`
+- **Version:** `0.20.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-24
+- **Date:** 2026-09-25
 - **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md)
 
 ## Purpose and boundary
@@ -626,3 +626,76 @@
 - **Status:** `PASS` for the bounded mocked UI checks, typecheck, build, and exact code-commit/remote synchronization.
 - **Reviewer / owner:** delivery/technical owner — commands, commit boundary and ref synchronization. No separate human implementation-diff review decision is claimed by this evidence.
 - **Limitations and follow-up:** no live AISStream request or real-key inspection/use occurred. These local checks do not establish provider availability/receipt, key validity, full R2 acceptance, final human implementation-diff acceptance or release readiness. The separately requested delivery-record commit/push is not covered by this code-delivery evidence.
+
+### E-SEA-052 — One bounded live AISStream attempt
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R2-B09B10-LIVE-001`; `TASK-SEA-R2-B09-001`; `TASK-SEA-R2-B10-001`; `E-SEA-031`–`E-SEA-039`; `E-SEA-026`; `E-SEA-051`.
+- **Claim under verification:** one user-authorized live attempt used the existing server-side key accessor and reader, without exposing the key or raw provider payload, and stopped without retry when no suitable PositionReport was received.
+- **Source:** one Node.js 22.23.2 invocation of `getAISStreamApiKey()`, `startAISStreamReader()` and the existing PositionReport transformer; fixed harness stdout; `git check-ignore` and `git ls-files` checks for `.env.local` without reading its contents; live sample-path existence checks; `git diff --check`.
+- **Expected:** one connection with a 15-second total deadline; capture only the first valid PositionReport; otherwise close and stop without retry or sample fabrication.
+- **Observed:** the first harness evaluation failed at JavaScript parsing before starting the reader and did not create a connection. After correcting that harness-only syntax issue, exactly one bounded live reader invocation terminated with the fixed `provider_error` code. No valid PositionReport was received by the harness, no raw provider/error text was retained, and the attempt was not retried. No live sample or provenance file was created; the existing synthetic B-10 fixture/provenance were not changed. `.env.local` was confirmed ignored and not tracked without inspecting its contents. `git diff --check` passed and both live sample targets remained absent.
+- **Timestamp / environment:** 2026-09-24; UTC clock sampled at 16:03:53Z after the attempt (exact connection start time was not separately captured); macOS; Node.js v22.23.2; local SeaRadar workspace; branch `sprint2`.
+- **Status:** `FAIL` for the single live-message receipt criterion; no conclusion is made about the underlying provider cause. B-08 configuration-boundary evidence remains separate; existing demo evidence remains local/mock-based.
+- **Reviewer / owner:** delivery/technical owner — bounded invocation and result recording.
+- **Limitations and follow-up:** no live PositionReport, live sample/provenance, live UI/API end-to-end result, full checkpoint 03 pass, complete R2 acceptance or release readiness is established. This task permits no retry; any further live attempt requires a new explicit authorization. The single `provider_error` result does not establish whether the key, provider, connection or transient service state caused the error.
+
+### E-SEA-053 — One additional bounded live AISStream attempt
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R2-B09B10-LIVE-002`; `TASK-SEA-R2-B09B10-LIVE-001`; `E-SEA-052`; `E-SEA-031`–`E-SEA-039`; `E-SEA-026`; `E-SEA-051`.
+- **Claim under verification:** one additional user-authorized attempt used the existing server-side accessor and reader, captured only non-sensitive lifecycle status, and stopped without retry when no valid PositionReport arrived.
+- **Source:** one Node.js v22.23.2 invocation of `getAISStreamApiKey()`, `startAISStreamReader()` and the B-11 transformer; harness status output; preflight imports; `.env.local` ignore/tracking checks without reading contents; live sample-path absence check; `git diff --check`; user's report that the configured key worked in Postman (unverified by this task).
+- **Expected:** one connection and one 15-second total deadline; report only whether the reader sent its subscription, a fixed reader error enum, and a final outcome enum; capture one suitable PositionReport or stop without retry.
+- **Observed:** preflight imports passed; `.env.local` was ignored and untracked without content inspection; both live sample targets were absent. The single additional reader invocation reported `SUBSCRIBED=yes` and `RESULT=reader_error_provider_error` (exit 1). The reader had sent the subscription, but no provider acknowledgment or valid PositionReport was observed. No raw payload/provider error text or key was printed or saved, no sample/provenance file was created, and no retry was made. `git diff --check` passed.
+- **User-reported context:** the user said the configured key worked through Postman. This report is recorded as context only; the Postman session, key and provider response were not inspected, and the report does not establish why this reader attempt returned `provider_error`.
+- **Timestamp / environment:** 2026-09-24; UTC clock sampled at 16:29:20Z after the attempt (exact connection start time was not separately captured); macOS; Node.js v22.23.2; local SeaRadar workspace; branch `sprint2`.
+- **Status:** `FAIL` for the additional live-message receipt criterion. The reader error occurred after its local subscription send; the underlying provider/connection/key cause remains unknown. The one additional attempt allowed by this contract is exhausted.
+- **Reviewer / owner:** delivery/technical owner — bounded attempt and evidence recording.
+- **Limitations and follow-up:** the attempt proves only that the existing reader invoked `onSubscribed` before receiving a fixed `provider_error`; it does not prove provider acceptance, key validity, live receipt, sample provenance, live UI/API end-to-end behavior, checkpoint 03 completion, overall R2 acceptance or release readiness. No further live attempt or provider troubleshooting is authorized by this task.
+
+### E-SEA-054 — LIVE-003 preflight blocked before provider connection
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R2-B09B10-LIVE-003`; `TASK-SEA-R2-B09B10-LIVE-002`; `E-SEA-053`; `CHECKPOINT-04`.
+- **Claim under verification:** determine whether the approved accessor can obtain a configured key from the invoking Node process before the one bounded reader attempt, without loading or exposing local secret-file contents.
+- **Source:** Node.js v22.23.2 direct import and call of `getAISStreamApiKey()` under the inherited process environment; `.env.local` ignore/tracking checks; live sample target existence checks. No reader or WebSocket invocation.
+- **Expected:** if the accessor returns no key, stop before connecting and record no provider outcome.
+- **Observed:** ignore/tracking checks passed and both live sample targets were absent. The accessor returned `null`; output was only `KEY_CONFIGURED=no`. The guarded command exited 4. No `.env.local` content or key value was read, printed or loaded. No reader invocation, WebSocket connection, AISStream request, PositionReport, sample or checkpoint update occurred.
+- **Timestamp / environment:** 2026-09-24; macOS; Node.js v22.23.2; local SeaRadar workspace; branch `sprint2`.
+- **Status:** `BLOCKED` before the provider attempt. The one live-attempt allowance in LIVE-003 remains unused; this observation does not establish key invalidity, provider behavior or connectivity.
+- **Limitations and follow-up:** the current LIVE-003 contract prohibits local env loading, so a key stored only in `.env.local` is unavailable to the inherited Node process. Any further attempt requires a reviewed contract revision explicitly authorizing a safe in-memory environment-loading method and a separate continue before connecting. Checkpoint 03 remains `HOLD`.
+
+### E-SEA-055 — LIVE-003 non-text message event
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R2-B09B10-LIVE-003`; `TASK-SEA-R2-B09B10-LIVE-002`; `E-SEA-054`; `CHECKPOINT-05`.
+- **Claim under verification:** one bounded, user-authorized reader attempt used the existing key accessor and reader after safe in-memory environment loading, and classified the event producing the fixed reader error without exposing secret or frame contents.
+- **Source:** one Node.js v22.23.2 harness invocation using the installed `@next/env` loader, `getAISStreamApiKey()`, `startAISStreamReader()`, the existing PositionReport transformer, and a temporary event wrapper that recorded only event category and fixed reader error. The repository's Next.js environment-variable guide was consulted. No app server, build, test runner or alternate provider route was started.
+- **Expected:** one reader invocation, one WebSocket, 15-second maximum deadline, no retry; record only key-configured boolean, local subscription flag, fixed event category, fixed reader error and bounded outcome. Save a single sanitized sample only if one valid PositionReport arrives.
+- **Observed:** accessor availability was `KEY_CONFIGURED=yes`; the single reader invocation reported `SUBSCRIBED=yes`, then the wrapper observed `EVENT_CATEGORY=non_text_message`. The reader returned `READER_ERROR=provider_error`; final outcome was `reader_error` (exit 1). The harness inspected only `typeof event.data`; it did not decode, print or persist the message data. No valid PositionReport was received, no sample/provenance was created, and no retry occurred. Both live sample targets were absent after the attempt. No key value or `.env*` contents were emitted or inspected.
+- **Preflight note:** an initial ESM named import of the CommonJS `@next/env` package failed before `loadEnvConfig` ran and before any key was loaded; no network call occurred in that preflight. The corrected CommonJS import and runtime-module preflight passed before the one reader invocation.
+- **Timestamp / environment:** 2026-09-24; macOS; Node.js v22.23.2; local SeaRadar workspace; branch `sprint2`.
+- **Status:** `FAIL` for the live PositionReport receipt criterion; `non_text_message` is the observed reader event category for this invocation. This identifies the code path, not the data contents or underlying provider/transport cause.
+- **Limitations and follow-up:** the observation does not establish whether the non-string event data contains a PositionReport, why it was non-string, key validity, provider acceptance, ongoing availability, sample provenance, live UI/API end-to-end behavior, full R2 acceptance or release readiness. No further live attempt or source troubleshooting is authorized under LIVE-003. Any reader compatibility change requires a separate reviewed contract and deterministic test. Checkpoint 03 remains `HOLD`.
+
+### E-SEA-056 — WebSocket UTF-8 binary compatibility local checks
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R2-B09B10-FIX-001`; `TASK-SEA-R2-B12-001`; `TASK-SEA-R2-B09B10-LIVE-003`; `E-SEA-055`; `CHECKPOINT-06`.
+- **Claim under verification:** the authorized reader-boundary change accepts strict UTF-8 `ArrayBuffer` messages while retaining the existing deterministic snapshot behavior for text, errors and cleanup.
+- **Source:** changes in `server/aisstream-reader.ts`, `tests/snapshot-reader.spec.ts`, `tests/snapshot-collector.spec.ts`; test/type/build command output and scoped diff check from the implementation work.
+- **Expected:** configure native WebSocket delivery as `arraybuffer`; pass strings unchanged; strictly decode `ArrayBuffer` as UTF-8; map unsupported input or invalid UTF-8 to fixed `provider_error`; preserve existing route envelope and cleanup behavior.
+- **Observed:** the reader sets `binaryType = "arraybuffer"`; valid UTF-8 `ArrayBuffer` text reaches the collector boundary; unsupported input and invalid UTF-8 map to `provider_error`. The route fixture verifies an UTF-8 binary PositionReport can use the existing snapshot path. `AISSTREAM_API_KEY=test-only-no-secret npx playwright test tests/snapshot-reader.spec.ts tests/snapshot-collector.spec.ts tests/snapshot-interface.spec.ts` — `PASS`, 33 tests; `AISSTREAM_API_KEY=test-only-no-secret npx tsc --noEmit` — `PASS`; `AISSTREAM_API_KEY=test-only-no-secret npm run build` — `PASS`; scoped `git diff --check` — `PASS`.
+- **Build environment note:** Next.js output identified `.env.local` as an environment source. No environment value was printed, but the build's environment loader may have read the file; this evidence does not claim the file or its contents were untouched.
+- **Timestamp / environment:** 2026-09-25; local SeaRadar workspace, branch `sprint2`; exact UTC execution time and runtime version were not recorded in this entry.
+- **Status:** `PASS` for the bounded local reader compatibility checks only.
+- **Reviewer / owner:** implementation/check execution by delivery/technical owner; final human diff review remains pending.
+- **Limitations and follow-up:** no post-fix AISStream attempt occurred in this task. These local fixtures do not establish the LIVE-003 frame contents, provider acceptance, live receipt, a valid live PositionReport, key validity, live UI/API end-to-end behavior, full R2 acceptance or release readiness. No raw frame, live sample or provenance was captured. Checkpoint 03 remains `HOLD`.
+
+### E-SEA-057 — User report that the application worked
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R2-B09B10-FIX-001`; `TASK-SEA-R2-B09B10-LIVE-003`; `E-SEA-056`; `E-SEA-055`; `CHECKPOINT-06`.
+- **Claim under verification:** the user reported that the application began working after the local reader compatibility change.
+- **Source:** user statement in this session: “стій, запрацювало”.
+- **Expected:** preserve the user's report without inferring a specific AISStream message, successful provider acknowledgment, or sample.
+- **Observed:** the user made the quoted statement. No further detail about the visible state was supplied in that statement, and the assistant did not independently observe or repeat a live request after the code change.
+- **Timestamp / environment:** 2026-09-25; user report in this session; runtime/source not independently captured.
+- **Status:** `UNKNOWN` for independent live verification; the statement is retained as user-reported context only.
+- **Reviewer / owner:** user report; not independently reviewed as live-provider evidence.
+- **Limitations and follow-up:** this report does not establish provider acceptance, key validity, live PositionReport receipt, sample/provenance, or live UI/API end-to-end behavior. Keep Sprint checkpoint 03 at `HOLD`; any further live attempt requires a separate bounded contract and explicit authorization.
