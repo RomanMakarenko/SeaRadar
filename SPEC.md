@@ -1,12 +1,12 @@
 # SPEC.md — SeaRadar project contract
 
 - **ID:** `SPEC-SEA-001`
-- **Version:** `1.0.2`
+- **Version:** `1.5.0`
 - **Status:** `Ready`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-22
-- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-003-r1-handoff.md`](docs/decisions/DEC-003-r1-handoff.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md)
+- **Date:** 2026-09-27
+- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`SPRINT-02.md`](SPRINT-02.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-003-r1-handoff.md`](docs/decisions/DEC-003-r1-handoff.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), [`docs/decisions/DEC-009-r2-current-task-status.md`](docs/decisions/DEC-009-r2-current-task-status.md), [`docs/decisions/DEC-010-r2-sparse-snapshot-demo-fallback.md`](docs/decisions/DEC-010-r2-sparse-snapshot-demo-fallback.md), [`docs/decisions/DEC-011-r2-task-authorization-reconciliation.md`](docs/decisions/DEC-011-r2-task-authorization-reconciliation.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md)
 
 > Це поточна затверджена MVP-база, перенесена з `PROJECT_BRIEF.md`. Вона може змінюватися: зміна контракту потребує нової версії цього документа та пов'язаного decision record до початку роботи за зміненим scope.
 
@@ -58,28 +58,31 @@
 3. Переміщує карту, наближає її та клікає по судну для відкриття картки.
 4. Показує рух і зупинку демонстраційних суден.
 5. Натискає одну кнопку для короткого збору справжніх AIS-повідомлень.
-6. Бачить отримані судна, час збору, кількість і обмеження повноти даних або зрозуміле повідомлення про невдачу.
+6. Бачить отримані AISStream-судна, час збору, їхню кількість і обмеження повноти даних або зрозуміле повідомлення про невдачу; якщо успішний знімок містить менше трьох AISStream-суден, карта додатково показує всі три демо-судна з окремим кольором джерела.
 7. Після кожного bounded slice проходить людський checkpoint і отримує фактичний evidence/handoff.
 
 ## Scope
 
 ### In scope
 
-- **R1 / поточний release slice:** US-01…US-04 — карта, демонстраційне судно, значок, вибір і картка; US-05…US-08 — справжні судна за кнопкою, підписи та повідомлення про помилки; US-09 — відтворювані перевірки цілісності даних; US-10 — фінальна інструкція встановлення.
+- **R1 / verified baseline:** US-01…US-04 — карта, демонстраційне судно, значок, вибір і картка.
+- **R2 / authorized release slice:** US-05…US-08 — справжні судна за кнопкою, підписи та повідомлення про помилки; R2 деталізований у `SPRINT-02.md`; DEC-006 historically selected B-08 as its bounded task. DEC-009 recorded that no successor R2 task had been authorized as of its 2026-09-25 approval. Later, DEC-010 and the approved `TASK-SEA-R2-B14-MIXED-VESSELS-001` authorize only the bounded sparse-snapshot UI slice; all other R2 technical tasks remain separately gated.
+- **Final planned acceptance:** US-09 — відтворювані перевірки цілісності даних; US-10 — фінальна інструкція встановлення. Їхня implementation acceptance не заявляється виконаною.
 - Локальний запуск на `http://localhost:3000` loopback.
 - Один фіксований район: Дуврська протока.
 - Демонстраційні та справжні судна як одна узгоджена структура даних.
+- Для успішного AISStream-знімка з 0–2 отриманими суднами показувати всі три демо-судна додатково; AISStream-лічильник і підпис описують лише фактичний знімок. Маркери AISStream і демо мають різні кольори, а вибраний маркер має окреме помітне виділення.
 
 ### Non-goals
 
 - Зони, тривоги, сповіщення, історія руху, сліди, replay, пошук і фільтри.
 - Кілька районів, збереження налаштувань, безперервне real-time оновлення, вхід за паролем, кілька користувачів, віддалений сервер або хмара.
 - Рекомендації, прогнози, «розумні» функції та використання для реальної навігації.
-- S2/S3 plans, їхні дати, owners, задачі та додатковий scope — `Waiting for MVP input`.
+- Sprint 3 plan, його дати, owners, задачі та додатковий scope — `Waiting for MVP input`; R2 follow-up tasks B-09…B-13 remain individually task-gated.
 
 ## Release slice
 
-`R1 — карта й демонстраційні судна` деталізований у `SPRINT-01.md` і є єдиним поточно авторизованим sprint plan. Він використовує поточний stack baseline з `DEC-002-r1-stack.md`. Подальші sprint-и не деталізувати з припущень; їх можна створити лише після окремого погодження меж і decision records.
+`R1 — карта й демонстраційні судна` деталізований у `SPRINT-01.md` і є verified baseline. `R2 — знімок справжніх позицій` авторизований decision record `DEC-006-R2-SCOPE` і деталізований у `SPRINT-02.md`; B-08 був bounded task, історично вибраним DEC-006. DEC-009 зафіксував, що на момент його затвердження successor R2 task ще не був авторизований. Пізніше DEC-010 і окремо затверджений `TASK-SEA-R2-B14-MIXED-VESSELS-001` авторизували лише зазначену зміну sparse-snapshot UI; її implementation review залишається окремим gate. Ця авторизація не дозволяє жодну іншу R2 implementation/diagnostic task і не є автоматичним прийманням B-09…B-14. Sprint 3 та архітектура поза R2 залишаються `Waiting for MVP input`/`Unknown`.
 
 ## Acceptance criteria
 
@@ -89,6 +92,7 @@
 4. US-10 має бути виконана фінальною інструкцією встановлення та запуску.
 5. Кожен заявлений результат має evidence з expected/observed і limitation.
 6. Непідтверджені claims позначені `Unknown` або `Needs verification`; product implementation, deployment і user validation не вважаються виконаними без evidence.
+7. За успішного AISStream-знімка з 0–2 суднами на карті є три додаткові маркери `demo`; для 3+ суден додаткові демо-маркери відсутні; AIS count не збільшується через демо; джерела мають різні кольори, а вибраний маркер окремо підсвічений.
 
 **Current acceptance status:** `Ready as a contract; implementation acceptance is not yet verified.`
 
@@ -100,17 +104,18 @@
 
 ## Assumptions and Unknowns
 
-- **Confirmed:** `PROJECT_BRIEF.md` затверджений як поточна MVP-база; деталізований лише R1; stack із `SPRINT-01.md` прийнятий як поточний R1 baseline.
+- **Confirmed:** `PROJECT_BRIEF.md` затверджений як поточна MVP-база; R1 verified; R2 scope та історичний вибір B-08 авторизовані `DEC-006-R2-SCOPE`; DEC-009 зафіксував відсутність successor task станом на його затвердження, а DEC-010 та `TASK-SEA-R2-B14-MIXED-VESSELS-001` пізніше авторизували лише B-14 sparse-snapshot slice. Інші R2 implementation/diagnostic tasks залишаються task-gated; див. DEC-011. Stack із `SPRINT-01.md` прийнятий як поточний R1 baseline.
 - **Needs verification:** умови безкоштовного AISStream, стабільність джерела, фактична кількість суден і поведінка джерела при обриві зв'язку.
-- **Unknown:** точні baseline/target/observation window метрики, дати sprint-ів, деталізація S2/S3, architecture beyond R1, implementation/runtime evidence.
+- **Unknown:** точні baseline/target/observation window метрики, дати sprint-ів, деталізація Sprint 3, architecture beyond R2, implementation/runtime evidence.
 
 ## Open decisions
 
 - Архітектурна деталізація поза R1 — `Unknown`.
-- Межі та outcome Sprint 2 і Sprint 3 — `Waiting for MVP input`.
+- R2 scope та outcome US-05…US-08 — авторизовані `DEC-006-R2-SCOPE`; B-08 був історичним task-gated slice. `DEC-009` фіксує стан авторизації на дату його затвердження; пізніші `DEC-010` та `TASK-SEA-R2-B14-MIXED-VESSELS-001` дозволяють лише sparse-snapshot UI slice, що залишається під review. Жодна інша R2 technical task цим не авторизована; див. уточнення хронології в `DEC-011`.
+- Межі та outcome Sprint 3 — `Waiting for MVP input`.
 - Точні metric baseline, target та observation window — `Needs verification`.
 - Будь-яка зміна approved brief, scope або R1 stack — новий versioned decision record і версія SPEC.
 
 ## Change-control gate
 
-Не починати роботу за зміненими вимогами, поки product owner не затвердить нову версію `PROJECT_BRIEF.md`/`SPEC.md`, пов'язаний decision record і bounded task contract. Delivery/technical owner фіксує зміни, evidence та handoff; product owner приймає продуктову зміну.
+`DEC-006-R2-SCOPE` історично авторизував R2 scope та вибрав B-08 як bounded task; `DEC-009-R2-CURRENT-TASK-STATUS` зафіксував межі авторизації станом на дату його затвердження; `DEC-010-R2-SPARSE-SNAPSHOT-DEMO-FALLBACK` та пов'язаний B-14 contract згодом затвердили лише точкове UI-доповнення. Хронологію та межі уточнює `DEC-011-R2-TASK-AUTHORIZATION-RECONCILIATION`. Кожна інша R2 implementation або diagnostic task потребує окремого reviewed bounded task contract і explicit approval. Подальші зміни approved brief, scope або stack потребують нової версії `PROJECT_BRIEF.md`/`SPEC.md`, пов'язаного decision record і bounded task contract. Delivery/technical owner фіксує зміни, evidence та handoff; product owner приймає продуктові зміни.
