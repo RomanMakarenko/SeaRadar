@@ -2005,7 +2005,7 @@ If this draft-preparation slice is rejected, inspect the diff and revise/remove 
 # TASK-SEA-R2-SPRINT02-RETRO-README-001 — Sprint 2 retrospective README
 
 - **Version:** `1.0.0`
-- **Status:** `Active`
+- **Status:** `Verified` — retrospective status wording updated and accepted after human review; no broader acceptance is implied.
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-09-26
@@ -2050,6 +2050,21 @@ After approval and writing:
 - Stop if an intended statement lacks an existing evidence anchor, the image is missing/changed, the Sprint status cannot be described without guessing, or a requested edit would alter excluded canonical records or expand the task.
 - After the task contract approval, pause after the README diff for human review and `continue`, `revise`, or `HOLD`.
 - **Rollback/recovery:** revise or remove only this task's own README text/link after inspecting its diff; preserve all unrelated and pre-existing Git state. Do not rewrite append-only history. No commit/push/deployment is authorized.
+
+## Current-state addendum — 2026-09-28
+
+- **Trigger / authorization:** the user explicitly requested that the existing retrospective record what was completed and how, noting that substantial content is already present. Continue the previously approved documentation-only task; preserve and update its existing material rather than replacing it.
+- **Current status source of truth:** after this contract's original approval, later evidence and decisions changed several statements in the 2026-09-26 draft. Use `E-SEA-075`, `E-SEA-087`–`E-SEA-092`, `CHECKPOINT-21`–`CHECKPOINT-25`, current `TASK_SPEC.md`, and current `RUNBOOK.md`. CHECKPOINT-03's original HOLD is historical/superseded; CHECKPOINT-22 records PASS/VERIFIED only for CHECKPOINT-03's defined criteria; CHECKPOINT-25 records PASS/VERIFIED for bounded R2 acceptance. Neither is full MVP, release, or deployment acceptance.
+- **Output boundary remains:** `SPRINT-02-README.md` and the existing Sprint 2 summary/navigation sentence in root `README.md`; update this task section in `TASK_SPEC.md` to record the present approval/status. Do not change `SPRINT-02.md`, the sprint catalog, `SPRINT-02-README.pdf`, `sprint-2.png`, implementation, tests, samples, references, or append-only evidence/checkpoint records.
+- **Content update:** retain sound existing sections and screenshot. Correct stale R2/checkpoint/B-14 status; update B-08…B-14 outcomes using current evidence classes; record the approved bounded acceptance and selected-card→loading test; explain both what was done and the bounded, contract-first, human-reviewed, evidence-led method. Clearly separate mocked/local checks, static reviews, user-reported/manual observations, and the one bounded live capture. Keep request duration/no-key HTTP metadata, provider acknowledgement/key validity, US-09/US-10, full MVP, release, and deployment limitations accurate.
+- **Verification / review gate:** validate current metadata, referenced evidence IDs, relative links, image target and unchanged screenshot; verify changed paths; run `git diff --check` only (no product tests/build/provider/network). Present the exact diff and checks, then wait for a separate `continue`, `revise`, or `HOLD`; do not mark this task Verified or commit/push before that disposition.
+
+## Human disposition and closeout — 2026-09-28
+
+- **Requested correction:** the user asked for an explicit statement that bounded Sprint 2 was complete. `SPRINT-02-README.md` now distinguishes the retrospective's `Draft` status from Sprint 2 / R2 being `ЗАВЕРШЕНО` only within the bounded `PASS / VERIFIED` scope of CHECKPOINT-25.
+- **Review decision:** after reviewing the changed wording, the user selected `continue`; this authorizes closeout of this documentation task only. It does not authorize commit, push, deployment, broader MVP acceptance, or additional R2 work.
+- **Verification:** the status wording was checked against CHECKPOINT-25/CHECKPOINT-22; the focused README check found 65 resolving local links and passed its whitespace check. `git diff --check -- TASK_SPEC.md` passed for this closeout. No application tests/build, network/provider activity, or secret/environment access was performed.
+- **Outcome:** this retrospective task is `Verified`. No EVIDENCE.md or RUNBOOK.md entry was added; the change records document status wording, not new product/runtime evidence.
 
 # TASK-SEA-R2-SPRINT02-README-PDF-001 — Export Sprint 2 README to PDF
 
@@ -3061,3 +3076,107 @@ Recommend overall bounded Sprint 2/R2 `PASS` only if the new regression assertio
 - **Limitations:** live request duration and no-key HTTP metadata remain uncaptured and are not separate canonical acceptance criteria. The local Playwright result proves mocked UI behavior only; it does not independently establish provider availability, key validity, provider acknowledgement, or live UI/API transport. US-09/US-10 and release/deployment readiness remain unverified/out of scope.
 - **Recovery:** preserve the focused test and append-only evidence/checkpoint. Any correction must be recorded as an additional factual record; do not reset, clean, or discard shared work.
 - **Handoff:** this bounded R2 acceptance task is `Verified`; no further technical or delivery action is authorized by this closeout.
+
+# TASK-SEA-DOC-TWO-SPRINT-README-001 — Root README and Sprint 1 guide
+
+- **Version:** `1.0.0`
+- **Status:** `Verified` — bounded documentation task completed and accepted; no broader product or delivery authorization.
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-28
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`SPRINT-02.md`](SPRINT-02.md), [`SPRINT-02-README.md`](SPRINT-02-README.md), [`CHECKPOINT-22`](docs/checkpoints/CHECKPOINT-22.md), [`CHECKPOINT-25`](docs/checkpoints/CHECKPOINT-25.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md).
+
+## Goal and approval boundary
+
+- **Goal:** rename the existing root R1 guide to `SPRINT-01-README.md` and create a new root `README.md` that serves as a concise project landing page summarizing verified Sprint 1 and bounded Sprint 2 outcomes.
+- **Scope:** documentation/navigation only. The new landing page links to the detailed R1 guide, both sprint contracts, the Sprint 2 retrospective, and canonical acceptance/evidence records. This does not change product scope, sprint acceptance, implementation, or canonical evidence paths.
+- **Approval / disposition:** the user approved this exact contract with `continue README-TWO-SPRINTS-001` before the README changes and selected `continue` after reviewing the exact diff and checks. This accepts only this bounded documentation task; it does not authorize changes to product scope, other project records, tests, runtime, provider/network, commit, push, or deployment.
+
+## Owner, paths, and preservation
+
+- **Contract preparation now:** append this section in `TASK_SPEC.md` only.
+- **After exact approval — allowed paths:** `README.md` (the new landing page), `SPRINT-01-README.md` (rename of the current root guide with only necessary self-identification/artifact-tree updates), and this section of `TASK_SPEC.md` only for task closeout after review.
+- **Read-only inputs:** `CLAUDE.md`, `SPEC.md`, `SPRINT-01.md`, `SPRINT-02.md`, the current root `README.md`, `SPRINT-02-README.md`, `docs/checkpoints/CHECKPOINT-22.md`, `docs/checkpoints/CHECKPOINT-25.md`, and relevant entries in `EVIDENCE.md` and `RUNBOOK.md`.
+- **Excluded paths:** all nested README files and sprint catalogs; `SPRINT-01.md`, `SPRINT-02.md`, `SPRINT-02-README.md`, checkpoints, `EVIDENCE.md`, `RUNBOOK.md`, decisions, `README.pdf`, images, samples, references, application/source/tests/configuration, generated files and all other paths. Do not rewrite historical records.
+- Preserve all existing modified, staged, deleted, and untracked paths, including the current README/TASK_SPEC changes and untracked Sprint 2 retrospective/PDF, live samples, and `reference/`. Do not stage, reset, clean, overwrite, commit, push, or deploy.
+
+## Content contract and acceptance criteria
+
+- The existing root R1 guide is preserved under `SPRINT-01-README.md`; update its self-identification and artifact-tree entry to the new filename, keeping valid relative asset and document links.
+- The new root `README.md` identifies the project and summarizes:
+  - Sprint 1 as `DONE / Verified`, with B-01…B-07 accepted; link to `SPRINT-01.md` and the renamed R1 guide for full scope/run instructions.
+  - Sprint 2 as bounded `PASS / VERIFIED` only for US-05…US-08, B-08…B-14, and the defined CHECKPOINT-03 criteria; link to CHECKPOINT-25 as the authoritative result and to `SPRINT-02.md` for the contract.
+  - `SPRINT-02-README.md` as a `Draft` descriptive companion, not evidence or a replacement for the sprint contract/checkpoints.
+  - Evidence boundaries: one bounded live capture and matching sample/provenance do not establish provider acknowledgement, key validity, general availability, or an independently evidenced live UI/API end-to-end path; mocked/local tests, static review, screenshot-visible facts, and user-reported observations remain distinct.
+  - CHECKPOINT-22 supersedes the original CHECKPOINT-03 `HOLD` only for its defined criteria; Sprint 3 remains waiting for MVP input and unauthorized.
+  - The bounded R2 result is not full MVP acceptance, release readiness, or deployment approval.
+- New root links resolve. Statuses, scope and limitations match canonical records; no unsupported implementation, live, release, or user-validation claim is introduced.
+- The landing page stays an overview and directs readers to the detailed sprint and evidence sources rather than duplicating their full content.
+
+## Verification, stop conditions, and recovery
+
+- **Contract preparation check:** inspect the exact appended task section and run `git diff --check -- TASK_SPEC.md`. Expected change now: this Draft section only. Stop here and request the exact approval above.
+- **After approval:** inspect the allowed-path diff, verify root Markdown links and image references, search textual references to distinguish root README from nested/historical references, cross-check claims against canonical sources, and run `git diff --check` plus a focused Markdown/internal-link check. No app tests/build, network/provider operation, or secret/environment access is needed or allowed.
+- **Stop conditions:** stop if implementing the requested role/path change requires editing a path outside this contract, canonical acceptance claims conflict, or a link/evidence boundary cannot be verified. Preserve `Unknown` and report the gap; do not silently broaden scope.
+- **Human checkpoint:** after showing the exact diff and checks, stop for `continue`, `revise`, or `HOLD`. No subsequent changes are authorized by this task without a new bounded approval.
+- **Recovery:** before approval, revise or remove only this appended Draft section. After approval, if rejected or checks fail, inspect the diff and restore only task-owned README changes to the pre-task state; preserve all unrelated changes and historical records. Never use a destructive reset or cleanup.
+
+## Closeout — 2026-09-28
+
+- **Authorization / disposition:** the user approved this exact contract with `continue README-TWO-SPRINTS-001` and selected `continue` after reviewing the README changes and verification results.
+- **Observed:** the new root `README.md` is a two-sprint overview; the former root guide is present as `SPRINT-01-README.md`. The R1 guide's original content was preserved, with the title and artifact-tree identity updated; its pre-existing R2 status edit was retained. `SPRINT-02-README.md` remains `Draft` and unchanged.
+- **Verification:** `git diff --check -- TASK_SPEC.md` and `git diff --check -- README.md TASK_SPEC.md` passed. Focused assertions against `SPRINT-01.md`, `CHECKPOINT-22.md`, `CHECKPOINT-25.md`, and the Sprint 2 retrospective passed; 20 local Markdown links across the two README files resolved, and whitespace checks passed. The first path-check command had a Python quoting syntax error; the corrected check confirmed the expected source/target file state. No application tests/build, network/provider operation, secret/environment access, staging, commit, push, or deployment occurred.
+- **Evidence boundary:** no new EVIDENCE/RUNBOOK record was created because those paths were excluded by this task contract. The canonical supporting records remain `E-SEA-027`, CHECKPOINT-22, and CHECKPOINT-25. The bounded R2 result is not full MVP acceptance, release readiness, deployment approval, provider acknowledgement, key validity, or independently evidenced live UI/API end-to-end behavior.
+- **Changed paths:** `README.md`, `SPRINT-01-README.md`, and this task contract/closeout in `TASK_SPEC.md`. Pre-existing modified/untracked files were preserved; no staging or commit was performed.
+- **Handoff:** this bounded README task is `Verified`. No follow-on task, commit, push, or delivery action is authorized by this closeout.
+
+# TASK-SEA-DOC-R2-RETRO-STATUS-001 — Verify Sprint 2 retrospective status
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Owner:** виконавець проєкту
+- **Date:** 2026-09-28
+- **Related artifacts:** [`SPRINT-02-README.md`](SPRINT-02-README.md), [`CHECKPOINT-25`](docs/checkpoints/CHECKPOINT-25.md), [`TASK_SPEC.md`](TASK_SPEC.md)
+
+## Goal and authorization
+
+- **Goal:** replace the stale document-level `Draft` label with `Verified` in the retrospective metadata. Sprint 2's completed bounded acceptance remains stated separately in the body and is not changed.
+- **Authorization:** the user explicitly requested: “онови статус ретроспективи на Verified”. This authorizes only the one-line metadata update and this task record; it does not reopen Sprint 2 or authorize other edits/delivery.
+
+## Paths, acceptance, and verification
+
+- **Allowed paths:** the status metadata line in `SPRINT-02-README.md`; this task section in `TASK_SPEC.md` for contract and later closeout only.
+- **Read-only source:** `CHECKPOINT-25.md` confirms bounded Sprint 2 acceptance; no other content changes are required.
+- **Acceptance:** the retrospective metadata reads `Status: Verified`; the Sprint 2 body status remains `ЗАВЕРШЕНО` for its approved bounded scope; no other README content changes.
+- **Check:** inspect the focused diff and run `git diff --check -- SPRINT-02-README.md TASK_SPEC.md`. No application tests/build, network/provider access, secrets, staging, commit, push, or deployment.
+- **Human checkpoint:** the user reviewed the status correction and then explicitly requested commit and push; this is the `continue` disposition for this change.
+- **Observed:** `SPRINT-02-README.md` now labels the retrospective `Verified`; its separate Sprint 2 status remains `ЗАВЕРШЕНО` for the bounded acceptance scope.
+- **Verification:** focused checks passed for the metadata, retained Sprint 2 completion statement, and whitespace; `git diff --check -- TASK_SPEC.md` passed. No application tests/build, network/provider access, or secrets were used.
+- **Recovery:** if rejected, restore only the task-owned status line to its prior text; preserve all other working-tree changes.
+
+# TASK-SEA-DOC-SPRINT-README-DELIVERY-001 — Commit and push sprint documentation
+
+- **Version:** `1.0.0`
+- **Status:** `Active`
+- **Owner:** виконавець проєкту
+- **Date:** 2026-09-28
+- **Related artifacts:** [`README.md`](README.md), [`SPRINT-01-README.md`](SPRINT-01-README.md), [`SPRINT-02-README.md`](SPRINT-02-README.md), [`TASK_SPEC.md`](TASK_SPEC.md)
+
+## Goal and authorization
+
+- **Goal:** commit and push the requested completed sprint documentation on the current `sprint2` branch.
+- **Authorization:** the user explicitly requested “закоміть ... та запуш” and specifically named `SPRINT-01-README.md` and `SPRINT-02-README.md`.
+
+## Paths and delivery boundary
+
+- **Allowed paths for this documentation commit:** `README.md`, `SPRINT-01-README.md`, `SPRINT-02-README.md`, and `TASK_SPEC.md` (the related task records and the current retrospective status).
+- **Status consistency:** update only the two current-status references in root `README.md` from `Draft` to `Verified`, matching the accepted retrospective metadata. Preserve all other content.
+- **Excluded:** `SPRINT-02-README.pdf`, `data/samples/live/`, `reference/`, and all other existing or untracked paths. Do not stage unrelated files, rewrite history, amend, force-push, or deploy.
+- **Delivery target:** current branch `sprint2` and its configured remote `origin/sprint2`; stop if the branch or remote relationship changes, if upstream diverged, or if push cannot proceed as a fast-forward.
+
+## Acceptance and checks
+
+- Review the exact four-path diff, ensure the two readmes and task records are in scope, and confirm unrelated untracked paths remain untouched.
+- Run `git diff --check` on the selected paths; no application tests/build, network/provider or secret/environment access.
+- Create a normal commit with a concise documentation message and the required attribution trailer; push the commit to `origin/sprint2` without force.
+- After verified delivery, append a factual closeout with commit/push result and observed branch state; no EVIDENCE.md/RUNBOOK.md entry is needed for this documentation delivery.
