@@ -7,8 +7,9 @@ SeaRadar — локальний навчальний R1-зріз для карт
 - **Sprint 1 / R1:** `DONE` / `Verified`.
 - **Runtime baseline:** Node.js `22.x`.
 - **Доставка:** commit [`e98145e`](https://github.com/RomanMakarenko/SeaRadar/commit/e98145e), branch `sprint1`, синхронізований з `origin/sprint1`.
-- **Наступні спринти:** Sprint 2 і Sprint 3 не деталізовані та не авторизовані.
-- **Продуктовий scope:** тільки локальна демонстраційна карта; AIS/API, пошук, pause, rewind, loop і production deployment не входять до R1.
+- **Sprint 2 / R2:** план — [`SPRINT-02.md`](SPRINT-02.md), підсумок виконання й процесу — [`SPRINT-02-README.md`](SPRINT-02-README.md); checkpoint 03 лишається `HOLD / not passed`, повне приймання не підтверджене.
+- **Sprint 3:** очікує MVP input і не авторизований.
+- **Продуктовий scope R1:** тільки локальна демонстраційна карта; AIS/API, пошук, pause, rewind, loop і production deployment не входили до R1.
 
 ## Візуальний результат
 
@@ -94,7 +95,9 @@ SeaRadar/
 ├── README.md                         # цей entry point: запуск, спосіб роботи й карта артефактів
 ├── PROJECT_BRIEF.md                  # вихідний product brief і межі MVP
 ├── SPEC.md                           # versioned project contract: проблема, user/JTBD, scope і acceptance
-├── SPRINT-01.md                      # єдиний деталізований план R1; B-01…B-07 і closure
+├── SPRINT-01.md                      # деталізований план R1; B-01…B-07 і closure
+├── SPRINT-02.md                      # Sprint 2 contract/plan; не є evidence
+├── SPRINT-02-README.md               # companion retrospective: delivery process, evidence та limitations
 ├── TASK_SPEC.md                      # contract поточного bounded task / останнього delivery slice
 ├── EVIDENCE.md                       # append-only ledger фактичних перевірок та їхніх limitations
 ├── RUNBOOK.md                        # append-only delivery history, decisions, blockers і handoff

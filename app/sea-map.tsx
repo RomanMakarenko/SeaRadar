@@ -21,6 +21,7 @@ type MapMode = "demo" | "hidden" | "snapshot";
 interface SeaMapProps {
   mode: MapMode;
   vessels: Vessel[];
+  selectedVesselId: string | null;
   viewResetToken: number;
   onVesselSelect: (vessel: Vessel) => void;
   onVesselUpdate: (vessel: Vessel) => void;
@@ -59,13 +60,19 @@ function calculateBearing(from: RoutePoint, to: RoutePoint): number {
   return (((Math.atan2(y, x) * 180) / Math.PI + 360) % 360 + 360) % 360;
 }
 
-function updateMarkerElement(marker: Marker, vessel: Vessel): void {
+function updateMarkerElement(
+  marker: Marker,
+  vessel: Vessel,
+  selectedVesselId: string | null,
+): void {
   const markerElement = marker.getElement();
   if (!markerElement) {
     return;
   }
 
   markerElement.dataset.vesselId = vessel.id;
+  markerElement.dataset.vesselSource = vessel.source;
+  markerElement.dataset.selected = String(vessel.id === selectedVesselId);
   markerElement.dataset.icon = vessel.courseDeg === null ? "neutral" : "course";
 
   const glyph = markerElement.querySelector<HTMLElement>(".vessel-glyph");
@@ -91,6 +98,7 @@ function createMotionStates(startedAt: string): MotionState[] {
 export default function SeaMap({
   mode,
   vessels,
+  selectedVesselId,
   viewResetToken,
   onVesselSelect,
   onVesselUpdate,
@@ -106,6 +114,7 @@ export default function SeaMap({
   const modeRef = useRef(mode);
   const vesselsRef = useRef(vessels);
   const viewResetTokenRef = useRef(viewResetToken);
+  const selectedVesselIdRef = useRef(selectedVesselId);
   const onVesselSelectRef = useRef(onVesselSelect);
   const onVesselUpdateRef = useRef(onVesselUpdate);
   const reconcileMarkersRef = useRef<() => void>(() => {});
@@ -114,6 +123,7 @@ export default function SeaMap({
   modeRef.current = mode;
   vesselsRef.current = vessels;
   viewResetTokenRef.current = viewResetToken;
+  selectedVesselIdRef.current = selectedVesselId;
   onVesselSelectRef.current = onVesselSelect;
   onVesselUpdateRef.current = onVesselUpdate;
 
@@ -161,7 +171,7 @@ export default function SeaMap({
         onVesselSelectRef.current(motionState?.vessel ?? vessel);
       };
       marker.on("click", handleClick);
-      updateMarkerElement(marker, vessel);
+      updateMarkerElement(marker, vessel, selectedVesselIdRef.current);
       markersRef.current.push({ id: vessel.id, marker, handleClick });
     }
   };
@@ -197,7 +207,7 @@ export default function SeaMap({
       const markerEntry = markersRef.current.find(({ id }) => id === updatedVessel.id);
       markerEntry?.marker.setLatLng([updatedVessel.lat, updatedVessel.lon]);
       if (markerEntry) {
-        updateMarkerElement(markerEntry.marker, updatedVessel);
+        updateMarkerElement(markerEntry.marker, updatedVessel, selectedVesselIdRef.current);
       }
       onVesselUpdateRef.current(updatedVessel);
     }
@@ -206,6 +216,15 @@ export default function SeaMap({
   useEffect(() => {
     reconcileMarkersRef.current();
   }, [mode, vessels]);
+
+  useEffect(() => {
+    for (const { id, marker } of markersRef.current) {
+      const markerElement = marker.getElement();
+      if (markerElement) {
+        markerElement.dataset.selected = String(id === selectedVesselId);
+      }
+    }
+  }, [selectedVesselId]);
 
   useEffect(() => {
     if (mode !== "demo") {

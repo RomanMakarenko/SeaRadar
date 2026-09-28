@@ -1,12 +1,12 @@
 # RUNBOOK.md — delivery history and handoff
 
 - **ID:** `RUNBOOK-SEA-001`
-- **Version:** `0.20.0`
+- **Version:** `0.29.0`
 - **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-25
-- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`EVIDENCE.md`](EVIDENCE.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md)
+- **Date:** 2026-09-27
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`EVIDENCE.md`](EVIDENCE.md), [`docs/checkpoints/CHECKPOINT-23.md`](docs/checkpoints/CHECKPOINT-23.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md), [`docs/decisions/DEC-011-r2-task-authorization-reconciliation.md`](docs/decisions/DEC-011-r2-task-authorization-reconciliation.md)
 
 ## Purpose and boundary
 
@@ -748,3 +748,157 @@ Each entry must include: date/session, goal and scope, changed artifacts, comman
 - **Verification:** `git diff --check` passed for the changed tracked governance files; structural checks confirmed versions, links (zero broken), no trailing whitespace, the index entry, checkpoint 03 HOLD, and absence of exact stale B-08-current phrases. An initial broad regex flagged a historical B-08 mention adjacent to the explicit no-current-task statement; the exact-phrase check then passed. See E-SEA-069. Complete diff review and human checkpoint remain pending.
 - **Status / limitation:** documentation synchronization is verified for the bounded claim/index consistency only. Sprint checkpoint 03 remains `HOLD / not passed`; no live receipt, sample/provenance, product acceptance, or release readiness is claimed. The Sprint catalog mismatch is deferred; `docs/README.md`, `docs/sprints/README.md`, and `SPRINT-02.md` were not edited.
 - **Recovery / next action:** human reviewer should inspect the complete diff and choose `continue`, `revise`, or `HOLD`. If revising, preserve all pre-existing Git state and correct historical evidence only through a superseding append-only entry. No build/tests, provider/network request, environment/secret access, commit, push, or deployment occurred.
+
+### 2026-09-25 — Implemented and checked sparse snapshot demo fallback
+
+- **Task / authorization:** `TASK-SEA-R2-B14-MIXED-VESSELS-001`; DEC-010 and the bounded task contract were explicitly approved. No provider/network request, secret inspection, commit, push, or deployment was authorized or performed.
+- **Observed changes:** synchronized the approved sparse-snapshot behavior in `SPEC.md` and `SPRINT-02.md`; added the approved DEC-010 record/index entry; implemented mixed AISStream/demo marker display, source colors, and selected-marker highlighting; added deterministic threshold and interaction coverage. Pre-existing `reference/` remains untouched.
+- **Verification:** 17 targeted Playwright tests passed, including snapshot counts 0–4; `npx tsc --noEmit` passed; `npm run build` passed; see E-SEA-070. Build emitted a warning that a parent-directory package-lock was ignored and reported `.env.local` as an environment source; values were not inspected. `git diff --check` passed before append-only evidence/history updates and must be rerun afterward.
+- **Status / limitation:** implementation checks passed for the mocked and bounded behavior only. No live AISStream receipt, provider behavior, user validation, Sprint checkpoint 03, or release readiness is established. Full diff review and human checkpoint remain pending.
+- **Recovery / next action:** inspect the scoped diff and choose `continue`, `revise`, or `HOLD`; on revision, change only task-owned paths and preserve all pre-existing Git state and append-only records. Do not commit, push, deploy, access provider/network, or inspect secrets under this task.
+
+### 2026-09-26 — DIAG-007 static environment-loader API inspection
+
+- **Task / authorization:** `TASK-SEA-R2-B09B10-DIAG-007`; the user instructed “виконуй, доведи спрінт 2 докінця” after review of the exact Draft. This was applied only to DIAG-007 static inspection; it does not authorize subsequent runtime, provider, code-change, or Sprint acceptance work.
+- **Preflight:** branch `sprint2`; `HEAD` `4b82a7a`; pre-existing modified/untracked paths were preserved. `docs/checkpoints/CHECKPOINT-17.md` was absent before creation. `git diff --check -- TASK_SPEC.md` passed before the inspection record append.
+- **Timestamp:** 2026-09-26T10:44:32Z (post-inspection and final-check observation).
+- **Observed result:** read `@next/env` v16.3.5 package metadata, declaration, bundled static source, and installed App Router environment-variable guide. Package metadata identifies `dist/index.js` as main and `dist/index.d.ts` as types; the declaration and guide show the named `loadEnvConfig` API and call signature. Bundled source uses getter-backed exports on the CommonJS module object; its loader source contains `.env*` reads. No package code was imported or executed; no getter, loader or accessor was invoked; no `.env*` file, credential, process environment, network, WebSocket, or provider was accessed.
+- **Verification:** source facts were compared with DIAG-001 and DIAG-005/006. They confirm the documented static API shape but do not explain the DIAG-001 runtime exception. `E-SEA-071` records the findings and limitations. Final `git diff --check` is run after the append-only records.
+- **Status / limitation:** DIAG-007 is complete as a static inspection only. Runtime compatibility, loader failure cause, key availability/validity, live receipt, sample/provenance, live UI/API end-to-end behavior, Sprint checkpoint 03, and release readiness remain unknown or unmet. Checkpoint 03 remains `HOLD / not passed`.
+- **Recovery / next action:** preserve all pre-existing Git state and append-only history. Any loader execution, code fix, environment access, or provider request requires a separately bounded contract and explicit approval. No code, configuration, test, dependency, commit, push, or deployment change occurred.
+
+### 2026-09-26 — LIVE-007 one-shot capture (HOLD)
+
+- **Task / authorization:** `TASK-SEA-R2-B09B10-LIVE-007`; the user explicitly approved `continue LIVE-007`. Authorization was limited to one silent `@next/env` loader call and one reader attempt with a 15-second maximum; no retries were authorized.
+- **Preflight:** branch `sprint2`; `.env.local` ignored and untracked, confirmed without opening its contents. Both sample targets and CHECKPOINT-18 were absent; existing modified and untracked worktree paths were preserved.
+- **Observed operation:** one in-memory Node invocation loaded the existing TypeScript config accessor, AISStream reader and transformer; loaded environment configuration once through the installed CommonJS package; checked key presence without outputting the value; then made one connection/subscription attempt through the existing reader. The reader's local subscription-send callback fired; this does not establish provider acknowledgement. The first received WebSocket text message failed eligibility checks and the fixed result was `unsuitable_message` after approximately one second. Reader was stopped immediately. No retry, second connection, troubleshooting or alternate path was attempted.
+- **Artifacts / data handling:** no live sample or provenance was created. Raw provider content, secret values, loader results and raw errors were not output or persisted. No application/source/test/dependency/configuration files were changed.
+- **Evidence / status:** `E-SEA-072` records the bounded result. CHECKPOINT-03's real receipt and matching sample/provenance criteria remain not met; overall status remains `HOLD / not passed`. The exact unsuitability reason, key validity, provider behavior, live UI/API behavior and full Sprint 2 acceptance remain unknown.
+- **Timestamp:** 2026-09-26T11:24:45Z post-attempt observation.
+- **Verification / recovery:** target paths were confirmed absent after the attempt. Run `git diff --check` after appending the evidence and checkpoint. Preserve all existing and newly appended records; no cleanup, reset, commit, push or deployment is authorized. No further provider request is authorized by LIVE-007.
+
+### 2026-09-26 — LIVE-008 one-shot capture (HOLD)
+
+- **Task / authorization:** `TASK-SEA-R2-B09B10-LIVE-008`; the user explicitly approved `continue LIVE-008`. Authorization was limited to one silent `@next/env` loader call and one reader attempt with a 15-second maximum; no retries were authorized.
+- **Preflight:** branch `sprint2`; `.env.local` ignored and untracked, confirmed without opening its contents. Both sample targets and CHECKPOINT-19 were absent; existing modified/untracked worktree paths were preserved.
+- **Observed operation:** one in-memory Node invocation loaded the existing server modules through the installed TypeScript transpiler, invoked `@next/env` once, checked key presence without emitting the value, then made one reader attempt. The fixed reader result was `connect_failed` after about 4 seconds, before the local subscription-send callback (`subscribed: false`). No provider acknowledgement or PositionReport was observed. The attempt ended with no retry or second connection.
+- **Artifacts / data handling:** no live sample or provenance was created. Raw provider content/error, credentials, loader results and environment values were not output or persisted. No application/source/test/dependency/configuration path was changed.
+- **Evidence / status:** `E-SEA-073` records the attempt. CHECKPOINT-03's live receipt and matching sample/provenance criteria remain not met; overall status remains `HOLD / not passed`. The cause of the fixed connection error, key validity, provider behavior and full Sprint 2 acceptance remain unknown.
+- **Timestamp:** 2026-09-26T13:06:36Z post-attempt observation.
+- **Verification / recovery:** target paths were confirmed absent after the attempt. Run `git diff --check` after the append-only records and checkpoint. Preserve all existing and newly appended records; no cleanup, reset, commit, push or deployment is authorized. LIVE-008's single attempt is exhausted.
+
+### 2026-09-26 — DIAG-008 instrumented connection-stage diagnostic
+
+- **Task / authorization:** `TASK-SEA-R2-B09B10-DIAG-008`; the user explicitly approved `continue DIAG-008`. Authorization was limited to one silent loader call and one instrumented reader attempt with a 15-second maximum; no retries.
+- **Preflight:** branch `sprint2`; `.env.local` ignored and untracked, confirmed without opening its contents. CHECKPOINT-20 and both live sample/provenance targets were absent; all pre-existing modified/untracked paths were preserved.
+- **Observed operation:** one in-memory Node invocation instrumented only fixed WebSocket lifecycle categories, called `@next/env` once, checked key presence without outputting its value, and made one reader attempt. The sequence was `open_seen`, `subscription_send_callback`, then `message_transform_rejected` in about one second. The first text message was passed to the existing transformer for a boolean acceptance result and discarded. No provider acknowledgement was asserted; no raw message, event object, error or close reason was retained or emitted. The attempt ended with no retry or second connection.
+- **Artifacts / data boundary:** no sample or provenance was created. No application/source/test/dependency/configuration path was changed; no raw payload or secret was output or persisted.
+- **Evidence / status:** `E-SEA-074` records the observed lifecycle. This establishes that this attempt opened and locally sent the subscription, but it does not establish why the message was rejected or the cause of LIVE-008's earlier `connect_failed`. CHECKPOINT-03 remains `HOLD / not passed`.
+- **Timestamp:** 2026-09-26T13:50:43Z post-attempt observation.
+- **Verification / recovery:** CHECKPOINT-20 and sample/provenance targets remained absent after the attempt. Run `git diff --check` after the task-owned records. Preserve all prior state; no cleanup, reset, commit, push or deployment. DIAG-008's single attempt is exhausted.
+
+### 2026-09-26 — LIVE-009 bounded stream capture
+
+- **Task / authorization:** `TASK-SEA-R2-B09B10-LIVE-009`; the user explicitly approved `continue LIVE-009`. Scope was one silent `@next/env` loader invocation, one server-side reader connection and one hard 15-second stream window; transformer-rejected text messages could be discarded while continuing within that same connection.
+- **Preflight:** branch `sprint2`; `.env.local` ignored and untracked, confirmed without opening its contents. Both sample targets and CHECKPOINT-21 were absent before the attempt. Pre-existing modified/untracked paths were preserved.
+- **Observed operation:** one in-memory invocation called the CommonJS loader once with a silent logger, checked key presence without printing its value, and started one existing-reader WebSocket. Local subscription-send callback ran; this is not provider acknowledgement. Two messages were received in the same connection: the first was rejected by the existing transformer and discarded; the next passed the transformer. The accepted report was projected to the allowlisted B-10 fields, with no null normalization required. The reader stopped on acceptance after approximately 7 seconds; no retry or second connection occurred.
+- **Artifacts / data boundary:** created `data/samples/live/position-report.sample.json` and `data/samples/live/PROVENANCE.md` from the accepted message. Verified the saved allowlisted shape and provenance correspondence without printing the payload. No raw provider envelope, key, raw error, close reason or unrelated environment value was emitted or persisted.
+- **Evidence / status:** `E-SEA-075` and CHECKPOINT-21 record the outcome. This supports the bounded live receipt and sample/provenance criteria for this attempt. Do not rewrite the historical CHECKPOINT-03 record; it remains `HOLD / not passed` until human review/superseding decision. No claim of full Sprint 2 acceptance, release readiness, provider acknowledgement or live UI/API end-to-end behavior.
+- **Timestamp:** 2026-09-26T14:38:17Z post-attempt observation.
+- **Verification / recovery:** `git diff --check` passed after all task-owned records and CHECKPOINT-21 were finalized (no output). The sample allowlist and provenance-link/essential-contents check passed without printing the sample payload. No tests/build, source edits, cleanup, staging, commit, push or deployment. Preserve the new sample/provenance and all pre-existing paths.
+
+### 2026-09-26 — User-approved CHECKPOINT-03 status review
+
+- **Task / authorization:** `TASK-SEA-R2-CHECKPOINT-03-STATUS-001`; the user explicitly instructed `Затверди статус CHECKPOINT-03 за результатами CHECKPOINT-21`. Scope was a review of CHECKPOINT-03 criteria against the existing LIVE-009 evidence and a superseding status record; no technical/provider work.
+- **Review:** CHECKPOINT-21 and `E-SEA-075` support the live PositionReport receipt and matching sample/provenance criteria. Safe key handling remains supported only at the configured-value/secret-boundary level, not key validity. Working demo remains supported locally only.
+- **Decision:** the user's approval is recorded in `E-SEA-076` and CHECKPOINT-22. CHECKPOINT-03's defined criteria are recorded as `PASS / VERIFIED`; the earlier checkpoint record now has artifact status `Superseded`, points to CHECKPOINT-22, and retains its original 2026-09-24 HOLD findings as historical. This does not claim full Sprint 2 acceptance or release readiness.
+- **Verification / recovery:** formatting/link checks and `git diff --check` are run after task-owned records are finalized. No provider/network request, secret/environment access, tests/build, source edits, cleanup, staging, commit, push or deployment. Preserve all prior workspace state and the LIVE-009 sample/provenance.
+
+### 2026-09-27 — B-13 exact-commit review and closeout
+
+- **Task / authorization:** `TASK-SEA-R2-B13-REVIEW-001`; the user first approved the exact read-only review contract with `continue B13-REVIEW-001`, then separately chose `continue` after receiving the no-findings review report. This authorizes only the bounded review closeout records.
+- **Review scope/result:** inspected B-13 commit `17006c615f7a93e84c7c554c624b8909691828fb` against first parent `fef4a8fc51c9c0e41a8158e4e541af574f895741`. The commit changes exactly `app/globals.css`, `app/map-shell.tsx`, `app/sea-map.tsx`, and `tests/snapshot-interface.spec.ts`. No defect against the approved security/data-flow, state/behavior, path/scope, or evidence-boundary criteria was reported.
+- **Decision / artifacts:** user's `continue` disposition recorded in `TASK_SPEC.md`; B-13 task and review gate status set to `Verified`. Appended `E-SEA-077` and created `docs/checkpoints/CHECKPOINT-23.md`. No implementation/test path was edited; pre-existing B-14 changes and unrelated paths were preserved.
+- **Verification:** `git diff --check -- TASK_SPEC.md EVIDENCE.md RUNBOOK.md` passed with no output. Focused validation of CHECKPOINT-23 passed for whitespace, relative links, metadata and review anchors. `E-SEA-077` records the review boundary and limitations.
+- **Limitations / recovery:** no application tests, typecheck, build, provider/network request, secret/environment access, current combined worktree diff, staging, commit, push or deployment occurred. This review does not establish live UI/API behavior, B-14 acceptance, full Sprint 2 acceptance or release readiness. Preserve append-only records and all existing modified/untracked paths; correct any factual issue with a superseding record, not by rewriting history. Further R2 work requires a new bounded contract and explicit approval.
+
+### 2026-09-27 — SPEC R2 authorization chronology reconciliation
+
+- **Task / authorization:** `TASK-SEA-R2-B14-SPEC-STATUS-001`; the user explicitly approved the bounded contract with `continue B14-SPEC-STATUS-001` after the B-14 review found contradictory present-tense authorization claims in `SPEC.md:85` and `SPEC.md:107`.
+- **Observed changes:** versioned `SPEC.md` from 1.3.0 to 1.4.0; clarified that DEC-009 records the authorization state when approved and that DEC-010 plus the approved B-14 task later authorize only that bounded sparse-snapshot UI slice. Created DEC-011 to record this chronology without changing DEC-009/DEC-010 or authorizing other R2 work; added it to `docs/decisions/README.md`. Appended `E-SEA-078`. B-14 remains Active and its review remains open.
+- **Verification:** `git diff --check -- SPEC.md TASK_SPEC.md EVIDENCE.md RUNBOOK.md docs/decisions/README.md` passed with no output. Focused checks passed for metadata, relative links, authorization chronology/boundary, DEC-011 index entry, and the still-Active B-14 task. No application tests, typecheck or build were run.
+- **Limitations / recovery:** no app/source/test changes, tests, typecheck, build, provider/network, environment/secret access, commit, push or deployment. This correction does not close B-14 review, create CHECKPOINT-24, or establish full Sprint 2 acceptance or release readiness. Preserve all pre-existing worktree paths and append-only history; any further technical work requires its own approved bounded contract.
+
+### 2026-09-27 — SPEC correction disposition and B-14 re-review handoff
+
+- **Task / authorization:** the user selected `continue` after reviewing the corrected SPEC/decision chronology diff. This records acceptance only of `TASK-SEA-R2-B14-SPEC-STATUS-001`; it does not accept B-14 or Sprint 2.
+- **Disposition / artifacts:** marked the bounded documentation task `Verified`; superseded the old B-14 review contract because its target fingerprint was stale. Added Draft `TASK-SEA-R2-B14-REVIEW-002` for the corrected seven-path target, fingerprint `0c3e8153f453d10d73564f247bf6ef88b51d947b30a6ddbd2b3a6a22cf1b7b86` against base `4b82a7aa1bdc2c70d3963a6bc02aef8517ad98d7`. The staged target diff was empty; no review was performed under this Draft contract.
+- **Verification:** `git diff --check -- TASK_SPEC.md` passed. Focused assertions passed for the correction task's final status, superseded prior review, new draft approval gate, and separation from B-14/Sprint acceptance. An initial assertion failed because it searched for a different literal than the equivalent wording in the contract; corrected assertion passed.
+- **Handoff / limitations:** next action is exact user approval `continue B14-REVIEW-002`, then a read-only review of the frozen target. No app tests, typecheck, build, provider/network, environment/secrets, commit, push, deployment or CHECKPOINT-24 occurred. Preserve all pre-existing worktree changes and append-only history.
+
+### 2026-09-27 — B-14 review finding remediation
+
+- **Task / authorization:** `TASK-SEA-R2-B14-REMEDIATION-001`; the user explicitly approved it with `continue B14-REMEDIATION-001`. Scope was limited to stabilizing the sparse-snapshot marker array and clarifying the DEC-009 decision-index row.
+- **Observed changes:** `app/map-shell.tsx` memoizes derived map vessels by snapshot identity, so selection-only updates do not send a new vessel-array identity to the map reconciliation effect. `tests/snapshot-interface.spec.ts` retains AIS/demo element handles across selection transfer and verifies the nodes stay connected. `docs/decisions/README.md` dates the DEC-009 authorization statement to 2026-09-25 and points to DEC-011 for the later narrow B-14 authorization.
+- **Verification:** `npx playwright test tests/snapshot-interface.spec.ts tests/vessel-selection.spec.ts` passed 17/17; `npx tsc --noEmit` passed; `npm run build` passed (Next.js 16.3.5/Turbopack). Pre-append `git diff --check` passed for the source, test, index and task paths; final append-only records require a final diff check. The test was not run against pre-fix code; its expected pre-fix failure was not directly observed.
+- **Limitations / handoff:** build output identified `.env.local` as an environment source; its contents were not inspected. No provider/network request, direct secret/environment inspection, commit, push or deployment. B-14 review remains open; no CHECKPOINT-24 or Sprint 2 acceptance is claimed. Human diff disposition is required, then a separate fresh B-14 review contract/approval is required before review.
+
+### 2026-09-27 — Final append-only record whitespace check
+
+- After `E-SEA-080` and the remediation execution note were appended, `git diff --check -- app/map-shell.tsx tests/snapshot-interface.spec.ts docs/decisions/README.md TASK_SPEC.md EVIDENCE.md RUNBOOK.md` passed with no output. No paths outside the approved remediation set plus task/evidence/runbook records were changed by this remediation.
+
+### 2026-09-27 — B-14 remediation disposition and replacement review handoff
+
+- **Disposition:** the user supplied `continue` for the remediation diff. This accepts only `TASK-SEA-R2-B14-REMEDIATION-001`; it does not pass the B-14 review or accept Sprint 2. The remediation task is recorded `Verified` for its bounded changes and checks.
+- **Review target:** `TASK-SEA-R2-B14-REVIEW-002` is marked `Superseded` because remediation changed its frozen target. Draft `TASK-SEA-R2-B14-REVIEW-003` freezes the exact seven-path unstaged diff against base `4b82a7aa1bdc2c70d3963a6bc02aef8517ad98d7`, fingerprint `3c413600f35500e9acb83e514891c76283a3fab9271ad5fe0605b95292b75e2d`; staged target diff was empty at preparation. No review was performed.
+- **Verification:** the hash/path preflight reported the seven expected paths and empty staged target. Focused assertions and `git diff --check` are recorded in E-SEA-081 after execution.
+- **Handoff / limitations:** B-14 review remains open. Next action requires exact approval `continue B14-REVIEW-003`; no CHECKPOINT-24, B-14 acceptance, Sprint 2 acceptance, test/build, provider/network, environment/secrets, commit, push or deployment occurred in this closeout.
+
+### 2026-09-27 — Replacement review contract record validation
+
+- `git diff --check -- TASK_SPEC.md EVIDENCE.md RUNBOOK.md app/map-shell.tsx tests/snapshot-interface.spec.ts docs/decisions/README.md` passed. Structural assertions passed for the exact seven-path target, empty staged target, SHA-256 `3c413600f35500e9acb83e514891c76283a3fab9271ad5fe0605b95292b75e2d`, remediation/review lifecycle statuses, and explicit `continue B14-REVIEW-003` gate. Recorded as `E-SEA-082`.
+- **Handoff:** the read-only post-remediation review has not been performed. Await exact user approval `continue B14-REVIEW-003`; no B-14 or Sprint 2 acceptance is implied.
+
+### 2026-09-27 — Post-remediation B-14 review and SPEC correction handoff
+
+- **Task / authorization:** `TASK-SEA-R2-B14-REVIEW-003`; user approved the exact read-only review with `continue B14-REVIEW-003`, then dispositioned the result with `продовжуй`. That disposition authorizes closeout records and preparation of a separate bounded correction contract only.
+- **Review result:** the frozen seven-path target matched base `4b82a7aa1bdc2c70d3963a6bc02aef8517ad98d7` and SHA-256 `3c413600f35500e9acb83e514891c76283a3fab9271ad5fe0605b95292b75e2d`. One medium inconsistency was confirmed at `SPEC.md:69`: the stale no-current-R2-task statement conflicts with the later B-14 authorization in the SPEC and DEC-011. Review recommendation is `FAIL`; no other confirmed finding. B-14 stays Active; no CHECKPOINT-24 is created.
+- **Disposition / handoff:** recorded as `E-SEA-083`; review task is `Verified` for review completion, not acceptance. Draft `TASK-SEA-R2-B14-SPEC-STATUS-002` freezes the current SPEC diff fingerprint `3c60f5d201762b02ddb89edd9c8f948c71a72fabf218eb6ec7abd60ba9d9cf2d`, with staged SPEC diff empty. Next action requires exact approval `continue B14-SPEC-STATUS-002` before editing SPEC.
+- **Limitations:** no tests, typecheck, build, application code, provider/network, environment/secrets, commit, push or deployment occurred. Sprint 2 acceptance and release readiness remain unestablished.
+
+### 2026-09-27 — SPEC authorization-scope wording correction
+
+- **Task / authorization:** `TASK-SEA-R2-B14-SPEC-STATUS-002`; user explicitly approved the exact bounded documentation contract with `continue B14-SPEC-STATUS-002`.
+- **Observed change:** `SPEC.md` version advanced from 1.4.0 to 1.5.0; the date is 2026-09-27. Only the stale R2 scope-status sentence was revised to distinguish DEC-009's 2026-09-25 state from the later, B-14-only authorization in DEC-010 and the approved B-14 task. No other SPEC section/product scope was changed.
+- **Verification:** focused textual/metadata assertions passed; `git diff --check -- SPEC.md TASK_SPEC.md EVIDENCE.md RUNBOOK.md` passed. Recorded as `E-SEA-084`.
+- **Handoff / limitations:** waiting for the user's `continue`, `revise`, or `HOLD` disposition on the SPEC diff. B-14 review remains failed/open pending a fresh review contract after this correction; no CHECKPOINT-24 or Sprint 2 acceptance is claimed. No tests/typecheck/build, provider/network, environment/secrets, commit, push or deployment occurred.
+
+### 2026-09-27 — SPEC correction disposition and B-14 review handoff
+
+- **Disposition:** the user selected `continue` for `TASK-SEA-R2-B14-SPEC-STATUS-002`. This accepts only the bounded SPEC wording/metadata diff; the correction task is closed `Verified` for its defined scope, as recorded in E-SEA-085. This is not a B-14 review pass or Sprint 2 acceptance.
+- **Verification:** focused structural/path/fingerprint assertions and `git diff --check -- SPEC.md TASK_SPEC.md EVIDENCE.md RUNBOOK.md` passed before the append-only closeout records were finalized. The frozen review target still matches the exact seven paths and SHA-256 `bda55292cd56688e1b7c6919caa20e6a545e125a742a6399ffb015375ccf7afa`; the staged target is empty.
+- **Handoff:** Draft `TASK-SEA-R2-B14-REVIEW-004` is prepared, but no review has been performed. Await exact approval `continue B14-REVIEW-004` before inspecting the target. B-14 remains open; no CHECKPOINT-24 is created. No tests/typecheck/build, application execution, provider/network, environment/secrets, commit, push or deployment occurred.
+
+### 2026-09-27 — B-14 post-correction review and accepted closeout
+
+- **Task / authorization:** `TASK-SEA-R2-B14-REVIEW-004`; user approved exact read-only review with `continue B14-REVIEW-004`, then selected `continue` on the PASS report. The latter authorizes only this B-14 review closeout and the checkpoint permitted by the contract.
+- **Preflight / review:** exact seven-path diff and staged boundary matched base `4b82a7aa1bdc2c70d3963a6bc02aef8517ad98d7`, fingerprint `bda55292cd56688e1b7c6919caa20e6a545e125a742a6399ffb015375ccf7afa`, staged target empty. All six review oracles passed by static inspection; recommendation `PASS`, no findings.
+- **Closeout:** `TASK-SEA-R2-B14-REVIEW-004` and `TASK-SEA-R2-B14-MIXED-VESSELS-001` are `Verified` for scoped criteria. `E-SEA-086` records the facts, and `docs/checkpoints/CHECKPOINT-24.md` records B-14's bounded PASS. This does not accept all of Sprint 2 or establish live provider behavior, user validation, or release readiness.
+- **Verification:** review contract prohibited tests/typecheck/build/application execution/network/secrets; none were run/accessed. Final whitespace and focused record/path assertions are performed after this closeout is written.
+- **Handoff / recovery:** B-14 review is closed for its approved slice. Preserve the implementation and all existing worktree paths. No code edits, staging, reset, cleanup, commit, push or deployment occurred. Any final Sprint 2 acceptance activity remains separately gated; do not infer it from CHECKPOINT-24.
+
+### 2026-09-27 — Sprint 2 bounded acceptance review
+
+- **Task / disposition:** `TASK-SEA-R2-SPRINT02-ACCEPTANCE-REVIEW-001`; the user reported that clicking “Завантажити справжні позиції” loads real ships, then selected `continue SPRINT02-ACCEPTANCE-REVIEW-001`.
+- **Review result:** bounded task evidence supports B-08…B-14 for their scoped criteria; CHECKPOINT-22 supports only CHECKPOINT-03's defined criteria. The user's report supports the core live click-to-display flow as human-reported evidence, not an independent runtime observation. No explicit confirmation was supplied for live marker-to-card matching or every manual US-05…US-08 behavior.
+- **Recommendation / closeout:** `CONTINUE WITH APPROVAL`; `TASK-SEA-R2-SPRINT02-ACCEPTANCE-REVIEW-001` is `Verified` for review completion only. No overall Sprint 2 PASS checkpoint is created. Part C's B-10…B-13 statuses are treated as an earlier plan snapshot against later delivered task records; neither source was rewritten. Evidence: `E-SEA-087`.
+- **Verification / boundary:** `git diff --check` and focused structural/path checks are run after this closeout. No tests, typecheck, build, application execution, provider/network request, environment loading, secret access, source changes, staging, reset, cleanup, commit, push, or deployment occurred. US-09/US-10 and release readiness remain outside scope.
+- **Handoff:** any remaining manual acceptance detail requires a separately reviewed bounded contract and explicit approval; no technical follow-up is authorized by this review.
+
+### 2026-09-28 — Sprint 2 bounded manual acceptance closeout
+
+- **Task / authorization:** `TASK-SEA-R2-MANUAL-ACCEPTANCE-001`; exact approval `continue SPRINT02-MANUAL-ACCEPTANCE-001`, followed by the user's `continue` disposition on the bounded manual report.
+- **Observed:** user-provided local-browser screenshot showed one same-origin `GET /api/snapshot` with HTTP 200 and an AISStream snapshot label, 15-second window, displayed UTC time, count 4, and incomplete-sample wording; OSM tile requests were blocked. The user reported seeing the loading state, confirming the selected marker/card ID correspondence, observing a stationary live marker for about five seconds, and receiving the exact no-key UI message after a separate local launch with an empty process key. The user confirmed the development server was stopped. No vessel identifiers or external lookup details were retained.
+- **Result / limits:** PASS for the bounded manual outcomes reported and screenshot-visible success response; this does not establish overall Sprint 2 acceptance. The exact live-request duration, initial idle-state details, all loading subdetails, and no-key HTTP metadata were not separately captured. The no-key route's source checks for a missing key before calling the snapshot collector; no server-side egress instrumentation was used. An external site lookup was excluded from evidence.
+- **Verification:** `git diff --check -- EVIDENCE.md RUNBOOK.md` and focused structural assertions were run after appending E-SEA-088 and this handoff. No tests, typecheck, build, further app run, provider request, secret/environment inspection, source changes, checkpoint, staging, reset, cleanup, commit, push, or deployment occurred.
+- **Handoff:** E-SEA-088 records the scoped observations. No CHECKPOINT-25 or overall Sprint 2 PASS was created. Preserve current worktree state; any further acceptance work requires its own bounded contract and explicit approval.

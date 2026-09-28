@@ -143,13 +143,41 @@ test("renders stationary snapshot markers, matching cards, and exact status", as
   await expect(status).toHaveText(
     "AISStream · знімок за 15 с · отримано 12:34:56 UTC · суден: 2 · вибірка неповна",
   );
-  await expect(page.locator("[data-vessel-id]")).toHaveCount(2);
+  await expect(page.locator("[data-vessel-id]")).toHaveCount(5);
+  await expect(page.locator('[data-vessel-source="aisstream"]')).toHaveCount(2);
+  await expect(page.locator('[data-vessel-source="demo"]')).toHaveCount(3);
   await expect(page.locator('[data-vessel-id="123456789"]')).toBeVisible();
   await expect(page.locator('[data-vessel-id="987654321"]')).toBeVisible();
 
-  await page.locator('[data-vessel-id="987654321"]').click();
+  const aisColor = await page
+    .locator('[data-vessel-source="aisstream"] .vessel-glyph')
+    .first()
+    .evaluate((element) => getComputedStyle(element).backgroundColor);
+  const demoColor = await page
+    .locator('[data-vessel-source="demo"] .vessel-glyph')
+    .first()
+    .evaluate((element) => getComputedStyle(element).backgroundColor);
+  expect(aisColor).not.toBe(demoColor);
+
+  const aisMarker = page.locator('[data-vessel-id="987654321"]');
+  const demoMarker = page.locator('[data-vessel-id="demo-1"]');
+  const aisMarkerNode = await aisMarker.evaluateHandle((element) => element);
+  const demoMarkerNode = await demoMarker.evaluateHandle((element) => element);
+
+  await aisMarker.click();
   await expect(page.locator('[data-vessel-card-id="987654321"]')).toBeVisible();
-  await expect(page.locator('[data-vessel-card-id="987654321"]')).toContainText("987654321");
+  await expect(aisMarker).toHaveAttribute("data-selected", "true");
+  await expect(page.locator('[data-vessel-id][data-selected="true"]')).toHaveCount(1);
+  expect(await aisMarkerNode.evaluate((element) => element.isConnected)).toBe(true);
+  expect(await demoMarkerNode.evaluate((element) => element.isConnected)).toBe(true);
+
+  await demoMarker.click();
+  await expect(page.locator('[data-vessel-card-id="demo-1"]')).toBeVisible();
+  await expect(demoMarker).toHaveAttribute("data-selected", "true");
+  await expect(aisMarker).toHaveAttribute("data-selected", "false");
+  await expect(page.locator('[data-vessel-id][data-selected="true"]')).toHaveCount(1);
+  expect(await aisMarkerNode.evaluate((element) => element.isConnected)).toBe(true);
+  expect(await demoMarkerNode.evaluate((element) => element.isConnected)).toBe(true);
 
   const marker = page.locator('[data-vessel-id="123456789"]');
   const initialTransform = await marker.evaluate((element) => (element as HTMLElement).style.transform);
@@ -194,8 +222,40 @@ test("distinguishes an empty successful snapshot from an error", async ({ page }
     "AISStream · знімок за 15 с · отримано 12:34:56 UTC · суден: 0 · вибірка неповна",
   );
   await expect(page.getByRole("status")).toContainText("За час збору позицій не отримано");
-  await expect(page.locator("[data-vessel-id]")).toHaveCount(0);
+  await expect(page.locator("[data-vessel-id]")).toHaveCount(3);
+  await expect(page.locator('[data-vessel-source="demo"]')).toHaveCount(3);
+  await expect(page.locator('[data-vessel-source="aisstream"]')).toHaveCount(0);
   await expect(page.locator("[data-vessel-card-id]")).toHaveCount(0);
+});
+
+test("adds all demo vessels only when a successful snapshot contains fewer than three AIS vessels", async ({ page }) => {
+  const tiles = await blockTiles(page);
+  const counts = [0, 1, 2, 3, 4];
+  let requestIndex = 0;
+  await page.route(SNAPSHOT_URL, (route) => {
+    const count = counts[requestIndex++];
+    const vessels = Array.from({ length: count }, (_, index) =>
+      vessel(String(123450000 + index)),
+    );
+    return route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(successBody(vessels)),
+    });
+  });
+
+  await page.goto("/");
+  const button = page.getByRole("button", { name: "Завантажити справжні позиції" });
+  for (const count of counts) {
+    await button.click();
+    await expect(page.locator('[data-source="aisstream"]')).toContainText(`суден: ${count}`);
+    await expect(page.locator('[data-vessel-source="aisstream"]')).toHaveCount(count);
+    await expect(page.locator('[data-vessel-source="demo"]')).toHaveCount(count < 3 ? 3 : 0);
+    await expect(page.locator("[data-vessel-id]")).toHaveCount(count < 3 ? count + 3 : count);
+  }
+
+  expect(requestIndex).toBe(counts.length);
+  expectTilesBlocked(tiles);
 });
 
 const API_ERRORS = [

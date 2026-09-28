@@ -1,14 +1,16 @@
 # CHECKPOINT-03 — B-08…B-10 live receipt and demo evidence
 
 - **ID:** `CHECKPOINT-SEA-R2-003`
-- **Version:** `1.0.0`
-- **Status:** `Active`
+- **Version:** `1.1.0`
+- **Status:** `Superseded`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-24
-- **Related artifacts:** [`../../SPRINT-02.md`](../../SPRINT-02.md), [`../../TASK_SPEC.md`](../../TASK_SPEC.md), [`../../EVIDENCE.md`](../../EVIDENCE.md), [`../../RUNBOOK.md`](../../RUNBOOK.md), [`../decisions/DEC-004-checkpoint-convention.md`](../decisions/DEC-004-checkpoint-convention.md), `TASK-SEA-R2-B09B10-LIVE-001`, `E-SEA-026`, `E-SEA-031`–`E-SEA-039`, `E-SEA-051`, `E-SEA-052`.
+- **Date:** 2026-09-26
+- **Related artifacts:** [`../../SPRINT-02.md`](../../SPRINT-02.md), [`../../TASK_SPEC.md`](../../TASK_SPEC.md), [`../../EVIDENCE.md`](../../EVIDENCE.md), [`../../RUNBOOK.md`](../../RUNBOOK.md), [`../decisions/DEC-004-checkpoint-convention.md`](../decisions/DEC-004-checkpoint-convention.md), [`CHECKPOINT-21.md`](CHECKPOINT-21.md), [`CHECKPOINT-22.md`](CHECKPOINT-22.md), `TASK-SEA-R2-B09B10-LIVE-001`, `E-SEA-026`, `E-SEA-031`–`E-SEA-039`, `E-SEA-051`–`E-SEA-052`, `E-SEA-075`–`E-SEA-076`.
 
-## Checkpoint outcome
+> **Supersession:** the HOLD outcome below records the state as of 2026-09-24. After the later LIVE-009 evidence and the user's explicit approval, CHECKPOINT-22 records the current scoped outcome as `PASS / VERIFIED`. This historical checkpoint is superseded; its contemporaneous observations are preserved.
+
+## Original checkpoint outcome (as of 2026-09-24)
 
 **HOLD — checkpoint 03 is not passed.** One authorized live attempt ended with the reader's fixed `provider_error` result; no valid PositionReport or live sample/provenance was produced. This restart record summarizes evidence and is not itself evidence.
 

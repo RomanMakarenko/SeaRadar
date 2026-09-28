@@ -1,8 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import VesselCard from "./vessel-card";
+import { DEMO_VESSELS } from "./vessel-model";
 import type { Vessel } from "./vessel-model";
 
 type SnapshotSuccess = {
@@ -208,13 +209,23 @@ export default function MapShell() {
     }
   }, []);
 
+  const snapshot =
+    state.kind === "success" || state.kind === "empty" ? state.snapshot : null;
   const mapMode: MapMode =
     state.kind === "idle-demo"
       ? "demo"
-      : state.kind === "success"
+      : snapshot !== null
         ? "snapshot"
         : "hidden";
-  const mapVessels = state.kind === "success" ? state.snapshot.vessels : NO_VESSELS;
+  const mapVessels = useMemo(() => {
+    if (snapshot === null) {
+      return NO_VESSELS;
+    }
+
+    return snapshot.vessels.length < 3
+      ? [...snapshot.vessels, ...DEMO_VESSELS]
+      : snapshot.vessels;
+  }, [snapshot]);
   const sourceLabel =
     state.kind === "idle-demo"
       ? "Демонстраційні дані"
@@ -238,6 +249,7 @@ export default function MapShell() {
       <SeaMap
         mode={mapMode}
         vessels={mapVessels}
+        selectedVesselId={selectedVessel?.id ?? null}
         viewResetToken={viewResetToken}
         onVesselSelect={handleVesselSelect}
         onVesselUpdate={handleVesselUpdate}
