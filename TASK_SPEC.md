@@ -2841,7 +2841,7 @@ Before approval, revise or remove only this Draft contract. After review, preser
 # TASK-SEA-R2-MANUAL-ACCEPTANCE-001 — Remaining Sprint 2 manual acceptance
 
 - **Version:** `1.0.0`
-- **Status:** `Draft`
+- **Status:** `Verified` — bounded manual pass completed and reported; uncaptured subdetails remain unresolved and this is not Sprint 2 acceptance.
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-09-27
@@ -2897,4 +2897,167 @@ Before approval, revise or remove only this Draft contract. After review, preser
 - **Contract preparation checks:** `git diff --check -- TASK_SPEC.md`; structural assertions for task ID/status, exact approval gate, allowed/excluded paths, one-request cap, no-secret rule, acceptance oracle, stop conditions, and recovery; inspect changed-path boundary. No runtime/product check is part of contract preparation.
 - **Expected result now:** only this Draft contract is appended to `TASK_SPEC.md`; no EVIDENCE/RUNBOOK/checkpoint or implementation file is changed.
 - **Recovery:** before approval, revise or remove only this appended Draft section. After an approved manual pass, preserve the append-only evidence; correct factual errors only with a superseding factual record. Never reset/clean the shared worktree or alter local secret files.
-- **Next action:** human review of this exact Draft and explicit `continue SPRINT02-MANUAL-ACCEPTANCE-001`, `revise`, or `HOLD`. No manual operation is authorized until that approval is given.
+## Bounded manual outcome — 2026-09-28
+
+- **Outcome:** `Verified` for completion of the one authorized manual pass and its report only. E-SEA-088 records screenshot-visible same-origin HTTP 200 and snapshot status/count/time plus user-reported loading, live marker/card correspondence, stationary marker and no-key UI message. The user separately selected `continue` on that report.
+- **Unresolved observations:** initial idle-demo label/selection-clearing details, individual loading-state subdetails, exact live request duration, and no-key HTTP metadata were not separately captured. No-key no-provider behavior is supported by the route's missing-key guard, not server-side egress instrumentation.
+- **Boundary:** this status closes the bounded manual attempt; it does not certify the unobserved details, overall Sprint 2, US-09/US-10, release readiness, or deployment. See E-SEA-088 and subsequent final-evidence review.
+- **Handoff:** no additional runtime or provider action is authorized. Any remaining behavior check requires a separate bounded contract and exact approval.
+
+# TASK-SEA-R2-SPRINT02-ACCEPTANCE-REVIEW-002 — Reassess Sprint 2 acceptance after manual evidence
+
+- **Version:** `1.0.0`
+- **Status:** `Verified` — bounded read-only review completed; recommendation remains `CONTINUE WITH APPROVAL`, not Sprint 2 acceptance.
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-28
+- **Related artifacts:** [`SPEC.md`](SPEC.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), [`docs/decisions/DEC-009-r2-current-task-status.md`](docs/decisions/DEC-009-r2-current-task-status.md), [`docs/decisions/DEC-010-r2-sparse-snapshot-demo-fallback.md`](docs/decisions/DEC-010-r2-sparse-snapshot-demo-fallback.md), [`docs/decisions/DEC-011-r2-task-authorization-reconciliation.md`](docs/decisions/DEC-011-r2-task-authorization-reconciliation.md), [`docs/checkpoints/CHECKPOINT-22.md`](docs/checkpoints/CHECKPOINT-22.md), [`docs/checkpoints/CHECKPOINT-23.md`](docs/checkpoints/CHECKPOINT-23.md), [`docs/checkpoints/CHECKPOINT-24.md`](docs/checkpoints/CHECKPOINT-24.md), `TASK-SEA-R2-SPRINT02-ACCEPTANCE-REVIEW-001`, `TASK-SEA-R2-MANUAL-ACCEPTANCE-001`, `E-SEA-075`–`E-SEA-088`.
+
+## Goal and authorization boundary
+
+- **Goal:** perform a fresh, read-only assessment of whether the newly recorded bounded manual observations in E-SEA-088 close the specific acceptance gap identified by E-SEA-087, and determine whether current evidence supports a Sprint 2 / R2 acceptance recommendation.
+- **Scope:** approved Sprint 2 / R2 criteria US-05…US-08 and B-08…B-14, plus CHECKPOINT-03's already superseded, scoped result as currently recorded by CHECKPOINT-22. Reconcile E-SEA-087 with E-SEA-088 and the approved B-13/B-14 records without extending their claims.
+- **Exclusions:** US-09, US-10, full MVP acceptance, release/deployment readiness, broad user validation, provider availability/key validity, any new live or diagnostic operation, source/test changes, and README/PDF or sample updates.
+- **Approval:** this Draft authorizes no review or other operation. Begin only after explicit approval of this exact contract with `continue SPRINT02-ACCEPTANCE-REVIEW-002`. Approval authorizes only the read-only assessment and report described here; it does not itself accept Sprint 2 or authorize any follow-up task.
+
+## Review method and acceptance oracle
+
+After exact approval, review only the canonical contracts, dated decision records, task outcomes, evidence, runbook, and scoped checkpoints listed above. Treat E-SEA-088 as a sanitized user-reported/manual observation plus screenshot-visible metadata; do not infer facts beyond what it records. Do not inspect raw live sample values or the retrospective README/PDF.
+
+Prepare an acceptance matrix for each applicable criterion with: source; latest task/evidence/checkpoint anchors; evidence class (`local automated`, `static review`, `bounded live capture`, `manual user report`, or `human disposition`); status (`SUPPORTED`, `NOT SUPPORTED`, or `UNKNOWN`); and limitation. Assess at minimum:
+
+1. **Scope and governance:** only approved R2 scope and the bounded B-14 addition are considered; DEC-009/010/011 chronology is consistent; CHECKPOINT-22 is used for the current scoped CHECKPOINT-03 result.
+2. **B-08…B-12:** direct evidence supports only their bounded local behavior and the single authorized live receipt/sample; do not claim key validity or provider acknowledgement.
+3. **B-13 / US-05…US-08:** distinguish mocked UI tests, static review, E-SEA-088 screenshot-visible facts, and user-reported manual observations. Assess each recorded criterion, including any loading detail not explicitly observed, without promoting `UNKNOWN` to `SUPPORTED`.
+4. **B-14:** keep CHECKPOINT-24's PASS bounded to its approved UI criteria; do not infer live provider behavior or user validation.
+5. **Overall recommendation:** recommend `PASS` only if every applicable Sprint 2/R2 criterion has sufficient current evidence and no blocking acceptance detail remains; otherwise recommend `CONTINUE WITH APPROVAL` or `HOLD` and name each remaining gap. State explicitly that US-09/US-10 and overall MVP/release readiness are outside this task.
+
+The review output is a matrix and recommendation in the conversation. Do not edit records, create a checkpoint, run tests/typecheck/build, start the app, make provider/network requests, inspect environment/secrets, or access raw sample values during review.
+
+## Allowed paths, preservation, and closeout gate
+
+- **Contract preparation now:** this appended Draft in `TASK_SPEC.md` only.
+- **After exact approval:** read-only inspection of the listed contracts, task records, evidence, runbook, decisions, and checkpoints only as needed for the matrix. Do not inspect implementation diffs or raw sample payloads.
+- **After report:** stop for a separate user disposition `continue`, `revise`, or `HOLD`. Only after a separate `continue` may this task's outcome be recorded in `TASK_SPEC.md` and factual review results be appended to `EVIDENCE.md` and `RUNBOOK.md`. A new Sprint 2 acceptance checkpoint may be created only if the review oracle supports `PASS` and the user explicitly accepts that bounded result. `revise` or `HOLD` records no overall PASS.
+- Any follow-up needing manual behavior not already evidenced, code/test changes, application execution, provider/network, secret/environment access, or new product decisions requires its own reviewed bounded contract and explicit approval.
+- Preserve all existing committed and uncommitted paths, including the live sample, Sprint retrospective files, screenshots, and `reference/`. Do not stage, reset, clean, overwrite, commit, push, deploy, or change those paths under this task.
+
+## Verification, stop conditions, and recovery
+
+- **Contract preparation check:** run `git diff --check -- TASK_SPEC.md` and focused structural checks for the task ID/status, exact approval gate, criteria, evidence boundary, allowed paths, stop conditions, and recovery. Expected change now: this Draft section only.
+- **Stop:** if records conflict or evidence is insufficient to classify a criterion, preserve `UNKNOWN`/`HOLD`; do not seek new evidence under this contract.
+- **Recovery:** before approval, revise or remove only this Draft section. After review, preserve the report and append-only history; correct factual errors only through a superseding record. Never reset, clean, or roll back shared work.
+## Review outcome and disposition — 2026-09-28
+
+- **Review status:** `Verified` for completion of this bounded read-only review only. Recommendation: `CONTINUE WITH APPROVAL`; this is not overall Sprint 2 acceptance.
+- **Matrix outcome:** scope/governance and dated DEC-009/010/011 chronology are `SUPPORTED`; B-08…B-12 are `SUPPORTED` for bounded local behavior and the single live receipt/sample in E-SEA-075; B-13/US-05…US-08 are supported by scoped mocked/static evidence plus E-SEA-088's screenshot-visible and user-reported results, with explicit manual details still `UNKNOWN`; B-14 is `SUPPORTED` only for CHECKPOINT-24's scoped criteria; CHECKPOINT-03 is `PASS / VERIFIED` only for the criteria captured in CHECKPOINT-22.
+- **E-SEA-087 reconciliation:** E-SEA-088 closes the previously missing reported marker/card correspondence and adds bounded live UI success, loading, stationary-marker and no-key outcomes. Its screenshot-visible HTTP 200/snapshot metadata is not an instrumented trace; the no-key no-egress claim remains based on source guard, not network instrumentation.
+- **Open details:** initial idle-demo details, individual loading subdetails, exact live request duration, and no-key HTTP metadata remain uncaptured/`UNKNOWN`. Existing mocked tests support local UI behavior but do not convert these live/manual observations to `SUPPORTED`. `TASK-SEA-R2-MANUAL-ACCEPTANCE-001` remains marked `Draft` despite E-SEA-088/RUNBOOK recording its approved execution and disposition; this lifecycle inconsistency is reported, not edited under this review.
+- **Disposition:** user selected `CONTINUE WITH APPROVAL` on the review report. This authorizes closeout of this review only, not a Sprint 2 PASS. No checkpoint is created because the review oracle does not support PASS.
+- **Evidence / verification:** `E-SEA-089`; final documentation check results are recorded there. No tests, typecheck, build, application execution, provider/network, environment loading, secret access, source changes, staging, reset, cleanup, commit, push, or deployment occurred.
+- **Handoff:** resolve whether the uncaptured manual details are acceptance-blocking and reconcile the manual task lifecycle only through a separate bounded contract/approval. US-09/US-10, full MVP acceptance, release readiness and deployment remain outside this review.
+
+# TASK-SEA-R2-SPRINT02-FINAL-EVIDENCE-REVIEW-003 — Final evidence sufficiency review
+
+- **Version:** `1.0.0`
+- **Status:** `Verified` — bounded read-only review completed; recommendation is `CONTINUE WITH APPROVAL`, not overall Sprint 2 acceptance.
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-28
+- **Related artifacts:** [`SPEC.md`](SPEC.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/checkpoints/CHECKPOINT-22.md`](docs/checkpoints/CHECKPOINT-22.md), [`docs/checkpoints/CHECKPOINT-23.md`](docs/checkpoints/CHECKPOINT-23.md), [`docs/checkpoints/CHECKPOINT-24.md`](docs/checkpoints/CHECKPOINT-24.md), `TASK-SEA-R2-SPRINT02-ACCEPTANCE-REVIEW-002`, `TASK-SEA-R2-MANUAL-ACCEPTANCE-001`, `E-SEA-051`, `E-SEA-075`, `E-SEA-077`, `E-SEA-087`–`E-SEA-089`.
+
+## Goal and approval boundary
+
+- **Goal:** determine whether already-recorded local/mock UI test evidence directly covers the idle/loading details left uncaptured by E-SEA-088; reconcile the manual acceptance task's Draft lifecycle label against its approval/outcome records; and determine whether all in-scope Sprint 2 acceptance criteria now have sufficient evidence for a final recommendation.
+- **Scope:** US-05…US-08 / B-13 idle/loading criteria only as necessary to assess the open details from E-SEA-089; task/evidence/checkpoint reconciliation for B-08…B-14 and CHECKPOINT-03 solely by reference to current scoped records. No new product behavior, live acceptance or expanded R2 scope.
+- **Approval:** Draft only. Begin only after the user explicitly approves this exact read-only review with `continue SPRINT02-FINAL-EVIDENCE-REVIEW-003`. Approval does not itself accept Sprint 2 or authorize a runtime action.
+
+## Review method and acceptance oracle
+
+After exact approval, inspect only the canonical records listed above and the existing B-13 automated test source(s) named by those records, starting with `tests/snapshot-interface.spec.ts`. Do not run the tests. Do not inspect raw live sample values, retrospective README/PDF, unrelated code, or the combined worktree diff.
+
+Prepare a criterion matrix showing each open idle/loading detail; the exact existing assertion/evidence anchor, if any; evidence class (`local automated`, `manual user report`, `static review`, or `UNKNOWN`); and result (`SUPPORTED`, `NOT SUPPORTED`, or `UNKNOWN`). Then reassess the acceptance gap without upgrading mocked behavior into live-provider evidence. Specifically:
+
+1. Establish whether an existing assertion directly covers the initial idle label/markers/button and each observable loading detail from the prior manual contract: disabled button, cleared demo selection/card, loading label, and prevention of overlapping requests.
+2. Keep live request duration and no-key HTTP metadata distinct from product behavior; determine from the canonical R2 contract whether either is a blocking acceptance criterion, and cite the source.
+3. Reconcile `TASK-SEA-R2-MANUAL-ACCEPTANCE-001`'s status against its exact approval, E-SEA-088, and the user's recorded `continue`. Do not change the task status during review.
+4. Recommend `PASS` only if every applicable in-scope Sprint 2 criterion has sufficient direct, current, internally consistent evidence and no blocking gap remains. Otherwise recommend `CONTINUE WITH APPROVAL` or `HOLD`, preserving each `UNKNOWN` and naming its separate bounded follow-up.
+5. Keep CHECKPOINT-22/23/24 bounded to their recorded criteria; US-09/US-10, full MVP acceptance, release readiness, deployment, key validity, provider availability, and broad user validation remain excluded.
+
+No tests, typecheck, build, app execution, provider/network request, environment/secret access, or new data collection is authorized.
+
+## Allowed paths and closeout gate
+
+- **Contract preparation now:** this appended Draft in `TASK_SPEC.md` only.
+- **After exact approval:** read-only inspection of the listed records and the B-13 test source(s) explicitly referenced by them; no edits during review.
+- **Only after a separate user disposition `continue` on the report:** record this task's outcome in `TASK_SPEC.md`; if the approval/evidence chronology supports it, correct the manual acceptance task's status and add its factual outcome there; append factual results to `EVIDENCE.md` and `RUNBOOK.md`. Create a Sprint 2 acceptance checkpoint only if the oracle supports `PASS` and the user explicitly accepts that bounded result. `revise` or `HOLD` creates no overall PASS.
+- Any missing criterion that needs new tests, runtime/manual execution, provider/network, secrets/environment, code changes, or a new product decision requires a separate reviewed bounded contract and explicit approval.
+- Preserve all existing modified and untracked paths. Do not stage, reset, clean, overwrite, commit, push, deploy, or change unrelated paths.
+
+## Verification, stop conditions, and recovery
+
+- **Contract preparation check:** run `git diff --check -- TASK_SPEC.md` and focused structural assertions for task ID/status, exact approval gate, inspection boundary, criteria, allowed paths, closeout gate, and recovery. Expected change now: this appended Draft section only.
+- **Stop:** if an acceptance requirement cannot be traced to an authorized canonical source, if test assertions do not directly establish a criterion, or if resolving a detail requires prohibited execution, preserve `UNKNOWN`/`HOLD` and report the specific gap.
+- **Recovery:** before approval, revise or remove only this appended Draft. After review, preserve append-only evidence/runbook history; correct factual errors only through a superseding record. Never reset, clean, or roll back shared work.
+## Review outcome and disposition — 2026-09-28
+
+- **Review status / recommendation:** `Verified` for the bounded read-only review only; recommendation `CONTINUE WITH APPROVAL`. The user selected `continue` on this report. This does not accept Sprint 2.
+- **Existing idle/loading evidence:** `tests/snapshot-interface.spec.ts:73-90` and `tests/vessel-selection.spec.ts:9-48` cover the initial demo label/three markers and marker/card behavior in mocked browser tests. `tests/snapshot-interface.spec.ts:93-127` uses a 700 ms mocked response and asserts the disabled button, loading label, absence of markers/cards while pending, retained map, blocked overlapping click and later request. E-SEA-051 records 16 passed B-07/B-13 mocked Playwright tests; tests were not rerun for this review.
+- **Remaining B-13 gap:** the loading test starts without a selected marker/card. The existing tests do not directly exercise `select demo marker/card → click snapshot → verify selection/card clear while pending`. This is an explicit B-13 state requirement in this task's Inputs and behavior contract and the Sprint 2 loading behavior; result remains `UNKNOWN`. Resolving it needs a separate bounded test-change/check contract and approval.
+- **Non-blocking evidence limits:** exact live-request duration and no-key HTTP metadata remain uncaptured, but the canonical product acceptance clauses specify no duration threshold or required no-key HTTP status. The configured 15-second window is not measured elapsed time. These omissions are limitations, not independent acceptance blockers. No-key UI text is user-reported in E-SEA-088; no-provider behavior relies on the route guard, not egress instrumentation.
+- **Manual task lifecycle:** `TASK-SEA-R2-MANUAL-ACCEPTANCE-001` is now `Verified` for completion of the bounded manual pass/report only. Its recorded outcomes, separate user disposition, limitations, and evidence link E-SEA-088 are added above. This does not mark unobserved details as passed.
+- **Scope summary:** R2 governance and B-08…B-12 are supported within their records; B-13 remains supported for tested/mock and reported behavior with the explicit selected-card-to-loading transition unknown; B-14 and CHECKPOINT-03 remain scoped to CHECKPOINT-24 and CHECKPOINT-22 respectively. US-09/US-10, full MVP acceptance, release readiness, and deployment are outside scope.
+- **Closeout:** appended E-SEA-090 and RUNBOOK handoff. No Sprint 2 acceptance checkpoint is created because this review does not recommend `PASS`. No tests, typecheck, build, application execution, provider/network request, environment/secret access, raw sample inspection, source changes, staging, reset, cleanup, commit, push, or deployment occurred.
+
+# TASK-SEA-R2-SPRINT02-SELECTION-LOADING-FINAL-001 — Verify selected-card clearing and close R2 acceptance
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-28
+- **Related artifacts:** [`SPEC.md`](SPEC.md), [`SPRINT-02.md`](SPRINT-02.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`tests/snapshot-interface.spec.ts`](tests/snapshot-interface.spec.ts), [`tests/vessel-selection.spec.ts`](tests/vessel-selection.spec.ts), [`docs/checkpoints/CHECKPOINT-22.md`](docs/checkpoints/CHECKPOINT-22.md), [`docs/checkpoints/CHECKPOINT-23.md`](docs/checkpoints/CHECKPOINT-23.md), [`docs/checkpoints/CHECKPOINT-24.md`](docs/checkpoints/CHECKPOINT-24.md), `TASK-SEA-R2-SPRINT02-FINAL-EVIDENCE-REVIEW-003`, `TASK-SEA-R2-MANUAL-ACCEPTANCE-001`, `E-SEA-051`, `E-SEA-075`, `E-SEA-077`, `E-SEA-088`–`E-SEA-091`.
+
+## Goal and approval boundary
+
+- **Goal:** add one deterministic mocked regression test for the only remaining identified B-13 evidence gap — transitioning from a selected demo vessel/card into loading — then reassess the approved Sprint 2 / R2 acceptance matrix using current evidence.
+- **Scope:** one test-only addition for B-13 / US-05…US-08 selection-to-loading behavior; targeted execution of the existing snapshot-interface Playwright spec; final evidence synthesis limited to already-approved R2 scope and CHECKPOINT-22/23/24 records. No new product behavior or scope.
+- **Approval:** Draft only. Do not edit tests or run the test until the user explicitly approves this exact contract with `continue SPRINT02-SELECTION-LOADING-FINAL-001`. Approval does not itself accept Sprint 2.
+
+## Implementation and acceptance oracle
+
+After exact approval, add one focused case to `tests/snapshot-interface.spec.ts` using the existing Playwright route-interception and tile-blocking helpers. The case must:
+
+1. Navigate to the initial demo state, select a demo marker and verify its matching card is open.
+2. Start one mocked `GET /api/snapshot` with a deterministic delay long enough to observe pending state; do not contact the live provider.
+3. While pending, assert the button is disabled, the loading label is shown, the selected demo marker/card are removed, the base map remains, and a second click does not increase the intercepted request count.
+4. Fulfill the mocked request and verify the pending state settles without restoring the stale demo selection/card.
+
+Only the new focused test may be added to the implementation target. Do not edit application source, production configuration, package manifests, other tests, generated files, or unrelated B-14 behavior. If the test reveals a product-code failure, stop and report it; do not fix production code under this contract.
+
+After the targeted test passes, prepare a final matrix for R2 scope (US-05…US-08, B-08…B-14, and CHECKPOINT-03's scoped result through CHECKPOINT-22). Use only the recorded task/evidence/checkpoint records and the test result from this task. Keep the live/manual evidence class distinct from local mocked tests. The exact live request duration and no-key HTTP metadata remain non-blocking unless a canonical product criterion says otherwise; do not invent thresholds.
+
+Recommend overall bounded Sprint 2/R2 `PASS` only if the new regression assertion passes and every applicable criterion has sufficient current, internally consistent evidence. Otherwise recommend `CONTINUE WITH APPROVAL` or `HOLD`, listing the exact unresolved criterion. US-09/US-10, full MVP acceptance, release/deployment readiness, provider availability/key validity and broad user validation remain out of scope.
+
+## Allowed paths and closeout gate
+
+- **Contract preparation now:** append this Draft in `TASK_SPEC.md` only.
+- **After exact approval:** edit only `tests/snapshot-interface.spec.ts`; read the relevant installed Next.js guide under `node_modules/next/dist/docs/` before any code edit as required by the repository instructions; inspect only the canonical records listed above and the scoped test source.
+- **Targeted checks after edit:** `npx playwright test tests/snapshot-interface.spec.ts` and `git diff --check -- tests/snapshot-interface.spec.ts TASK_SPEC.md`. Do not run a build, typecheck, package install, manual app session, live request, or test against provider services. Stop if the existing Playwright setup cannot be shown to use the mocked route and block external tile traffic.
+- **After reporting the exact diff, test result, and acceptance matrix:** stop for separate user disposition `continue`, `revise`, or `HOLD`. Only after a separate `continue` may this task be marked `Verified` and factual results appended to `EVIDENCE.md`/`RUNBOOK.md`. Create a Sprint 2 acceptance checkpoint only if the full R2 oracle supports `PASS` and the user's disposition explicitly accepts that bounded result; do not create one for `CONTINUE WITH APPROVAL` or `HOLD`.
+- Preserve all existing modified and untracked paths; add no staging, reset, cleanup, commit, push, deployment, provider/network, environment/secret, or raw sample operations.
+
+## Stop conditions, verification, and recovery
+
+- Stop if the existing test harness would make an unmocked snapshot/provider request, if the expected state cannot be asserted within the test-only path, if any external request other than existing blocked tile traffic is observed, or if a product source change appears necessary.
+- If the targeted test fails, report the exact failure and do not broaden the fix. A product-code remediation requires a new bounded contract and explicit approval.
+- **Contract preparation check:** `git diff --check -- TASK_SPEC.md` plus focused assertions for task ID/status, exact approval gate, one-file target, mock/no-provider boundary, targeted command, final acceptance oracle, stop conditions, and recovery. Expected change now: this Draft section only.
+- **Recovery:** before approval, revise or remove only this appended Draft. After implementation, preserve the test change and observed result; correct factual errors only by a superseding record. Never reset, clean, or discard shared work.
+## Closeout — 2026-09-28
+
+- **Authorization / disposition:** the user approved the exact contract with `continue SPRINT02-SELECTION-LOADING-FINAL-001` before implementation and selected `continue` after reviewing the test diff, targeted result, and PASS recommendation. The latter accepts only this bounded R2 result; US-09/US-10, full MVP acceptance, release readiness, and deployment remain out of scope.
+- **Observed:** added the single scoped regression test to `tests/snapshot-interface.spec.ts`. `npx playwright test tests/snapshot-interface.spec.ts` passed all 17 tests; `git diff --check -- tests/snapshot-interface.spec.ts TASK_SPEC.md` passed with no output. The test uses a mocked snapshot response and blocks external OSM tiles; no provider/network or secret/environment access occurred.
+- **Acceptance / checkpoint:** the complete bounded R2 evidence matrix supports `PASS`; `E-SEA-092` records the synthesis and `docs/checkpoints/CHECKPOINT-25.md` records the scoped acceptance decision. CHECKPOINT-22/23/24 remain scoped supporting records, not broader claims.
+- **Limitations:** live request duration and no-key HTTP metadata remain uncaptured and are not separate canonical acceptance criteria. The local Playwright result proves mocked UI behavior only; it does not independently establish provider availability, key validity, provider acknowledgement, or live UI/API transport. US-09/US-10 and release/deployment readiness remain unverified/out of scope.
+- **Recovery:** preserve the focused test and append-only evidence/checkpoint. Any correction must be recorded as an additional factual record; do not reset, clean, or discard shared work.
+- **Handoff:** this bounded R2 acceptance task is `Verified`; no further technical or delivery action is authorized by this closeout.

@@ -127,6 +127,56 @@ test("locks loading, retains the map, and allows a later user request", async ({
   expectTilesBlocked(tiles);
 });
 
+test("clears a selected demo card while a snapshot request is loading", async ({ page }) => {
+  const tiles = await blockTiles(page);
+  let requestCount = 0;
+  let fulfillSnapshot!: () => void;
+  const snapshotPending = new Promise<void>((resolve) => {
+    fulfillSnapshot = resolve;
+  });
+  await page.route(SNAPSHOT_URL, async (route) => {
+    requestCount += 1;
+    await snapshotPending;
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(
+        successBody([
+          vessel("123456789"),
+          vessel("987654321"),
+          vessel("246801357"),
+        ]),
+      ),
+    });
+  });
+
+  await page.goto("/");
+  await page.locator('[data-vessel-id="demo-1"]').click();
+  await expect(page.locator('[data-vessel-card-id="demo-1"]')).toBeVisible();
+
+  const button = page.getByRole("button", { name: "Завантажити справжні позиції" });
+  const mapElement = await page.locator(".sea-map").elementHandle();
+  expect(mapElement).not.toBeNull();
+  await button.click();
+
+  await expect(button).toBeDisabled();
+  await expect(page.locator('[data-source="loading"]')).toHaveText("Завантаження…");
+  await expect(page.locator("[data-vessel-id]")).toHaveCount(0);
+  await expect(page.locator("[data-vessel-card-id]")).toHaveCount(0);
+  expect(await mapElement!.evaluate((element) => element.isConnected)).toBe(true);
+  await button.evaluate((element: HTMLButtonElement) => element.click());
+  expect(requestCount).toBe(1);
+
+  fulfillSnapshot();
+  await expect(button).toBeEnabled();
+  await expect(page.locator('[data-source="aisstream"]')).toContainText("суден: 3");
+  await expect(page.locator('[data-vessel-id^="demo-"]')).toHaveCount(0);
+  await expect(page.locator('[data-vessel-id][data-selected="true"]')).toHaveCount(0);
+  await expect(page.locator("[data-vessel-card-id]")).toHaveCount(0);
+  expect(requestCount).toBe(1);
+  expectTilesBlocked(tiles);
+});
+
 test("renders stationary snapshot markers, matching cards, and exact status", async ({ page }) => {
   const tiles = await blockTiles(page);
   await page.route(SNAPSHOT_URL, (route) =>
