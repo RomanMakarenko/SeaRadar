@@ -3,12 +3,12 @@ import { GET } from "../app/api/snapshot/route";
 import {
   collectSnapshot,
   SNAPSHOT_VESSEL_LIMIT,
-  SNAPSHOT_WINDOW_MS,
   type SnapshotReaderStarter,
 } from "../server/snapshot-collector";
 import {
   AISSTREAM_URL,
   SnapshotReadCancelled,
+  startAISStreamReader,
   type SnapshotErrorCode,
   type SnapshotReaderHandle,
   type SnapshotReaderHandlers,
@@ -22,6 +22,10 @@ class FakeTimer implements TimerApi {
   lastCallback: (() => void) | null = null;
   private callbacks = new Map<number, () => void>();
   private nextId = 0;
+
+  get pendingCount(): number {
+    return this.callbacks.size;
+  }
 
   setTimeout(callback: () => void, delay: number): ReturnType<typeof setTimeout> {
     const id = this.nextId++;
@@ -45,6 +49,32 @@ class FakeTimer implements TimerApi {
     const [id, callback] = next.value;
     this.callbacks.delete(id);
     callback();
+  }
+}
+
+class FakeWebSocket implements WebSocketLike {
+  closeCount = 0;
+  private listeners = new Map<string, ((event: { data?: unknown }) => void)[]>();
+
+  addEventListener(
+    type: "open" | "message" | "error" | "close",
+    listener: (event: { data?: unknown }) => void,
+  ): void {
+    const listeners = this.listeners.get(type) ?? [];
+    listeners.push(listener);
+    this.listeners.set(type, listeners);
+  }
+
+  send(): void {}
+
+  close(): void {
+    this.closeCount += 1;
+  }
+
+  emit(type: "open" | "message" | "error" | "close", event: { data?: unknown } = {}): void {
+    for (const listener of this.listeners.get(type) ?? []) {
+      listener(event);
+    }
   }
 }
 
@@ -111,7 +141,7 @@ function createAttempt(signal?: AbortSignal) {
   let reader: FakeReader | null = null;
   let startCount = 0;
   const startReader: SnapshotReaderStarter = (handlers) => {
-    expect(timer.delays).toEqual([SNAPSHOT_WINDOW_MS]);
+    expect(timer.delays).toEqual([15_000]);
     startCount += 1;
     reader = new FakeReader(handlers);
     return reader;
@@ -151,17 +181,43 @@ test("starts deadline before reader and maps a pre-subscription timeout", async 
   });
   expect(attempt.reader.stopCount).toBe(1);
   expect(attempt.timer.clearCount).toBe(1);
+  expect(attempt.timer.pendingCount).toBe(0);
+});
+
+test("maps a pre-open socket error to connect_failed and closes the socket", async () => {
+  const socket = new FakeWebSocket();
+  const timer = new FakeTimer();
+  const promise = collectSnapshot({
+    apiKey: "test-key",
+    startReader: (handlers) => startAISStreamReader({
+      apiKey: "test-key",
+      webSocketFactory: () => socket,
+    }, handlers),
+    timer,
+    now: () => new Date(FIXED_NOW),
+  });
+
+  socket.emit("error");
+
+  await expect(promise).resolves.toEqual({
+    ok: false,
+    code: "connect_failed",
+  });
+  expect(socket.closeCount).toBe(1);
+  expect(timer.clearCount).toBe(1);
+  expect(timer.pendingCount).toBe(0);
 });
 
 test("returns an empty successful snapshot when the subscribed window expires", async () => {
   const attempt = createAttempt();
   attempt.reader.subscribed();
+  expect(attempt.timer.delays).toEqual([15_000]);
   attempt.timer.runNext();
 
   await expect(attempt.promise).resolves.toEqual({
     ok: true,
     vessels: [],
-    collectedAt: FIXED_NOW,
+    collectedAt: "2026-09-24T12:01:00.000Z",
     windowSeconds: 15,
     count: 0,
     truncated: false,
@@ -220,6 +276,50 @@ test("keeps the latest whole vessel and retains the first equal-timestamp report
   });
 });
 
+test("replaces the complete vessel when the newest report has no name", async () => {
+  const attempt = createAttempt();
+  attempt.reader.subscribed();
+  attempt.reader.text(positionReport({
+    name: "previous vessel",
+    timestamp: "2026-09-24 12:00:00.100 +0000 UTC",
+    lat: 50.9,
+    lon: 1.1,
+  }));
+
+  const replacement = JSON.parse(positionReport({
+    timestamp: "2026-09-24 12:00:00.200 +0000 UTC",
+    lat: 51.2,
+    lon: 1.8,
+  })) as {
+    MetaData: Record<string, unknown>;
+    Message: { PositionReport: Record<string, unknown> };
+  };
+  delete replacement.MetaData.ShipName;
+  delete replacement.Message.PositionReport.Sog;
+  delete replacement.Message.PositionReport.Cog;
+  attempt.reader.text(JSON.stringify(replacement));
+  attempt.timer.runNext();
+
+  await expect(attempt.promise).resolves.toEqual({
+    ok: true,
+    vessels: [{
+      id: "123456789",
+      name: null,
+      lat: 51.2,
+      lon: 1.8,
+      speedKnots: null,
+      courseDeg: null,
+      timestamp: "2026-09-24T12:00:00.200Z",
+      source: "aisstream",
+    }],
+    collectedAt: FIXED_NOW,
+    windowSeconds: 15,
+    count: 1,
+    truncated: false,
+    reason: "window_elapsed",
+  });
+});
+
 test("ignores reports rejected by the transformer", async () => {
   const attempt = createAttempt();
   attempt.reader.subscribed();
@@ -239,13 +339,14 @@ test("duplicate messages do not consume the unique-vessel limit", async () => {
   const attempt = createAttempt();
   attempt.reader.subscribed();
 
-  for (let index = 0; index < SNAPSHOT_VESSEL_LIMIT; index += 1) {
+  for (let index = 0; index < 100; index += 1) {
     attempt.reader.text(positionReport({ mmsi: "123456789" }));
   }
 
   attempt.timer.runNext();
   await expect(attempt.promise).resolves.toMatchObject({
     ok: true,
+    vessels: [expect.objectContaining({ id: "123456789" })],
     count: 1,
     truncated: false,
     reason: "window_elapsed",
@@ -258,7 +359,7 @@ test("stops at exactly 100 unique valid vessels", async () => {
   const attempt = createAttempt();
   attempt.reader.subscribed();
 
-  for (let index = 0; index < SNAPSHOT_VESSEL_LIMIT; index += 1) {
+  for (let index = 0; index < 100; index += 1) {
     attempt.reader.text(positionReport({ mmsi: String(100000000 + index) }));
   }
   attempt.reader.text(positionReport({ mmsi: "999999999" }));
@@ -266,7 +367,7 @@ test("stops at exactly 100 unique valid vessels", async () => {
   const result = await attempt.promise;
   expect(result).toMatchObject({
     ok: true,
-    count: SNAPSHOT_VESSEL_LIMIT,
+    count: 100,
     vessels: expect.arrayContaining([
       expect.objectContaining({ id: "100000000" }),
       expect.objectContaining({ id: "100000099" }),
@@ -274,9 +375,36 @@ test("stops at exactly 100 unique valid vessels", async () => {
     truncated: true,
     reason: "limit_reached",
   });
-  expect(result.ok && result.vessels).toHaveLength(SNAPSHOT_VESSEL_LIMIT);
+  expect(result.ok && result.vessels).toHaveLength(100);
+  expect(result.ok && result.vessels.map(({ id }) => id)).not.toContain("999999999");
   expect(attempt.reader.stopCount).toBe(1);
   expect(attempt.timer.clearCount).toBe(1);
+});
+
+test("keeps the limit success when a provider error arrives afterwards", async () => {
+  const attempt = createAttempt();
+  attempt.reader.subscribed();
+
+  for (let index = 0; index < 100; index += 1) {
+    attempt.reader.text(positionReport({ mmsi: String(300000000 + index) }));
+  }
+
+  const result = await attempt.promise;
+  expect(result).toMatchObject({
+    ok: true,
+    count: 100,
+    truncated: true,
+    reason: "limit_reached",
+  });
+  expect(attempt.reader.stopCount).toBe(1);
+  expect(attempt.timer.clearCount).toBe(1);
+  expect(attempt.timer.pendingCount).toBe(0);
+
+  attempt.reader.error("provider_error");
+  await expect(attempt.promise).resolves.toEqual(result);
+  expect(attempt.reader.stopCount).toBe(1);
+  expect(attempt.timer.clearCount).toBe(1);
+  expect(attempt.timer.pendingCount).toBe(0);
 });
 
 test("fails malformed JSON without exposing a partial snapshot", async () => {
@@ -291,18 +419,22 @@ test("fails malformed JSON without exposing a partial snapshot", async () => {
   });
   expect(attempt.reader.stopCount).toBe(1);
   expect(attempt.timer.clearCount).toBe(1);
+  expect(attempt.timer.pendingCount).toBe(0);
 });
 
 test("discards collected vessels on provider errors and disconnects", async () => {
   for (const code of ["provider_error", "disconnected", "internal"] as const) {
     const attempt = createAttempt();
     attempt.reader.subscribed();
-    attempt.reader.text(positionReport());
+    for (let index = 0; index < 3; index += 1) {
+      attempt.reader.text(positionReport({ mmsi: String(123456789 + index) }));
+    }
     attempt.reader.error(code);
 
     await expect(attempt.promise).resolves.toEqual({ ok: false, code });
     expect(attempt.reader.stopCount).toBe(1);
     expect(attempt.timer.clearCount).toBe(1);
+    expect(attempt.timer.pendingCount).toBe(0);
   }
 });
 
@@ -316,10 +448,13 @@ test("cancels without partial success and ignores late events", async () => {
   await expect(attempt.promise).rejects.toBeInstanceOf(SnapshotReadCancelled);
   expect(attempt.reader.stopCount).toBe(1);
   expect(attempt.timer.clearCount).toBe(1);
+  expect(attempt.timer.pendingCount).toBe(0);
 
   attempt.reader.text(positionReport({ mmsi: "222222222" }));
   attempt.reader.error("provider_error");
   expect(attempt.reader.stopCount).toBe(1);
+  expect(attempt.timer.clearCount).toBe(1);
+  expect(attempt.timer.pendingCount).toBe(0);
 });
 
 test("settles and cleans up once when terminal events arrive late or repeatedly", async () => {
@@ -336,6 +471,7 @@ test("settles and cleans up once when terminal events arrive late or repeatedly"
   expect(settled).toMatchObject({ ok: true, count: 1, reason: "window_elapsed" });
   expect(attempt.reader.stopCount).toBe(1);
   expect(attempt.timer.clearCount).toBe(1);
+  expect(attempt.timer.pendingCount).toBe(0);
 });
 
 class RouteWebSocket implements WebSocketLike {

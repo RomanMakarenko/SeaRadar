@@ -9,7 +9,12 @@ export default defineConfig({
   },
   projects: [
     {
+      name: "node",
+      testMatch: ["**/position-report-transformer.spec.ts", "**/snapshot-collector.spec.ts"],
+    },
+    {
       name: "chromium",
+      testIgnore: ["**/position-report-transformer.spec.ts", "**/snapshot-collector.spec.ts"],
       use: { ...devices["Desktop Chrome"] },
     },
   ],

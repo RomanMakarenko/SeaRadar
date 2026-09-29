@@ -1,12 +1,12 @@
 # SPRINT-03 — Реліз R3: відтворювані перевірки даних і руху
 
 - **ID:** `SPRINT-SEA-R3-001`
-- **Version:** `1.0.0`
+- **Version:** `1.1.0`
 - **Status:** `Ready — scope затверджено; реалізація залишається task-gated`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-29
-- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`docs/sprints/README.md`](docs/sprints/README.md), [`docs/checkpoints/CHECKPOINT-25.md`](docs/checkpoints/CHECKPOINT-25.md), майбутній checkpoint `docs/checkpoints/CHECKPOINT-26.md`.
+- **Date:** 2026-09-30
+- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`docs/decisions/DEC-013-r3-t06-demo-mode-test.md`](docs/decisions/DEC-013-r3-t06-demo-mode-test.md), [`docs/sprints/README.md`](docs/sprints/README.md), [`docs/checkpoints/CHECKPOINT-25.md`](docs/checkpoints/CHECKPOINT-25.md), майбутній checkpoint `docs/checkpoints/CHECKPOINT-26.md`.
 
 > **Межа схвалення:** DEC-012 затверджує цей обмежений план Sprint 3. Жодну задачу реалізації цим не авторизовано. Перед кожною зміною коду або тестів потрібні окремий reviewed bounded contract у `TASK_SPEC.md` та явне схвалення. Production-код не змінювати, доки тест не покаже підтверджене розходження; для виправлення потрібні окремий контракт і дозвіл.
 
@@ -23,7 +23,7 @@
 - Лише Playwright Test: Node-перевірки наявного перетворювача й збирача та Chromium-перевірки руху й інтерфейсу.
 - Збережений `data/samples/position-report.sample.json` і явно позначені синтетичні варіанти; вихідний зразок не змінювати.
 - Літеральні очікування, підмінене джерело подій/годинник збирача та керований `page.clock` там, де тестується рух у браузері. Нові R3 browser-кейси не використовують `waitForTimeout` або інше реальне очікування.
-- Кожен новий browser-кейс підміняє зовнішні залежності: snapshot API відповідає з fixture, OSM tile-запити блокуються.
+- Кожен новий browser-кейс блокує зовнішні OSM tile-запити. Якщо кейс викликає snapshot API, відповідь `GET /api/snapshot` підміняється fixture. Вузький виняток R3-T06 описаний нижче: він не викликає snapshot API, а встановлює route guard, який перериває та рахує неочікувані запити, і перевіряє, що їх немає.
 - Незалежний read-only review дозволеного diff і фактичних результатів перевірок.
 
 ### Поза scope
@@ -110,10 +110,10 @@
 - **Вхід / результат:** наявна demo-сторінка та `page.clock`; focused browser assertions.
 - **Залежності:** browser project з R3-T01.
 - **Allowed paths:** новий `tests/demo-movement.spec.ts`. `app/sea-map.tsx`, `app/vessel-model.ts` та `app/vessel-card.tsx` — read-only без окремо схваленої remediation-задачі.
-- **Критерії приймання:** перед навігацією заморозити `page.clock` на `2026-09-29T12:00:00.000Z`; підмінити snapshot успішною порожньою відповіддю, дочекатися наявного demo fallback і вибрати `demo-1`. Перевірити літеральну координату після кожного `page.clock.runFor(2_000)`: початково `51.00000, 1.45000`; t=2s `51.01000, 1.45000`; t=4s `51.02000, 1.46500`; t=6s `51.03000, 1.48000`; t=8s `51.04000, 1.49500`; t=10s `51.05000, 1.51000`; t=12s `51.06000, 1.52500`; t=14s `51.07000, 1.54000`; t=16s `51.08000, 1.55500`; t=18s `51.09000, 1.57000`. На кінцевій точці картка також показує `0 kn`, курс `43°` і час останнього кроку `12:00:18 UTC`. Після наступних 2 000 ms усі кінцеві значення, включно з часом останнього кроку, лишаються незмінними. Кожен R3-кейс блокує OSM tile-запити; `waitForTimeout` та інше реальне очікування не використовуються.
-- **Targeted check:** `npx playwright test --project=chromium tests/demo-movement.spec.ts`; snapshot підмінений, зовнішні OSM tile-запити заблоковані.
-- **Checkpoint / review:** перевірити, що clock встановлений до navigation/timers і assertions стосуються вибраного судна.
-- **Stop / recovery:** зупинитися, якщо тест вимагає зміни product behavior або реального доступу до tiles; у разі відхилення відновити лише зміну тесту цього slice.
+- **Критерії приймання:** перед навігацією заморозити `page.clock` на `2026-09-29T12:00:00.000Z`; почати в наявному початковому idle-demo режимі й не запускати snapshot loading. Встановити route guard на `/api/snapshot`, який перериває та рахує будь-який неочікуваний запит; перевірити, що лічильник дорівнює нулю. Заблокувати зовнішні OSM tile-запити. Вибрати `demo-1` і перевірити літеральну координату після кожного `page.clock.runFor(2_000)`: початково `51.00000, 1.45000`; t=2s `51.01000, 1.45000`; t=4s `51.02000, 1.46500`; t=6s `51.03000, 1.48000`; t=8s `51.04000, 1.49500`; t=10s `51.05000, 1.51000`; t=12s `51.06000, 1.52500`; t=14s `51.07000, 1.54000`; t=16s `51.08000, 1.55500`; t=18s `51.09000, 1.57000`. На кінцевій точці картка також показує `0 kn`, курс `43°` і час останнього кроку `12:00:18 UTC`. Після наступних 2 000 ms усі кінцеві значення, включно з часом останнього кроку, лишаються незмінними. Не стверджувати, що sparse-snapshot fallback markers рухаються; це не поведінка, яку перевіряє T06. `waitForTimeout`, інші реальні очікування та live provider requests заборонені.
+- **Targeted check:** `npx playwright test --project=chromium tests/demo-movement.spec.ts`; встановити snapshot route guard і перевірити нуль запитів до `/api/snapshot`, заблокувати зовнішні OSM tile-запити. Запуск команди лишається окремо task-gated.
+- **Checkpoint / review:** перевірити, що clock встановлений до navigation/timers, snapshot route guard не зафіксував запитів, OSM tiles заблоковані, а assertions стосуються вибраного судна та зберігають усі literal route/card values.
+- **Stop / recovery:** якщо початковий idle-demo рух не збігається з літеральним оракулом, зупинитися й залишити T06 на `HOLD`; не змінювати product behavior. Зупинитися також, якщо не вдається блокувати tiles або route guard бачить snapshot request; у разі відхилення відновити лише тестову зміну цього slice.
 
 ### R3-T07 — Помилка, порожня відповідь та успішні стани snapshot UI
 
@@ -179,6 +179,6 @@
 
 1. Перед авторизацією кожної задачі переглянути її literal oracle та точні allowed paths.
 2. Виконувати один bounded slice за раз; expected/observed і limitations записувати лише після фактичної перевірки.
-3. Node-тести використовують injected source/clock, без реального WebSocket і глобальної підміни годинника. Browser-тести встановлюють `page.clock` перед навігацією/timers, підміняють `/api/snapshot`, блокують зовнішні tile-запити й не використовують реальне очікування.
+3. Node-тести використовують injected source/clock, без реального WebSocket і глобальної підміни годинника. Browser-тести встановлюють `page.clock` перед навігацією/timers, блокують зовнішні tile-запити й не використовують реальне очікування. Відповідь `/api/snapshot` підміняється fixture, якщо тест викликає API; єдиний виняток — R3-T06, який ставить route guard і перевіряє відсутність запитів.
 4. Після кожного slice переглядати diff. Свіжа незалежна сесія перевіряє фінальний diff та outputs без права запису; disposition приймає людина.
 5. Evidence, RUNBOOK handoff і checkpoint створювати лише після фактичної перевірки та за окремо визначеною межею дозволених шляхів.

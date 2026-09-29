@@ -3240,3 +3240,452 @@ Recommend overall bounded Sprint 2/R2 `PASS` only if the new regression assertio
 - **Limitations:** this verifies the bounded documentation/governance result only. R3 implementation, runtime acceptance, full MVP acceptance, release readiness, and deployment remain unverified and unauthorized by this task. No `EVIDENCE.md` or `RUNBOOK.md` entry was added because no runtime verification was performed.
 - **Recovery:** the documentation is pushed. Make any correction in a new reviewed bounded change; do not rewrite history or discard unrelated local changes. A remote revert requires explicit owner authorization.
 - **Handoff:** this planning task is `Verified`. Each R3 implementation slice still requires its own reviewed bounded `TASK_SPEC.md` contract and explicit approval.
+
+# TASK-SEA-R3-TEST-001 — Playwright project boundary and test oracle
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-29
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`playwright.config.ts`](playwright.config.ts), [`tests/position-report-transformer.spec.ts`](tests/position-report-transformer.spec.ts), [`tests/snapshot-collector.spec.ts`](tests/snapshot-collector.spec.ts), [`data/samples/position-report.sample.json`](data/samples/position-report.sample.json)
+
+## Goal and authorization boundary
+
+- **Goal:** establish the Playwright project boundary and record the independent literal-oracle mapping needed by later R3 test tasks.
+- **Current state:** the existing configuration has only the `chromium` project.
+- **Approval:** on 2026-09-29, after this exact contract was presented for review, the user instructed `продовжуй`; this is recorded as approval of the bounded R3-T01 contract.
+- **Authorized bounded slice:** add a `node` project for the converter and collector specs while preserving browser specs in `chromium`. This task does not authorize any later R3 test task or product-code change.
+
+## Inputs and expected output
+
+- **Inputs:** the approved US-09 scope and task definitions in `SPRINT-03.md`; DEC-012; current Playwright configuration and direct specs; saved synthetic sample.
+- **Expected output:** a `node`/`chromium` test-project map and a literal-oracle map for subsequent R3 test scenarios, with synthetic fixtures identified as synthetic. Detailed case expectations remain defined by their bounded acceptance criteria in `SPRINT-03.md`.
+- **Dependencies:** none.
+
+## Constraints and allowed paths
+
+- Reuse the existing Playwright Test and Node.js 22 baseline. No new runner, dependency, package script, runtime, or architecture is in scope.
+- **Allowed implementation paths after approval:** `playwright.config.ts`, `tests/position-report-transformer.spec.ts`, `tests/snapshot-collector.spec.ts`.
+- `data/samples/position-report.sample.json` is read-only. Product/source files, `package.json`, existing browser specs, and all unrelated paths are excluded.
+- Preserve existing Chromium test behavior. `node` means these two specs are selected by the Node project without a browser fixture; it does not promise that no development server starts. `webServer` is currently configured globally; changing that boundary is excluded and requires a separate reviewed contract and approval.
+- Expected values must be literal and independent of production functions. Do not infer expected results by calling the transformer, collector, or route/model implementation under test.
+
+## Acceptance and verification
+
+- `node` is the explicit target for `position-report-transformer.spec.ts` and `snapshot-collector.spec.ts`; `chromium` remains the target for existing browser specs and later R3 browser tasks.
+- The Node project list contains only the intended direct specs; the Chromium project list retains the existing browser specs and excludes the two direct Node specs.
+- The R3 scenario-to-project/oracle map is explicit, consistent with `SPRINT-03.md`, and labels synthetic inputs; no application behavior or browser behavior is changed.
+- **Targeted checks, only after explicit approval:** `npx playwright test --project=node --list` and `npx playwright test --project=chromium --list`. Expected result: each command lists only the specs assigned to that project. These are planned checks, not observed results.
+- Do not run Playwright or modify implementation files while this contract remains `Draft`.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** first review this exact task contract and obtain explicit user approval. After approved implementation, review the configuration diff and project lists before writing assertions for later slices.
+- **Stop if:** preserving Chromium behavior or selecting only the direct specs requires a new runner/dependency, product-code change, package-manifest change, global `webServer` change, broader architecture, provider/network access, or any path outside the allowlist. Return for a separate bounded contract rather than expanding this task.
+- **Recovery:** if the Draft is rejected, revise or remove only this appended section after review. After implementation approval, recover only this slice's reviewed configuration/test diff; preserve unrelated staged, unstaged, and untracked paths. No reset, clean, commit, push, or evidence/runbook update is authorized by this Draft.
+
+## Closeout — 2026-09-29
+
+- **Authorization / disposition:** the user reviewed the R3-T01 diff and instructed `виконай`; this is recorded as approval to accept and close this bounded task.
+- **Observed change:** `playwright.config.ts` now defines a `node` project matching only `position-report-transformer.spec.ts` and `snapshot-collector.spec.ts`; `chromium` ignores those two files. The existing Chromium device configuration and global `webServer` remain unchanged. No test/source files, package manifests, or dependencies were changed.
+- **Verification:** `npx playwright test --project=node --list` passed and listed 21 tests in the two intended files. `npx playwright test --project=chromium --list` passed and listed 24 tests in the existing three browser spec files, excluding the two direct Node specs. `git diff --check -- playwright.config.ts TASK_SPEC.md` passed. The two direct specs contain no `page`, `context`, or `browser` fixture references. No test cases were executed; no build or runtime check was run.
+- **Limitations:** list-only output verifies project selection, not test behavior or that a future Node test run avoids the globally configured dev server. Moving `webServer` requires a separate reviewed contract and approval. No `EVIDENCE.md` or `RUNBOOK.md` update was authorized or made.
+- **Recovery:** if the reviewed boundary must be reverted, restore only this task's `playwright.config.ts` diff through a new bounded reviewed change; preserve unrelated `.idea/vcs.xml` and `.mcp.json`. No reset, clean, commit, or push was performed.
+- **Handoff:** R3-T01 is `Verified`. R3-T02 (converter acceptance cases) is the next planned slice and still requires its own reviewed bounded `TASK_SPEC.md` contract and explicit approval before changes.
+
+# TASK-SEA-R3-TEST-002 — PositionReport transformer acceptance
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-29
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`tests/position-report-transformer.spec.ts`](tests/position-report-transformer.spec.ts), [`data/samples/position-report.sample.json`](data/samples/position-report.sample.json), [`server/position-report-transformer.ts`](server/position-report-transformer.ts)
+
+## Goal and authorization boundary
+
+- **Goal:** complete the deterministic US-09 acceptance coverage for mapping valid PositionReport input and rejecting invalid required values or normalizing invalid optional values.
+- **Scope:** add or refine assertions only in the existing transformer spec. Retain passing coverage; avoid duplicating cases already covered unless needed to make the expected value explicit and independent.
+- **Approval:** on 2026-09-29, after reviewing this exact bounded contract, the user said `перевірив, продовжуй`; this is recorded as explicit approval for R3-T02 implementation.
+- **Authorization boundary:** changes are limited to the single test file and criteria below. Product/source changes remain unauthorized.
+
+## Inputs and expected output
+
+- **Inputs:** the approved R3-T02 criteria in `SPRINT-03.md`; the existing converter spec; the saved synthetic PositionReport sample; current transformer behavior as the subject under test only.
+- **Expected output:** focused deterministic assertions with literal expected values for the saved sample and the specified valid/invalid synthetic variants. Synthetic inputs must be clearly identified; do not modify the saved sample.
+- **Dependencies:** `TASK-SEA-R3-TEST-001` is `Verified`.
+
+## Constraints and allowed paths
+
+- **Allowed implementation path after approval:** `tests/position-report-transformer.spec.ts` only.
+- `data/samples/position-report.sample.json` and `server/position-report-transformer.ts` are read-only. No product-code fixes, other tests, package manifests, dependencies, provider/network access, secrets/environment access, or unrelated cleanup.
+- Reuse the existing Node Playwright project and current test helpers. Expected results must be literal and must not be computed by calling the transformer or any other production function.
+
+## Acceptance and verification
+
+- The saved sample maps to literal `{ id: "999000001", name: "SYNTHETIC TRAINING VESSEL", lat: 51, lon: 1.45, speedKnots: 12.4, courseDeg: 123.4, timestamp: "2026-09-23T15:00:00.000Z", source: "aisstream" }`.
+- Missing or whitespace-only vessel name produces `null`; speed `0` remains `0`, while `102.3`, `-1`, and missing speed produce `null`; course `360` produces `null`.
+- Invalid required positions are rejected: coordinates `(91,181)`, `(95,-200)`, string-valued coordinates, missing or empty MMSI, and a timestamp that does not parse. Invalid coordinates never produce a vessel at `(0,0)`.
+- All assertions pass under the Node project with no browser fixture or real-time wait.
+- **Targeted check, only after explicit approval:** `npx playwright test --project=node tests/position-report-transformer.spec.ts`. Expected result: the focused spec passes. This is a planned check, not an observed result.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** before implementation, review the expected literal objects and synthetic input cases against the contract and current spec. After implementation, review the focused test diff and observed output.
+- **Stop if:** an acceptance case exposes production behavior that differs from the contract, or implementation requires changing production code, the saved sample, another path, a dependency, or test semantics beyond this slice. Preserve the failure and seek a separate reviewed remediation contract; do not fix product code here.
+- **Recovery:** if this Draft is rejected, revise or remove only this appended section after review. After approval, recover only this slice's own test-spec diff; preserve all unrelated staged, unstaged, and untracked paths. No commit, push, evidence/runbook update, or destructive Git command is authorized by this Draft.
+
+## Closeout — 2026-09-29
+
+- **Authorization / disposition:** after reviewing the R3-T02 diff, the user instructed `продовжуй`; this is recorded as acceptance of the bounded result.
+- **Observed change:** added literal converter assertions for missing/whitespace-only vessel names, coordinate pairs `(91,181)` and `(95,-200)`, and speed `-1`; retained the existing exact sample mapping and required/optional field coverage. Only `tests/position-report-transformer.spec.ts` was changed for implementation.
+- **Verification:** `npx playwright test --project=node tests/position-report-transformer.spec.ts` passed all 10 tests. `git diff --check -- tests/position-report-transformer.spec.ts TASK_SPEC.md` passed. No other test suite, build, or runtime check was run.
+- **Limitations:** this result covers only the bounded PositionReport transformer cases; collector, browser, full MVP, live-provider, release, and deployment behavior remain unverified. No `EVIDENCE.md` or `RUNBOOK.md` update was made under this task contract.
+- **Recovery:** restore only this task's test additions through a new reviewed bounded change if needed. Preserve the earlier R3-T01 config diff and unrelated `.idea/vcs.xml` / `.mcp.json`; no commit or push was performed.
+- **Handoff:** R3-T02 is `Verified`. R3-T03 (collector ordering, uniqueness, and full-object replacement) is next and requires its own reviewed bounded contract and explicit approval before implementation.
+
+# TASK-SEA-R3-TEST-003 — Snapshot collector ordering and replacement
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-29
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`TASK-SEA-R3-TEST-001` project-boundary contract](TASK_SPEC.md), [`TASK-SEA-R3-TEST-002` converter contract](TASK_SPEC.md), [`tests/snapshot-collector.spec.ts`](tests/snapshot-collector.spec.ts), [`server/snapshot-collector.ts`](server/snapshot-collector.ts)
+
+## Goal and authorization boundary
+
+- **Goal:** verify that the snapshot collector retains one latest complete vessel per MMSI, applies the existing equal-timestamp first-accepted rule, and replaces prior vessel fields rather than merging stale values.
+- **Current state:** R3-T01 and R3-T02 are `Verified`. The existing collector spec covers duplicate counts, latest-vs-later-arriving-older reports, and equal timestamps; the required explicit replacement of a named vessel by a complete object with `name: null` remains to be verified.
+- **Approval:** on 2026-09-29, after reviewing this exact bounded contract, the user said `продовжуй`; this is recorded as approval for R3-T03 implementation.
+- **Authorization boundary:** changes are limited to `tests/snapshot-collector.spec.ts` and the acceptance criteria below. Product/source changes remain unauthorized.
+
+## Inputs and expected output
+
+- **Inputs:** the approved R3-T03 acceptance criteria in `SPRINT-03.md`; the existing collector spec, fake reader/timer helpers, and its synthetic message builder; current collector behavior as the subject under test only.
+- **Expected output:** deterministic collector assertions using the existing fake source/timer seams and literal expected vessel/result values. Synthetic messages and mutations are identified as synthetic; no live reader/provider is used.
+- **Dependencies:** `TASK-SEA-R3-TEST-001` and `TASK-SEA-R3-TEST-002` are `Verified`.
+
+## Constraints and allowed paths
+
+- **Allowed implementation path after approval:** `tests/snapshot-collector.spec.ts` only.
+- `server/snapshot-collector.ts`, `server/position-report-transformer.ts`, `server/aisstream-reader.ts`, and all sample files are read-only. No product-code fixes, other test files, package manifests, dependencies, live sockets/provider, network access, secrets/environment access, or unrelated cleanup.
+- Reuse the current Playwright `node` project, fake reader, fake timer, and synthetic message helper. Do not derive expected values by calling the transformer/collector or using collector constants as expected results.
+
+## Acceptance and verification
+
+- Repeated identical messages for one MMSI produce exactly one vessel.
+- A newer timestamp is retained even when its older-timestamp message arrives later; the test asserts the complete retained vessel against literal expected fields.
+- When two reports normalize to the same timestamp, the first accepted report remains; the input and normalized timestamp are explicit literals.
+- A later complete synthetic report with the same MMSI and no usable vessel name replaces the previous object: expected `name` is literal `null`, newer fields are asserted, and stale values from the earlier object (including optional motion fields omitted by the later report) do not remain.
+- All expected vessel/result fields are literal and independent of production logic; test paths do not use a live WebSocket or browser fixture and contain no real-time wait.
+- **Targeted check, only after explicit approval:** `npx playwright test --project=node tests/snapshot-collector.spec.ts`. Expected result: the focused spec passes. This is a planned check, not an observed result.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** before implementation, review the exact synthetic input order, timestamps after normalization, and complete expected vessel objects. After implementation, review the collector-spec diff and actual focused-test output.
+- **Stop if:** any case indicates a production mismatch, requires changing freshness/tie rules or the vessel schema, or needs changes outside the single allowed test file. Preserve the failure and request a separate reviewed remediation contract; do not edit product code here.
+- **Recovery:** if this Draft is rejected, revise or remove only this appended section after review. After approval, recover only this slice's test-spec diff; preserve all unrelated staged, unstaged, and untracked paths. No commit, push, evidence/runbook update, or destructive Git command is authorized by this Draft.
+
+## Closeout — 2026-09-29
+
+- **Authorization / disposition:** after reviewing the R3-T03 diff, the user instructed `продовжуй`; this is recorded as acceptance of the bounded result.
+- **Observed change:** strengthened duplicate-message coverage to assert exactly one vessel and added a literal whole-object replacement case where a newer report has `name: null` and absent optional motion fields. Existing out-of-order freshness and equal-timestamp-first assertions remain in place. Only `tests/snapshot-collector.spec.ts` changed for this implementation.
+- **Verification:** `npx playwright test --project=node tests/snapshot-collector.spec.ts` passed all 13 tests. `git diff --check -- tests/snapshot-collector.spec.ts TASK_SPEC.md` passed. No other test suite, build, or runtime check was run.
+- **Limitations:** this verifies only the bounded ordering/uniqueness/replacement slice; exact collection-window and limit acceptance remains R3-T04. No `EVIDENCE.md` or `RUNBOOK.md` update was made under this task contract.
+- **Recovery:** restore only the R3-T03 assertions through a new reviewed bounded change if needed. Preserve earlier R3-T01/R3-T02 changes and unrelated `.idea/vcs.xml` / `.mcp.json`; no commit or push was performed.
+- **Handoff:** R3-T03 is `Verified`. R3-T04 (collection window, vessel limit, and successful completion) is next and requires its own reviewed bounded contract and explicit approval before implementation.
+
+# TASK-SEA-R3-TEST-004 — Snapshot collector window, limit, and successful completion
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-29
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`TASK-SEA-R3-TEST-001` project-boundary contract](TASK_SPEC.md), [`TASK-SEA-R3-TEST-003` collector contract](TASK_SPEC.md), [`tests/snapshot-collector.spec.ts`](tests/snapshot-collector.spec.ts), [`server/snapshot-collector.ts`](server/snapshot-collector.ts)
+
+## Goal and authorization boundary
+
+- **Goal:** verify the existing collector's successful completion at the 15-second window and the 100-unique-vessel limit using the injected reader, timer, and clock.
+- **Current state:** R3-T01 and R3-T03 are `Verified`. The collector spec already has basic empty-window, duplicate-input, and 100-vessel cases; this slice will make the 100/101 boundary, no-early-completion condition, 15,000 ms window, and `collectedAt` oracle explicit and independent of collector constants.
+- **Approval:** on 2026-09-29, after reviewing this exact bounded contract, the user said `продовжуй`; this is recorded as approval for R3-T04 implementation.
+- **Authorization boundary:** after approval, changes remain limited to the acceptance criteria below in `tests/snapshot-collector.spec.ts`. Product/source changes remain unauthorized.
+
+## Inputs and expected output
+
+- **Inputs:** the approved R3-T04 criteria in `SPRINT-03.md`; the existing snapshot collector spec, fake reader/timer, synthetic report builder, and injected clock; current collector behavior as the subject under test only.
+- **Expected output:** deterministic assertions for limit completion, window completion, and literal completion time; no live provider, WebSocket, browser fixture, or real-time wait.
+- **Dependencies:** `TASK-SEA-R3-TEST-001` and `TASK-SEA-R3-TEST-003` are `Verified`.
+
+## Constraints and allowed paths
+
+- **Allowed implementation path after approval:** `tests/snapshot-collector.spec.ts` only.
+- `server/snapshot-collector.ts`, `server/position-report-transformer.ts`, `server/aisstream-reader.ts`, route-level B-12 tests, all other test files, sample files, and package manifests are read-only. No product-code fixes, dependency changes, live sockets/provider, network access, secrets/environment access, or unrelated cleanup.
+- Reuse the existing injected fake reader/timer/clock and synthetic report helper. For R3-T04 collector assertions, use literal `100`, `101` boundary expectations, `15_000` milliseconds, and literal `collectedAt`; do not use `SNAPSHOT_VESSEL_LIMIT` or `SNAPSHOT_WINDOW_MS` as expected values or as the collector test's loop boundary. Do not globally replace `Date` or wait in real time.
+
+## Acceptance and verification
+
+- Exactly 100 distinct valid MMSIs reach a successful result with literal `count: 100`, exactly 100 vessels, `truncated: true`, and `reason: "limit_reached"`; send a 101st distinct report and assert its MMSI is absent from the result.
+- Send 100 reports for one MMSI and demonstrate the collector has not completed at the limit: its injected window timer remains runnable after those reports. Firing that timer then returns one vessel, literal `count: 1`, `truncated: false`, and `reason: "window_elapsed"`.
+- With an open subscription and no reports, assert the injected deadline is literal `15_000` ms, fire the fake timer without real-time waiting, and assert successful empty output with `count: 0` and `reason: "window_elapsed"`.
+- Assert `collectedAt` against a literal ISO timestamp matching the injected clock at completion; do not compute the expected value using the clock fixture or collector output.
+- Keep assertions scoped to successful collection/window behavior; do not alter the result schema, timing, vessel limit, API route behavior, or other R3-T03 acceptance cases.
+- **Targeted check, only after explicit approval:** `npx playwright test --project=node tests/snapshot-collector.spec.ts`. Expected result: the focused spec passes. This is a planned check, not an observed result.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** before implementation, review the exact 100/101 inputs, fake-timer ordering, literal 15,000 ms deadline, and literal `collectedAt` oracle. After implementation, review the scoped test diff and actual focused-test output.
+- **Stop if:** a case reveals a product mismatch, requires changing the 15-second window, 100-vessel limit, completion semantics, or result schema, or needs changes outside the single allowed test file. Preserve the failure and request a separate reviewed remediation contract; do not edit product code here.
+- **Recovery:** if this Draft is rejected, revise or remove only this appended section after review. After approval, recover only this slice's test-spec diff; preserve all unrelated staged, unstaged, and untracked paths. No commit, push, evidence/runbook update, or destructive Git command is authorized by this Draft.
+
+## Closeout — 2026-09-29
+
+- **Authorization / disposition:** after reviewing the R3-T04 diff and focused test output, the user instructed `продовжуй`; this is recorded as acceptance of the bounded result.
+- **Observed change:** the collector tests now use literal 100-vessel input and expected count, assert the 101st MMSI is absent, establish that 100 duplicate reports leave the window timer runnable, assert the literal 15,000 ms deadline, and compare `collectedAt` to a literal ISO timestamp matching the injected clock. Only `tests/snapshot-collector.spec.ts` changed for this implementation.
+- **Verification:** `npx playwright test --project=node tests/snapshot-collector.spec.ts` passed all 13 tests. `git diff --check -- tests/snapshot-collector.spec.ts TASK_SPEC.md` passed. No other test suite, build, or runtime check was run.
+- **Limitations:** this verifies only the bounded collection-window, vessel-limit, and successful-completion slice; collector failure/cancellation lifecycle and browser/UI behavior remain unverified by this task. No `EVIDENCE.md` or `RUNBOOK.md` update was made under this task contract.
+- **Recovery:** restore only the R3-T04 test changes through a new reviewed bounded change if needed. Preserve prior R3-T01/R3-T03 work and unrelated `.idea/vcs.xml` / `.mcp.json`; no commit or push was performed.
+- **Handoff:** R3-T04 is `Verified`. R3-T05 (collector errors, cancellation, and resource cleanup) is next and requires its own reviewed bounded contract and explicit approval before implementation.
+
+# TASK-SEA-R3-TEST-005 — Snapshot collector errors, cancellation, and cleanup
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-29
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`TASK-SEA-R3-TEST-001` project-boundary contract](TASK_SPEC.md), [`TASK-SEA-R3-TEST-003` collector contract](TASK_SPEC.md), [`TASK-SEA-R3-TEST-004` window and limit contract](TASK_SPEC.md), [`tests/snapshot-collector.spec.ts`](tests/snapshot-collector.spec.ts), [`server/snapshot-collector.ts`](server/snapshot-collector.ts), [`server/aisstream-reader.ts`](server/aisstream-reader.ts)
+
+## Goal and authorization boundary
+
+- **Goal:** verify that collector failures and cancellation never become partial success, terminal outcomes clean up the reader and timer exactly once, and late events do not change a settled outcome.
+- **Current state:** R3-T01, R3-T03, and R3-T04 are `Verified`. Existing tests cover a pre-subscription timeout, provider errors/disconnects, cancellation, and late terminal events, but they do not yet cover the full three-message partial-input cases, pre-open socket error mapping, post-limit provider error, and absence of pending fake timer callbacks across terminal paths.
+- **Approval:** on 2026-09-29, after reviewing this exact bounded contract, the user said `продовжуй` and `схвалюю`; this is recorded as approval for R3-T05 implementation.
+- **Authorization boundary:** after approval, changes remain limited to the acceptance criteria below in `tests/snapshot-collector.spec.ts`. Product/source changes remain unauthorized.
+
+## Inputs and expected output
+
+- **Inputs:** the approved R3-T05 criteria in `SPRINT-03.md`; existing fake reader/timer and synthetic report helper; a deterministic fake WebSocket for the pre-open error case if needed; current collector/reader behavior as the subject under test only.
+- **Expected output:** deterministic lifecycle assertions for failed connection, provider error/disconnect, limit success followed by a late error, and cancellation; no live provider or network access.
+- **Dependencies:** `TASK-SEA-R3-TEST-001` and `TASK-SEA-R3-TEST-003` are `Verified`. T04 has also been verified; it supplies the same existing fake timer seam but is not a product-code dependency.
+
+## Constraints and allowed paths
+
+- **Allowed implementation path after approval:** `tests/snapshot-collector.spec.ts` only.
+- `server/snapshot-collector.ts`, `server/aisstream-reader.ts`, `server/position-report-transformer.ts`, route-level B-12 tests, all other test files, sample files, and package manifests are read-only. No product-code fixes, dependency changes, live sockets/provider, network access, secrets/environment access, or unrelated cleanup.
+- Reuse the injected collector reader/timer seams and existing synthetic message builder. Any WebSocket needed to assert pre-open socket-error mapping must be a local fake supplied through the reader's existing factory seam; it must not instantiate a live socket. No real-time waits or global clock replacement.
+
+## Acceptance and verification
+
+- A connection that has not subscribed by the injected 15,000 ms timeout returns `{ ok: false, code: "connect_failed" }`; a fake socket `error` before `open` also maps to `connect_failed`. Assert the fake socket closes once and the collector timer has no pending callback.
+- After three valid synthetic vessel reports, a provider error returns `{ ok: false, code: "provider_error" }`; a disconnect returns `{ ok: false, code: "disconnected" }`. Neither terminal result contains or resolves to a partial success snapshot.
+- After the collector succeeds at the existing 100-unique-vessel limit, a subsequent provider error does not replace that success or trigger cleanup a second time.
+- Aborting after subscription and partial input rejects with `SnapshotReadCancelled`, never resolves successfully, stops the reader once, clears the timer once, and leaves no pending fake timer callback.
+- For each covered terminal path, assert reader/socket cleanup and timer cleanup are idempotent, with no pending fake timer callbacks after settlement; late reader events do not change the established outcome.
+- Keep assertions scoped to existing collector/reader lifecycle semantics; do not alter error mapping, cancellation behavior, result schema, collection timing, or API route behavior.
+- **Targeted check, only after explicit approval:** `npx playwright test --project=node tests/snapshot-collector.spec.ts`. Expected result: the focused spec passes. This is a planned check, not an observed result.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** before implementation, review the fake socket event ordering and every terminal outcome's literal error/result expectation, stop/close counts, and timer state. After implementation, review the scoped test diff and actual focused-test output.
+- **Stop if:** any case reveals a product mismatch, requires changing collector/reader error semantics or lifecycle behavior, or needs changes outside the single allowed test file. Preserve the failure and request a separate reviewed remediation contract; do not edit product code here.
+- **Recovery:** if this Draft is rejected, revise or remove only this appended section after review. After approval, recover only this slice's test-spec diff; preserve all unrelated staged, unstaged, and untracked paths. No commit, push, evidence/runbook update, or destructive Git command is authorized by this Draft.
+
+## Closeout — 2026-09-29
+
+- **Authorization / disposition:** after reviewing the R3-T05 diff and focused test output, the user instructed `продовжуй`; this is recorded as acceptance of the bounded result.
+- **Observed change:** added a pending-callback count to the fake timer; a deterministic fake WebSocket pre-open error case; three-report partial-input cases for provider error/disconnect; a post-limit late-error case; and explicit no-pending-timer/once-only cleanup assertions across covered terminal paths. Only `tests/snapshot-collector.spec.ts` changed for this implementation.
+- **Verification:** `npx playwright test --project=node tests/snapshot-collector.spec.ts` passed all 15 tests. `git diff --check -- tests/snapshot-collector.spec.ts TASK_SPEC.md` passed. No other test suite, build, or runtime check was run.
+- **Limitations:** this verifies only the bounded collector/reader error, cancellation, and cleanup slice; browser/UI behavior and other Sprint 3 acceptance remain unverified. No `EVIDENCE.md` or `RUNBOOK.md` update was made under this task contract.
+- **Recovery:** restore only the R3-T05 test changes through a new reviewed bounded change if needed. Preserve prior R3-T01–T04 work and unrelated `.idea/vcs.xml` / `.mcp.json`; no commit or push was performed.
+- **Handoff:** R3-T05 is `Verified`. R3-T06 (demo movement and route end) is next and requires its own reviewed bounded contract and explicit approval before implementation.
+
+# TASK-SEA-R3-TEST-006 — Demo vessel movement and route end
+
+- **Version:** `1.1.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-30
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`docs/decisions/DEC-013-r3-t06-demo-mode-test.md`](docs/decisions/DEC-013-r3-t06-demo-mode-test.md), [`TASK-SEA-R3-TEST-001` project-boundary contract](TASK_SPEC.md), [`tests/demo-movement.spec.ts`](tests/demo-movement.spec.ts), [`app/sea-map.tsx`](app/sea-map.tsx), [`app/vessel-model.ts`](app/vessel-model.ts), [`app/vessel-card.tsx`](app/vessel-card.tsx)
+
+## Goal and authorization boundary
+
+- **Goal:** verify the existing `demo-1` movement sequence and route-end freeze with the browser's controlled clock, without changing product behavior.
+- **Current state:** R3-T01 is `Verified` and provides the Chromium test project. Source inspection confirmed that an empty successful snapshot enters snapshot mode, where fallback demo markers remain stationary; movement runs in idle-demo mode. DEC-013 approves testing the existing moving mode instead. This resolves the setup mismatch without changing product behavior; the amended implementation has now been separately approved and verified.
+- **Approval:** on 2026-09-30, after review of this exact bounded implementation contract, the user instructed `продовжуй`; this is recorded as approval for the test-only implementation and its targeted check.
+- **Disposition:** on 2026-09-29, the user chose `HOLD T06` under the original empty-snapshot setup. On 2026-09-30, the user approved option 2 in DEC-013 and the versioned scope synchronization, then separately approved the amended implementation contract. The bounded test passed; product behavior was not changed.
+- **Authorization boundary:** implementation was limited to the new `tests/demo-movement.spec.ts` and the acceptance criteria below. Product/source changes remain unauthorized.
+
+## Inputs and expected output
+
+- **Inputs:** the approved R3-T06 sequence and literal values in `SPRINT-03.md`; the existing initial idle-demo mode and demo-vessel UI as the subject under test; Chromium's controlled `page.clock` and a guarded snapshot route that must receive no request.
+- **Expected output:** deterministic browser assertions for the initial demo position, each two-second movement step through route end, and unchanged terminal state after one further step. No live snapshot provider or map tile request is used.
+- **Dependencies:** `TASK-SEA-R3-TEST-001` browser project is `Verified`.
+
+## Constraints and allowed paths
+
+- **Allowed implementation path after approval:** new `tests/demo-movement.spec.ts` only.
+- `app/sea-map.tsx`, `app/vessel-model.ts`, `app/vessel-card.tsx`, other tests, package manifests, and all product files are read-only. No product-code fixes, route/schema changes, dependency changes, live provider/network requests, secrets/environment access, or unrelated cleanup.
+- Freeze `page.clock` before navigation at `2026-09-29T12:00:00.000Z`; start in the initial idle-demo mode and do not trigger snapshot loading. Install an `/api/snapshot` route guard that aborts and counts unexpected requests; assert the count is zero. Block external OpenStreetMap tile requests. Do not use live provider requests, `waitForTimeout`, real-time waiting, or a global clock replacement.
+
+## Acceptance and implementation gate
+
+- **Resolved setup mismatch:** the former setup required a successful empty `/api/snapshot` response, which moved the map to snapshot mode. Source inspection found that snapshot-mode fallback demo markers do not initialize or advance their motion states. Under approved DEC-013 option 2, T06 instead starts in the existing initial idle-demo mode and asserts no snapshot request; it does not test fallback movement.
+- The Sprint 3 movement oracle remains the documented literal sequence: initial `51.00000, 1.45000`; t=2s `51.01000, 1.45000`; t=4s `51.02000, 1.46500`; t=6s `51.03000, 1.48000`; t=8s `51.04000, 1.49500`; t=10s `51.05000, 1.51000`; t=12s `51.06000, 1.52500`; t=14s `51.07000, 1.54000`; t=16s `51.08000, 1.55500`; t=18s `51.09000, 1.57000`. Its endpoint oracle remains `0 kn`, `43°`, `12:00:18 UTC`, unchanged after one further 2,000 ms tick.
+- **Implementation gate:** before implementation, the user must review and explicitly approve this revised bounded contract. That approval was recorded on 2026-09-30 before the test edit and targeted command. Do not infer that the empty-snapshot fallback moves; if the initial idle-demo route fails the literal oracle, stop and retain `HOLD` without product edits.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** before implementation, review that the page clock is frozen before navigation/timers, the `/api/snapshot` route guard reports zero requests, tile requests are blocked, and every timestamp/coordinate/card value is literal. After separately approved implementation, review the scoped browser-test diff and actual targeted-test output.
+- **Stop if:** the initial idle-demo route differs from any expected literal, the test requires a product change, cannot block external tile requests, the route guard sees a snapshot request, or changes outside the single new test file are required. Preserve the observed discrepancy and retain `HOLD`; do not edit product code here.
+- **Recovery:** if recovery is needed, restore only this slice's new test file through a new reviewed bounded change; preserve all unrelated staged, unstaged, and untracked paths. No commit, push, evidence/runbook update, or destructive Git command was authorized or performed under this task.
+
+### Change-control history — DEC-013 option 2 approved
+
+On 2026-09-30, the user approved option 2 in DEC-013 and authorized the versioned contract synchronization recorded in this task. The effective R3-T06 acceptance criteria are stated above and in `SPRINT-03.md` v1.1.0. The `HOLD` selected on 2026-09-29 applied to the former empty-snapshot setup. The user later separately approved this revised bounded implementation contract; implementation and verification are recorded in the closeout below.
+
+## Closeout — 2026-09-30
+
+- **Authorization / disposition:** after reviewing the scoped T06 test change and targeted result, the user instructed `продовжуй`; this is recorded as acceptance of the bounded implementation.
+- **Observed change:** added `tests/demo-movement.spec.ts` for initial idle-demo movement across the literal route and endpoint freeze. The test installs the controlled clock before navigation, blocks OSM tile requests, guards `/api/snapshot` and asserts zero requests, selects `demo-1`, checks each two-second coordinate, and verifies endpoint speed/course/time remain unchanged after one further tick. No product code changed.
+- **Verification:** `npx playwright test --project=chromium tests/demo-movement.spec.ts` passed 1 test (645 ms; 1.3 s total). The untracked test's `git diff --no-index --check /dev/null tests/demo-movement.spec.ts` produced no whitespace diagnostics. No other test suite, build, or runtime check was run.
+- **Limitations:** this verifies only the literal demo movement route and route-end freeze in initial idle-demo mode; it does not test sparse-snapshot fallback movement. T07 remains the empty-success snapshot UI case. No `EVIDENCE.md` or `RUNBOOK.md` update was made under this task contract.
+- **Recovery:** restore only this slice's new test file through a new reviewed bounded change if needed; preserve prior work and unrelated staged, unstaged, and untracked paths. No commit or push was performed.
+- **Handoff:** R3-T06 is `Verified`. Its dependency is satisfied for T08, but T08 was not started and still requires its own reviewed bounded contract and explicit approval. T09 remains dependent on T08.
+
+# TASK-SEA-R3-TEST-007 — Snapshot UI error, empty, and successful states
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-29
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`TASK-SEA-R3-TEST-001` project-boundary contract](TASK_SPEC.md), [`tests/snapshot-interface.spec.ts`](tests/snapshot-interface.spec.ts), [`app/map-shell.tsx`](app/map-shell.tsx), [`app/vessel-card.tsx`](app/vessel-card.tsx)
+
+## Goal and authorization boundary
+
+- **Goal:** verify the existing snapshot UI's error, empty-success, and successful-vessel-with-missing-motion-data states using mocked API responses.
+- **Current state:** R3-T01 is `Verified` and provides the Chromium project. R3-T06 remains on `HOLD`; T07 depends only on the browser project and is an independent test-only slice.
+- **Approval:** on 2026-09-29, after reviewing this exact bounded contract, the user said `продовжуй`; this is recorded as approval for R3-T07 implementation.
+- **Authorization boundary:** after approval, changes remain limited to the acceptance criteria below in `tests/snapshot-interface.spec.ts`. Product/source changes remain unauthorized.
+
+## Inputs and expected output
+
+- **Inputs:** the approved R3-T07 criteria in `SPRINT-03.md`; the existing snapshot-interface tests and their browser/mock patterns; literal mocked API responses for each UI state.
+- **Expected output:** focused browser assertions for the visible error, empty-success, and selected-vessel card states. No live provider or external map tile request is used.
+- **Dependencies:** `TASK-SEA-R3-TEST-001` Chromium project is `Verified`. R3-T06 is not a dependency for this slice.
+
+## Constraints and allowed paths
+
+- **Allowed implementation path after approval:** `tests/snapshot-interface.spec.ts` only.
+- `app/map-shell.tsx`, `app/vessel-card.tsx`, `app/sea-map.tsx`, other tests, package manifests, and all product files are read-only. No product-code fixes, API/schema changes, dependency changes, live provider/network requests, secrets/environment access, or unrelated cleanup.
+- Mock every `/api/snapshot` response and block external OpenStreetMap tile requests in every new R3 case. Do not use `waitForTimeout`, real-time waits, or browser-clock changes as a substitute for the server collector clock.
+- Group every new R3 test under a title containing the exact phrase `R3 snapshot UI states`, so the targeted command excludes unrelated existing cases.
+
+## Acceptance and verification
+
+- **Error state:** fulfill the mocked endpoint with the supported fixed error `{ code: "connect_failed", message: "Не вдалося підключитися до джерела" }`. Assert `[data-source="none"]` displays `Даних на карті немає`, the `role="status"` text is `Не вдалося отримати дані: Не вдалося підключитися до джерела`, and there are zero `[data-vessel-id]` markers and zero `[data-vessel-card-id]` cards.
+- **Empty-success state:** fulfill the mocked endpoint with status 200 and `successBody([])`. Assert the `[data-source="aisstream"]` summary includes `суден: 0`, the `role="status"` text is `За час збору позицій не отримано`, and the fallback contains three `[data-vessel-source="demo"]` markers and no `[data-vessel-source="aisstream"]` markers or card.
+- **Vessel without motion data:** fulfill status 200 with one vessel whose `speedKnots` and `courseDeg` are both `null`. Click its `[data-vessel-id="<id>"]` marker; assert `[data-vessel-card-id="<id>"]` is visible, the `Швидкість` and `Курс` values each display `Немає даних`, and the selected marker (not the card) has `data-icon="neutral"`.
+- Assert visible UI output for each mocked state; do not infer live-provider availability or change UI semantics.
+- **Verification:** the initial `npx playwright test --project=chromium tests/snapshot-interface.spec.ts --grep "R3 snapshot UI states"` attempt selected all three cases but could not launch Chromium because the browser executable was absent; assertions did not execute. After the user authorized the local browser download, `npx playwright install chromium` completed, installing Chrome for Testing / Headless Shell `153.0.8010.12` (Playwright Chromium `v1243`), and the same targeted test command passed all 3 tests. The corresponding `--list` command selected exactly those 3 cases. `git diff --check -- tests/snapshot-interface.spec.ts TASK_SPEC.md` passed.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** before implementation, review each mocked response, the visible UI oracle, tile blocking, and the grep grouping. After implementation, review the scoped diff and actual targeted-test output.
+- **Stop if:** any assertion requires product changes, a live provider, an external tile request, a real-time wait, or edits outside the single allowed test file. Preserve the observed discrepancy and request a separate reviewed remediation contract; do not edit product code here.
+- **Recovery:** if this Draft is rejected, revise or remove only this appended section after review. After approval, recover only this slice's test changes; preserve all unrelated staged, unstaged, and untracked paths. No commit, push, evidence/runbook update, or destructive Git command is authorized by this Draft.
+
+## Closeout — 2026-09-30
+
+- **Authorization / disposition:** after reviewing the R3-T07 diff and targeted test result, the user instructed `продовжуй`; this is recorded as acceptance of the bounded result.
+- **Observed change:** added three tests grouped under `R3 snapshot UI states` for the fixed API error, empty successful snapshot, and successful selected vessel with missing speed/course. Every case mocks the snapshot endpoint and blocks OSM tile requests. Only `tests/snapshot-interface.spec.ts` changed for this implementation.
+- **Verification:** the targeted R3 UI test command passed all 3 tests; the grep list contained exactly those three cases; `git diff --check -- tests/snapshot-interface.spec.ts TASK_SPEC.md` passed. No other test suite, build, or runtime check was run.
+- **Limitations:** this verifies only the bounded snapshot UI states. R3-T06 remains on `HOLD`; the T08 review dependency on T01–T07 is therefore incomplete, and T08/T09 have not been performed. No `EVIDENCE.md` or `RUNBOOK.md` update was made under this task contract.
+- **Recovery:** restore only the R3-T07 test additions through a new reviewed bounded change if needed. Preserve prior R3-T01–T06 work and unrelated `.idea/vcs.xml` / `.mcp.json`; no commit or push was performed.
+- **Handoff:** R3-T07 is `Verified`. R3-T08 depends on R3-T01…T07 and cannot proceed while T06 remains on `HOLD`; resolve the T06 scope blocker through a separately reviewed decision before starting T08. R3-T09 remains dependent on T08.
+
+# TASK-SEA-R3-PLAN-002 — Prepare a T06 test-setup scope-change proposal
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-30
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-010-r2-sparse-snapshot-demo-fallback.md`](docs/decisions/DEC-010-r2-sparse-snapshot-demo-fallback.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), proposed [`DEC-013`](docs/decisions/DEC-013-r3-t06-demo-mode-test.md), [`TASK-SEA-R3-TEST-006` T06 contract](TASK_SPEC.md)
+
+## Goal and authorization boundary
+
+- **Goal:** prepare a reviewable change-control proposal that makes the R3-T06 movement oracle testable in the existing moving demo mode without changing product behavior.
+- **Current state:** the R3-T06 empty-snapshot setup enters snapshot mode, where supplemental demo markers are stationary; DEC-010 explicitly preserves stationary fallback markers and unchanged idle-demo motion. T06 is on `HOLD` pending this scope decision.
+- **Approval:** on 2026-09-30, the user selected `Reopen T06 scope`, authorizing preparation of a decision proposal and proposed task-contract amendment only.
+- **Authorization boundary:** proposal documents only. This does not authorize updating the effective Sprint 3 plan, implementing tests, changing product behavior, or closing T06.
+
+## Inputs and expected output
+
+- **Inputs:** the approved T06 acceptance criteria in `SPRINT-03.md`; existing behavior described by DEC-010 and read-only inspected source; T06's recorded HOLD.
+- **Expected output:** a new `DEC-013` in `Draft` status plus an explicit proposed T06 test-setup amendment in this task record. The recommendation is to begin in the initial idle-demo mode, keep the literal route oracle, and not claim that sparse-snapshot fallback markers move.
+- **Dependencies:** T06 blocker verified by source inspection; DEC-010 and DEC-012 are current `Ready` records.
+
+## Constraints and allowed paths
+
+- **Allowed paths:** `TASK_SPEC.md` and new `docs/decisions/DEC-013-r3-t06-demo-mode-test.md` only.
+- Do not edit `SPRINT-03.md`, `docs/decisions/README.md`, DEC-010 or DEC-012, tests, application source, `EVIDENCE.md`, or `RUNBOOK.md` under this proposal task. Do not change the approved baseline before the user reviews and approves the decision proposal.
+- Do not infer movement in snapshot mode. The proposal must preserve the exact literal route coordinates and endpoint card oracle from current R3-T06, keep the controlled page clock before navigation, block OSM tile requests, and prohibit real waits and live provider requests.
+
+## Acceptance and verification
+
+- DEC-013 states the mismatch, considers retaining HOLD, a test-only setup change to initial idle-demo mode, and a product behavior change; it recommends only the test-only setup revision and marks it `Draft` pending explicit user approval.
+- The proposed T06 contract amendment replaces only the infeasible empty-snapshot/fallback setup with the initial moving demo state. It retains demo-1 selection, the existing literal t=0…18s route values, terminal `0 kn`/`43°`/`12:00:18 UTC`, the extra 2,000ms frozen-end assertion, tile blocking, and no-real-wait rule.
+- The proposal explicitly says the T06 `HOLD` remains effective until the decision and versioned Sprint contract are approved. No tests or implementation are performed under this task.
+- **Observed structural checks:** `git diff --check -- TASK_SPEC.md docs/decisions/DEC-013-r3-t06-demo-mode-test.md` passed with no output. `rg` confirmed one definition each for `TASK-SEA-R3-PLAN-002`, `TASK-SEA-R3-TEST-006`, and `DEC-013-R3-T06-DEMO-MODE-TEST`; all related local artifact paths exist. No tests or implementation commands were run.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** review DEC-013 options/rationale and the proposed T06 acceptance side-by-side with DEC-010 and current `SPRINT-03.md`; do not merge proposed criteria into effective sprint scope before user approval.
+- **Stop if:** the proposed mode cannot be entered without an unapproved product change, the route oracle needs revision, or the decision requires changes to other baselines. Preserve the HOLD and ask for a bounded follow-up decision.
+- **Recovery:** if rejected, remove only the DEC-013 Draft and proposed-amendment text introduced by this task; preserve the original T06 HOLD, verified T01–T05/T07 work, and unrelated working-tree changes. No implementation, tests, commit, push, evidence/runbook update, or destructive Git command is authorized here.
+
+# TASK-SEA-R3-PLAN-003 — Synchronize approved T06 scope change
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-30
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-013-r3-t06-demo-mode-test.md`](docs/decisions/DEC-013-r3-t06-demo-mode-test.md), [`docs/decisions/README.md`](docs/decisions/README.md), [`DEC-010`](docs/decisions/DEC-010-r2-sparse-snapshot-demo-fallback.md), [`DEC-012`](docs/decisions/DEC-012-r3-scope.md), [`TASK-SEA-R3-TEST-006` T06 contract](TASK_SPEC.md)
+
+## Goal and authorization boundary
+
+- **Goal:** synchronize the user's approved option 2 from DEC-013 into versioned Sprint 3, T06, and decision-index records without changing product or test behavior.
+- **Approval:** on 2026-09-30, the user explicitly selected `Схвалити варіант 2` for DEC-013; the bounded documentation synchronization plan was approved before these edits.
+- **Authorization boundary:** governance documents only. This does not authorize editing or running `tests/demo-movement.spec.ts`, changing product code, completing T06, or starting T08/T09.
+
+## Inputs and expected output
+
+- **Inputs:** approved DEC-013 option 2; original T06 literal movement and route-end oracle; DEC-010, DEC-012, and the current Sprint 3 test-only boundary.
+- **Expected output:** DEC-013 `Ready` v1.1.0; `SPRINT-03.md` v1.1.0 with a narrow T06 no-snapshot-request exception; the R3-T06 task contract v1.1.0 reflecting the same setup and retaining a separate implementation approval gate; decisions index v1.1.0 with DEC-013 catalogued as `Ready`.
+- **Dependencies:** DEC-013 option 2 explicitly approved; DEC-010 and DEC-012 remain unchanged.
+
+## Constraints and allowed paths
+
+- **Allowed paths:** `TASK_SPEC.md`, `SPRINT-03.md`, `docs/decisions/DEC-013-r3-t06-demo-mode-test.md`, and `docs/decisions/README.md` only.
+- Preserve all route coordinates, t=0…18s time steps, endpoint card values, and the extra 2,000ms frozen-end assertion exactly. Freeze `page.clock` before navigation; start in initial idle-demo mode; block OSM tiles; guard `/api/snapshot`, abort and count unexpected requests, and assert zero requests; use no live provider requests or real-time waits.
+- Do not claim sparse-snapshot fallback markers move. Do not edit DEC-010, DEC-012, `SPEC.md`, application source, tests, `EVIDENCE.md`, or `RUNBOOK.md`. Preserve all pre-existing unrelated staged, unstaged, and untracked changes.
+- T06 test implementation remains separately task-gated: it needs its own reviewed bounded contract and explicit approval. If initial idle-demo movement does not satisfy the literal oracle, stop and retain `HOLD`; do not change product behavior.
+
+## Acceptance and verification
+
+- DEC-013 records option 2 as the approved decision (`Ready`) and retains the test/product implementation boundaries.
+- Sprint 3 and T06 are versioned and describe the same initial idle-demo setup and narrow no-request exception; T07 remains the empty-success UI case. **Current handoff:** the former T06 setup `HOLD` was resolved by DEC-013 and the v1.1 contract sync; T06 implementation still needs separate explicit approval; T08 cannot start until T06 is verified, and T09 remains gated on T08.
+- The literal route and endpoint oracle is unchanged; local links and task/decision IDs are unique.
+- **Observed verification:** `git diff --check` passed on the three tracked allowed paths; the untracked DEC-013 file passed `git diff --no-index --check`. Structural checks confirmed one declaration each for `TASK-SEA-R3-PLAN-003`, `TASK-SEA-R3-TEST-006`, and `DEC-013-R3-T06-DEMO-MODE-TEST`; all linked governance targets exist; the 10 literal route coordinates match between `SPRINT-03.md` and T06; decision status/version and zero-request route-guard wording are present. No application tests, builds, or runtime checks were run.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** review the four-file diff against DEC-013, DEC-010, DEC-012, and the original literal T06 oracle before accepting the synchronized contracts.
+- **Stop if:** updating a contract would require changing route literals, product behavior, tests, or any path outside the allowed list; preserve the last approved documents and ask for a new bounded decision.
+- **Recovery:** revert only the documentation edits introduced by this task, retaining the user's approval record and all pre-existing worktree changes. No commit, push, deployment, evidence/runbook update, or destructive Git command is authorized.
