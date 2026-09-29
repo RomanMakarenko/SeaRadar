@@ -3184,7 +3184,7 @@ Recommend overall bounded Sprint 2/R2 `PASS` only if the new regression assertio
 # TASK-SEA-R3-PLAN-001 — Authorize and decompose Sprint 3
 
 - **Version:** `1.0.0`
-- **Status:** `Active`
+- **Status:** `Verified`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-09-29
@@ -3230,3 +3230,13 @@ Recommend overall bounded Sprint 2/R2 `PASS` only if the new regression assertio
 - **Checkpoint:** after governance/doc checks, present exact changed paths, diff, observed checks, unresolved Unknowns, and rollback note for human review. Do not create the future Sprint 3 acceptance checkpoint during planning.
 - **Stop if:** the approved test-only outcome conflicts with an existing approved contract; an unused ID cannot be established; a new dependency/architecture or production feature is required; or a required product decision remains Unknown. Preserve unresolved items as `Unknown`/`Needs approval`.
 - **Recovery:** if the documentation diff is rejected, restore only this task's changes in the allowed paths after review. Preserve historical records, staged/unstaged user changes, and untracked files. No reset, clean, provider access, or deployment is authorized. On 2026-09-29, the user explicitly authorized committing and pushing the ready task-owned documentation paths after review; exclude `.idea/vcs.xml`, `.mcp.json`, and any other unrelated paths.
+
+## Closeout — 2026-09-29
+
+- **Authorization / disposition:** the user explicitly instructed to commit and push the completed work after the documentation checkpoint review.
+- **Observed:** Sprint 3 governance, decision record, canonical decomposition, and current summary/status references were updated within the allowed documentation paths. Nine bounded R3 tasks have explicit goals, non-goals, inputs/outputs, dependencies, allowed paths, acceptance criteria, targeted checks, checkpoints/reviews, stop conditions, and recovery paths.
+- **Verification:** `git diff --check` and staged `git diff --cached --check` passed. Structural checks passed for Markdown links/whitespace/final newlines, all nine task IDs/required fields, and the reserved CHECKPOINT-26 boundary. No application test, build, runtime, provider, or secret/environment command was run or claimed.
+- **Delivery:** commit `f66ef56` (`docs(r3): authorize and decompose Sprint 3`) was created and pushed to `origin/sprint3`. `.idea/vcs.xml` and `.mcp.json` were excluded and preserved.
+- **Limitations:** this verifies the bounded documentation/governance result only. R3 implementation, runtime acceptance, full MVP acceptance, release readiness, and deployment remain unverified and unauthorized by this task. No `EVIDENCE.md` or `RUNBOOK.md` entry was added because no runtime verification was performed.
+- **Recovery:** the documentation is pushed. Make any correction in a new reviewed bounded change; do not rewrite history or discard unrelated local changes. A remote revert requires explicit owner authorization.
+- **Handoff:** this planning task is `Verified`. Each R3 implementation slice still requires its own reviewed bounded `TASK_SPEC.md` contract and explicit approval.
