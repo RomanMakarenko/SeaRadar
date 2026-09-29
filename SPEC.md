@@ -1,12 +1,12 @@
 # SPEC.md — SeaRadar project contract
 
 - **ID:** `SPEC-SEA-001`
-- **Version:** `1.5.0`
+- **Version:** `1.6.0`
 - **Status:** `Ready`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-27
-- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`SPRINT-02.md`](SPRINT-02.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-003-r1-handoff.md`](docs/decisions/DEC-003-r1-handoff.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), [`docs/decisions/DEC-009-r2-current-task-status.md`](docs/decisions/DEC-009-r2-current-task-status.md), [`docs/decisions/DEC-010-r2-sparse-snapshot-demo-fallback.md`](docs/decisions/DEC-010-r2-sparse-snapshot-demo-fallback.md), [`docs/decisions/DEC-011-r2-task-authorization-reconciliation.md`](docs/decisions/DEC-011-r2-task-authorization-reconciliation.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md)
+- **Date:** 2026-09-29
+- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`SPRINT-02.md`](SPRINT-02.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-003-r1-handoff.md`](docs/decisions/DEC-003-r1-handoff.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), [`docs/decisions/DEC-009-r2-current-task-status.md`](docs/decisions/DEC-009-r2-current-task-status.md), [`docs/decisions/DEC-010-r2-sparse-snapshot-demo-fallback.md`](docs/decisions/DEC-010-r2-sparse-snapshot-demo-fallback.md), [`docs/decisions/DEC-011-r2-task-authorization-reconciliation.md`](docs/decisions/DEC-011-r2-task-authorization-reconciliation.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`SPRINT-03.md`](SPRINT-03.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md)
 
 > Це поточна затверджена MVP-база, перенесена з `PROJECT_BRIEF.md`. Вона може змінюватися: зміна контракту потребує нової версії цього документа та пов'язаного decision record до початку роботи за зміненим scope.
 
@@ -78,11 +78,11 @@
 - Зони, тривоги, сповіщення, історія руху, сліди, replay, пошук і фільтри.
 - Кілька районів, збереження налаштувань, безперервне real-time оновлення, вхід за паролем, кілька користувачів, віддалений сервер або хмара.
 - Рекомендації, прогнози, «розумні» функції та використання для реальної навігації.
-- Sprint 3 plan, його дати, owners, задачі та додатковий scope — `Waiting for MVP input`; R2 follow-up tasks B-09…B-13 remain individually task-gated.
+- Sprint 3 / R3 не додає продуктних функцій: його scope обмежений перевірками US-09 за DEC-012 та `SPRINT-03.md`. Дати, метрики поза цією перевіркою й архітектура понад погоджений stack залишаються `Unknown`; кожна технічна задача окремо task-gated.
 
 ## Release slice
 
-`R1 — карта й демонстраційні судна` деталізований у `SPRINT-01.md` і є verified baseline. `R2 — знімок справжніх позицій` авторизований decision record `DEC-006-R2-SCOPE` і деталізований у `SPRINT-02.md`; B-08 був bounded task, історично вибраним DEC-006. DEC-009 зафіксував, що на момент його затвердження successor R2 task ще не був авторизований. Пізніше DEC-010 і окремо затверджений `TASK-SEA-R2-B14-MIXED-VESSELS-001` авторизували лише зазначену зміну sparse-snapshot UI; її implementation review залишається окремим gate. Ця авторизація не дозволяє жодну іншу R2 implementation/diagnostic task і не є автоматичним прийманням B-09…B-14. Sprint 3 та архітектура поза R2 залишаються `Waiting for MVP input`/`Unknown`.
+`R1 — карта й демонстраційні судна` деталізований у `SPRINT-01.md` і є verified baseline. `R2 — знімок справжніх позицій` авторизований decision record `DEC-006-R2-SCOPE` і деталізований у `SPRINT-02.md`; B-08 був bounded task, історично вибраним DEC-006. DEC-009 зафіксував, що на момент його затвердження successor R2 task ще не був авторизований. Пізніше DEC-010 і окремо затверджений `TASK-SEA-R2-B14-MIXED-VESSELS-001` авторизували лише зазначену зміну sparse-snapshot UI; її acceptance визначено `CHECKPOINT-25`, і це не дозволяє жодну іншу R2 implementation/diagnostic task. DEC-012 авторизував обмежений Sprint 3 / R3 план перевірок US-09, деталізований у `SPRINT-03.md`; це не є автоматичним прийманням, авторизацією імплементації чи дозволом змінювати продукт. Архітектура понад погоджений stack залишається `Unknown`.
 
 ## Acceptance criteria
 
@@ -106,16 +106,16 @@
 
 - **Confirmed:** `PROJECT_BRIEF.md` затверджений як поточна MVP-база; R1 verified; R2 scope та історичний вибір B-08 авторизовані `DEC-006-R2-SCOPE`; DEC-009 зафіксував відсутність successor task станом на його затвердження, а DEC-010 та `TASK-SEA-R2-B14-MIXED-VESSELS-001` пізніше авторизували лише B-14 sparse-snapshot slice. Інші R2 implementation/diagnostic tasks залишаються task-gated; див. DEC-011. Stack із `SPRINT-01.md` прийнятий як поточний R1 baseline.
 - **Needs verification:** умови безкоштовного AISStream, стабільність джерела, фактична кількість суден і поведінка джерела при обриві зв'язку.
-- **Unknown:** точні baseline/target/observation window метрики, дати sprint-ів, деталізація Sprint 3, architecture beyond R2, implementation/runtime evidence.
+- **Unknown:** точні baseline/target/observation window продуктових метрик, дати sprint-ів, архітектура поза погодженим R1 stack, implementation/runtime evidence. Bounded Sprint 3 scope і перелік task slices визначені DEC-012 та `SPRINT-03.md`.
 
 ## Open decisions
 
 - Архітектурна деталізація поза R1 — `Unknown`.
 - R2 scope та outcome US-05…US-08 — авторизовані `DEC-006-R2-SCOPE`; B-08 був історичним task-gated slice. `DEC-009` фіксує стан авторизації на дату його затвердження; пізніші `DEC-010` та `TASK-SEA-R2-B14-MIXED-VESSELS-001` дозволяють лише sparse-snapshot UI slice, що залишається під review. Жодна інша R2 technical task цим не авторизована; див. уточнення хронології в `DEC-011`.
-- Межі та outcome Sprint 3 — `Waiting for MVP input`.
+- Scope та outcome Sprint 3 / R3 затверджені `DEC-012` і деталізовані в `SPRINT-03.md`; implementation slices залишаються окремо task-gated.
 - Точні metric baseline, target та observation window — `Needs verification`.
 - Будь-яка зміна approved brief, scope або R1 stack — новий versioned decision record і версія SPEC.
 
 ## Change-control gate
 
-`DEC-006-R2-SCOPE` історично авторизував R2 scope та вибрав B-08 як bounded task; `DEC-009-R2-CURRENT-TASK-STATUS` зафіксував межі авторизації станом на дату його затвердження; `DEC-010-R2-SPARSE-SNAPSHOT-DEMO-FALLBACK` та пов'язаний B-14 contract згодом затвердили лише точкове UI-доповнення. Хронологію та межі уточнює `DEC-011-R2-TASK-AUTHORIZATION-RECONCILIATION`. Кожна інша R2 implementation або diagnostic task потребує окремого reviewed bounded task contract і explicit approval. Подальші зміни approved brief, scope або stack потребують нової версії `PROJECT_BRIEF.md`/`SPEC.md`, пов'язаного decision record і bounded task contract. Delivery/technical owner фіксує зміни, evidence та handoff; product owner приймає продуктові зміни.
+`DEC-006-R2-SCOPE` історично авторизував R2 scope та вибрав B-08 як bounded task; `DEC-009-R2-CURRENT-TASK-STATUS` зафіксував межі авторизації станом на дату його затвердження; `DEC-010-R2-SPARSE-SNAPSHOT-DEMO-FALLBACK` та пов'язаний B-14 contract згодом затвердили лише точкове UI-доповнення. Хронологію та межі уточнює `DEC-011-R2-TASK-AUTHORIZATION-RECONCILIATION`. Кожна інша R2 implementation або diagnostic task потребує окремого reviewed bounded task contract і explicit approval. `DEC-012-R3-SCOPE` і `SPRINT-03.md` визначають чинний обмежений R3 test scope; кожен технічний slice залишається окремо task-gated і потребує reviewed bounded task contract та explicit approval. Подальше розширення approved brief, scope або stack потребує нової версії `PROJECT_BRIEF.md`/`SPEC.md`, пов'язаного decision record і bounded task contract. Delivery/technical owner фіксує зміни, evidence та handoff; product owner приймає продуктові зміни.

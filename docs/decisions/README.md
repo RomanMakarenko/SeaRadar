@@ -1,12 +1,12 @@
 # Decision records
 
 - **ID:** `DECISIONS-GOV-001`
-- **Version:** `0.9.0`
+- **Version:** `1.0.0`
 - **Status:** `Ready`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-27
-- **Related artifacts:** [`../../CLAUDE.md`](../../CLAUDE.md), [`../../SPEC.md`](../../SPEC.md), [`../../TASK_SPEC.md`](../../TASK_SPEC.md), [`../../EVIDENCE.md`](../../EVIDENCE.md), [`../../RUNBOOK.md`](../../RUNBOOK.md), [`../checkpoints/CHECKPOINT-01.md`](../checkpoints/CHECKPOINT-01.md), [`DEC-001-mvp-contract.md`](DEC-001-mvp-contract.md), [`DEC-002-r1-stack.md`](DEC-002-r1-stack.md), [`DEC-003-r1-handoff.md`](DEC-003-r1-handoff.md), [`DEC-004-checkpoint-convention.md`](DEC-004-checkpoint-convention.md), [`DEC-005-r1-node22.md`](DEC-005-r1-node22.md), [`DEC-006-r2-scope.md`](DEC-006-r2-scope.md), [`DEC-009-r2-current-task-status.md`](DEC-009-r2-current-task-status.md), [`DEC-010-r2-sparse-snapshot-demo-fallback.md`](DEC-010-r2-sparse-snapshot-demo-fallback.md), [`DEC-011-r2-task-authorization-reconciliation.md`](DEC-011-r2-task-authorization-reconciliation.md)
+- **Date:** 2026-09-29
+- **Related artifacts:** [`../../CLAUDE.md`](../../CLAUDE.md), [`../../SPEC.md`](../../SPEC.md), [`../../TASK_SPEC.md`](../../TASK_SPEC.md), [`../../SPRINT-03.md`](../../SPRINT-03.md), [`../../EVIDENCE.md`](../../EVIDENCE.md), [`../../RUNBOOK.md`](../../RUNBOOK.md), [`../checkpoints/CHECKPOINT-01.md`](../checkpoints/CHECKPOINT-01.md), [`DEC-001-mvp-contract.md`](DEC-001-mvp-contract.md), [`DEC-002-r1-stack.md`](DEC-002-r1-stack.md), [`DEC-003-r1-handoff.md`](DEC-003-r1-handoff.md), [`DEC-004-checkpoint-convention.md`](DEC-004-checkpoint-convention.md), [`DEC-005-r1-node22.md`](DEC-005-r1-node22.md), [`DEC-006-r2-scope.md`](DEC-006-r2-scope.md), [`DEC-009-r2-current-task-status.md`](DEC-009-r2-current-task-status.md), [`DEC-010-r2-sparse-snapshot-demo-fallback.md`](DEC-010-r2-sparse-snapshot-demo-fallback.md), [`DEC-011-r2-task-authorization-reconciliation.md`](DEC-011-r2-task-authorization-reconciliation.md), [`DEC-012-r3-scope.md`](DEC-012-r3-scope.md)
 
 ## Decision record format
 
@@ -36,13 +36,14 @@ A catalog entry or chat statement is not a decision. Do not select a technology 
 | [`DEC-009-r2-current-task-status.md`](DEC-009-r2-current-task-status.md) | `Ready` | B-08 remains historical under DEC-006; as of DEC-009's 2026-09-25 approval, no successor R2 task had been authorized. Later bounded B-14 authorization is recorded in DEC-011 |
 | [`DEC-010-r2-sparse-snapshot-demo-fallback.md`](DEC-010-r2-sparse-snapshot-demo-fallback.md) | `Ready` | For successful AISStream snapshots with 0–2 vessels, show all three demo vessels; distinguish source colors and highlight selection without inflating AIS count |
 | [`DEC-011-r2-task-authorization-reconciliation.md`](DEC-011-r2-task-authorization-reconciliation.md) | `Ready` | DEC-009 records the earlier authorization state; the later approved DEC-010/B-14 contract authorizes only its bounded UI slice; other R2 work remains gated |
+| [`DEC-012-r3-scope.md`](DEC-012-r3-scope.md) | `Ready` | Sprint 3 authorizes only the bounded US-09 deterministic verification plan; implementation slices remain separately task-gated |
 
 ## Pending decisions
 
 | Decision | Status | Required input |
 |---|---|---|
 | Architecture beyond R1 client/local boundary | `Waiting for input` | Core flow, data boundaries and integrations when they become material |
-| Sprint 2 / Sprint 3 allocation | `Partially resolved` | R2 scope is recorded in DEC-006; DEC-007 approves only the narrow B-09 reader-boundary exception for B-12. R2 tasks remain separately gated, and Sprint 3 still awaits MVP input |
+| Sprint 2 / Sprint 3 allocation | `Partially resolved` | R2 scope is recorded in DEC-006 and its tasks remain separately gated; DEC-012 authorizes the bounded US-09 Sprint 3 plan, while implementation slices remain separately task-gated and architecture beyond R2 is `Unknown` |
 | Quantitative success metric | `Needs verification` | Baseline, target, observation window and collection confirmation |
 | AISStream service terms | `Needs verification` | Confirmed free-tier terms, availability and source behavior |
 | Checkpoint archive packaging/publication | `Waiting for input` | Owner-approved archive format, publication target and recovery ownership |

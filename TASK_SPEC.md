@@ -3180,3 +3180,53 @@ Recommend overall bounded Sprint 2/R2 `PASS` only if the new regression assertio
 - Run `git diff --check` on the selected paths; no application tests/build, network/provider or secret/environment access.
 - Create a normal commit with a concise documentation message and the required attribution trailer; push the commit to `origin/sprint2` without force.
 - After verified delivery, append a factual closeout with commit/push result and observed branch state; no EVIDENCE.md/RUNBOOK.md entry is needed for this documentation delivery.
+
+# TASK-SEA-R3-PLAN-001 — Authorize and decompose Sprint 3
+
+- **Version:** `1.0.0`
+- **Status:** `Active`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-29
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`SPRINT-03.md`](SPRINT-03.md), [`docs/sprints/README.md`](docs/sprints/README.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-010-r2-sparse-snapshot-demo-fallback.md`](docs/decisions/DEC-010-r2-sparse-snapshot-demo-fallback.md), [`docs/checkpoints/CHECKPOINT-05.md`](docs/checkpoints/CHECKPOINT-05.md)
+
+## Goal and authorization boundary
+
+- **Goal:** formalize the user-approved US-09, test-only Sprint 3 outcome and decompose it into small, independently verifiable tasks with explicit goals, non-goals and acceptance criteria.
+- **Approval:** on 2026-09-29, the user approved the SPRINT-03.md scope as the official Sprint 3 MVP input and explicitly authorized resolving governance and identifier conflicts before preparing the decomposition.
+- **Scope:** documentation and governance only. This task creates/updates the Sprint 3 decision, synchronizes governing status/catalog, and structures the Sprint 3 plan. It does not implement tests or product changes and does not claim Sprint 3 acceptance.
+- **SPEC outcome:** `SPEC-SEA-001 / US-09 reproducible data-integrity and movement checks`, bounded to the test-only scope approved in SPRINT-03.md.
+
+## Allowed paths and preservation
+
+- `TASK_SPEC.md` — this task contract and closeout only.
+- `docs/decisions/DEC-012-r3-scope.md` — new decision record.
+- `docs/decisions/README.md` — decision index entry and pending-decision status.
+- `SPEC.md` — Sprint 3 scope/status synchronization and required version metadata.
+- `CLAUDE.md` — current phase/status synchronization.
+- `docs/sprints/README.md` — Sprint 3 catalog/creation-state synchronization.
+- `SPRINT-03.md` — canonical Sprint 3 decomposition.
+- `README.md`, `SPRINT-01-README.md`, and `docs/README.md` — current summary status only, per the user's additional approval on 2026-09-29.
+- **Excluded:** source, tests, package manifests, `EVIDENCE.md`, `RUNBOOK.md`, all existing checkpoints, `.mcp.json`, `.idea/vcs.xml`, secrets, historical decision/evidence/runbook records, and unrelated paths. Preserve the pre-existing user-authored `SPRINT-03.md` content except for this explicitly authorized decomposition; preserve the unrelated `.idea/vcs.xml` modification and untracked `.mcp.json`.
+
+## Inputs, constraints, and expected output
+
+- **Inputs:** current approved PROJECT_BRIEF/SPEC acceptance for US-09; the user's 2026-09-29 scope approval; existing R1 Playwright/Node 22 baseline; DEC-010's existing B-14 allocation; CHECKPOINT-05 and CHECKPOINT-25 history; the sprint/decision conventions.
+- **Constraint:** reuse the existing Playwright Test stack and R1 runtime baseline only. No new dependency, architecture decision, provider/network access, secret/environment access, date, or broader success metric is inferred. Stop if implementation would require one.
+- **IDs:** use unique R3-qualified task IDs after repository-wide collision checks. Do not reuse B-14. Reserve the next unused checkpoint number/ID only for the future Sprint 3 result; do not create or fill that checkpoint during this planning task.
+- **Expected output:** a linked decision, synchronized governance status, and Sprint 3 slices for test-oracle/fixture setup; converter cases; collector ordering/deduplication; collector limits/timing; collector failures/cancellation/resource cleanup; browser movement; browser snapshot/UI states; and independent review/closeout. Each slice has a goal, explicit non-goals, inputs/outputs, observable acceptance criteria, dependencies, allowed paths, targeted verification, checkpoint/review, stop conditions, and recovery.
+- Remove stale B-07 conditional work; B-07 remains a verified R1 baseline. Keep production changes excluded unless a separate task authorizes a minimal fix for a confirmed contract discrepancy. The sprint plan does not authorize implementation; each technical slice remains separately task-gated.
+
+## Acceptance and verification
+
+- Sprint 3 has one observable US-09 outcome and explicit non-goals; no unrelated R2 history or acceptance is changed.
+- Decision, SPEC, CLAUDE, sprint catalog, and SPRINT-03 agree on authorized scope, current status, Unknowns, and implementation gate.
+- No task or checkpoint ID collides with existing records; CHECKPOINT-05 remains unchanged and the future R3 checkpoint is only referenced, not created.
+- Every Sprint 3 task has simple, literal, observable acceptance criteria and a targeted verification method; automated tests use deterministic fixtures/clocks and no live provider connection.
+- Markdown structure, required metadata, relative links, IDs, status/scope cross-references and `git diff --check` pass for allowed documentation paths. No runtime command or product test is required or claimed.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** after governance/doc checks, present exact changed paths, diff, observed checks, unresolved Unknowns, and rollback note for human review. Do not create the future Sprint 3 acceptance checkpoint during planning.
+- **Stop if:** the approved test-only outcome conflicts with an existing approved contract; an unused ID cannot be established; a new dependency/architecture or production feature is required; or a required product decision remains Unknown. Preserve unresolved items as `Unknown`/`Needs approval`.
+- **Recovery:** if the documentation diff is rejected, restore only this task's changes in the allowed paths after review. Preserve historical records, staged/unstaged user changes, and untracked files. No reset, clean, provider access, or deployment is authorized. On 2026-09-29, the user explicitly authorized committing and pushing the ready task-owned documentation paths after review; exclude `.idea/vcs.xml`, `.mcp.json`, and any other unrelated paths.

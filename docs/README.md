@@ -1,12 +1,12 @@
 # Project documentation
 
 - **ID:** `DOCS-SEA-001`
-- **Version:** `0.2.0`
+- **Version:** `0.3.0`
 - **Status:** `Ready`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-22
-- **Related artifacts:** [`../CLAUDE.md`](../CLAUDE.md), [`../PROJECT_BRIEF.md`](../PROJECT_BRIEF.md), [`../SPEC.md`](../SPEC.md), [`../TASK_SPEC.md`](../TASK_SPEC.md), [`../EVIDENCE.md`](../EVIDENCE.md), [`../RUNBOOK.md`](../RUNBOOK.md), [`sprints/README.md`](sprints/README.md), [`decisions/README.md`](decisions/README.md)
+- **Date:** 2026-09-29
+- **Related artifacts:** [`../CLAUDE.md`](../CLAUDE.md), [`../PROJECT_BRIEF.md`](../PROJECT_BRIEF.md), [`../SPEC.md`](../SPEC.md), [`../TASK_SPEC.md`](../TASK_SPEC.md), [`../EVIDENCE.md`](../EVIDENCE.md), [`../RUNBOOK.md`](../RUNBOOK.md), [`sprints/README.md`](sprints/README.md), [`decisions/README.md`](decisions/README.md), [`../SPRINT-03.md`](../SPRINT-03.md), [`decisions/DEC-012-r3-scope.md`](decisions/DEC-012-r3-scope.md)
 
 ## Canonical records
 
@@ -16,7 +16,9 @@
 - [`../TASK_SPEC.md`](../TASK_SPEC.md) — current bounded task contract.
 - [`../EVIDENCE.md`](../EVIDENCE.md) — append-only factual verification ledger.
 - [`../RUNBOOK.md`](../RUNBOOK.md) — append-only delivery history and handoff.
-- [`../SPRINT-01.md`](../SPRINT-01.md) — only currently detailed sprint/release record, R1.
+- [`../SPRINT-01.md`](../SPRINT-01.md) — verified R1 sprint record.
+- [`../SPRINT-02.md`](../SPRINT-02.md) — bounded R2 sprint record; see its acceptance/checkpoint boundaries.
+- [`../SPRINT-03.md`](../SPRINT-03.md) — approved R3/US-09 test plan; implementation slices remain task-gated.
 - [`sprints/README.md`](sprints/README.md) — convention and catalog for current/future sprint plans.
 - [`decisions/README.md`](decisions/README.md) — index and convention for material decisions.
 
@@ -33,4 +35,4 @@ There is one canonical path per artifact. Templates and examples must not diverg
 
 ## Current gate
 
-The MVP contract and R1 baseline are approved for governance purposes. Product implementation is not yet verified and remains gated by an active bounded `TASK_SPEC.md`, a human diff checkpoint and fresh evidence. Sprint 2 and Sprint 3 plans remain intentionally absent and are `Waiting for input`.
+The MVP contract and R1 baseline are approved; bounded R2 acceptance is recorded in CHECKPOINT-25. Sprint 3's US-09 test-only plan is authorized by DEC-012 and detailed in `SPRINT-03.md`; its technical slices remain gated by separate bounded task contracts, explicit approval, human diff checkpoints and fresh evidence. This plan does not establish US-09 execution, full MVP acceptance, release readiness or deployment.

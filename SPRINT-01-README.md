@@ -8,7 +8,7 @@ SeaRadar — локальний навчальний R1-зріз для карт
 - **Runtime baseline:** Node.js `22.x`.
 - **Доставка:** commit [`e98145e`](https://github.com/RomanMakarenko/SeaRadar/commit/e98145e), branch `sprint1`, синхронізований з `origin/sprint1`.
 - **Sprint 2 / R2:** bounded acceptance — `PASS / VERIFIED` для US-05…US-08, B-08…B-14 і визначених критеріїв CHECKPOINT-03 ([`CHECKPOINT-25`](docs/checkpoints/CHECKPOINT-25.md)); це не повне MVP-приймання або release/deployment approval. План — [`SPRINT-02.md`](SPRINT-02.md), підсумок роботи й процесу — [`SPRINT-02-README.md`](SPRINT-02-README.md).
-- **Sprint 3:** очікує MVP input і не авторизований.
+- **Sprint 3 / R3:** bounded US-09 test plan затверджений DEC-012 і деталізований у [`SPRINT-03.md`](SPRINT-03.md); implementation slices залишаються окремо task-gated.
 - **Продуктовий scope R1:** тільки локальна демонстраційна карта; AIS/API, пошук, pause, rewind, loop і production deployment не входили до R1.
 
 ## Візуальний результат
