@@ -3738,7 +3738,7 @@ On 2026-09-30, the user approved option 2 in DEC-013 and authorized the versione
 # TASK-SEA-R3-TEST-009 — Independent review and Sprint 3 checkpoint
 
 - **Version:** `1.0.0`
-- **Status:** `Draft — prepared as a separate contract-only prerequisite; T09 execution awaits human review and explicit authorization`
+- **Status:** `Verified — bounded T09 review and handoff only`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-09-30
@@ -3881,3 +3881,156 @@ On 2026-09-30, the user approved option 2 in DEC-013 and authorized the versione
 - **Limitations:** no full suite, build, runtime, live-provider/network check, secret access, or deployment was performed. Sprint 3 remains subject to its other acceptance gates; this task does not declare Sprint 3 `DONE` or establish release readiness.
 - **Evidence / history:** `E-SEA-095` records the observed command and result; the dated RUNBOOK handoff records the bounded change and its limitations. Historical T04/T08/T09 records, E-SEA-094, and CHECKPOINT-26 remain unchanged.
 - **Recovery / next action:** if a later review rejects this test-only change, revert only the change in `tests/snapshot-collector.spec.ts`. Any additional test behavior, product change, or broader verification requires a separate bounded contract and approval.
+
+# TASK-SEA-R3-EVIDENCE-REFRESH-001 — Fresh targeted execution evidence for T02, T06, and T07
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-30
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`TASK-SEA-R3-TEST-002` T02](TASK_SPEC.md), [`TASK-SEA-R3-TEST-006` T06](TASK_SPEC.md), [`TASK-SEA-R3-TEST-007` T07](TASK_SPEC.md), [`TASK-SEA-DOC-RETRO-001`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`E-SEA-094`](EVIDENCE.md), [`E-SEA-095`](EVIDENCE.md), [`DEC-012`](docs/decisions/DEC-012-r3-scope.md), [`DEC-013`](docs/decisions/DEC-013-r3-t06-demo-mode-test.md)
+
+## Goal and authorization boundary
+
+- **Goal:** obtain fresh, directly observed targeted-test outcomes for the existing T02, T06, and T07 acceptance checks whose historical command output was not retained.
+- **Current evidence:** E-SEA-094 records T02, T06, and T07 pass counts as task-record summaries, with execution `Unknown` to that retrospective absent raw output. T01 `--list` establishes selection only. E-SEA-095 records a fresh passing run of the current collector spec for the bounded T04 follow-up; it does not retroactively recreate historical outputs. Do not rewrite those records or claim Sprint 3 is `DONE`.
+- **Task class:** read-only targeted execution/evidence refresh for three already-approved acceptance checks. This is not a new Sprint task or T10, does not change test/product behavior, and does not resolve unrelated task-status discrepancies such as T09's current Draft status.
+- **Approval gate:** this Draft defines scope only. Do not run any command below until the user has reviewed this exact contract and explicitly authorized the three targeted checks. Approval of this contract-preparation step alone is not execution authorization.
+
+## Inputs and expected output
+
+- **Inputs:** R3-T02, T06, and T07 contracts and acceptance criteria; their existing tests; the T01–T08 evidence limitations in E-SEA-094; the T04 follow-up evidence in E-SEA-095; and the Sprint 3 blocking checks in `SPRINT-03.md`.
+- **Expected output after separate execution approval:** directly observed outcomes from these commands, recorded only after they run:
+  - T02: `npx playwright test --project=node tests/position-report-transformer.spec.ts`
+  - T06: `npx playwright test --project=chromium tests/demo-movement.spec.ts`
+  - T07: `npx playwright test --project=chromium tests/snapshot-interface.spec.ts --grep "R3 snapshot UI states"`
+- **Future closeout:** after all authorized commands finish and the user reviews the resulting facts, append one factual evidence record (next ID expected: `E-SEA-096`), one dated RUNBOOK handoff, and a factual closeout in this task section. Record each exact command and observed status/count from its actual output, environment/date, limitations, and any failure. The expected ID must be rechecked before writing. Do not describe the previous task summaries as raw output or alter historical closeouts.
+- **Dependencies:** the approved R3-T02, T06, and T07 contracts and their targeted tests are present; T06 uses the DEC-013-approved idle-demo setup and T07's command isolates its three R3 cases.
+
+## Constraints and allowed paths
+
+- **Contract preparation:** append this Draft to `TASK_SPEC.md` only.
+- **After separate execution approval:** run only the three commands above, in the listed order. No source/test/configuration edit is authorized. After observed outcomes and separate human review, the only documentation write paths proposed are this task's closeout in `TASK_SPEC.md`, append-only `EVIDENCE.md`, and append-only `RUNBOOK.md`.
+- `SPRINT-03.md`, prior task closeouts, E-SEA-094/095, E-SEA-093, CHECKPOINT-26, decision records, tests, application source, package files, and configuration remain read-only. Do not reconcile T09 status or modify any historical checkpoint in this task.
+- Do not install or download a browser. If a command cannot launch its configured browser, stop and report the observed blocker; request a separate contract/authorization before any installation or environment change. Do not run a full suite/build, contact the live provider, make other network requests, access secrets or `.mcp.json`, stage, commit, push, publish, deploy, or perform destructive Git operations.
+- Preserve existing modified/untracked paths, including `.idea/vcs.xml` and `.mcp.json`; do not inspect `.mcp.json`.
+
+## Acceptance and verification
+
+- Each command is invoked only after separate explicit authorization, and the observed result is traceable to that exact command and the corresponding task criterion.
+- T02 verifies only its approved transformer cases; T06 verifies only the DEC-013-approved demo movement and route-end case; T07 verifies only the three `R3 snapshot UI states` cases. Passing these checks alone does not establish all Sprint 3 gates, full-suite/build status, live-provider behavior, full MVP acceptance, or release readiness.
+- All outcomes, including command errors, failed assertions, and unavailable-browser blockers, are reported faithfully. Any non-pass is a stop; do not change code or broaden the run in response.
+- **Checks after future documentation closeout:** `git diff --check -- TASK_SPEC.md EVIDENCE.md RUNBOOK.md`; focused checks for unique evidence/task IDs, append-only placement, required fields, and claim-to-output traceability. No application tests/build beyond the three approved commands.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint 1:** present this Draft for human review; only explicit authorization of this exact contract permits the three runs.
+- **Checkpoint 2:** after the runs, compare the actual output with the individual T02/T06/T07 acceptance criteria and present the observed results before making any closeout/evidence/runbook write.
+- **Stop if:** any command needs an unapproved browser installation, external service, secret, source/test/configuration change, or additional path; if output differs from its task oracle; or if one command fails. Preserve the actual failure/blocker and Unknowns; do not infer a product defect or rerun an expanded suite.
+- **Recovery:** contract preparation changes only this appended Draft section. After separately approved runs, recovery is limited to correcting/removing only this task's own closeout/evidence/history amendments by a new reviewed factual correction; never rewrite existing T02/T06/T07 closeouts, E-SEA-094/095, E-SEA-093, or CHECKPOINT-26. No destructive Git operation is authorized.
+
+## Observed execution, verification, and handoff — 2026-09-30
+
+- **Authorization:** after reviewing the exact Draft contract, the user instructed `продовжуй`; this authorized the three listed targeted runs. After reviewing their observed results, the user separately instructed `продовжуй` to authorize this factual documentation closeout.
+- **T02:** `npx playwright test --project=node tests/position-report-transformer.spec.ts` — **PASS**, 10 tests passed (406 ms).
+- **T06:** `npx playwright test --project=chromium tests/demo-movement.spec.ts` — **PASS**, 1 test passed (809 ms test duration; 1.5 s total).
+- **T07:** `npx playwright test --project=chromium tests/snapshot-interface.spec.ts --grep "R3 snapshot UI states"` — **PASS**, 3 tests passed (1.5 s total).
+- **Observed worktree:** after the three runs, `git status --short --branch` showed only the pre-existing `.idea/vcs.xml` modification, this task's `TASK_SPEC.md` modification, and pre-existing untracked `.mcp.json`; no test-generated path was observed. `.mcp.json` was not accessed.
+- **Evidence / history:** `E-SEA-096` records these three directly observed results. The dated RUNBOOK entry records commands, counts, and limitations. E-SEA-094's statement about unavailable historical outputs remains an accurate account of those earlier runs; these are fresh 2026-09-30 observations, not reconstructed historical outputs.
+- **Limitations:** no full suite, build, provider/network check, secret access, browser installation, or deployment was performed. T01 `--list` remains selection-only. Passing these three targeted checks does not establish every Sprint 3 gate, Sprint `DONE`, full MVP acceptance, or release readiness. T09's Draft status discrepancy remains outside this task.
+- **Recovery / handoff:** preserve all historical records and the three observed outcomes. Any further verification, T09 status reconciliation, code change, or broader validation requires its own reviewed bounded contract and explicit authorization.
+
+# TASK-SEA-R3-T09-STATUS-RECONCILE-001 — Reconcile T09 review status
+
+- **Version:** `1.0.0`
+- **Status:** `Draft — prepared for human review; changing the T09 status requires separate explicit approval`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-30
+- **Related artifacts:** [`TASK-SEA-R3-TEST-009`](TASK_SPEC.md), [`SPRINT-03.md`](SPRINT-03.md), [`E-SEA-093`](EVIDENCE.md), [`E-SEA-096`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`CHECKPOINT-26.md`](docs/checkpoints/CHECKPOINT-26.md)
+
+## Goal and authorization boundary
+
+- **Goal:** propose a narrowly scoped correction to the current T09 task status so it reflects the completed bounded independent review and handoff recorded in E-SEA-093, the T09 RUNBOOK entry, and CHECKPOINT-26.
+- **Task class:** documentation status reconciliation only. It does not add or authorize a Sprint 3 implementation slice, revise product behavior, rerun tests, or change the Sprint exit decision.
+- **Current state:** T09 remains `Draft` until the owner reviews and explicitly approves this contract and the bounded status correction below. Approval to prepare this Draft, including approval of the preceding plan, is not approval to change the T09 status.
+- **Proposed T09 status after separate approval:** `Verified — bounded T09 review and handoff only`. This wording describes the review and handoff recorded in CHECKPOINT-26. It does not mean Sprint 3 is `DONE`, establish test execution beyond available evidence, or claim full MVP acceptance, release readiness, or deployment readiness.
+
+## Inputs and expected output
+
+- **Inputs:** E-SEA-093's independent review and evidence limits; the existing T09 RUNBOOK entry; CHECKPOINT-26's bounded verification and `CONTINUE WITH APPROVAL` disposition; E-SEA-096's handoff requiring a separate reconciliation contract; and the Sprint 3 task-closure and completion gates in `SPRINT-03.md`.
+- **Evidence limitation:** the raw authorization transcript is not retained in the repository. E-SEA-093, RUNBOOK, and CHECKPOINT-26 record the authorization and its limited scope. CHECKPOINT-26's `Verified` applies only to bounded T09 review and handoff. Its recorded Sprint disposition is `CONTINUE WITH APPROVAL`, not `DONE`. Do not turn historical evidence limits or later targeted test runs into broader T09 or Sprint claims.
+- **Expected output after separate explicit approval:** change only the `Status` metadata value under `TASK-SEA-R3-TEST-009` to the proposed wording above. Keep the T09 task body, historical evidence, RUNBOOK entry, CHECKPOINT-26, E-SEA-093, E-SEA-096, and `SPRINT-03.md` unchanged.
+
+## Constraints and allowed paths
+
+- **Contract preparation:** append this Draft contract to `TASK_SPEC.md` only.
+- **Allowed write path after separate approval:** the `Status` metadata value for `TASK-SEA-R3-TEST-009` in `TASK_SPEC.md` only. No other field, record, or file is authorized by this contract.
+- Do not edit E-SEA-093, E-SEA-096, the T09 RUNBOOK entry, CHECKPOINT-26, `SPRINT-03.md`, other task contracts, source, tests, configuration, or decision records. Do not mark Sprint 3 `DONE`.
+- Do not run tests/builds, access secrets or `.mcp.json`, make provider/network requests, stage, commit, push, publish, deploy, or perform destructive Git operations.
+- Preserve all pre-existing staged, unstaged, and untracked changes.
+
+## Acceptance and verification
+
+- The proposed status is traceable to the bounded T09 review and handoff recorded by E-SEA-093, RUNBOOK, and CHECKPOINT-26, and is consistent with CHECKPOINT-26's scope.
+- The status wording does not imply that Sprint 3 is complete or alter the historical `CONTINUE WITH APPROVAL` disposition. Unverified test execution, full-suite/build results, full MVP acceptance, and release/deployment readiness remain unclaimed.
+- Any later status edit occurs only after explicit owner approval of this contract and changes only the T09 `Status` metadata value.
+- **Targeted check after the separately approved status edit:** inspect the focused diff to confirm only the approved T09 status value changed; run `git diff --check -- TASK_SPEC.md`. No application tests or builds.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint 1:** present this Draft for human review. Do not change the T09 status until the owner explicitly approves this contract and the proposed wording.
+- **Checkpoint 2:** after any separately approved one-field status edit, present the focused diff and check result for human review. No commit or push is authorized.
+- **Stop if:** the owner does not approve the proposed wording; the cited records no longer support it; the wording could imply Sprint `DONE` or broader verification; or reconciliation would require changing another field, path, or historical claim. Preserve the current status and request a new bounded decision rather than expanding scope.
+- **Recovery:** during this contract-preparation stage, revise or remove only this appended Draft section after inspecting the diff. If a separately approved status edit is later rejected on review, recovery is limited to the T09 status field and requires human review; do not rewrite any historical evidence or unrelated work.
+
+# TASK-SEA-R3-GATE-RECONCILE-001 — Post-T04 Sprint 3 evidence and gate reconciliation
+
+- **Version:** `1.0.0`
+- **Status:** `Draft — prepared for human review; read-only review and closeout require separate explicit approval`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-30
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`TASK-SEA-R3-TEST-001` through `TASK-SEA-R3-TEST-009`](TASK_SPEC.md), [`TASK-SEA-R3-T04-COVERAGE-001`](TASK_SPEC.md), [`TASK-SEA-R3-EVIDENCE-REFRESH-001`](TASK_SPEC.md), [`E-SEA-093` through `E-SEA-096`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`CHECKPOINT-26.md`](docs/checkpoints/CHECKPOINT-26.md), [`DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`DEC-013-r3-t06-demo-mode-test.md`](docs/decisions/DEC-013-r3-t06-demo-mode-test.md)
+
+## Goal and authorization boundary
+
+- **Goal:** perform a bounded, read-only reconciliation of the T04 coverage finding recorded in E-SEA-093/CHECKPOINT-26 against the later test-only follow-up in E-SEA-095, then assess current Sprint 3 evidence and remaining exit gates against `SPRINT-03.md` without rewriting the historical review.
+- **Task class:** documentation/evidence review only. No implementation, test execution, task-status edit, or Sprint scope change is included.
+- **Current evidence boundary:** CHECKPOINT-26 records what was found at its reviewed input revision and remains a valid historical record. E-SEA-095 later records the narrowly scoped T04 assertion change and passing focused collector spec. The reconciliation must distinguish that later evidence from the earlier checkpoint and must not claim that the original finding was false at review time.
+- **Approval gate:** this Draft defines a proposed review and documentation scope only. Do not begin the review or write any closeout records until the user reviews this exact contract and explicitly authorizes it. Preparation of this Draft and prior `продовжуй` instructions for other slices do not authorize this task.
+
+## Inputs and expected output
+
+- **Inputs:** the T01–T09 task contracts/current statuses in `TASK_SPEC.md`; the Sprint 3 blocking criteria and exit gate in `SPRINT-03.md`; E-SEA-093–096; CHECKPOINT-26; the relevant dated RUNBOOK handoffs; DEC-012 and DEC-013; and the existing T04 follow-up test diff/record as documented by E-SEA-095.
+- **Review questions:** (1) whether E-SEA-095 directly addresses the specific uniqueness/full-submitted-MMSI-set gap found at the T04 review input; (2) which Sprint 3 blocking criteria are supported by current records and which remain Unknown or only supported by task-record summaries; and (3) what bounded current disposition is supported by those sources. Trace every conclusion to a source and preserve its evidence class.
+- **Evidence distinctions:** E-SEA-095 is direct evidence of the scoped T04 test change and focused command result, not proof of all T04 behavior or all Sprint gates. E-SEA-096 is fresh direct evidence for T02, T06, and T07 only. E-SEA-094 records T01 selection and T02–T07 task-record summaries; Git history does not prove command execution. Do not upgrade summaries to raw output, or infer full-suite/build, live-provider, full MVP, release, or deployment outcomes.
+- **Expected output after separate review approval:** a criterion-to-evidence matrix and a recommendation limited to `DONE`, `CONTINUE WITH APPROVAL`, or `HOLD` as supported by `SPRINT-03.md`. A `DONE` recommendation is permitted only if each blocking criterion has sufficient traceable evidence; otherwise state the exact remaining gate(s) and recommend continuation or hold. The human owner retains the exit decision.
+- **Expected records after a further explicit closeout approval:** append one current reconciliation record to `EVIDENCE.md` (next ID expected: `E-SEA-097`, recheck uniqueness before writing); append one dated RUNBOOK handoff; and create a new `docs/checkpoints/CHECKPOINT-27.md` to record the post-E-SEA-095 state and bounded disposition. Update this task section with observed review/closeout facts only. Do not amend CHECKPOINT-26.
+- **Dependencies:** E-SEA-093–096, CHECKPOINT-26, current task contracts, and Sprint 3 gate criteria are available for read-only comparison. If the sources conflict or a criterion cannot be assessed within these paths, preserve it as Unknown and stop rather than expanding scope.
+
+## Constraints and allowed paths
+
+- **Contract preparation:** append this Draft to `TASK_SPEC.md` only.
+- **After separate review approval:** read-only inspection of the inputs listed above; no source/test execution or changes.
+- **After a further explicit closeout approval:** write only this task's factual closeout in `TASK_SPEC.md`, one append-only record in `EVIDENCE.md`, one append-only entry in `RUNBOOK.md`, and new `docs/checkpoints/CHECKPOINT-27.md`.
+- `CHECKPOINT-26.md`, E-SEA-093–096, prior task closeouts, `SPRINT-03.md`, decision records, source, tests, configuration, and package files remain read-only. Do not change any T01–T09 status, reconcile T09 status, modify Sprint scope/status, or mark the Sprint `DONE` as a side effect of this documentation task.
+- Do not run tests, build, typecheck, application/runtime or provider/network commands; do not access secrets or `.mcp.json`; do not install dependencies; do not stage, commit, push, publish, deploy, or perform destructive Git operations.
+- Preserve all pre-existing modified, staged, and untracked paths, including `.idea/vcs.xml` and `.mcp.json`; do not inspect `.mcp.json`.
+
+## Acceptance and verification
+
+- The review explicitly states that CHECKPOINT-26's T04 finding was accurate for its recorded review input and that E-SEA-095 is later evidence addressing that exact test-coverage gap; neither record is rewritten.
+- Every Sprint 3 blocking criterion is mapped to a current source, evidence class, observed scope, and limitation. Task summaries, direct command outputs, static inspection, and Unknowns remain distinct.
+- Any recommendation follows the SPRINT-03 gate and does not imply more than the available records establish. Do not infer `DONE` solely from all task statuses reading `Verified` or from the T04 follow-up pass.
+- Closeout records, if separately approved, use unique IDs, correct metadata and local links, append-only placement, exact claim-to-source attribution, explicit limitations, recovery, and handoff. CHECKPOINT-27 does not replace or alter CHECKPOINT-26.
+- **Targeted checks after an approved documentation closeout:** `git diff --check -- TASK_SPEC.md EVIDENCE.md RUNBOOK.md docs/checkpoints/CHECKPOINT-27.md`; focused structural checks for unique IDs, required fields, local links, append-only placement, and source attribution. No application tests or builds.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint 1:** present this Draft for human review; no review or closeout write occurs without explicit approval of the exact scope.
+- **Checkpoint 2:** after the read-only review, present the evidence matrix, proposed disposition, limitations, and exact remaining gates. Do not write EVIDENCE/RUNBOOK/CHECKPOINT-27 until the user separately authorizes the factual closeout.
+- **Checkpoint 3:** after approved closeout writes and structural checks, present the focused diff and check results for human disposition. No commit or push is authorized.
+- **Stop if:** an alleged T04 conclusion needs a test rerun or code change; the evidence conflicts; any blocking criterion requires new execution; a current task/status edit or prior-record rewrite appears necessary; or the proposed disposition exceeds what the evidence supports. Record unresolved gates as Unknown and request a new bounded contract rather than expanding this task.
+- **Recovery:** during contract preparation, revise or remove only this appended Draft section after inspecting the diff. After separately approved review/closeout, correct only this task's own documentation by a reviewed factual amendment; preserve E-SEA-093–096, CHECKPOINT-26, all historical task records, and unrelated worktree changes. No destructive Git operation is authorized.

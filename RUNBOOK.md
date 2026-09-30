@@ -964,3 +964,14 @@ Each entry must include: date/session, goal and scope, changed artifacts, comman
 - **Limitations:** only the focused Node collector spec ran. No full suite, build, runtime, provider/network check, secret access, or deployment occurred. Sprint 3 completion, full MVP acceptance, live-provider behavior, and release readiness remain unestablished by this task.
 - **Worktree / operations:** post-run `git status --short` showed the authorized test file plus the pre-existing modified/untracked paths; no additional generated path was observed. No staging, commit, push, deployment, or destructive Git operation occurred. Existing `.mcp.json` remained unaccessed.
 - **Handoff:** preserve the test diff and append-only records. Further test scope, product remediation, or broader verification requires a separate reviewed bounded contract and explicit approval.
+
+### 2026-09-30 — Fresh targeted R3 execution evidence for T02, T06, and T07
+
+- **Task / authorization:** `TASK-SEA-R3-EVIDENCE-REFRESH-001`. After review of its Draft contract, the user instructed `продовжуй`, authorizing the three listed targeted commands. After review of the results, the user instructed `продовжуй` to authorize this factual closeout.
+- **T02:** `npx playwright test --project=node tests/position-report-transformer.spec.ts` — **PASS**, 10 passed (406 ms).
+- **T06:** `npx playwright test --project=chromium tests/demo-movement.spec.ts` — **PASS**, 1 passed (809 ms test duration; 1.5 s total).
+- **T07:** `npx playwright test --project=chromium tests/snapshot-interface.spec.ts --grep "R3 snapshot UI states"` — **PASS**, 3 passed (1.5 s total).
+- **Evidence / outcome:** `E-SEA-096` records the observed commands and outcomes. `TASK-SEA-R3-EVIDENCE-REFRESH-001` is `Verified` for these fresh targeted runs. E-SEA-094's historical evidence limitation remains unchanged; these runs do not recreate the prior outputs.
+- **Limitations:** no full suite, build, T01 execution, provider/network check, secret access, browser installation, or deployment occurred. These passes alone do not establish Sprint 3 `DONE`, full MVP acceptance, or release readiness. T09 status reconciliation remains out of scope.
+- **Worktree / operations:** after the runs, status showed only the existing `.idea/vcs.xml` modification, `TASK_SPEC.md`, and untracked `.mcp.json`; no generated test path appeared. `.mcp.json` was not accessed. No commit or push was performed.
+- **Handoff:** any further test execution, T09 status reconciliation, or broader validation requires a separate reviewed bounded contract and explicit authorization.

@@ -1140,3 +1140,16 @@
 - **Timestamp / environment:** 2026-09-30; local SeaRadar repository, branch `sprint3`; exact wall-clock time not captured.
 - **Limitations:** this run covered only the focused Node project spec. No full-suite run, build, runtime/provider/network check, secret access, or deployment occurred. This evidence does not establish all Sprint 3 acceptance gates, full MVP acceptance, live provider behavior, or release readiness.
 - **Recovery / handoff:** preserve the bounded test change and this append-only record. Any further test expansion, product edit, or broader validation requires its own reviewed bounded contract and explicit approval; correct factual errors by dated append-only amendment.
+
+### E-SEA-096 — Fresh targeted execution evidence for T02, T06, and T07
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R3-EVIDENCE-REFRESH-001`; `TASK-SEA-R3-TEST-002`; `TASK-SEA-R3-TEST-006`; `TASK-SEA-R3-TEST-007`; `SPRINT-03.md`; `E-SEA-094`; `E-SEA-095`; `DEC-012`; `DEC-013`.
+- **Authorization:** after reviewing the bounded Draft contract, the user instructed `продовжуй` to authorize the three targeted commands. After reviewing their observed outcomes, the user instructed `продовжуй` to authorize this factual closeout.
+- **Source / expected:** the approved T02 transformer, T06 demo movement, and T07 snapshot UI acceptance contracts and their exact targeted Playwright commands. E-SEA-094 records prior pass-count summaries without retained raw command output; expected here was a fresh observed execution of each listed command, not reconstruction of prior results.
+- **Observed T02:** `npx playwright test --project=node tests/position-report-transformer.spec.ts` — **PASS**, 10 passed (406 ms).
+- **Observed T06:** `npx playwright test --project=chromium tests/demo-movement.spec.ts` — **PASS**, 1 passed (809 ms test duration; 1.5 s total).
+- **Observed T07:** `npx playwright test --project=chromium tests/snapshot-interface.spec.ts --grep "R3 snapshot UI states"` — **PASS**, 3 passed (1.5 s total; three cases selected and passed).
+- **Timestamp / environment:** 2026-09-30; local SeaRadar repository, branch `sprint3`; wall-clock time not captured.
+- **Status / conclusion:** all three fresh targeted commands passed. These current observations do not replace or rewrite the earlier task closeouts; E-SEA-094 remains accurate about the unavailable historical command outputs.
+- **Limitations:** this evidence covers only the targeted T02, T06, and T07 checks. It does not establish T01 execution, full-suite/build outcomes, all Sprint 3 acceptance, full MVP acceptance, live-provider behavior, or release readiness. T09 status reconciliation was not part of this task.
+- **Recovery / handoff:** preserve this append-only record and the task contract closeout. Further execution, status reconciliation, or broader validation requires its own reviewed bounded contract and explicit authorization.
