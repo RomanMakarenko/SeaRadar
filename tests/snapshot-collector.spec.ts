@@ -358,9 +358,10 @@ test("duplicate messages do not consume the unique-vessel limit", async () => {
 test("stops at exactly 100 unique valid vessels", async () => {
   const attempt = createAttempt();
   attempt.reader.subscribed();
+  const expectedMmsis = Array.from({ length: 100 }, (_, index) => String(100000000 + index));
 
-  for (let index = 0; index < 100; index += 1) {
-    attempt.reader.text(positionReport({ mmsi: String(100000000 + index) }));
+  for (const mmsi of expectedMmsis) {
+    attempt.reader.text(positionReport({ mmsi }));
   }
   attempt.reader.text(positionReport({ mmsi: "999999999" }));
 
@@ -376,7 +377,10 @@ test("stops at exactly 100 unique valid vessels", async () => {
     reason: "limit_reached",
   });
   expect(result.ok && result.vessels).toHaveLength(100);
-  expect(result.ok && result.vessels.map(({ id }) => id)).not.toContain("999999999");
+  const returnedMmsis = result.ok ? result.vessels.map(({ id }) => id) : [];
+  expect(new Set(returnedMmsis).size).toBe(100);
+  expect([...returnedMmsis].sort()).toEqual([...expectedMmsis].sort());
+  expect(returnedMmsis).not.toContain("999999999");
   expect(attempt.reader.stopCount).toBe(1);
   expect(attempt.timer.clearCount).toBe(1);
 });
