@@ -4401,3 +4401,67 @@ At completion, present each gate as PASS/FAIL/BLOCKED/UNKNOWN with evidence link
 | README’s commands must be executed before they are presented as verified | Proposed, not approved | Unknown | Requested acceptance rule; B-21 approval pending |
 
 At completion, present the focused README diff and command results, request human disposition, and remind the owner to commit and push the reviewed stage. No commit/push without separate explicit authorization.
+
+---
+
+# TASK-SEA-R4-GOV-001 — R4 governance contract synchronization
+
+- **Version:** `1.0.0`
+- **Status:** `Active — governance outputs prepared; awaiting human diff review`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-10-01
+- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK-SEA-R4-PLAN-001`](TASK_SPEC.md), [`SPRINT-03b-CHANGE-REQUEST.md`](SPRINT-03b-CHANGE-REQUEST.md), [`DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`DEC-014-r4-scope.md`](docs/decisions/DEC-014-r4-scope.md), [`docs/decisions/README.md`](docs/decisions/README.md), [`docs/sprints/README.md`](docs/sprints/README.md)
+
+## Goal and authorization boundary
+
+- **Goal:** formalize the user's approved R4 B-18–B-21 product scope in the versioned project contracts and a linked decision record, while retaining independent approval gates for every implementation/acceptance task.
+- **Approval:** On 2026-10-01, after review of this exact Draft contract, the user explicitly instructed `продовжуй`. This authorizes only the governance synchronization below; it does not authorize B-18, B-19, B-20, or B-21 implementation or acceptance work.
+- **G1 output:** synchronized, versioned `PROJECT_BRIEF.md` and `SPEC.md`; one new R4 scope decision record using a verified unique ID/path; and its entry in `docs/decisions/README.md`.
+- **Scope boundary:** R4 remains a release label only. Sprint assignment is `Unknown`; neither Sprint 3b nor Sprint 4 is inferred. This contract does not authorize a change to `docs/sprints/README.md`.
+
+## Inputs and expected contract changes
+
+- **Read-only inputs:** `SPRINT-03b-CHANGE-REQUEST.md`; current `PROJECT_BRIEF.md`, `SPEC.md`, `TASK_SPEC.md`, `DEC-012-r3-scope.md`, decision index, and sprint catalog.
+- Version the brief and SPEC together. Reflect the approved behavior for US-06/US-07: the displayed vessel set and source label/time are distinct from last-attempt status/time; loading, empty, and error retain the displayed set; only a nonempty success replaces it; timestamps come from response payloads; and page reload restores demo data.
+- Record the US-10/README handoff requirement without assuming the second laptop's OS or choosing cross-platform versus OS-specific instructions.
+- Add a decision with the required context, constraints, options, decision/rationale, consequences/deferred work, revisit/verification trigger, and links to SPEC/TASK/EVIDENCE/RUNBOOK. Before creation, verify decision ID and path uniqueness. In this execution, `DEC-014-r4-scope.md` was the verified available next decision path.
+- Add the new decision to the index. Leave the pre-existing DEC-008 index omission unchanged; do not rewrite DEC-012/DEC-013 or any checkpoint.
+- State in the decision that scope synchronization is not authorization to implement or execute B-18, B-19, B-20, or B-21.
+
+## Non-goals and deferred Unknowns
+
+- No sprint/release assignment, sprint catalog update, new canonical sprint record, or change to prior decisions/checkpoints.
+- No B-18 UI implementation, B-19 tests, B-20 acceptance/build/provider/key/secret operation, B-21 README edit/command execution, or downstream task-status promotion.
+- No reading or recording secret values; no live-provider attempt; no archive creation, inspection, or publication; no deployment, staging, commit, or push.
+- Second-laptop OS/cross-platform target remains `Unknown`. Archive format, destination/publication target, and recovery owner remain `Waiting for input`.
+- Do not create EVIDENCE/RUNBOOK entries or a checkpoint: no runtime or acceptance observation is authorized by this contract.
+
+## Allowed paths and worktree boundary
+
+- **For execution after explicit approval:** `PROJECT_BRIEF.md`, `SPEC.md`, one verified new `docs/decisions/DEC-<number>-r4-scope.md`, `docs/decisions/README.md`, and `TASK_SPEC.md` only for this task's approval/status/closeout fields.
+- The change request and historical decisions are read-only inputs. All other files are excluded.
+- Preserve the existing staged, unstaged, and untracked paths; do not stage or include them. Do not inspect `.mcp.json` or secrets.
+
+## Acceptance and verification
+
+- Brief, SPEC, and decision state the same approved R4 outcome, scope boundaries, and separate task gates; synchronized metadata and local links are correct.
+- The selected decision ID/path is unique; the index links the record without silently changing unrelated entries.
+- Sprint mapping, OS target, archive packaging, and B-18–B-21 execution remain explicitly unresolved/gated rather than inferred or claimed.
+- After approval, use only documentation/content, ID/link, and scoped diff checks; `git diff --check` must pass for the authorized paths. Do not run product tests, build, runtime, provider, secret, or README command checks.
+- Present the exact diff and actual check outputs for human review. Record no evidence/history beyond observed checks that the relevant canonical log is authorized to contain.
+
+## Stop, recovery and checkpoint
+
+- Stop without editing the G1 output paths if this exact contract is not approved, the decision ID/path conflicts, or a correct contract would require resolving sprint assignment, laptop OS, archive ownership, or another deferred Unknown.
+- Recovery is limited to a human-approved revision of this task contract; preserve historical records and all unrelated worktree state. Never reset/clean or broadly stage the repository.
+- At completion, pause for human diff review and `continue` / `revise` / `HOLD`. Remind the owner to commit and push the reviewed stage; do not perform either action without a separate explicit authorization.
+
+## Observed execution and checkpoint — 2026-10-01
+
+- **Authorization:** the user responded `продовжуй` after review of this exact contract; governance synchronization proceeded under this task only.
+- **Changed paths:** `PROJECT_BRIEF.md`, `SPEC.md`, `docs/decisions/DEC-014-r4-scope.md` (new), `docs/decisions/README.md`, and this task's approval/status/closeout fields in `TASK_SPEC.md`.
+- **Observed checks:** `git diff --check -- PROJECT_BRIEF.md SPEC.md TASK_SPEC.md docs/decisions/README.md` passed with no output. A read-only local-link/EOF check over the five governance files reported `checked_files=5; broken_local_links=[]`. A targeted search found one DEC-014 decision heading.
+- **Not run:** product build/tests, runtime/manual acceptance, provider/network or secret checks, README command checks, checkpoint/archive work.
+- **Evidence IDs:** none; no runtime or acceptance evidence was generated.
+- **Current checkpoint:** awaiting the user's diff review and `continue` / `revise` / `HOLD`; no commit/push performed. Preserve unrelated pre-existing worktree changes.

@@ -1,12 +1,12 @@
 # Decision records
 
 - **ID:** `DECISIONS-GOV-001`
-- **Version:** `1.1.0`
+- **Version:** `1.2.0`
 - **Status:** `Ready`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-30
-- **Related artifacts:** [`../../CLAUDE.md`](../../CLAUDE.md), [`../../SPEC.md`](../../SPEC.md), [`../../TASK_SPEC.md`](../../TASK_SPEC.md), [`../../SPRINT-03.md`](../../SPRINT-03.md), [`../../EVIDENCE.md`](../../EVIDENCE.md), [`../../RUNBOOK.md`](../../RUNBOOK.md), [`../checkpoints/CHECKPOINT-01.md`](../checkpoints/CHECKPOINT-01.md), [`DEC-001-mvp-contract.md`](DEC-001-mvp-contract.md), [`DEC-002-r1-stack.md`](DEC-002-r1-stack.md), [`DEC-003-r1-handoff.md`](DEC-003-r1-handoff.md), [`DEC-004-checkpoint-convention.md`](DEC-004-checkpoint-convention.md), [`DEC-005-r1-node22.md`](DEC-005-r1-node22.md), [`DEC-006-r2-scope.md`](DEC-006-r2-scope.md), [`DEC-009-r2-current-task-status.md`](DEC-009-r2-current-task-status.md), [`DEC-010-r2-sparse-snapshot-demo-fallback.md`](DEC-010-r2-sparse-snapshot-demo-fallback.md), [`DEC-011-r2-task-authorization-reconciliation.md`](DEC-011-r2-task-authorization-reconciliation.md), [`DEC-012-r3-scope.md`](DEC-012-r3-scope.md), [`DEC-013-r3-t06-demo-mode-test.md`](DEC-013-r3-t06-demo-mode-test.md)
+- **Date:** 2026-10-01
+- **Related artifacts:** [`../../CLAUDE.md`](../../CLAUDE.md), [`../../SPEC.md`](../../SPEC.md), [`../../TASK_SPEC.md`](../../TASK_SPEC.md), [`../../SPRINT-03.md`](../../SPRINT-03.md), [`../../EVIDENCE.md`](../../EVIDENCE.md), [`../../RUNBOOK.md`](../../RUNBOOK.md), [`../checkpoints/CHECKPOINT-01.md`](../checkpoints/CHECKPOINT-01.md), [`DEC-001-mvp-contract.md`](DEC-001-mvp-contract.md), [`DEC-002-r1-stack.md`](DEC-002-r1-stack.md), [`DEC-003-r1-handoff.md`](DEC-003-r1-handoff.md), [`DEC-004-checkpoint-convention.md`](DEC-004-checkpoint-convention.md), [`DEC-005-r1-node22.md`](DEC-005-r1-node22.md), [`DEC-006-r2-scope.md`](DEC-006-r2-scope.md), [`DEC-009-r2-current-task-status.md`](DEC-009-r2-current-task-status.md), [`DEC-010-r2-sparse-snapshot-demo-fallback.md`](DEC-010-r2-sparse-snapshot-demo-fallback.md), [`DEC-011-r2-task-authorization-reconciliation.md`](DEC-011-r2-task-authorization-reconciliation.md), [`DEC-012-r3-scope.md`](DEC-012-r3-scope.md), [`DEC-013-r3-t06-demo-mode-test.md`](DEC-013-r3-t06-demo-mode-test.md), [`DEC-014-r4-scope.md`](DEC-014-r4-scope.md)
 
 ## Decision record format
 
@@ -38,6 +38,7 @@ A catalog entry or chat statement is not a decision. Do not select a technology 
 | [`DEC-011-r2-task-authorization-reconciliation.md`](DEC-011-r2-task-authorization-reconciliation.md) | `Ready` | DEC-009 records the earlier authorization state; the later approved DEC-010/B-14 contract authorizes only its bounded UI slice; other R2 work remains gated |
 | [`DEC-012-r3-scope.md`](DEC-012-r3-scope.md) | `Ready` | Sprint 3 authorizes only the bounded US-09 deterministic verification plan; implementation slices remain separately task-gated |
 | [`DEC-013-r3-t06-demo-mode-test.md`](DEC-013-r3-t06-demo-mode-test.md) | `Ready` | R3-T06 verifies existing demo motion in the initial idle-demo mode without requesting a snapshot; implementation remains separately task-gated |
+| [`DEC-014-r4-scope.md`](DEC-014-r4-scope.md) | `Ready` | R4 updates US-06/US-07 snapshot-retention contract and confirms US-10 handoff; B-18—B-21 remain separately task-gated; sprint assignment is Unknown |
 
 ## Pending decisions
 
@@ -45,6 +46,8 @@ A catalog entry or chat statement is not a decision. Do not select a technology 
 |---|---|---|
 | Architecture beyond R1 client/local boundary | `Waiting for input` | Core flow, data boundaries and integrations when they become material |
 | Sprint 2 / Sprint 3 allocation | `Partially resolved` | R2 scope is recorded in DEC-006 and its tasks remain separately gated; DEC-012 authorizes the bounded US-09 Sprint 3 plan and DEC-013 approves only the R3-T06 test-setup correction. Implementation slices remain separately task-gated and architecture beyond R2 is `Unknown` |
+| R4 release-to-sprint assignment | `Unknown` | DEC-014 approves the R4 product-contract change, but no Sprint 3b/Sprint 4 assignment is established |
+| Second-laptop platform for US-10 | `Unknown` | Resolve the target OS or explicitly approve a cross-platform README target before B-21 |
 | Quantitative success metric | `Needs verification` | Baseline, target, observation window and collection confirmation |
 | AISStream service terms | `Needs verification` | Confirmed free-tier terms, availability and source behavior |
 | Checkpoint archive packaging/publication | `Waiting for input` | Owner-approved archive format, publication target and recovery ownership |
