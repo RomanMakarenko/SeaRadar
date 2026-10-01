@@ -3988,7 +3988,7 @@ On 2026-09-30, the user approved option 2 in DEC-013 and authorized the versione
 # TASK-SEA-R3-GATE-RECONCILE-001 — Post-T04 Sprint 3 evidence and gate reconciliation
 
 - **Version:** `1.0.0`
-- **Status:** `Draft — prepared for human review; read-only review and closeout require separate explicit approval`
+- **Status:** `Verified — bounded post-T04 evidence/gate reconciliation and documentation closeout only`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-09-30
@@ -4034,3 +4034,121 @@ On 2026-09-30, the user approved option 2 in DEC-013 and authorized the versione
 - **Checkpoint 3:** after approved closeout writes and structural checks, present the focused diff and check results for human disposition. No commit or push is authorized.
 - **Stop if:** an alleged T04 conclusion needs a test rerun or code change; the evidence conflicts; any blocking criterion requires new execution; a current task/status edit or prior-record rewrite appears necessary; or the proposed disposition exceeds what the evidence supports. Record unresolved gates as Unknown and request a new bounded contract rather than expanding this task.
 - **Recovery:** during contract preparation, revise or remove only this appended Draft section after inspecting the diff. After separately approved review/closeout, correct only this task's own documentation by a reviewed factual amendment; preserve E-SEA-093–096, CHECKPOINT-26, all historical task records, and unrelated worktree changes. No destructive Git operation is authorized.
+
+## Observed closeout — 2026-09-30
+
+- **Authorization / disposition:** after the post-T04 evidence matrix and recommendation `DONE` within the approved Sprint 3 scope were presented, the user instructed `виконуй`. This authorized the bounded factual closeout and selected the recommended `DONE` disposition. `SPRINT-03.md` and Sprint scope/status metadata were not changed.
+- **Observed review:** CHECKPOINT-26's T04 coverage finding was accurate for its review input. E-SEA-095 is later evidence of the test-only correction: the 100-vessel case now asserts 100 distinct returned MMSIs and equality with the complete submitted set; the focused collector spec passed 15 tests. E-SEA-096 records fresh targeted passes for T02 (10), T06 (1), and T07 (3). Together with the current collector-spec pass for T03–T05 and T01's recorded project-selection checks, the sources support the SPRINT-03 blocking gates for the bounded test-only scope.
+- **Evidence limits:** T01 `--list` verifies project test selection, not test execution. E-SEA-094's historical summaries remain summaries; E-SEA-095/E-SEA-096 provide later direct command results only for the specified focused specs. No full-suite/build, live-provider, broad user-validation, full-MVP, release, or deployment outcome is established; these are not claimed as Sprint 3 results.
+- **Artifacts:** E-SEA-097, the append-only RUNBOOK handoff dated 2026-09-30, and CHECKPOINT-27 record this post-E-SEA-095 review and bounded disposition. CHECKPOINT-26 and E-SEA-093–096 remain unchanged. No T01–T09 task status was edited.
+- **Verification:** `git diff --check -- TASK_SPEC.md EVIDENCE.md RUNBOOK.md` passed with no output. `git diff --no-index --check /dev/null docs/checkpoints/CHECKPOINT-27.md` produced no whitespace diagnostics (the expected non-zero diff status reflects the new untracked file). Focused structural checks passed for IDs, required metadata, local links, append-only placement, and source attribution. No application tests/build or provider/network commands were run for this closeout.
+- **Worktree / recovery / handoff:** preserved pre-existing `.idea/vcs.xml` and untracked `.mcp.json`; `.mcp.json` was not accessed. No source/test/config change, staging, commit, push, deployment, or destructive Git operation occurred. Preserve prior evidence and checkpoint history; any broader verification or scope change requires its own reviewed bounded contract and explicit approval.
+
+# TASK-SEA-R3-README-001 — Sprint 3 retrospective and root README update
+
+- **Version:** `1.0.0`
+- **Status:** `Verified — bounded README draft and root update only; companion awaits human review`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-10-01
+- **Related artifacts:** [`SPEC.md`](SPEC.md), [`SPRINT-03.md`](SPRINT-03.md), [`SPRINT-03-README.md`](SPRINT-03-README.md), [`SPRINT-02-README.md`](SPRINT-02-README.md), [`DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`DEC-013-r3-t06-demo-mode-test.md`](docs/decisions/DEC-013-r3-t06-demo-mode-test.md), [`E-SEA-093`–`E-SEA-097`](EVIDENCE.md), [`CHECKPOINT-26.md`](docs/checkpoints/CHECKPOINT-26.md), [`CHECKPOINT-27.md`](docs/checkpoints/CHECKPOINT-27.md)
+
+## Goal and authorization boundary
+
+- **Goal:** create a factual descriptive retrospective companion `SPRINT-03-README.md` and update the root `README.md` to reflect the current bounded Sprint 3 outcome in CHECKPOINT-27/E-SEA-097.
+- **Task class:** documentation-only summary based on existing records. Do not re-run, recreate, or imply any historical command or user-validation result.
+- **Approval gate:** this Draft records proposed scope only. Do not create or edit either README until the user explicitly approves this exact task contract. Approval of a broader documentation plan is not approval of this task's final bounded paths/content.
+- **Canonical boundary:** `SPRINT-03.md` remains the approved canonical Sprint 3 plan with its existing `Ready` metadata. The retrospective companion and root README are summaries, not replacements for the plan, EVIDENCE, RUNBOOK, task contracts, or checkpoints.
+
+## Inputs and expected outputs
+
+- **Read-only inputs:** `SPRINT-03.md`, `SPEC.md`, DEC-012/DEC-013, T01–T09 task records, E-SEA-093–097, R3 RUNBOOK entries, CHECKPOINT-26/27, and the root README plus SPRINT-01/02 companion conventions.
+- **Output 1:** new root `SPRINT-03-README.md`, using the descriptive companion pattern in `SPRINT-02-README.md`. Summarize approved scope, bounded `DONE` outcome, work performed and methods, criterion/evidence map for T01–T09, T04 follow-up, DEC-013's T06 test-setup change, source links, evidence distinctions, limitations, and handoff. Set its document status to `Draft` pending human review; clearly label it as a retrospective companion, not canonical plan or evidence.
+- **Output 2:** update root `README.md`'s project-status table, R3 summary, evidence-boundary text, and document links to reflect `DONE` for the test-only Sprint 3 scope and link the new companion. Preserve clear separation from full MVP acceptance, live-provider validation, release/deployment readiness, and overall product acceptance. Clarify that `SPRINT-03.md` remains the plan record with `Ready` metadata.
+- **Evidence rules:** cite exact sources for reported work and observed focused checks. State that T01 `--list` confirms selection, not execution; E-SEA-095 directly records the collector spec (15 passed) and T04 set/uniqueness follow-up; E-SEA-096 directly records T02 (10), T06 (1), and T07 (3) focused passes. Do not present E-SEA-094 historical summaries as retained raw output or turn any check into full-suite/build/provider evidence.
+
+## Constraints and allowed paths
+
+- **Contract preparation:** append this Draft to `TASK_SPEC.md` only.
+- **After explicit approval of this contract:** write only the new `SPRINT-03-README.md` and root `README.md`; the final factual closeout may update only this task's own status/closeout section in `TASK_SPEC.md`.
+- `SPRINT-03.md`, `SPEC.md`, DEC-012/DEC-013, EVIDENCE, RUNBOOK, checkpoints, docs catalogs, source, tests, configuration, and package files are read-only for this task. Do not add evidence or delivery-history entries because this summary creates no new observations.
+- Preserve current uncommitted modifications and untracked paths, including `.idea/vcs.xml`, EVIDENCE.md, RUNBOOK.md, TASK_SPEC.md, `.mcp.json`, and CHECKPOINT-27; do not inspect `.mcp.json` or secrets.
+- No application tests, build, runtime, provider/network command, dependency install, stage, commit, push, publication, deployment, or destructive Git operation.
+
+## Acceptance and verification
+
+- `SPRINT-03-README.md` follows the existing R2 companion's descriptive role and metadata convention; claims are traceable to the approved Sprint scope and existing records; the bounded disposition and all limitations are explicit.
+- The R3 matrix differentiates task-record/static-review evidence, T01 test selection, and fresh direct focused results in E-SEA-095/E-SEA-096. The original CHECKPOINT-26 T04 finding is described as accurate at its input revision and later addressed by E-SEA-095; CHECKPOINT-26 is not rewritten.
+- Root README no longer describes R3 only as a future plan, but does not overstate `DONE` beyond the bounded test-only Sprint scope or change canonical plan status/scope.
+- All new/modified Markdown local links resolve; document/task IDs are unique; required metadata and evidence references exist; `git diff --check` passes on changed tracked Markdown, with a separate whitespace check for the new untracked file.
+- **Targeted verification:** Markdown/source attribution review, local-link and structure checks, and focused Git diff review only. No app tests or build.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint 1:** user reviews and explicitly approves this Draft contract. Do not write either README before approval.
+- **Checkpoint 2:** after approval and documentation edits, present the focused diff and observed structural/whitespace checks for human review. No commit or push is authorized.
+- **Stop if:** source records conflict, the wording requires asserting unverified behavior or test execution, the README update would imply broad MVP/release/deployment acceptance, or any path beyond the allowed README files/task closeout is needed.
+- **Recovery:** revise only the new companion, root README, or this task's own closeout section after inspection. Preserve all prior evidence/checkpoints, canonical sprint records, and unrelated worktree changes.
+
+## Observed closeout — 2026-10-01
+
+- **Authorization:** after reviewing this bounded contract, the user instructed `продовжуй`, authorizing the README changes within its allowed paths.
+- **Changes:** created `SPRINT-03-README.md` as a descriptive retrospective draft and updated root `README.md` to reflect `DONE` only for the bounded test-only Sprint 3 scope. The guide maps T01–T09 to their existing sources, distinguishes direct focused runs from test-selection/historical summaries, explains the T04 test-only follow-up and DEC-013 T06 setup change, and records limitations. `SPRINT-03.md`, EVIDENCE, RUNBOOK, decisions, and checkpoints were not changed by this task.
+- **Human review status:** the new companion retains `Draft — descriptive retrospective companion pending human review`; its content and the root README update are presented for review. The canonical plan retains its existing `Ready` metadata.
+- **Evidence limits:** the documentation summarizes existing records only. T01 `--list` proves selection rather than execution; no full-suite/build, live-provider, broad user-validation, full-MVP, release, or deployment result is inferred. No application tests/build were run for this task.
+- **Worktree boundary:** preserved prior closeout changes in EVIDENCE.md, RUNBOOK.md, TASK_SPEC.md, and CHECKPOINT-27.md, plus `.idea/vcs.xml` and untracked `.mcp.json`; `.mcp.json` and secrets were not accessed. No staging, commit, push, publication, deployment, or destructive Git operation occurred.
+
+# TASK-SEA-R3-PDF-001 — Sprint 3 retrospective PDF
+
+- **Version:** `1.0.0`
+- **Status:** `Verified — execution-focused Sprint 3 retrospective PDF created and checked`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-10-01
+- **Related artifacts:** [`SPRINT-03-README.md`](SPRINT-03-README.md), [`SPRINT-03.md`](SPRINT-03.md), [`CHECKPOINT-27`](docs/checkpoints/CHECKPOINT-27.md), [`E-SEA-095`–`E-SEA-097`](EVIDENCE.md)
+
+## Goal and authorization boundary
+
+- **Goal:** create a readable PDF derivative of the Sprint 3 retrospective companion for convenient review.
+- **Source status:** `SPRINT-03-README.md` remains `Draft — descriptive retrospective companion pending human review`; the PDF must carry this draft status and must not imply human acceptance of the source.
+- **Approval gate:** this contract records proposed scope only. Do not create the PDF until the user explicitly approves this exact contract. Approval of the broader plan or this Draft alone does not authorize PDF generation.
+- **Outcome boundary:** `DONE` means only the bounded test-only Sprint 3 scope recorded by CHECKPOINT-27. The PDF is a formatted derivative, not canonical plan, independent evidence, or a new scope/acceptance decision.
+
+## Inputs and expected output
+
+- **Read-only inputs:** `SPRINT-03-README.md` as the narrative source; `CHECKPOINT-27.md` and E-SEA-095–097 for factual cross-checks; existing local PDF tooling documentation if needed.
+- **Output:** new root `SPRINT-03-RETROSPECTIVE.pdf`; no overwrite if that path already exists.
+- Preserve the retrospective's T01–T09 account, bounded outcome, E-SEA-095/E-SEA-096 targeted results, T04 follow-up, DEC-013 T06 test setup, historic CHECKPOINT-26 context, evidence distinctions, limitations, references, and handoff. Keep it faithful to the approved source; do not add unsupported facts.
+
+## Constraints and allowed paths
+
+- **Contract preparation:** append this Draft contract to `TASK_SPEC.md` only.
+- **After explicit approval:** create only `SPRINT-03-RETROSPECTIVE.pdf` and update only this task's own status/closeout in `TASK_SPEC.md`.
+- `SPRINT-03-README.md`, `SPRINT-03.md`, `README.md`, EVIDENCE, RUNBOOK, decisions, checkpoints, source, tests, configuration, and package files are read-only for this task.
+- Use only an already available local PDF generation/inspection tool. Do not install dependencies, change project configuration, or use an online converter or external service. If no suitable local tool is available, stop and report the blocker.
+- Preserve pre-existing uncommitted changes and untracked files, including `.idea/vcs.xml`, `EVIDENCE.md`, `README.md`, `RUNBOOK.md`, `TASK_SPEC.md`, `.mcp.json`, `SPRINT-03-README.md`, and `docs/checkpoints/CHECKPOINT-27.md`; do not inspect `.mcp.json` or secrets.
+- Do not run application tests/build, provider/network commands, stage, commit, push, publish, deploy, or perform destructive Git operations.
+
+## Acceptance and verification
+
+- PDF opens/renders locally and is legible with sensible page breaks, typography, table layout, Draft status, source references, and non-claims.
+- Facts are consistent with CHECKPOINT-27 and E-SEA-095–097. T01 `--list` is described as test selection, not test execution; do not imply a full-suite/build result, live-provider/network validation, broad user validation, full MVP acceptance, release readiness, or deployment readiness.
+- Record the available generation/inspection tool and actual command/result. Inspect PDF text/metadata or equivalent where supported, and review the generated artifact visually if a local renderer is available. Do not claim a check that could not be performed.
+- Review focused changes and whitespace/integrity checks for the generated PDF and task closeout; exclude unrelated pre-existing changes.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint 1:** user reviews and explicitly approves this exact Draft task contract. No PDF generation before approval.
+- **Checkpoint 2:** after generation and factual/layout checks, present the PDF and actual command results for human review; no commit or push is authorized.
+- **Stop if:** the source/checkpoint conflict, PDF generation requires installing or changing dependencies, the target already exists, a claim requires going beyond approved evidence, or an allowed path is insufficient.
+- **Recovery:** preserve the Markdown source and existing worktree changes. If a newly generated PDF fails verification, regenerate only that task-authorized output after inspection or stop and report the blocker; do not rewrite source/evidence history.
+
+## Observed closeout — 2026-10-01
+
+- **Authorization:** after the Draft contract was presented, the user reiterated the direct request to create the Sprint 3 PDF and clarified that the emphasis must be on work performed and how it was carried out. This was treated as explicit authorization for the bounded PDF task.
+- **Output:** created root `SPRINT-03-RETROSPECTIVE.pdf`, a three-page landscape PDF. Its opening centers the T01–T09 work/evidence matrix; the execution method and targeted commands follow, then bounded disposition, limitations, sources, and document metadata. The PDF retains the source companion's Draft/pending-review status and bounded test-only outcome.
+- **Method:** used installed Playwright/Chromium and an inline local Markdown-to-HTML renderer; no dependencies were installed and no project configuration or source README was changed.
+- **Verification:** `file SPRINT-03-RETROSPECTIVE.pdf` identified PDF 1.4. Local PDFKit opened the final PDF and extracted 7,066 characters across 3 pages. Normalized-text checks passed for Draft status, T01–T09 markers, E-SEA-095 and targeted pass counts (10/15/1/3), T01 selection-vs-execution language, and full-suite/deployment limitations. All three final pages were rendered with macOS PDFKit/Quartz and visually reviewed; the final layout places the work/evidence matrix first and has no orphaned source note. `git diff --check -- TASK_SPEC.md` passed with no output.
+- **Verification notes:** the built-in PDF Read preview could not render because `pdftoppm` is unavailable; local PDFKit/Quartz provided page rendering. An earlier layout pass exposed a fixed-footer overlap and was regenerated. An initial text-marker check did not account for PDF line wrapping (`1` and `passed` split across lines); after whitespace normalization the check passed. No application tests, build, runtime, provider/network checks, or secret access were performed.
+- **Worktree boundary:** only this task's contract/status/closeout and the requested new PDF were changed. Temporary local page-preview images were removed. Existing changes to `.idea/vcs.xml`, EVIDENCE, README, RUNBOOK, `.mcp.json`, `SPRINT-03-README.md`, and CHECKPOINT-27 were preserved; `.mcp.json` was not accessed. No staging, commit, push, publication, deployment, or destructive Git operation occurred.
+- **Handoff:** PDF is available for human review. The source `SPRINT-03-README.md` remains `Draft`; this PDF does not promote it to accepted status or claim more than the bounded Sprint 3 test-only outcome.
