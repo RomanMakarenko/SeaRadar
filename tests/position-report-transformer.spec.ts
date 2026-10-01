@@ -24,6 +24,16 @@ test("maps the synthetic PositionReport sample to a Vessel", () => {
   });
 });
 
+test("normalizes missing and whitespace-only vessel names to null", () => {
+  const missingName = createEnvelope();
+  delete missingName.MetaData.ShipName;
+  expect(transformPositionReport(missingName)?.name).toBeNull();
+
+  const blankName = createEnvelope();
+  blankName.MetaData.ShipName = "   ";
+  expect(transformPositionReport(blankName)?.name).toBeNull();
+});
+
 test("normalizes supported MMSI values and rejects unsupported ones", () => {
   const accepted: Array<[unknown, string]> = [
     [0, "0"],
@@ -162,6 +172,18 @@ test("rejects unavailable, out-of-range, and non-numeric report coordinates", ()
     expect(transformPositionReport(envelope), `${field}=${String(value)}`).toBeNull();
   }
 
+  const invalidCoordinatePairs: Array<[number, number]> = [
+    [91, 181],
+    [95, -200],
+  ];
+
+  for (const [latitude, longitude] of invalidCoordinatePairs) {
+    const envelope = createEnvelope();
+    envelope.Message.PositionReport.Latitude = latitude;
+    envelope.Message.PositionReport.Longitude = longitude;
+    expect(transformPositionReport(envelope)).toBeNull();
+  }
+
   const missingCoordinates = createEnvelope();
   delete missingCoordinates.Message.PositionReport.Latitude;
   expect(transformPositionReport(missingCoordinates)).toBeNull();
@@ -177,6 +199,7 @@ test("maps invalid optional motion values to null and preserves valid zero", () 
     ["Sog", undefined, "speedKnots"],
     ["Sog", "12.4", "speedKnots"],
     ["Sog", 102.3, "speedKnots"],
+    ["Sog", -1, "speedKnots"],
     ["Sog", -0.1, "speedKnots"],
     ["Sog", 102.21, "speedKnots"],
     ["Cog", undefined, "courseDeg"],

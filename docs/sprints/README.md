@@ -1,16 +1,16 @@
 # Sprint planning convention
 
 - **ID:** `SPRINT-GOV-001`
-- **Version:** `0.2.0`
+- **Version:** `0.3.0`
 - **Status:** `Ready`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-22
-- **Related artifacts:** [`../../SPEC.md`](../../SPEC.md), [`../../TASK_SPEC.md`](../../TASK_SPEC.md), [`../../SPRINT-01.md`](../../SPRINT-01.md), [`../decisions/DEC-001-mvp-contract.md`](../decisions/DEC-001-mvp-contract.md), [`../decisions/DEC-002-r1-stack.md`](../decisions/DEC-002-r1-stack.md), [`../../EVIDENCE.md`](../../EVIDENCE.md), [`../../RUNBOOK.md`](../../RUNBOOK.md)
+- **Date:** 2026-09-29
+- **Related artifacts:** [`../../SPEC.md`](../../SPEC.md), [`../../TASK_SPEC.md`](../../TASK_SPEC.md), [`../../SPRINT-01.md`](../../SPRINT-01.md), [`../../SPRINT-03.md`](../../SPRINT-03.md), [`../decisions/DEC-001-mvp-contract.md`](../decisions/DEC-001-mvp-contract.md), [`../decisions/DEC-002-r1-stack.md`](../decisions/DEC-002-r1-stack.md), [`../decisions/DEC-012-r3-scope.md`](../decisions/DEC-012-r3-scope.md), [`../../EVIDENCE.md`](../../EVIDENCE.md), [`../../RUNBOOK.md`](../../RUNBOOK.md)
 
 ## Boundary
 
-The approved MVP baseline currently has one detailed sprint record: root-level [`SPRINT-01.md`](../../SPRINT-01.md), release R1. Sprint 2 and Sprint 3 are intentionally absent and remain `Unknown` / `Waiting for input`; their tasks, dates, owners and outcomes must not be inferred from the high-level three-sprint statement.
+The verified R1 record is root-level [`SPRINT-01.md`](../../SPRINT-01.md). Sprint 3 / R3 is now approved by [`DEC-012`](../decisions/DEC-012-r3-scope.md) as a bounded US-09 verification plan and is detailed in root-level [`SPRINT-03.md`](../../SPRINT-03.md); its technical slices remain separately task-gated. Sprint dates and architecture beyond the approved stack remain `Unknown`. Sprint 2's catalog status is unchanged by this record and its separate catalog inconsistency remains deferred.
 
 ## Required sprint contract
 
@@ -34,7 +34,7 @@ Each future `S1`, `S2` or `S3` record must contain:
 |---|---|---|---|
 | Sprint 1 | R1 | `Ready` | [`../../SPRINT-01.md`](../../SPRINT-01.md) |
 | Sprint 2 | Unknown | `Waiting for input` | Not created |
-| Sprint 3 | Unknown | `Waiting for input` | Not created |
+| Sprint 3 | R3 / US-09 checks | `Ready — implementation task-gated` | [`SPRINT-03.md`](../../SPRINT-03.md) |
 
 ## Creation gate
 

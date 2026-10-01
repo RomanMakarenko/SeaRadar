@@ -443,3 +443,73 @@ test("resets the view on the first non-empty success only and returns to demo on
   await expect(page.locator("[data-vessel-id]")).toHaveCount(3);
   expectTilesBlocked(tiles);
 });
+
+test.describe("R3 snapshot UI states", () => {
+  test("shows the fixed error state without vessels or cards", async ({ page }) => {
+    const tiles = await blockTiles(page);
+    await page.route(SNAPSHOT_URL, (route) =>
+      route.fulfill({
+        status: 502,
+        contentType: "application/json",
+        body: JSON.stringify(
+          fixedError("connect_failed", "Не вдалося підключитися до джерела"),
+        ),
+      }),
+    );
+
+    await page.goto("/");
+    await page.getByRole("button", { name: "Завантажити справжні позиції" }).click();
+    await expect(page.locator('[data-source="none"]')).toHaveText("Даних на карті немає");
+    await expect(page.getByRole("status")).toHaveText(
+      "Не вдалося отримати дані: Не вдалося підключитися до джерела",
+    );
+    await expect(page.locator("[data-vessel-id]")).toHaveCount(0);
+    await expect(page.locator("[data-vessel-card-id]")).toHaveCount(0);
+    expectTilesBlocked(tiles);
+  });
+
+  test("shows the empty successful snapshot state", async ({ page }) => {
+    const tiles = await blockTiles(page);
+    await page.route(SNAPSHOT_URL, (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(successBody([])),
+      }),
+    );
+
+    await page.goto("/");
+    await page.getByRole("button", { name: "Завантажити справжні позиції" }).click();
+    await expect(page.locator('[data-source="aisstream"]')).toContainText("суден: 0");
+    await expect(page.getByRole("status")).toHaveText("За час збору позицій не отримано");
+    await expect(page.locator('[data-vessel-source="demo"]')).toHaveCount(3);
+    await expect(page.locator('[data-vessel-source="aisstream"]')).toHaveCount(0);
+    await expect(page.locator("[data-vessel-card-id]")).toHaveCount(0);
+    expectTilesBlocked(tiles);
+  });
+
+  test("shows missing motion values on a selected successful vessel", async ({ page }) => {
+    const tiles = await blockTiles(page);
+    await page.route(SNAPSHOT_URL, (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(
+          successBody([vessel("345678901", { speedKnots: null, courseDeg: null })]),
+        ),
+      }),
+    );
+
+    await page.goto("/");
+    await page.getByRole("button", { name: "Завантажити справжні позиції" }).click();
+    const marker = page.locator('[data-vessel-id="345678901"]');
+    await marker.click();
+
+    const card = page.locator('[data-vessel-card-id="345678901"]');
+    await expect(card).toBeVisible();
+    await expect(card.locator('dt:has-text("Швидкість") + dd')).toHaveText("Немає даних");
+    await expect(card.locator('dt:has-text("Курс") + dd')).toHaveText("Немає даних");
+    await expect(marker).toHaveAttribute("data-icon", "neutral");
+    expectTilesBlocked(tiles);
+  });
+});

@@ -3180,3 +3180,975 @@ Recommend overall bounded Sprint 2/R2 `PASS` only if the new regression assertio
 - Run `git diff --check` on the selected paths; no application tests/build, network/provider or secret/environment access.
 - Create a normal commit with a concise documentation message and the required attribution trailer; push the commit to `origin/sprint2` without force.
 - After verified delivery, append a factual closeout with commit/push result and observed branch state; no EVIDENCE.md/RUNBOOK.md entry is needed for this documentation delivery.
+
+# TASK-SEA-R3-PLAN-001 — Authorize and decompose Sprint 3
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-29
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`SPRINT-03.md`](SPRINT-03.md), [`docs/sprints/README.md`](docs/sprints/README.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-010-r2-sparse-snapshot-demo-fallback.md`](docs/decisions/DEC-010-r2-sparse-snapshot-demo-fallback.md), [`docs/checkpoints/CHECKPOINT-05.md`](docs/checkpoints/CHECKPOINT-05.md)
+
+## Goal and authorization boundary
+
+- **Goal:** formalize the user-approved US-09, test-only Sprint 3 outcome and decompose it into small, independently verifiable tasks with explicit goals, non-goals and acceptance criteria.
+- **Approval:** on 2026-09-29, the user approved the SPRINT-03.md scope as the official Sprint 3 MVP input and explicitly authorized resolving governance and identifier conflicts before preparing the decomposition.
+- **Scope:** documentation and governance only. This task creates/updates the Sprint 3 decision, synchronizes governing status/catalog, and structures the Sprint 3 plan. It does not implement tests or product changes and does not claim Sprint 3 acceptance.
+- **SPEC outcome:** `SPEC-SEA-001 / US-09 reproducible data-integrity and movement checks`, bounded to the test-only scope approved in SPRINT-03.md.
+
+## Allowed paths and preservation
+
+- `TASK_SPEC.md` — this task contract and closeout only.
+- `docs/decisions/DEC-012-r3-scope.md` — new decision record.
+- `docs/decisions/README.md` — decision index entry and pending-decision status.
+- `SPEC.md` — Sprint 3 scope/status synchronization and required version metadata.
+- `CLAUDE.md` — current phase/status synchronization.
+- `docs/sprints/README.md` — Sprint 3 catalog/creation-state synchronization.
+- `SPRINT-03.md` — canonical Sprint 3 decomposition.
+- `README.md`, `SPRINT-01-README.md`, and `docs/README.md` — current summary status only, per the user's additional approval on 2026-09-29.
+- **Excluded:** source, tests, package manifests, `EVIDENCE.md`, `RUNBOOK.md`, all existing checkpoints, `.mcp.json`, `.idea/vcs.xml`, secrets, historical decision/evidence/runbook records, and unrelated paths. Preserve the pre-existing user-authored `SPRINT-03.md` content except for this explicitly authorized decomposition; preserve the unrelated `.idea/vcs.xml` modification and untracked `.mcp.json`.
+
+## Inputs, constraints, and expected output
+
+- **Inputs:** current approved PROJECT_BRIEF/SPEC acceptance for US-09; the user's 2026-09-29 scope approval; existing R1 Playwright/Node 22 baseline; DEC-010's existing B-14 allocation; CHECKPOINT-05 and CHECKPOINT-25 history; the sprint/decision conventions.
+- **Constraint:** reuse the existing Playwright Test stack and R1 runtime baseline only. No new dependency, architecture decision, provider/network access, secret/environment access, date, or broader success metric is inferred. Stop if implementation would require one.
+- **IDs:** use unique R3-qualified task IDs after repository-wide collision checks. Do not reuse B-14. Reserve the next unused checkpoint number/ID only for the future Sprint 3 result; do not create or fill that checkpoint during this planning task.
+- **Expected output:** a linked decision, synchronized governance status, and Sprint 3 slices for test-oracle/fixture setup; converter cases; collector ordering/deduplication; collector limits/timing; collector failures/cancellation/resource cleanup; browser movement; browser snapshot/UI states; and independent review/closeout. Each slice has a goal, explicit non-goals, inputs/outputs, observable acceptance criteria, dependencies, allowed paths, targeted verification, checkpoint/review, stop conditions, and recovery.
+- Remove stale B-07 conditional work; B-07 remains a verified R1 baseline. Keep production changes excluded unless a separate task authorizes a minimal fix for a confirmed contract discrepancy. The sprint plan does not authorize implementation; each technical slice remains separately task-gated.
+
+## Acceptance and verification
+
+- Sprint 3 has one observable US-09 outcome and explicit non-goals; no unrelated R2 history or acceptance is changed.
+- Decision, SPEC, CLAUDE, sprint catalog, and SPRINT-03 agree on authorized scope, current status, Unknowns, and implementation gate.
+- No task or checkpoint ID collides with existing records; CHECKPOINT-05 remains unchanged and the future R3 checkpoint is only referenced, not created.
+- Every Sprint 3 task has simple, literal, observable acceptance criteria and a targeted verification method; automated tests use deterministic fixtures/clocks and no live provider connection.
+- Markdown structure, required metadata, relative links, IDs, status/scope cross-references and `git diff --check` pass for allowed documentation paths. No runtime command or product test is required or claimed.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** after governance/doc checks, present exact changed paths, diff, observed checks, unresolved Unknowns, and rollback note for human review. Do not create the future Sprint 3 acceptance checkpoint during planning.
+- **Stop if:** the approved test-only outcome conflicts with an existing approved contract; an unused ID cannot be established; a new dependency/architecture or production feature is required; or a required product decision remains Unknown. Preserve unresolved items as `Unknown`/`Needs approval`.
+- **Recovery:** if the documentation diff is rejected, restore only this task's changes in the allowed paths after review. Preserve historical records, staged/unstaged user changes, and untracked files. No reset, clean, provider access, or deployment is authorized. On 2026-09-29, the user explicitly authorized committing and pushing the ready task-owned documentation paths after review; exclude `.idea/vcs.xml`, `.mcp.json`, and any other unrelated paths.
+
+## Closeout — 2026-09-29
+
+- **Authorization / disposition:** the user explicitly instructed to commit and push the completed work after the documentation checkpoint review.
+- **Observed:** Sprint 3 governance, decision record, canonical decomposition, and current summary/status references were updated within the allowed documentation paths. Nine bounded R3 tasks have explicit goals, non-goals, inputs/outputs, dependencies, allowed paths, acceptance criteria, targeted checks, checkpoints/reviews, stop conditions, and recovery paths.
+- **Verification:** `git diff --check` and staged `git diff --cached --check` passed. Structural checks passed for Markdown links/whitespace/final newlines, all nine task IDs/required fields, and the reserved CHECKPOINT-26 boundary. No application test, build, runtime, provider, or secret/environment command was run or claimed.
+- **Delivery:** commit `f66ef56` (`docs(r3): authorize and decompose Sprint 3`) was created and pushed to `origin/sprint3`. `.idea/vcs.xml` and `.mcp.json` were excluded and preserved.
+- **Limitations:** this verifies the bounded documentation/governance result only. R3 implementation, runtime acceptance, full MVP acceptance, release readiness, and deployment remain unverified and unauthorized by this task. No `EVIDENCE.md` or `RUNBOOK.md` entry was added because no runtime verification was performed.
+- **Recovery:** the documentation is pushed. Make any correction in a new reviewed bounded change; do not rewrite history or discard unrelated local changes. A remote revert requires explicit owner authorization.
+- **Handoff:** this planning task is `Verified`. Each R3 implementation slice still requires its own reviewed bounded `TASK_SPEC.md` contract and explicit approval.
+
+# TASK-SEA-R3-TEST-001 — Playwright project boundary and test oracle
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-29
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`playwright.config.ts`](playwright.config.ts), [`tests/position-report-transformer.spec.ts`](tests/position-report-transformer.spec.ts), [`tests/snapshot-collector.spec.ts`](tests/snapshot-collector.spec.ts), [`data/samples/position-report.sample.json`](data/samples/position-report.sample.json)
+
+## Goal and authorization boundary
+
+- **Goal:** establish the Playwright project boundary and record the independent literal-oracle mapping needed by later R3 test tasks.
+- **Current state:** the existing configuration has only the `chromium` project.
+- **Approval:** on 2026-09-29, after this exact contract was presented for review, the user instructed `продовжуй`; this is recorded as approval of the bounded R3-T01 contract.
+- **Authorized bounded slice:** add a `node` project for the converter and collector specs while preserving browser specs in `chromium`. This task does not authorize any later R3 test task or product-code change.
+
+## Inputs and expected output
+
+- **Inputs:** the approved US-09 scope and task definitions in `SPRINT-03.md`; DEC-012; current Playwright configuration and direct specs; saved synthetic sample.
+- **Expected output:** a `node`/`chromium` test-project map and a literal-oracle map for subsequent R3 test scenarios, with synthetic fixtures identified as synthetic. Detailed case expectations remain defined by their bounded acceptance criteria in `SPRINT-03.md`.
+- **Dependencies:** none.
+
+## Constraints and allowed paths
+
+- Reuse the existing Playwright Test and Node.js 22 baseline. No new runner, dependency, package script, runtime, or architecture is in scope.
+- **Allowed implementation paths after approval:** `playwright.config.ts`, `tests/position-report-transformer.spec.ts`, `tests/snapshot-collector.spec.ts`.
+- `data/samples/position-report.sample.json` is read-only. Product/source files, `package.json`, existing browser specs, and all unrelated paths are excluded.
+- Preserve existing Chromium test behavior. `node` means these two specs are selected by the Node project without a browser fixture; it does not promise that no development server starts. `webServer` is currently configured globally; changing that boundary is excluded and requires a separate reviewed contract and approval.
+- Expected values must be literal and independent of production functions. Do not infer expected results by calling the transformer, collector, or route/model implementation under test.
+
+## Acceptance and verification
+
+- `node` is the explicit target for `position-report-transformer.spec.ts` and `snapshot-collector.spec.ts`; `chromium` remains the target for existing browser specs and later R3 browser tasks.
+- The Node project list contains only the intended direct specs; the Chromium project list retains the existing browser specs and excludes the two direct Node specs.
+- The R3 scenario-to-project/oracle map is explicit, consistent with `SPRINT-03.md`, and labels synthetic inputs; no application behavior or browser behavior is changed.
+- **Targeted checks, only after explicit approval:** `npx playwright test --project=node --list` and `npx playwright test --project=chromium --list`. Expected result: each command lists only the specs assigned to that project. These are planned checks, not observed results.
+- Do not run Playwright or modify implementation files while this contract remains `Draft`.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** first review this exact task contract and obtain explicit user approval. After approved implementation, review the configuration diff and project lists before writing assertions for later slices.
+- **Stop if:** preserving Chromium behavior or selecting only the direct specs requires a new runner/dependency, product-code change, package-manifest change, global `webServer` change, broader architecture, provider/network access, or any path outside the allowlist. Return for a separate bounded contract rather than expanding this task.
+- **Recovery:** if the Draft is rejected, revise or remove only this appended section after review. After implementation approval, recover only this slice's reviewed configuration/test diff; preserve unrelated staged, unstaged, and untracked paths. No reset, clean, commit, push, or evidence/runbook update is authorized by this Draft.
+
+## Closeout — 2026-09-29
+
+- **Authorization / disposition:** the user reviewed the R3-T01 diff and instructed `виконай`; this is recorded as approval to accept and close this bounded task.
+- **Observed change:** `playwright.config.ts` now defines a `node` project matching only `position-report-transformer.spec.ts` and `snapshot-collector.spec.ts`; `chromium` ignores those two files. The existing Chromium device configuration and global `webServer` remain unchanged. No test/source files, package manifests, or dependencies were changed.
+- **Verification:** `npx playwright test --project=node --list` passed and listed 21 tests in the two intended files. `npx playwright test --project=chromium --list` passed and listed 24 tests in the existing three browser spec files, excluding the two direct Node specs. `git diff --check -- playwright.config.ts TASK_SPEC.md` passed. The two direct specs contain no `page`, `context`, or `browser` fixture references. No test cases were executed; no build or runtime check was run.
+- **Limitations:** list-only output verifies project selection, not test behavior or that a future Node test run avoids the globally configured dev server. Moving `webServer` requires a separate reviewed contract and approval. No `EVIDENCE.md` or `RUNBOOK.md` update was authorized or made.
+- **Recovery:** if the reviewed boundary must be reverted, restore only this task's `playwright.config.ts` diff through a new bounded reviewed change; preserve unrelated `.idea/vcs.xml` and `.mcp.json`. No reset, clean, commit, or push was performed.
+- **Handoff:** R3-T01 is `Verified`. R3-T02 (converter acceptance cases) is the next planned slice and still requires its own reviewed bounded `TASK_SPEC.md` contract and explicit approval before changes.
+
+# TASK-SEA-R3-TEST-002 — PositionReport transformer acceptance
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-29
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`tests/position-report-transformer.spec.ts`](tests/position-report-transformer.spec.ts), [`data/samples/position-report.sample.json`](data/samples/position-report.sample.json), [`server/position-report-transformer.ts`](server/position-report-transformer.ts)
+
+## Goal and authorization boundary
+
+- **Goal:** complete the deterministic US-09 acceptance coverage for mapping valid PositionReport input and rejecting invalid required values or normalizing invalid optional values.
+- **Scope:** add or refine assertions only in the existing transformer spec. Retain passing coverage; avoid duplicating cases already covered unless needed to make the expected value explicit and independent.
+- **Approval:** on 2026-09-29, after reviewing this exact bounded contract, the user said `перевірив, продовжуй`; this is recorded as explicit approval for R3-T02 implementation.
+- **Authorization boundary:** changes are limited to the single test file and criteria below. Product/source changes remain unauthorized.
+
+## Inputs and expected output
+
+- **Inputs:** the approved R3-T02 criteria in `SPRINT-03.md`; the existing converter spec; the saved synthetic PositionReport sample; current transformer behavior as the subject under test only.
+- **Expected output:** focused deterministic assertions with literal expected values for the saved sample and the specified valid/invalid synthetic variants. Synthetic inputs must be clearly identified; do not modify the saved sample.
+- **Dependencies:** `TASK-SEA-R3-TEST-001` is `Verified`.
+
+## Constraints and allowed paths
+
+- **Allowed implementation path after approval:** `tests/position-report-transformer.spec.ts` only.
+- `data/samples/position-report.sample.json` and `server/position-report-transformer.ts` are read-only. No product-code fixes, other tests, package manifests, dependencies, provider/network access, secrets/environment access, or unrelated cleanup.
+- Reuse the existing Node Playwright project and current test helpers. Expected results must be literal and must not be computed by calling the transformer or any other production function.
+
+## Acceptance and verification
+
+- The saved sample maps to literal `{ id: "999000001", name: "SYNTHETIC TRAINING VESSEL", lat: 51, lon: 1.45, speedKnots: 12.4, courseDeg: 123.4, timestamp: "2026-09-23T15:00:00.000Z", source: "aisstream" }`.
+- Missing or whitespace-only vessel name produces `null`; speed `0` remains `0`, while `102.3`, `-1`, and missing speed produce `null`; course `360` produces `null`.
+- Invalid required positions are rejected: coordinates `(91,181)`, `(95,-200)`, string-valued coordinates, missing or empty MMSI, and a timestamp that does not parse. Invalid coordinates never produce a vessel at `(0,0)`.
+- All assertions pass under the Node project with no browser fixture or real-time wait.
+- **Targeted check, only after explicit approval:** `npx playwright test --project=node tests/position-report-transformer.spec.ts`. Expected result: the focused spec passes. This is a planned check, not an observed result.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** before implementation, review the expected literal objects and synthetic input cases against the contract and current spec. After implementation, review the focused test diff and observed output.
+- **Stop if:** an acceptance case exposes production behavior that differs from the contract, or implementation requires changing production code, the saved sample, another path, a dependency, or test semantics beyond this slice. Preserve the failure and seek a separate reviewed remediation contract; do not fix product code here.
+- **Recovery:** if this Draft is rejected, revise or remove only this appended section after review. After approval, recover only this slice's own test-spec diff; preserve all unrelated staged, unstaged, and untracked paths. No commit, push, evidence/runbook update, or destructive Git command is authorized by this Draft.
+
+## Closeout — 2026-09-29
+
+- **Authorization / disposition:** after reviewing the R3-T02 diff, the user instructed `продовжуй`; this is recorded as acceptance of the bounded result.
+- **Observed change:** added literal converter assertions for missing/whitespace-only vessel names, coordinate pairs `(91,181)` and `(95,-200)`, and speed `-1`; retained the existing exact sample mapping and required/optional field coverage. Only `tests/position-report-transformer.spec.ts` was changed for implementation.
+- **Verification:** `npx playwright test --project=node tests/position-report-transformer.spec.ts` passed all 10 tests. `git diff --check -- tests/position-report-transformer.spec.ts TASK_SPEC.md` passed. No other test suite, build, or runtime check was run.
+- **Limitations:** this result covers only the bounded PositionReport transformer cases; collector, browser, full MVP, live-provider, release, and deployment behavior remain unverified. No `EVIDENCE.md` or `RUNBOOK.md` update was made under this task contract.
+- **Recovery:** restore only this task's test additions through a new reviewed bounded change if needed. Preserve the earlier R3-T01 config diff and unrelated `.idea/vcs.xml` / `.mcp.json`; no commit or push was performed.
+- **Handoff:** R3-T02 is `Verified`. R3-T03 (collector ordering, uniqueness, and full-object replacement) is next and requires its own reviewed bounded contract and explicit approval before implementation.
+
+# TASK-SEA-R3-TEST-003 — Snapshot collector ordering and replacement
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-29
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`TASK-SEA-R3-TEST-001` project-boundary contract](TASK_SPEC.md), [`TASK-SEA-R3-TEST-002` converter contract](TASK_SPEC.md), [`tests/snapshot-collector.spec.ts`](tests/snapshot-collector.spec.ts), [`server/snapshot-collector.ts`](server/snapshot-collector.ts)
+
+## Goal and authorization boundary
+
+- **Goal:** verify that the snapshot collector retains one latest complete vessel per MMSI, applies the existing equal-timestamp first-accepted rule, and replaces prior vessel fields rather than merging stale values.
+- **Current state:** R3-T01 and R3-T02 are `Verified`. The existing collector spec covers duplicate counts, latest-vs-later-arriving-older reports, and equal timestamps; the required explicit replacement of a named vessel by a complete object with `name: null` remains to be verified.
+- **Approval:** on 2026-09-29, after reviewing this exact bounded contract, the user said `продовжуй`; this is recorded as approval for R3-T03 implementation.
+- **Authorization boundary:** changes are limited to `tests/snapshot-collector.spec.ts` and the acceptance criteria below. Product/source changes remain unauthorized.
+
+## Inputs and expected output
+
+- **Inputs:** the approved R3-T03 acceptance criteria in `SPRINT-03.md`; the existing collector spec, fake reader/timer helpers, and its synthetic message builder; current collector behavior as the subject under test only.
+- **Expected output:** deterministic collector assertions using the existing fake source/timer seams and literal expected vessel/result values. Synthetic messages and mutations are identified as synthetic; no live reader/provider is used.
+- **Dependencies:** `TASK-SEA-R3-TEST-001` and `TASK-SEA-R3-TEST-002` are `Verified`.
+
+## Constraints and allowed paths
+
+- **Allowed implementation path after approval:** `tests/snapshot-collector.spec.ts` only.
+- `server/snapshot-collector.ts`, `server/position-report-transformer.ts`, `server/aisstream-reader.ts`, and all sample files are read-only. No product-code fixes, other test files, package manifests, dependencies, live sockets/provider, network access, secrets/environment access, or unrelated cleanup.
+- Reuse the current Playwright `node` project, fake reader, fake timer, and synthetic message helper. Do not derive expected values by calling the transformer/collector or using collector constants as expected results.
+
+## Acceptance and verification
+
+- Repeated identical messages for one MMSI produce exactly one vessel.
+- A newer timestamp is retained even when its older-timestamp message arrives later; the test asserts the complete retained vessel against literal expected fields.
+- When two reports normalize to the same timestamp, the first accepted report remains; the input and normalized timestamp are explicit literals.
+- A later complete synthetic report with the same MMSI and no usable vessel name replaces the previous object: expected `name` is literal `null`, newer fields are asserted, and stale values from the earlier object (including optional motion fields omitted by the later report) do not remain.
+- All expected vessel/result fields are literal and independent of production logic; test paths do not use a live WebSocket or browser fixture and contain no real-time wait.
+- **Targeted check, only after explicit approval:** `npx playwright test --project=node tests/snapshot-collector.spec.ts`. Expected result: the focused spec passes. This is a planned check, not an observed result.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** before implementation, review the exact synthetic input order, timestamps after normalization, and complete expected vessel objects. After implementation, review the collector-spec diff and actual focused-test output.
+- **Stop if:** any case indicates a production mismatch, requires changing freshness/tie rules or the vessel schema, or needs changes outside the single allowed test file. Preserve the failure and request a separate reviewed remediation contract; do not edit product code here.
+- **Recovery:** if this Draft is rejected, revise or remove only this appended section after review. After approval, recover only this slice's test-spec diff; preserve all unrelated staged, unstaged, and untracked paths. No commit, push, evidence/runbook update, or destructive Git command is authorized by this Draft.
+
+## Closeout — 2026-09-29
+
+- **Authorization / disposition:** after reviewing the R3-T03 diff, the user instructed `продовжуй`; this is recorded as acceptance of the bounded result.
+- **Observed change:** strengthened duplicate-message coverage to assert exactly one vessel and added a literal whole-object replacement case where a newer report has `name: null` and absent optional motion fields. Existing out-of-order freshness and equal-timestamp-first assertions remain in place. Only `tests/snapshot-collector.spec.ts` changed for this implementation.
+- **Verification:** `npx playwright test --project=node tests/snapshot-collector.spec.ts` passed all 13 tests. `git diff --check -- tests/snapshot-collector.spec.ts TASK_SPEC.md` passed. No other test suite, build, or runtime check was run.
+- **Limitations:** this verifies only the bounded ordering/uniqueness/replacement slice; exact collection-window and limit acceptance remains R3-T04. No `EVIDENCE.md` or `RUNBOOK.md` update was made under this task contract.
+- **Recovery:** restore only the R3-T03 assertions through a new reviewed bounded change if needed. Preserve earlier R3-T01/R3-T02 changes and unrelated `.idea/vcs.xml` / `.mcp.json`; no commit or push was performed.
+- **Handoff:** R3-T03 is `Verified`. R3-T04 (collection window, vessel limit, and successful completion) is next and requires its own reviewed bounded contract and explicit approval before implementation.
+
+# TASK-SEA-R3-TEST-004 — Snapshot collector window, limit, and successful completion
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-29
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`TASK-SEA-R3-TEST-001` project-boundary contract](TASK_SPEC.md), [`TASK-SEA-R3-TEST-003` collector contract](TASK_SPEC.md), [`tests/snapshot-collector.spec.ts`](tests/snapshot-collector.spec.ts), [`server/snapshot-collector.ts`](server/snapshot-collector.ts)
+
+## Goal and authorization boundary
+
+- **Goal:** verify the existing collector's successful completion at the 15-second window and the 100-unique-vessel limit using the injected reader, timer, and clock.
+- **Current state:** R3-T01 and R3-T03 are `Verified`. The collector spec already has basic empty-window, duplicate-input, and 100-vessel cases; this slice will make the 100/101 boundary, no-early-completion condition, 15,000 ms window, and `collectedAt` oracle explicit and independent of collector constants.
+- **Approval:** on 2026-09-29, after reviewing this exact bounded contract, the user said `продовжуй`; this is recorded as approval for R3-T04 implementation.
+- **Authorization boundary:** after approval, changes remain limited to the acceptance criteria below in `tests/snapshot-collector.spec.ts`. Product/source changes remain unauthorized.
+
+## Inputs and expected output
+
+- **Inputs:** the approved R3-T04 criteria in `SPRINT-03.md`; the existing snapshot collector spec, fake reader/timer, synthetic report builder, and injected clock; current collector behavior as the subject under test only.
+- **Expected output:** deterministic assertions for limit completion, window completion, and literal completion time; no live provider, WebSocket, browser fixture, or real-time wait.
+- **Dependencies:** `TASK-SEA-R3-TEST-001` and `TASK-SEA-R3-TEST-003` are `Verified`.
+
+## Constraints and allowed paths
+
+- **Allowed implementation path after approval:** `tests/snapshot-collector.spec.ts` only.
+- `server/snapshot-collector.ts`, `server/position-report-transformer.ts`, `server/aisstream-reader.ts`, route-level B-12 tests, all other test files, sample files, and package manifests are read-only. No product-code fixes, dependency changes, live sockets/provider, network access, secrets/environment access, or unrelated cleanup.
+- Reuse the existing injected fake reader/timer/clock and synthetic report helper. For R3-T04 collector assertions, use literal `100`, `101` boundary expectations, `15_000` milliseconds, and literal `collectedAt`; do not use `SNAPSHOT_VESSEL_LIMIT` or `SNAPSHOT_WINDOW_MS` as expected values or as the collector test's loop boundary. Do not globally replace `Date` or wait in real time.
+
+## Acceptance and verification
+
+- Exactly 100 distinct valid MMSIs reach a successful result with literal `count: 100`, exactly 100 vessels, `truncated: true`, and `reason: "limit_reached"`; send a 101st distinct report and assert its MMSI is absent from the result.
+- Send 100 reports for one MMSI and demonstrate the collector has not completed at the limit: its injected window timer remains runnable after those reports. Firing that timer then returns one vessel, literal `count: 1`, `truncated: false`, and `reason: "window_elapsed"`.
+- With an open subscription and no reports, assert the injected deadline is literal `15_000` ms, fire the fake timer without real-time waiting, and assert successful empty output with `count: 0` and `reason: "window_elapsed"`.
+- Assert `collectedAt` against a literal ISO timestamp matching the injected clock at completion; do not compute the expected value using the clock fixture or collector output.
+- Keep assertions scoped to successful collection/window behavior; do not alter the result schema, timing, vessel limit, API route behavior, or other R3-T03 acceptance cases.
+- **Targeted check, only after explicit approval:** `npx playwright test --project=node tests/snapshot-collector.spec.ts`. Expected result: the focused spec passes. This is a planned check, not an observed result.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** before implementation, review the exact 100/101 inputs, fake-timer ordering, literal 15,000 ms deadline, and literal `collectedAt` oracle. After implementation, review the scoped test diff and actual focused-test output.
+- **Stop if:** a case reveals a product mismatch, requires changing the 15-second window, 100-vessel limit, completion semantics, or result schema, or needs changes outside the single allowed test file. Preserve the failure and request a separate reviewed remediation contract; do not edit product code here.
+- **Recovery:** if this Draft is rejected, revise or remove only this appended section after review. After approval, recover only this slice's test-spec diff; preserve all unrelated staged, unstaged, and untracked paths. No commit, push, evidence/runbook update, or destructive Git command is authorized by this Draft.
+
+## Closeout — 2026-09-29
+
+- **Authorization / disposition:** after reviewing the R3-T04 diff and focused test output, the user instructed `продовжуй`; this is recorded as acceptance of the bounded result.
+- **Observed change:** the collector tests now use literal 100-vessel input and expected count, assert the 101st MMSI is absent, establish that 100 duplicate reports leave the window timer runnable, assert the literal 15,000 ms deadline, and compare `collectedAt` to a literal ISO timestamp matching the injected clock. Only `tests/snapshot-collector.spec.ts` changed for this implementation.
+- **Verification:** `npx playwright test --project=node tests/snapshot-collector.spec.ts` passed all 13 tests. `git diff --check -- tests/snapshot-collector.spec.ts TASK_SPEC.md` passed. No other test suite, build, or runtime check was run.
+- **Limitations:** this verifies only the bounded collection-window, vessel-limit, and successful-completion slice; collector failure/cancellation lifecycle and browser/UI behavior remain unverified by this task. No `EVIDENCE.md` or `RUNBOOK.md` update was made under this task contract.
+- **Recovery:** restore only the R3-T04 test changes through a new reviewed bounded change if needed. Preserve prior R3-T01/R3-T03 work and unrelated `.idea/vcs.xml` / `.mcp.json`; no commit or push was performed.
+- **Handoff:** R3-T04 is `Verified`. R3-T05 (collector errors, cancellation, and resource cleanup) is next and requires its own reviewed bounded contract and explicit approval before implementation.
+
+# TASK-SEA-R3-TEST-005 — Snapshot collector errors, cancellation, and cleanup
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-29
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`TASK-SEA-R3-TEST-001` project-boundary contract](TASK_SPEC.md), [`TASK-SEA-R3-TEST-003` collector contract](TASK_SPEC.md), [`TASK-SEA-R3-TEST-004` window and limit contract](TASK_SPEC.md), [`tests/snapshot-collector.spec.ts`](tests/snapshot-collector.spec.ts), [`server/snapshot-collector.ts`](server/snapshot-collector.ts), [`server/aisstream-reader.ts`](server/aisstream-reader.ts)
+
+## Goal and authorization boundary
+
+- **Goal:** verify that collector failures and cancellation never become partial success, terminal outcomes clean up the reader and timer exactly once, and late events do not change a settled outcome.
+- **Current state:** R3-T01, R3-T03, and R3-T04 are `Verified`. Existing tests cover a pre-subscription timeout, provider errors/disconnects, cancellation, and late terminal events, but they do not yet cover the full three-message partial-input cases, pre-open socket error mapping, post-limit provider error, and absence of pending fake timer callbacks across terminal paths.
+- **Approval:** on 2026-09-29, after reviewing this exact bounded contract, the user said `продовжуй` and `схвалюю`; this is recorded as approval for R3-T05 implementation.
+- **Authorization boundary:** after approval, changes remain limited to the acceptance criteria below in `tests/snapshot-collector.spec.ts`. Product/source changes remain unauthorized.
+
+## Inputs and expected output
+
+- **Inputs:** the approved R3-T05 criteria in `SPRINT-03.md`; existing fake reader/timer and synthetic report helper; a deterministic fake WebSocket for the pre-open error case if needed; current collector/reader behavior as the subject under test only.
+- **Expected output:** deterministic lifecycle assertions for failed connection, provider error/disconnect, limit success followed by a late error, and cancellation; no live provider or network access.
+- **Dependencies:** `TASK-SEA-R3-TEST-001` and `TASK-SEA-R3-TEST-003` are `Verified`. T04 has also been verified; it supplies the same existing fake timer seam but is not a product-code dependency.
+
+## Constraints and allowed paths
+
+- **Allowed implementation path after approval:** `tests/snapshot-collector.spec.ts` only.
+- `server/snapshot-collector.ts`, `server/aisstream-reader.ts`, `server/position-report-transformer.ts`, route-level B-12 tests, all other test files, sample files, and package manifests are read-only. No product-code fixes, dependency changes, live sockets/provider, network access, secrets/environment access, or unrelated cleanup.
+- Reuse the injected collector reader/timer seams and existing synthetic message builder. Any WebSocket needed to assert pre-open socket-error mapping must be a local fake supplied through the reader's existing factory seam; it must not instantiate a live socket. No real-time waits or global clock replacement.
+
+## Acceptance and verification
+
+- A connection that has not subscribed by the injected 15,000 ms timeout returns `{ ok: false, code: "connect_failed" }`; a fake socket `error` before `open` also maps to `connect_failed`. Assert the fake socket closes once and the collector timer has no pending callback.
+- After three valid synthetic vessel reports, a provider error returns `{ ok: false, code: "provider_error" }`; a disconnect returns `{ ok: false, code: "disconnected" }`. Neither terminal result contains or resolves to a partial success snapshot.
+- After the collector succeeds at the existing 100-unique-vessel limit, a subsequent provider error does not replace that success or trigger cleanup a second time.
+- Aborting after subscription and partial input rejects with `SnapshotReadCancelled`, never resolves successfully, stops the reader once, clears the timer once, and leaves no pending fake timer callback.
+- For each covered terminal path, assert reader/socket cleanup and timer cleanup are idempotent, with no pending fake timer callbacks after settlement; late reader events do not change the established outcome.
+- Keep assertions scoped to existing collector/reader lifecycle semantics; do not alter error mapping, cancellation behavior, result schema, collection timing, or API route behavior.
+- **Targeted check, only after explicit approval:** `npx playwright test --project=node tests/snapshot-collector.spec.ts`. Expected result: the focused spec passes. This is a planned check, not an observed result.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** before implementation, review the fake socket event ordering and every terminal outcome's literal error/result expectation, stop/close counts, and timer state. After implementation, review the scoped test diff and actual focused-test output.
+- **Stop if:** any case reveals a product mismatch, requires changing collector/reader error semantics or lifecycle behavior, or needs changes outside the single allowed test file. Preserve the failure and request a separate reviewed remediation contract; do not edit product code here.
+- **Recovery:** if this Draft is rejected, revise or remove only this appended section after review. After approval, recover only this slice's test-spec diff; preserve all unrelated staged, unstaged, and untracked paths. No commit, push, evidence/runbook update, or destructive Git command is authorized by this Draft.
+
+## Closeout — 2026-09-29
+
+- **Authorization / disposition:** after reviewing the R3-T05 diff and focused test output, the user instructed `продовжуй`; this is recorded as acceptance of the bounded result.
+- **Observed change:** added a pending-callback count to the fake timer; a deterministic fake WebSocket pre-open error case; three-report partial-input cases for provider error/disconnect; a post-limit late-error case; and explicit no-pending-timer/once-only cleanup assertions across covered terminal paths. Only `tests/snapshot-collector.spec.ts` changed for this implementation.
+- **Verification:** `npx playwright test --project=node tests/snapshot-collector.spec.ts` passed all 15 tests. `git diff --check -- tests/snapshot-collector.spec.ts TASK_SPEC.md` passed. No other test suite, build, or runtime check was run.
+- **Limitations:** this verifies only the bounded collector/reader error, cancellation, and cleanup slice; browser/UI behavior and other Sprint 3 acceptance remain unverified. No `EVIDENCE.md` or `RUNBOOK.md` update was made under this task contract.
+- **Recovery:** restore only the R3-T05 test changes through a new reviewed bounded change if needed. Preserve prior R3-T01–T04 work and unrelated `.idea/vcs.xml` / `.mcp.json`; no commit or push was performed.
+- **Handoff:** R3-T05 is `Verified`. R3-T06 (demo movement and route end) is next and requires its own reviewed bounded contract and explicit approval before implementation.
+
+# TASK-SEA-R3-TEST-006 — Demo vessel movement and route end
+
+- **Version:** `1.1.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-30
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`docs/decisions/DEC-013-r3-t06-demo-mode-test.md`](docs/decisions/DEC-013-r3-t06-demo-mode-test.md), [`TASK-SEA-R3-TEST-001` project-boundary contract](TASK_SPEC.md), [`tests/demo-movement.spec.ts`](tests/demo-movement.spec.ts), [`app/sea-map.tsx`](app/sea-map.tsx), [`app/vessel-model.ts`](app/vessel-model.ts), [`app/vessel-card.tsx`](app/vessel-card.tsx)
+
+## Goal and authorization boundary
+
+- **Goal:** verify the existing `demo-1` movement sequence and route-end freeze with the browser's controlled clock, without changing product behavior.
+- **Current state:** R3-T01 is `Verified` and provides the Chromium test project. Source inspection confirmed that an empty successful snapshot enters snapshot mode, where fallback demo markers remain stationary; movement runs in idle-demo mode. DEC-013 approves testing the existing moving mode instead. This resolves the setup mismatch without changing product behavior; the amended implementation has now been separately approved and verified.
+- **Approval:** on 2026-09-30, after review of this exact bounded implementation contract, the user instructed `продовжуй`; this is recorded as approval for the test-only implementation and its targeted check.
+- **Disposition:** on 2026-09-29, the user chose `HOLD T06` under the original empty-snapshot setup. On 2026-09-30, the user approved option 2 in DEC-013 and the versioned scope synchronization, then separately approved the amended implementation contract. The bounded test passed; product behavior was not changed.
+- **Authorization boundary:** implementation was limited to the new `tests/demo-movement.spec.ts` and the acceptance criteria below. Product/source changes remain unauthorized.
+
+## Inputs and expected output
+
+- **Inputs:** the approved R3-T06 sequence and literal values in `SPRINT-03.md`; the existing initial idle-demo mode and demo-vessel UI as the subject under test; Chromium's controlled `page.clock` and a guarded snapshot route that must receive no request.
+- **Expected output:** deterministic browser assertions for the initial demo position, each two-second movement step through route end, and unchanged terminal state after one further step. No live snapshot provider or map tile request is used.
+- **Dependencies:** `TASK-SEA-R3-TEST-001` browser project is `Verified`.
+
+## Constraints and allowed paths
+
+- **Allowed implementation path after approval:** new `tests/demo-movement.spec.ts` only.
+- `app/sea-map.tsx`, `app/vessel-model.ts`, `app/vessel-card.tsx`, other tests, package manifests, and all product files are read-only. No product-code fixes, route/schema changes, dependency changes, live provider/network requests, secrets/environment access, or unrelated cleanup.
+- Freeze `page.clock` before navigation at `2026-09-29T12:00:00.000Z`; start in the initial idle-demo mode and do not trigger snapshot loading. Install an `/api/snapshot` route guard that aborts and counts unexpected requests; assert the count is zero. Block external OpenStreetMap tile requests. Do not use live provider requests, `waitForTimeout`, real-time waiting, or a global clock replacement.
+
+## Acceptance and implementation gate
+
+- **Resolved setup mismatch:** the former setup required a successful empty `/api/snapshot` response, which moved the map to snapshot mode. Source inspection found that snapshot-mode fallback demo markers do not initialize or advance their motion states. Under approved DEC-013 option 2, T06 instead starts in the existing initial idle-demo mode and asserts no snapshot request; it does not test fallback movement.
+- The Sprint 3 movement oracle remains the documented literal sequence: initial `51.00000, 1.45000`; t=2s `51.01000, 1.45000`; t=4s `51.02000, 1.46500`; t=6s `51.03000, 1.48000`; t=8s `51.04000, 1.49500`; t=10s `51.05000, 1.51000`; t=12s `51.06000, 1.52500`; t=14s `51.07000, 1.54000`; t=16s `51.08000, 1.55500`; t=18s `51.09000, 1.57000`. Its endpoint oracle remains `0 kn`, `43°`, `12:00:18 UTC`, unchanged after one further 2,000 ms tick.
+- **Implementation gate:** before implementation, the user must review and explicitly approve this revised bounded contract. That approval was recorded on 2026-09-30 before the test edit and targeted command. Do not infer that the empty-snapshot fallback moves; if the initial idle-demo route fails the literal oracle, stop and retain `HOLD` without product edits.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** before implementation, review that the page clock is frozen before navigation/timers, the `/api/snapshot` route guard reports zero requests, tile requests are blocked, and every timestamp/coordinate/card value is literal. After separately approved implementation, review the scoped browser-test diff and actual targeted-test output.
+- **Stop if:** the initial idle-demo route differs from any expected literal, the test requires a product change, cannot block external tile requests, the route guard sees a snapshot request, or changes outside the single new test file are required. Preserve the observed discrepancy and retain `HOLD`; do not edit product code here.
+- **Recovery:** if recovery is needed, restore only this slice's new test file through a new reviewed bounded change; preserve all unrelated staged, unstaged, and untracked paths. No commit, push, evidence/runbook update, or destructive Git command was authorized or performed under this task.
+
+### Change-control history — DEC-013 option 2 approved
+
+On 2026-09-30, the user approved option 2 in DEC-013 and authorized the versioned contract synchronization recorded in this task. The effective R3-T06 acceptance criteria are stated above and in `SPRINT-03.md` v1.1.0. The `HOLD` selected on 2026-09-29 applied to the former empty-snapshot setup. The user later separately approved this revised bounded implementation contract; implementation and verification are recorded in the closeout below.
+
+## Closeout — 2026-09-30
+
+- **Authorization / disposition:** after reviewing the scoped T06 test change and targeted result, the user instructed `продовжуй`; this is recorded as acceptance of the bounded implementation.
+- **Observed change:** added `tests/demo-movement.spec.ts` for initial idle-demo movement across the literal route and endpoint freeze. The test installs the controlled clock before navigation, blocks OSM tile requests, guards `/api/snapshot` and asserts zero requests, selects `demo-1`, checks each two-second coordinate, and verifies endpoint speed/course/time remain unchanged after one further tick. No product code changed.
+- **Verification:** `npx playwright test --project=chromium tests/demo-movement.spec.ts` passed 1 test (645 ms; 1.3 s total). The untracked test's `git diff --no-index --check /dev/null tests/demo-movement.spec.ts` produced no whitespace diagnostics. No other test suite, build, or runtime check was run.
+- **Limitations:** this verifies only the literal demo movement route and route-end freeze in initial idle-demo mode; it does not test sparse-snapshot fallback movement. T07 remains the empty-success snapshot UI case. No `EVIDENCE.md` or `RUNBOOK.md` update was made under this task contract.
+- **Recovery:** restore only this slice's new test file through a new reviewed bounded change if needed; preserve prior work and unrelated staged, unstaged, and untracked paths. No commit or push was performed.
+- **Handoff:** R3-T06 is `Verified`. Its dependency is satisfied for T08, but T08 was not started and still requires its own reviewed bounded contract and explicit approval. T09 remains dependent on T08.
+
+# TASK-SEA-R3-TEST-007 — Snapshot UI error, empty, and successful states
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-29
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`TASK-SEA-R3-TEST-001` project-boundary contract](TASK_SPEC.md), [`tests/snapshot-interface.spec.ts`](tests/snapshot-interface.spec.ts), [`app/map-shell.tsx`](app/map-shell.tsx), [`app/vessel-card.tsx`](app/vessel-card.tsx)
+
+## Goal and authorization boundary
+
+- **Goal:** verify the existing snapshot UI's error, empty-success, and successful-vessel-with-missing-motion-data states using mocked API responses.
+- **Current state:** R3-T01 is `Verified` and provides the Chromium project. R3-T06 remains on `HOLD`; T07 depends only on the browser project and is an independent test-only slice.
+- **Approval:** on 2026-09-29, after reviewing this exact bounded contract, the user said `продовжуй`; this is recorded as approval for R3-T07 implementation.
+- **Authorization boundary:** after approval, changes remain limited to the acceptance criteria below in `tests/snapshot-interface.spec.ts`. Product/source changes remain unauthorized.
+
+## Inputs and expected output
+
+- **Inputs:** the approved R3-T07 criteria in `SPRINT-03.md`; the existing snapshot-interface tests and their browser/mock patterns; literal mocked API responses for each UI state.
+- **Expected output:** focused browser assertions for the visible error, empty-success, and selected-vessel card states. No live provider or external map tile request is used.
+- **Dependencies:** `TASK-SEA-R3-TEST-001` Chromium project is `Verified`. R3-T06 is not a dependency for this slice.
+
+## Constraints and allowed paths
+
+- **Allowed implementation path after approval:** `tests/snapshot-interface.spec.ts` only.
+- `app/map-shell.tsx`, `app/vessel-card.tsx`, `app/sea-map.tsx`, other tests, package manifests, and all product files are read-only. No product-code fixes, API/schema changes, dependency changes, live provider/network requests, secrets/environment access, or unrelated cleanup.
+- Mock every `/api/snapshot` response and block external OpenStreetMap tile requests in every new R3 case. Do not use `waitForTimeout`, real-time waits, or browser-clock changes as a substitute for the server collector clock.
+- Group every new R3 test under a title containing the exact phrase `R3 snapshot UI states`, so the targeted command excludes unrelated existing cases.
+
+## Acceptance and verification
+
+- **Error state:** fulfill the mocked endpoint with the supported fixed error `{ code: "connect_failed", message: "Не вдалося підключитися до джерела" }`. Assert `[data-source="none"]` displays `Даних на карті немає`, the `role="status"` text is `Не вдалося отримати дані: Не вдалося підключитися до джерела`, and there are zero `[data-vessel-id]` markers and zero `[data-vessel-card-id]` cards.
+- **Empty-success state:** fulfill the mocked endpoint with status 200 and `successBody([])`. Assert the `[data-source="aisstream"]` summary includes `суден: 0`, the `role="status"` text is `За час збору позицій не отримано`, and the fallback contains three `[data-vessel-source="demo"]` markers and no `[data-vessel-source="aisstream"]` markers or card.
+- **Vessel without motion data:** fulfill status 200 with one vessel whose `speedKnots` and `courseDeg` are both `null`. Click its `[data-vessel-id="<id>"]` marker; assert `[data-vessel-card-id="<id>"]` is visible, the `Швидкість` and `Курс` values each display `Немає даних`, and the selected marker (not the card) has `data-icon="neutral"`.
+- Assert visible UI output for each mocked state; do not infer live-provider availability or change UI semantics.
+- **Verification:** the initial `npx playwright test --project=chromium tests/snapshot-interface.spec.ts --grep "R3 snapshot UI states"` attempt selected all three cases but could not launch Chromium because the browser executable was absent; assertions did not execute. After the user authorized the local browser download, `npx playwright install chromium` completed, installing Chrome for Testing / Headless Shell `153.0.8010.12` (Playwright Chromium `v1243`), and the same targeted test command passed all 3 tests. The corresponding `--list` command selected exactly those 3 cases. `git diff --check -- tests/snapshot-interface.spec.ts TASK_SPEC.md` passed.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** before implementation, review each mocked response, the visible UI oracle, tile blocking, and the grep grouping. After implementation, review the scoped diff and actual targeted-test output.
+- **Stop if:** any assertion requires product changes, a live provider, an external tile request, a real-time wait, or edits outside the single allowed test file. Preserve the observed discrepancy and request a separate reviewed remediation contract; do not edit product code here.
+- **Recovery:** if this Draft is rejected, revise or remove only this appended section after review. After approval, recover only this slice's test changes; preserve all unrelated staged, unstaged, and untracked paths. No commit, push, evidence/runbook update, or destructive Git command is authorized by this Draft.
+
+## Closeout — 2026-09-30
+
+- **Authorization / disposition:** after reviewing the R3-T07 diff and targeted test result, the user instructed `продовжуй`; this is recorded as acceptance of the bounded result.
+- **Observed change:** added three tests grouped under `R3 snapshot UI states` for the fixed API error, empty successful snapshot, and successful selected vessel with missing speed/course. Every case mocks the snapshot endpoint and blocks OSM tile requests. Only `tests/snapshot-interface.spec.ts` changed for this implementation.
+- **Verification:** the targeted R3 UI test command passed all 3 tests; the grep list contained exactly those three cases; `git diff --check -- tests/snapshot-interface.spec.ts TASK_SPEC.md` passed. No other test suite, build, or runtime check was run.
+- **Limitations:** this verifies only the bounded snapshot UI states. R3-T06 remains on `HOLD`; the T08 review dependency on T01–T07 is therefore incomplete, and T08/T09 have not been performed. No `EVIDENCE.md` or `RUNBOOK.md` update was made under this task contract.
+- **Recovery:** restore only the R3-T07 test additions through a new reviewed bounded change if needed. Preserve prior R3-T01–T06 work and unrelated `.idea/vcs.xml` / `.mcp.json`; no commit or push was performed.
+- **Handoff:** R3-T07 is `Verified`. R3-T08 depends on R3-T01…T07 and cannot proceed while T06 remains on `HOLD`; resolve the T06 scope blocker through a separately reviewed decision before starting T08. R3-T09 remains dependent on T08.
+
+# TASK-SEA-R3-PLAN-002 — Prepare a T06 test-setup scope-change proposal
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-30
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-010-r2-sparse-snapshot-demo-fallback.md`](docs/decisions/DEC-010-r2-sparse-snapshot-demo-fallback.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), proposed [`DEC-013`](docs/decisions/DEC-013-r3-t06-demo-mode-test.md), [`TASK-SEA-R3-TEST-006` T06 contract](TASK_SPEC.md)
+
+## Goal and authorization boundary
+
+- **Goal:** prepare a reviewable change-control proposal that makes the R3-T06 movement oracle testable in the existing moving demo mode without changing product behavior.
+- **Current state:** the R3-T06 empty-snapshot setup enters snapshot mode, where supplemental demo markers are stationary; DEC-010 explicitly preserves stationary fallback markers and unchanged idle-demo motion. T06 is on `HOLD` pending this scope decision.
+- **Approval:** on 2026-09-30, the user selected `Reopen T06 scope`, authorizing preparation of a decision proposal and proposed task-contract amendment only.
+- **Authorization boundary:** proposal documents only. This does not authorize updating the effective Sprint 3 plan, implementing tests, changing product behavior, or closing T06.
+
+## Inputs and expected output
+
+- **Inputs:** the approved T06 acceptance criteria in `SPRINT-03.md`; existing behavior described by DEC-010 and read-only inspected source; T06's recorded HOLD.
+- **Expected output:** a new `DEC-013` in `Draft` status plus an explicit proposed T06 test-setup amendment in this task record. The recommendation is to begin in the initial idle-demo mode, keep the literal route oracle, and not claim that sparse-snapshot fallback markers move.
+- **Dependencies:** T06 blocker verified by source inspection; DEC-010 and DEC-012 are current `Ready` records.
+
+## Constraints and allowed paths
+
+- **Allowed paths:** `TASK_SPEC.md` and new `docs/decisions/DEC-013-r3-t06-demo-mode-test.md` only.
+- Do not edit `SPRINT-03.md`, `docs/decisions/README.md`, DEC-010 or DEC-012, tests, application source, `EVIDENCE.md`, or `RUNBOOK.md` under this proposal task. Do not change the approved baseline before the user reviews and approves the decision proposal.
+- Do not infer movement in snapshot mode. The proposal must preserve the exact literal route coordinates and endpoint card oracle from current R3-T06, keep the controlled page clock before navigation, block OSM tile requests, and prohibit real waits and live provider requests.
+
+## Acceptance and verification
+
+- DEC-013 states the mismatch, considers retaining HOLD, a test-only setup change to initial idle-demo mode, and a product behavior change; it recommends only the test-only setup revision and marks it `Draft` pending explicit user approval.
+- The proposed T06 contract amendment replaces only the infeasible empty-snapshot/fallback setup with the initial moving demo state. It retains demo-1 selection, the existing literal t=0…18s route values, terminal `0 kn`/`43°`/`12:00:18 UTC`, the extra 2,000ms frozen-end assertion, tile blocking, and no-real-wait rule.
+- The proposal explicitly says the T06 `HOLD` remains effective until the decision and versioned Sprint contract are approved. No tests or implementation are performed under this task.
+- **Observed structural checks:** `git diff --check -- TASK_SPEC.md docs/decisions/DEC-013-r3-t06-demo-mode-test.md` passed with no output. `rg` confirmed one definition each for `TASK-SEA-R3-PLAN-002`, `TASK-SEA-R3-TEST-006`, and `DEC-013-R3-T06-DEMO-MODE-TEST`; all related local artifact paths exist. No tests or implementation commands were run.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** review DEC-013 options/rationale and the proposed T06 acceptance side-by-side with DEC-010 and current `SPRINT-03.md`; do not merge proposed criteria into effective sprint scope before user approval.
+- **Stop if:** the proposed mode cannot be entered without an unapproved product change, the route oracle needs revision, or the decision requires changes to other baselines. Preserve the HOLD and ask for a bounded follow-up decision.
+- **Recovery:** if rejected, remove only the DEC-013 Draft and proposed-amendment text introduced by this task; preserve the original T06 HOLD, verified T01–T05/T07 work, and unrelated working-tree changes. No implementation, tests, commit, push, evidence/runbook update, or destructive Git command is authorized here.
+
+# TASK-SEA-R3-PLAN-003 — Synchronize approved T06 scope change
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-30
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-013-r3-t06-demo-mode-test.md`](docs/decisions/DEC-013-r3-t06-demo-mode-test.md), [`docs/decisions/README.md`](docs/decisions/README.md), [`DEC-010`](docs/decisions/DEC-010-r2-sparse-snapshot-demo-fallback.md), [`DEC-012`](docs/decisions/DEC-012-r3-scope.md), [`TASK-SEA-R3-TEST-006` T06 contract](TASK_SPEC.md)
+
+## Goal and authorization boundary
+
+- **Goal:** synchronize the user's approved option 2 from DEC-013 into versioned Sprint 3, T06, and decision-index records without changing product or test behavior.
+- **Approval:** on 2026-09-30, the user explicitly selected `Схвалити варіант 2` for DEC-013; the bounded documentation synchronization plan was approved before these edits.
+- **Authorization boundary:** governance documents only. This does not authorize editing or running `tests/demo-movement.spec.ts`, changing product code, completing T06, or starting T08/T09.
+
+## Inputs and expected output
+
+- **Inputs:** approved DEC-013 option 2; original T06 literal movement and route-end oracle; DEC-010, DEC-012, and the current Sprint 3 test-only boundary.
+- **Expected output:** DEC-013 `Ready` v1.1.0; `SPRINT-03.md` v1.1.0 with a narrow T06 no-snapshot-request exception; the R3-T06 task contract v1.1.0 reflecting the same setup and retaining a separate implementation approval gate; decisions index v1.1.0 with DEC-013 catalogued as `Ready`.
+- **Dependencies:** DEC-013 option 2 explicitly approved; DEC-010 and DEC-012 remain unchanged.
+
+## Constraints and allowed paths
+
+- **Allowed paths:** `TASK_SPEC.md`, `SPRINT-03.md`, `docs/decisions/DEC-013-r3-t06-demo-mode-test.md`, and `docs/decisions/README.md` only.
+- Preserve all route coordinates, t=0…18s time steps, endpoint card values, and the extra 2,000ms frozen-end assertion exactly. Freeze `page.clock` before navigation; start in initial idle-demo mode; block OSM tiles; guard `/api/snapshot`, abort and count unexpected requests, and assert zero requests; use no live provider requests or real-time waits.
+- Do not claim sparse-snapshot fallback markers move. Do not edit DEC-010, DEC-012, `SPEC.md`, application source, tests, `EVIDENCE.md`, or `RUNBOOK.md`. Preserve all pre-existing unrelated staged, unstaged, and untracked changes.
+- T06 test implementation remains separately task-gated: it needs its own reviewed bounded contract and explicit approval. If initial idle-demo movement does not satisfy the literal oracle, stop and retain `HOLD`; do not change product behavior.
+
+## Acceptance and verification
+
+- DEC-013 records option 2 as the approved decision (`Ready`) and retains the test/product implementation boundaries.
+- Sprint 3 and T06 are versioned and describe the same initial idle-demo setup and narrow no-request exception; T07 remains the empty-success UI case. **Current handoff:** the former T06 setup `HOLD` was resolved by DEC-013 and the v1.1 contract sync; T06 implementation still needs separate explicit approval; T08 cannot start until T06 is verified, and T09 remains gated on T08.
+- The literal route and endpoint oracle is unchanged; local links and task/decision IDs are unique.
+- **Observed verification:** `git diff --check` passed on the three tracked allowed paths; the untracked DEC-013 file passed `git diff --no-index --check`. Structural checks confirmed one declaration each for `TASK-SEA-R3-PLAN-003`, `TASK-SEA-R3-TEST-006`, and `DEC-013-R3-T06-DEMO-MODE-TEST`; all linked governance targets exist; the 10 literal route coordinates match between `SPRINT-03.md` and T06; decision status/version and zero-request route-guard wording are present. No application tests, builds, or runtime checks were run.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** review the four-file diff against DEC-013, DEC-010, DEC-012, and the original literal T06 oracle before accepting the synchronized contracts.
+- **Stop if:** updating a contract would require changing route literals, product behavior, tests, or any path outside the allowed list; preserve the last approved documents and ask for a new bounded decision.
+- **Recovery:** revert only the documentation edits introduced by this task, retaining the user's approval record and all pre-existing worktree changes. No commit, push, deployment, evidence/runbook update, or destructive Git command is authorized.
+
+# TASK-SEA-R3-TEST-008 — Review findings and bounded remediation disposition
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-30
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`TASK-SEA-R3-TEST-001` through `TASK-SEA-R3-TEST-007`](TASK_SPEC.md), [`DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`DEC-013-r3-t06-demo-mode-test.md`](docs/decisions/DEC-013-r3-t06-demo-mode-test.md), [`docs/checkpoints/CHECKPOINT-25.md`](docs/checkpoints/CHECKPOINT-25.md)
+
+## Goal and authorization boundary
+
+- **Goal:** compare the approved R3-T01…T07 test/config diffs and recorded targeted outcomes with their Sprint 3/task acceptance criteria; identify findings and record a human disposition.
+- **Approval / disposition:** on 2026-09-30, after review of the T08 report, the user selected `CONTINUE WITH APPROVAL`. The T04 coverage gap is accepted as an unresolved limitation for the next bounded step; no remediation is authorized by T08.
+- **Authorization boundary:** read-only review of the approved T01…T07 diffs and linked contracts; record review findings and disposition in `TASK_SPEC.md` only. No source/test edits, test reruns, builds, or automatic fixes.
+
+## Inputs and expected output
+
+- **Inputs:** `SPRINT-03.md` v1.1.0; T01…T07 task contracts and closeouts; DEC-010, DEC-012, DEC-013; the actual test/config diffs and the previously recorded targeted command outcomes.
+- **Expected output:** task-by-task findings or explicit no-finding results, evidence limitations, and a human disposition. A coverage gap is not evidence of a product defect.
+- **Dependencies:** R3-T01…T07 have task records and recorded targeted outcomes; T06 is `Verified`.
+
+## Constraints and allowed paths
+
+- **Allowed paths:** read-only review of the approved R3-T01…T07 diffs; `TASK_SPEC.md` only for findings and disposition.
+- Do not change tests, product source, configuration, `SPRINT-03.md`, `EVIDENCE.md`, or `RUNBOOK.md`; do not rerun tests or builds under T08.
+- Preserve historical closeout statements as dated facts. Record any superseding current handoff separately rather than rewriting prior history.
+
+## Acceptance and observed review
+
+- **T01:** no acceptance mismatch found in the Node/Chromium project boundary. The recorded `--list` outcomes establish selection counts only; they do not establish test execution.
+- **T02:** no test/contract mismatch found in the reviewed transformer cases; `TASK_SPEC.md` records 10 targeted tests passed.
+- **T03:** no test/contract mismatch found in ordering, uniqueness, and replacement cases; `TASK_SPEC.md` records 13 targeted tests passed.
+- **T04 — coverage gap:** `tests/snapshot-collector.spec.ts:367–379` checks a 100-entry result and excludes the 101st MMSI, but does not assert that all 100 returned MMSIs are distinct and match the submitted set. A duplicate/omission combination could satisfy the current assertions. This is a test-coverage gap, not a confirmed product defect. The user accepted it as an unresolved limitation under `CONTINUE WITH APPROVAL`; no remediation was made or authorized by this task.
+- **T05:** no test/contract mismatch found in the reviewed terminal error, cancellation, and cleanup cases; `TASK_SPEC.md` records 15 targeted tests passed.
+- **T06:** no test/contract mismatch found; the test follows DEC-013's idle-demo setup and `TASK_SPEC.md` records 1 targeted browser test passed.
+- **T07:** no test/contract mismatch found in the reviewed snapshot UI cases; `TASK_SPEC.md` records 3 targeted tests passed. Its earlier T06 `HOLD` handoff was historically accurate when written; T06 is now `Verified`. Preserve the historical entry and use this T08 record as the superseding handoff.
+- **Evidence limitations:** this review did not rerun tests or build. T02…T07 command outcomes are recorded summaries, not retained raw output; T01 records test-list results only. No full-suite/build outcome or `EVIDENCE.md`/`RUNBOOK.md` entry was established by this review.
+- **Observed disposition:** `CONTINUE WITH APPROVAL`. T08 is `Verified` with the T04 coverage gap unresolved; this is not a Sprint `DONE` decision. T09 remains a separate bounded task and approval gate.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** human reviewed the findings and selected `CONTINUE WITH APPROVAL`; no test/product remediation was performed.
+- **Stop if:** a later action would alter the T04 test, product behavior, or a path outside a separately approved bounded contract. Preserve the finding and request that contract before any edit or rerun.
+- **Recovery:** no implementation diff was created under T08. Preserve this factual review record; add any correction as a dated amendment rather than rewriting accepted history.
+
+# TASK-SEA-R3-TEST-009 — Independent review and Sprint 3 checkpoint
+
+- **Version:** `1.0.0`
+- **Status:** `Verified — bounded T09 review and handoff only`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-30
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`TASK-SEA-R3-TEST-001` through `TASK-SEA-R3-TEST-008`](TASK_SPEC.md), [`DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`DEC-013-r3-t06-demo-mode-test.md`](docs/decisions/DEC-013-r3-t06-demo-mode-test.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`CHECKPOINT-25.md`](docs/checkpoints/CHECKPOINT-25.md), future [`CHECKPOINT-26.md`](docs/checkpoints/CHECKPOINT-26.md)
+
+## Goal and authorization boundary
+
+- **Goal:** obtain an independent read-only review of the approved R3 work and available verification evidence, then prepare a factual, bounded Sprint 3 handoff in the new CHECKPOINT-26.
+- **Authorization:** this contract was prepared as a separate prerequisite, with the user’s authorization limited to editing `TASK_SPEC.md`. That authorization does not execute T09. T09 execution requires human review of this contract and separate explicit approval.
+- **Current disposition:** T08 is `Verified` with `CONTINUE WITH APPROVAL`. The T04 test-coverage gap remains unresolved; it is not a confirmed product defect, and no remediation is authorized. Do not call Sprint 3 `DONE` on the current evidence.
+
+## Inputs and expected output
+
+- **Inputs:** `SPRINT-03.md` v1.1.0; task contracts and approved diffs for T01–T08; DEC-010, DEC-012, DEC-013; available command outputs; current `EVIDENCE.md`, `RUNBOOK.md`, and CHECKPOINT-25.
+- **Evidence limitation:** T02–T07 command outcomes in `TASK_SPEC.md` are summaries, not retained raw outputs. T01 `--list` results establish test selection, not execution. Treat unavailable raw outputs as `Unknown`; do not reconstruct them from memory or describe task summaries as raw command output. Do not rerun tests/builds as part of this review.
+- **Expected output:** findings (including explicit no-finding results where supported), evidence limitations, append-only factual evidence and delivery history, and a new `docs/checkpoints/CHECKPOINT-26.md` with a supported handoff and human exit disposition.
+- **Dependencies:** T01–T08 task records and review are available; T08 disposition is recorded. The independent reviewer must be confirmed eligible before review begins.
+
+## Constraints and allowed paths
+
+- **Review:** read-only review of the approved R3 task contracts/diffs and available verification outputs. Reviewer must have no author-session history and no edit rights; do not assume the current author session qualifies.
+- **Allowed write paths during T09 execution only:** append-only `EVIDENCE.md`; append-only `RUNBOOK.md`; create new `docs/checkpoints/CHECKPOINT-26.md`. The separate preparation of this task contract in `TASK_SPEC.md` is a prerequisite, not an addition to T09 execution paths.
+- Do not edit `TASK_SPEC.md`, `SPRINT-03.md`, decision records, source, tests, configuration, or existing checkpoints during T09. Do not run tests/builds, access secrets, make provider requests, commit, push, publish, or deploy under this task.
+- Preserve CHECKPOINT-05 and CHECKPOINT-25 and all pre-existing unrelated staged, unstaged, and untracked work.
+
+## Acceptance and verification
+
+- Reviewer independence and read-only access are confirmed before review; the review boundary and exact input revisions are recorded.
+- Each finding or no-finding result is tied to an approved criterion and an inspected source. Distinguish directly observed output from task-record summaries; unsupported execution claims remain `Unknown`.
+- T04’s uniqueness/full-input-set coverage gap and the absence of authorized remediation are stated accurately. No product defect, test pass, full-suite/build result, or release claim is invented.
+- Append evidence only for facts observed during the authorized review; append a factual RUNBOOK handoff; create CHECKPOINT-26 with evidence links, limitations, recovery, and the human-selected exit disposition. Choose `HOLD` if missing evidence prevents a credible handoff; otherwise the continuation remains `CONTINUE WITH APPROVAL`. Do not select Sprint `DONE` while the T04 gap remains unresolved under the current contract.
+- **Targeted check after authorized T09 work:** `git diff --check -- EVIDENCE.md RUNBOOK.md docs/checkpoints/CHECKPOINT-26.md`; check local links and verify each checkpoint claim against the actual available sources. No application tests or builds.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** first present this Draft contract for human review and obtain explicit T09 execution approval. After the authorized review, present the final diff, evidence limitations, and checkpoint for human disposition. Contract approval alone does not authorize a commit or push.
+- **Stop if:** no reviewer meets the independence/access requirements; a required source or result is unavailable and prevents a credible handoff; a claim would exceed available evidence; scope would require another path, test rerun, product/test change, or Sprint-contract change. Preserve the current state and request a new bounded decision rather than expanding scope.
+- **Recovery:** do not rewrite earlier evidence, RUNBOOK entries, or checkpoints. Record factual corrections as dated append-only amendments. Human owner decides whether to continue, revise, or hold; no destructive Git operation is authorized.
+
+# TASK-SEA-DOC-RETRO-001 — Retrospective Sprint 3 documentation reconciliation
+
+- **Version:** `1.0.0`
+- **Status:** `Draft — prepared for human review; retrospective evidence/runbook writes require explicit approval after review`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-30
+- **Related artifacts:** [`SPEC.md`](SPEC.md), [`SPRINT-03.md`](SPRINT-03.md), [`TASK-SEA-R3-TEST-001` through `TASK-SEA-R3-TEST-009`](TASK_SPEC.md), [`DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`DEC-013-r3-t06-demo-mode-test.md`](docs/decisions/DEC-013-r3-t06-demo-mode-test.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`CHECKPOINT-26.md`](docs/checkpoints/CHECKPOINT-26.md)
+
+## Goal and authorization boundary
+
+- **Goal:** make the recorded history of Sprint 3 tasks T01–T08 discoverable in the canonical evidence and delivery records, while preserving evidence provenance and limitations.
+- **Task class:** administrative documentation reconciliation only; this does not add or authorize a Sprint 3 implementation slice, product behavior, test change, test rerun, or T04 remediation.
+- **Approval gate:** this Draft records the bounded contract. Do not append retrospective records until the user has reviewed this contract and explicitly approved continuing. Approval of the plan or preparation of this Draft alone does not authorize those append operations.
+
+## Inputs and expected output
+
+- **Inputs:** T01–T08 task contracts and closeouts in `TASK_SPEC.md`; `SPRINT-03.md`; DEC-012 and DEC-013; Git history relevant to R3 planning and the T01–T07 changes (`d778844`, `f66ef56`, `cb5a8e7`, `946f13a`); the existing T09 record E-SEA-093, RUNBOOK handoff, and CHECKPOINT-26.
+- **Source classes:** task closeouts establish what the repository records about those tasks; Git history establishes committed artifact/change history only; E-SEA-093 and CHECKPOINT-26 establish the bounded T09 review and its evidence limits. None of these sources turns a task-record summary into retained raw command output.
+- **Expected output after separate approval:** one append-only retrospective record in `EVIDENCE.md` (next available ID expected: `E-SEA-094`) mapping T01–T08 to their existing task records and evidence classes, plus one dated append-only reconciliation/handoff entry in `RUNBOOK.md`. Do not duplicate or amend the existing T09 entries.
+- **Evidence limitation:** T01 `--list` records selection only. T02–T07 pass counts in `TASK_SPEC.md` are recorded summaries; raw command outputs were not retained. Their execution is not independently established by this reconciliation. Full-suite and build outcomes remain `Unknown`.
+- **Dependencies:** existing R3 task records, relevant Git history, E-SEA-093, and CHECKPOINT-26 are available for read-only inspection. If a claim cannot be traced to those sources, omit it or retain `Unknown`.
+
+## Constraints and allowed paths
+
+- **Contract preparation:** append this task contract to `TASK_SPEC.md` only.
+- **Allowed write paths after the approval gate:** append one retrospective record to `EVIDENCE.md`; append one dated reconciliation/handoff entry to `RUNBOOK.md`. These are the only execution write paths.
+- Do not edit prior task records, E-SEA-093, the existing T09 RUNBOOK entry, CHECKPOINT-26, `SPRINT-03.md`, decision records, source, tests, or configuration. Do not create another checkpoint.
+- Do not reconstruct raw output, rerun tests/builds, access secrets or `.mcp.json`, make provider/network requests, stage, commit, push, deploy, or perform destructive Git operations.
+- Preserve all pre-existing staged, unstaged, and untracked changes.
+
+## Acceptance and verification
+
+- The retrospective record maps T01–T08 to their existing task records and distinguishes recorded summaries, Git artifact history, and T09 review evidence.
+- T01 is described as test selection only. T02–T07 counts are explicitly attributed to task-record summaries, with execution remaining `Unknown` absent raw output. No full-suite/build success or Sprint `DONE` claim is made.
+- T08's recorded static-review result and unresolved T04 coverage gap are described without classifying T04 as a confirmed product defect or implying remediation. T09 remains represented by E-SEA-093 and CHECKPOINT-26.
+- IDs, local links, append-only placement, source attribution, status, timestamp, limitations, recovery, and handoff are checked against the repository conventions. No unsupported claim is introduced.
+- **Targeted checks after the approved documentation writes:** `git diff --check -- TASK_SPEC.md EVIDENCE.md RUNBOOK.md`; focused structural checks for unique identifiers, required fields, local links, append-only placement, and claim-to-source traceability. No application tests or builds.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint:** first present this Draft contract for human review. Continue to EVIDENCE/RUNBOOK only after explicit approval of this contract and its stated limits; then present the resulting documentation diff for human review and disposition.
+- **Stop if:** source records conflict, a proposed claim cannot be traced, raw output would need to be reconstructed, or completing the record requires a path or action outside this contract. Keep unsupported outcomes `Unknown` and request a new bounded decision rather than expanding scope.
+- **Recovery:** preserve all existing records. Correct any factual error with a dated append-only amendment; do not rewrite T01–T09 closeouts, E-SEA-093, the RUNBOOK handoff, or CHECKPOINT-26. No destructive Git operation is authorized.
+
+# TASK-SEA-R3-T04-COVERAGE-001 — T04 complete MMSI-set assertion
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-30
+- **Related artifacts:** [`SPEC.md`](SPEC.md), [`SPRINT-03.md`](SPRINT-03.md), [`TASK-SEA-R3-TEST-004` T04 contract](TASK_SPEC.md), [`TASK-SEA-R3-TEST-008` review finding](TASK_SPEC.md), [`TASK-SEA-R3-TEST-009` review handoff](TASK_SPEC.md), [`DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`EVIDENCE.md`](EVIDENCE.md), [`CHECKPOINT-26.md`](docs/checkpoints/CHECKPOINT-26.md), [`tests/snapshot-collector.spec.ts`](tests/snapshot-collector.spec.ts)
+
+## Goal and authorization boundary
+
+- **Goal:** strengthen the existing T04 100-vessel test so it verifies that all returned MMSIs are distinct and that the complete returned MMSI set equals the 100 submitted MMSIs.
+- **Task class:** narrowly bounded, test-only verification follow-up to the existing T04 acceptance criterion; it does not create a new Sprint 3 task, revise T04's product contract, or claim a product defect.
+- **Finding:** T08/T09 review records identify a coverage gap: the current test checks 100 results and excludes the 101st MMSI, but does not assert uniqueness of all returned IDs or equality with the submitted set. This contract addresses only that assertion gap.
+- **Approval gate:** this Draft records the proposed scope only. Do not edit tests or run the targeted check until the user has reviewed this contract and explicitly approved implementation and verification. Any later product change requires a separate contract and authorization.
+
+## Inputs and expected output
+
+- **Inputs:** the existing T04 criterion in `SPRINT-03.md`; the T04 test and helpers in `tests/snapshot-collector.spec.ts`; the T08/T09 finding and evidence limitations in `TASK_SPEC.md`, `EVIDENCE.md`, and `CHECKPOINT-26.md`; DEC-012.
+- **Expected output after separate approval:** update only the existing `stops at exactly 100 unique valid vessels` test to retain its existing 100-item boundary, successful `limit_reached` result, `count`, `truncated`, and 101st-MMSI exclusion checks, and add assertions that the 100 returned MMSIs are pairwise distinct and their complete set equals the submitted 100 MMSIs. Use the expected submitted MMSI list as the test input oracle; do not derive expected values from collector output. Reuse the existing `positionReport` builder and `createAttempt` fixture; add no helper, dependency, or unrelated case.
+- **Existing behavior and limits:** test-only assertions do not change the collector's behavior or prove broader product correctness. The collector implementation remains read-only. Preserve the historical T04 closeout and T08/T09 findings; do not retroactively rewrite them.
+- **Dependencies:** the existing `TASK-SEA-R3-TEST-004` contract and focused collector test are available; the T04/T08/T09 records remain authoritative for their historical scope and evidence limitations.
+
+## Constraints and allowed paths
+
+- **Contract preparation:** append this contract to `TASK_SPEC.md` only.
+- **Allowed implementation path after separate approval:** `tests/snapshot-collector.spec.ts` only. `server/snapshot-collector.ts`, other source, other tests, Sprint/decision records, configuration, package manifests, and dependencies are read-only/out of scope.
+- **Allowed records after observed verification and review:** factual task closeout in this section of `TASK_SPEC.md`; append-only `EVIDENCE.md` and `RUNBOOK.md`, only after their allowed paths are included in the explicitly approved execution boundary.
+- Do not modify `SPRINT-03.md`, DEC-012/013, existing T04/T08/T09 records, E-SEA-094, or CHECKPOINT-26. Do not create another checkpoint or label this work as a new T10.
+- Do not run the test before implementation diff review and explicit approval of that test diff. Do not run a full suite/build, inspect secrets or `.mcp.json`, make provider/network requests, stage, commit, push, deploy, or perform destructive Git operations.
+- Preserve all pre-existing staged, unstaged, and untracked changes.
+
+## Acceptance and verification
+
+- The test uses one 100-MMSI submitted list and asserts that returned MMSIs contain 100 distinct IDs and have exact set equality with that submitted list.
+- Existing assertions remain: success, `count: 100`, `truncated: true`, `reason: 'limit_reached'`, result length 100, and exclusion of the 101st MMSI; existing reader/timer cleanup assertions remain unchanged.
+- No product source or behavior, additional test scenario, unrelated assertion, dependency, or configuration changes.
+- **Targeted check after separate approval and reviewed test diff:** `npx playwright test --project=node tests/snapshot-collector.spec.ts`. This verifies the focused Node collector spec only; it does not establish full-suite/build results, live-provider behavior, complete Sprint 3 acceptance, or release readiness.
+- Record the exact command outcome and limitations only after it is actually observed. If the test fails, preserve the observed failure and stop; do not infer a product defect or edit product code under this task.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint 1:** present this Draft contract for human review. Only explicit approval authorizes the test implementation stage.
+- **Checkpoint 2:** after the test-only edit, inspect the exact diff and present it for human review. Run the targeted check only after explicit approval of that diff.
+- **Checkpoint 3:** after the command, present the diff and observed result for human `continue`, `revise`, or `HOLD`; append factual evidence/runbook records only within the separately approved paths.
+- **Stop if:** the existing T04 criterion cannot be verified by test-only assertions; the expected MMSI set is not independent of collector output; any product behavior/source, broader cleanup, contract change, extra path, or new Sprint/decision authorization appears necessary; or the targeted check fails. Preserve Unknowns and request a new bounded task rather than expanding scope.
+- **Recovery:** if the approved test diff is rejected, restore only this task's edit to `tests/snapshot-collector.spec.ts`. Preserve this contract and all historical evidence unless the human reviewer directs a factual amendment; never reset or alter unrelated/pre-existing paths. No destructive Git operation is authorized.
+
+## Observed implementation, verification, and handoff
+
+- **Authorization:** after review of this Draft contract, the user instructed `продовжуй` to authorize implementation. After review of the test-only diff, the user separately instructed `продовжуй` to authorize the targeted check. After review of the passing result and diff, the user instructed `продовжуй` to authorize factual closeout records.
+- **Implementation:** updated only the existing 100-vessel case in `tests/snapshot-collector.spec.ts`. One 100-MMSI expected list is used for submitted reports; the returned MMSIs are asserted to contain 100 distinct IDs and to equal the submitted list. Existing boundary, limit metadata, 101st-MMSI exclusion, and cleanup assertions remain.
+- **Targeted check:** `npx playwright test --project=node tests/snapshot-collector.spec.ts` — **PASS**, 15 tests passed (591 ms).
+- **Diff check:** `git diff --check -- tests/snapshot-collector.spec.ts` — **PASS**, no output. Post-run `git status --short` showed the authorized test path alongside the previously present changes; no additional generated path was observed.
+- **Observed outcome:** `Verified` for this bounded test-coverage follow-up. The passing focused spec demonstrates the assertions in this test under its existing Node test setup; it does not establish a broader product claim.
+- **Limitations:** no full suite, build, runtime, live-provider/network check, secret access, or deployment was performed. Sprint 3 remains subject to its other acceptance gates; this task does not declare Sprint 3 `DONE` or establish release readiness.
+- **Evidence / history:** `E-SEA-095` records the observed command and result; the dated RUNBOOK handoff records the bounded change and its limitations. Historical T04/T08/T09 records, E-SEA-094, and CHECKPOINT-26 remain unchanged.
+- **Recovery / next action:** if a later review rejects this test-only change, revert only the change in `tests/snapshot-collector.spec.ts`. Any additional test behavior, product change, or broader verification requires a separate bounded contract and approval.
+
+# TASK-SEA-R3-EVIDENCE-REFRESH-001 — Fresh targeted execution evidence for T02, T06, and T07
+
+- **Version:** `1.0.0`
+- **Status:** `Verified`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-30
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`TASK-SEA-R3-TEST-002` T02](TASK_SPEC.md), [`TASK-SEA-R3-TEST-006` T06](TASK_SPEC.md), [`TASK-SEA-R3-TEST-007` T07](TASK_SPEC.md), [`TASK-SEA-DOC-RETRO-001`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`E-SEA-094`](EVIDENCE.md), [`E-SEA-095`](EVIDENCE.md), [`DEC-012`](docs/decisions/DEC-012-r3-scope.md), [`DEC-013`](docs/decisions/DEC-013-r3-t06-demo-mode-test.md)
+
+## Goal and authorization boundary
+
+- **Goal:** obtain fresh, directly observed targeted-test outcomes for the existing T02, T06, and T07 acceptance checks whose historical command output was not retained.
+- **Current evidence:** E-SEA-094 records T02, T06, and T07 pass counts as task-record summaries, with execution `Unknown` to that retrospective absent raw output. T01 `--list` establishes selection only. E-SEA-095 records a fresh passing run of the current collector spec for the bounded T04 follow-up; it does not retroactively recreate historical outputs. Do not rewrite those records or claim Sprint 3 is `DONE`.
+- **Task class:** read-only targeted execution/evidence refresh for three already-approved acceptance checks. This is not a new Sprint task or T10, does not change test/product behavior, and does not resolve unrelated task-status discrepancies such as T09's current Draft status.
+- **Approval gate:** this Draft defines scope only. Do not run any command below until the user has reviewed this exact contract and explicitly authorized the three targeted checks. Approval of this contract-preparation step alone is not execution authorization.
+
+## Inputs and expected output
+
+- **Inputs:** R3-T02, T06, and T07 contracts and acceptance criteria; their existing tests; the T01–T08 evidence limitations in E-SEA-094; the T04 follow-up evidence in E-SEA-095; and the Sprint 3 blocking checks in `SPRINT-03.md`.
+- **Expected output after separate execution approval:** directly observed outcomes from these commands, recorded only after they run:
+  - T02: `npx playwright test --project=node tests/position-report-transformer.spec.ts`
+  - T06: `npx playwright test --project=chromium tests/demo-movement.spec.ts`
+  - T07: `npx playwright test --project=chromium tests/snapshot-interface.spec.ts --grep "R3 snapshot UI states"`
+- **Future closeout:** after all authorized commands finish and the user reviews the resulting facts, append one factual evidence record (next ID expected: `E-SEA-096`), one dated RUNBOOK handoff, and a factual closeout in this task section. Record each exact command and observed status/count from its actual output, environment/date, limitations, and any failure. The expected ID must be rechecked before writing. Do not describe the previous task summaries as raw output or alter historical closeouts.
+- **Dependencies:** the approved R3-T02, T06, and T07 contracts and their targeted tests are present; T06 uses the DEC-013-approved idle-demo setup and T07's command isolates its three R3 cases.
+
+## Constraints and allowed paths
+
+- **Contract preparation:** append this Draft to `TASK_SPEC.md` only.
+- **After separate execution approval:** run only the three commands above, in the listed order. No source/test/configuration edit is authorized. After observed outcomes and separate human review, the only documentation write paths proposed are this task's closeout in `TASK_SPEC.md`, append-only `EVIDENCE.md`, and append-only `RUNBOOK.md`.
+- `SPRINT-03.md`, prior task closeouts, E-SEA-094/095, E-SEA-093, CHECKPOINT-26, decision records, tests, application source, package files, and configuration remain read-only. Do not reconcile T09 status or modify any historical checkpoint in this task.
+- Do not install or download a browser. If a command cannot launch its configured browser, stop and report the observed blocker; request a separate contract/authorization before any installation or environment change. Do not run a full suite/build, contact the live provider, make other network requests, access secrets or `.mcp.json`, stage, commit, push, publish, deploy, or perform destructive Git operations.
+- Preserve existing modified/untracked paths, including `.idea/vcs.xml` and `.mcp.json`; do not inspect `.mcp.json`.
+
+## Acceptance and verification
+
+- Each command is invoked only after separate explicit authorization, and the observed result is traceable to that exact command and the corresponding task criterion.
+- T02 verifies only its approved transformer cases; T06 verifies only the DEC-013-approved demo movement and route-end case; T07 verifies only the three `R3 snapshot UI states` cases. Passing these checks alone does not establish all Sprint 3 gates, full-suite/build status, live-provider behavior, full MVP acceptance, or release readiness.
+- All outcomes, including command errors, failed assertions, and unavailable-browser blockers, are reported faithfully. Any non-pass is a stop; do not change code or broaden the run in response.
+- **Checks after future documentation closeout:** `git diff --check -- TASK_SPEC.md EVIDENCE.md RUNBOOK.md`; focused checks for unique evidence/task IDs, append-only placement, required fields, and claim-to-output traceability. No application tests/build beyond the three approved commands.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint 1:** present this Draft for human review; only explicit authorization of this exact contract permits the three runs.
+- **Checkpoint 2:** after the runs, compare the actual output with the individual T02/T06/T07 acceptance criteria and present the observed results before making any closeout/evidence/runbook write.
+- **Stop if:** any command needs an unapproved browser installation, external service, secret, source/test/configuration change, or additional path; if output differs from its task oracle; or if one command fails. Preserve the actual failure/blocker and Unknowns; do not infer a product defect or rerun an expanded suite.
+- **Recovery:** contract preparation changes only this appended Draft section. After separately approved runs, recovery is limited to correcting/removing only this task's own closeout/evidence/history amendments by a new reviewed factual correction; never rewrite existing T02/T06/T07 closeouts, E-SEA-094/095, E-SEA-093, or CHECKPOINT-26. No destructive Git operation is authorized.
+
+## Observed execution, verification, and handoff — 2026-09-30
+
+- **Authorization:** after reviewing the exact Draft contract, the user instructed `продовжуй`; this authorized the three listed targeted runs. After reviewing their observed results, the user separately instructed `продовжуй` to authorize this factual documentation closeout.
+- **T02:** `npx playwright test --project=node tests/position-report-transformer.spec.ts` — **PASS**, 10 tests passed (406 ms).
+- **T06:** `npx playwright test --project=chromium tests/demo-movement.spec.ts` — **PASS**, 1 test passed (809 ms test duration; 1.5 s total).
+- **T07:** `npx playwright test --project=chromium tests/snapshot-interface.spec.ts --grep "R3 snapshot UI states"` — **PASS**, 3 tests passed (1.5 s total).
+- **Observed worktree:** after the three runs, `git status --short --branch` showed only the pre-existing `.idea/vcs.xml` modification, this task's `TASK_SPEC.md` modification, and pre-existing untracked `.mcp.json`; no test-generated path was observed. `.mcp.json` was not accessed.
+- **Evidence / history:** `E-SEA-096` records these three directly observed results. The dated RUNBOOK entry records commands, counts, and limitations. E-SEA-094's statement about unavailable historical outputs remains an accurate account of those earlier runs; these are fresh 2026-09-30 observations, not reconstructed historical outputs.
+- **Limitations:** no full suite, build, provider/network check, secret access, browser installation, or deployment was performed. T01 `--list` remains selection-only. Passing these three targeted checks does not establish every Sprint 3 gate, Sprint `DONE`, full MVP acceptance, or release readiness. T09's Draft status discrepancy remains outside this task.
+- **Recovery / handoff:** preserve all historical records and the three observed outcomes. Any further verification, T09 status reconciliation, code change, or broader validation requires its own reviewed bounded contract and explicit authorization.
+
+# TASK-SEA-R3-T09-STATUS-RECONCILE-001 — Reconcile T09 review status
+
+- **Version:** `1.0.0`
+- **Status:** `Draft — prepared for human review; changing the T09 status requires separate explicit approval`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-30
+- **Related artifacts:** [`TASK-SEA-R3-TEST-009`](TASK_SPEC.md), [`SPRINT-03.md`](SPRINT-03.md), [`E-SEA-093`](EVIDENCE.md), [`E-SEA-096`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`CHECKPOINT-26.md`](docs/checkpoints/CHECKPOINT-26.md)
+
+## Goal and authorization boundary
+
+- **Goal:** propose a narrowly scoped correction to the current T09 task status so it reflects the completed bounded independent review and handoff recorded in E-SEA-093, the T09 RUNBOOK entry, and CHECKPOINT-26.
+- **Task class:** documentation status reconciliation only. It does not add or authorize a Sprint 3 implementation slice, revise product behavior, rerun tests, or change the Sprint exit decision.
+- **Current state:** T09 remains `Draft` until the owner reviews and explicitly approves this contract and the bounded status correction below. Approval to prepare this Draft, including approval of the preceding plan, is not approval to change the T09 status.
+- **Proposed T09 status after separate approval:** `Verified — bounded T09 review and handoff only`. This wording describes the review and handoff recorded in CHECKPOINT-26. It does not mean Sprint 3 is `DONE`, establish test execution beyond available evidence, or claim full MVP acceptance, release readiness, or deployment readiness.
+
+## Inputs and expected output
+
+- **Inputs:** E-SEA-093's independent review and evidence limits; the existing T09 RUNBOOK entry; CHECKPOINT-26's bounded verification and `CONTINUE WITH APPROVAL` disposition; E-SEA-096's handoff requiring a separate reconciliation contract; and the Sprint 3 task-closure and completion gates in `SPRINT-03.md`.
+- **Evidence limitation:** the raw authorization transcript is not retained in the repository. E-SEA-093, RUNBOOK, and CHECKPOINT-26 record the authorization and its limited scope. CHECKPOINT-26's `Verified` applies only to bounded T09 review and handoff. Its recorded Sprint disposition is `CONTINUE WITH APPROVAL`, not `DONE`. Do not turn historical evidence limits or later targeted test runs into broader T09 or Sprint claims.
+- **Expected output after separate explicit approval:** change only the `Status` metadata value under `TASK-SEA-R3-TEST-009` to the proposed wording above. Keep the T09 task body, historical evidence, RUNBOOK entry, CHECKPOINT-26, E-SEA-093, E-SEA-096, and `SPRINT-03.md` unchanged.
+
+## Constraints and allowed paths
+
+- **Contract preparation:** append this Draft contract to `TASK_SPEC.md` only.
+- **Allowed write path after separate approval:** the `Status` metadata value for `TASK-SEA-R3-TEST-009` in `TASK_SPEC.md` only. No other field, record, or file is authorized by this contract.
+- Do not edit E-SEA-093, E-SEA-096, the T09 RUNBOOK entry, CHECKPOINT-26, `SPRINT-03.md`, other task contracts, source, tests, configuration, or decision records. Do not mark Sprint 3 `DONE`.
+- Do not run tests/builds, access secrets or `.mcp.json`, make provider/network requests, stage, commit, push, publish, deploy, or perform destructive Git operations.
+- Preserve all pre-existing staged, unstaged, and untracked changes.
+
+## Acceptance and verification
+
+- The proposed status is traceable to the bounded T09 review and handoff recorded by E-SEA-093, RUNBOOK, and CHECKPOINT-26, and is consistent with CHECKPOINT-26's scope.
+- The status wording does not imply that Sprint 3 is complete or alter the historical `CONTINUE WITH APPROVAL` disposition. Unverified test execution, full-suite/build results, full MVP acceptance, and release/deployment readiness remain unclaimed.
+- Any later status edit occurs only after explicit owner approval of this contract and changes only the T09 `Status` metadata value.
+- **Targeted check after the separately approved status edit:** inspect the focused diff to confirm only the approved T09 status value changed; run `git diff --check -- TASK_SPEC.md`. No application tests or builds.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint 1:** present this Draft for human review. Do not change the T09 status until the owner explicitly approves this contract and the proposed wording.
+- **Checkpoint 2:** after any separately approved one-field status edit, present the focused diff and check result for human review. No commit or push is authorized.
+- **Stop if:** the owner does not approve the proposed wording; the cited records no longer support it; the wording could imply Sprint `DONE` or broader verification; or reconciliation would require changing another field, path, or historical claim. Preserve the current status and request a new bounded decision rather than expanding scope.
+- **Recovery:** during this contract-preparation stage, revise or remove only this appended Draft section after inspecting the diff. If a separately approved status edit is later rejected on review, recovery is limited to the T09 status field and requires human review; do not rewrite any historical evidence or unrelated work.
+
+# TASK-SEA-R3-GATE-RECONCILE-001 — Post-T04 Sprint 3 evidence and gate reconciliation
+
+- **Version:** `1.0.0`
+- **Status:** `Verified — bounded post-T04 evidence/gate reconciliation and documentation closeout only`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-09-30
+- **Related artifacts:** [`SPRINT-03.md`](SPRINT-03.md), [`TASK-SEA-R3-TEST-001` through `TASK-SEA-R3-TEST-009`](TASK_SPEC.md), [`TASK-SEA-R3-T04-COVERAGE-001`](TASK_SPEC.md), [`TASK-SEA-R3-EVIDENCE-REFRESH-001`](TASK_SPEC.md), [`E-SEA-093` through `E-SEA-096`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`CHECKPOINT-26.md`](docs/checkpoints/CHECKPOINT-26.md), [`DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`DEC-013-r3-t06-demo-mode-test.md`](docs/decisions/DEC-013-r3-t06-demo-mode-test.md)
+
+## Goal and authorization boundary
+
+- **Goal:** perform a bounded, read-only reconciliation of the T04 coverage finding recorded in E-SEA-093/CHECKPOINT-26 against the later test-only follow-up in E-SEA-095, then assess current Sprint 3 evidence and remaining exit gates against `SPRINT-03.md` without rewriting the historical review.
+- **Task class:** documentation/evidence review only. No implementation, test execution, task-status edit, or Sprint scope change is included.
+- **Current evidence boundary:** CHECKPOINT-26 records what was found at its reviewed input revision and remains a valid historical record. E-SEA-095 later records the narrowly scoped T04 assertion change and passing focused collector spec. The reconciliation must distinguish that later evidence from the earlier checkpoint and must not claim that the original finding was false at review time.
+- **Approval gate:** this Draft defines a proposed review and documentation scope only. Do not begin the review or write any closeout records until the user reviews this exact contract and explicitly authorizes it. Preparation of this Draft and prior `продовжуй` instructions for other slices do not authorize this task.
+
+## Inputs and expected output
+
+- **Inputs:** the T01–T09 task contracts/current statuses in `TASK_SPEC.md`; the Sprint 3 blocking criteria and exit gate in `SPRINT-03.md`; E-SEA-093–096; CHECKPOINT-26; the relevant dated RUNBOOK handoffs; DEC-012 and DEC-013; and the existing T04 follow-up test diff/record as documented by E-SEA-095.
+- **Review questions:** (1) whether E-SEA-095 directly addresses the specific uniqueness/full-submitted-MMSI-set gap found at the T04 review input; (2) which Sprint 3 blocking criteria are supported by current records and which remain Unknown or only supported by task-record summaries; and (3) what bounded current disposition is supported by those sources. Trace every conclusion to a source and preserve its evidence class.
+- **Evidence distinctions:** E-SEA-095 is direct evidence of the scoped T04 test change and focused command result, not proof of all T04 behavior or all Sprint gates. E-SEA-096 is fresh direct evidence for T02, T06, and T07 only. E-SEA-094 records T01 selection and T02–T07 task-record summaries; Git history does not prove command execution. Do not upgrade summaries to raw output, or infer full-suite/build, live-provider, full MVP, release, or deployment outcomes.
+- **Expected output after separate review approval:** a criterion-to-evidence matrix and a recommendation limited to `DONE`, `CONTINUE WITH APPROVAL`, or `HOLD` as supported by `SPRINT-03.md`. A `DONE` recommendation is permitted only if each blocking criterion has sufficient traceable evidence; otherwise state the exact remaining gate(s) and recommend continuation or hold. The human owner retains the exit decision.
+- **Expected records after a further explicit closeout approval:** append one current reconciliation record to `EVIDENCE.md` (next ID expected: `E-SEA-097`, recheck uniqueness before writing); append one dated RUNBOOK handoff; and create a new `docs/checkpoints/CHECKPOINT-27.md` to record the post-E-SEA-095 state and bounded disposition. Update this task section with observed review/closeout facts only. Do not amend CHECKPOINT-26.
+- **Dependencies:** E-SEA-093–096, CHECKPOINT-26, current task contracts, and Sprint 3 gate criteria are available for read-only comparison. If the sources conflict or a criterion cannot be assessed within these paths, preserve it as Unknown and stop rather than expanding scope.
+
+## Constraints and allowed paths
+
+- **Contract preparation:** append this Draft to `TASK_SPEC.md` only.
+- **After separate review approval:** read-only inspection of the inputs listed above; no source/test execution or changes.
+- **After a further explicit closeout approval:** write only this task's factual closeout in `TASK_SPEC.md`, one append-only record in `EVIDENCE.md`, one append-only entry in `RUNBOOK.md`, and new `docs/checkpoints/CHECKPOINT-27.md`.
+- `CHECKPOINT-26.md`, E-SEA-093–096, prior task closeouts, `SPRINT-03.md`, decision records, source, tests, configuration, and package files remain read-only. Do not change any T01–T09 status, reconcile T09 status, modify Sprint scope/status, or mark the Sprint `DONE` as a side effect of this documentation task.
+- Do not run tests, build, typecheck, application/runtime or provider/network commands; do not access secrets or `.mcp.json`; do not install dependencies; do not stage, commit, push, publish, deploy, or perform destructive Git operations.
+- Preserve all pre-existing modified, staged, and untracked paths, including `.idea/vcs.xml` and `.mcp.json`; do not inspect `.mcp.json`.
+
+## Acceptance and verification
+
+- The review explicitly states that CHECKPOINT-26's T04 finding was accurate for its recorded review input and that E-SEA-095 is later evidence addressing that exact test-coverage gap; neither record is rewritten.
+- Every Sprint 3 blocking criterion is mapped to a current source, evidence class, observed scope, and limitation. Task summaries, direct command outputs, static inspection, and Unknowns remain distinct.
+- Any recommendation follows the SPRINT-03 gate and does not imply more than the available records establish. Do not infer `DONE` solely from all task statuses reading `Verified` or from the T04 follow-up pass.
+- Closeout records, if separately approved, use unique IDs, correct metadata and local links, append-only placement, exact claim-to-source attribution, explicit limitations, recovery, and handoff. CHECKPOINT-27 does not replace or alter CHECKPOINT-26.
+- **Targeted checks after an approved documentation closeout:** `git diff --check -- TASK_SPEC.md EVIDENCE.md RUNBOOK.md docs/checkpoints/CHECKPOINT-27.md`; focused structural checks for unique IDs, required fields, local links, append-only placement, and source attribution. No application tests or builds.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint 1:** present this Draft for human review; no review or closeout write occurs without explicit approval of the exact scope.
+- **Checkpoint 2:** after the read-only review, present the evidence matrix, proposed disposition, limitations, and exact remaining gates. Do not write EVIDENCE/RUNBOOK/CHECKPOINT-27 until the user separately authorizes the factual closeout.
+- **Checkpoint 3:** after approved closeout writes and structural checks, present the focused diff and check results for human disposition. No commit or push is authorized.
+- **Stop if:** an alleged T04 conclusion needs a test rerun or code change; the evidence conflicts; any blocking criterion requires new execution; a current task/status edit or prior-record rewrite appears necessary; or the proposed disposition exceeds what the evidence supports. Record unresolved gates as Unknown and request a new bounded contract rather than expanding this task.
+- **Recovery:** during contract preparation, revise or remove only this appended Draft section after inspecting the diff. After separately approved review/closeout, correct only this task's own documentation by a reviewed factual amendment; preserve E-SEA-093–096, CHECKPOINT-26, all historical task records, and unrelated worktree changes. No destructive Git operation is authorized.
+
+## Observed closeout — 2026-09-30
+
+- **Authorization / disposition:** after the post-T04 evidence matrix and recommendation `DONE` within the approved Sprint 3 scope were presented, the user instructed `виконуй`. This authorized the bounded factual closeout and selected the recommended `DONE` disposition. `SPRINT-03.md` and Sprint scope/status metadata were not changed.
+- **Observed review:** CHECKPOINT-26's T04 coverage finding was accurate for its review input. E-SEA-095 is later evidence of the test-only correction: the 100-vessel case now asserts 100 distinct returned MMSIs and equality with the complete submitted set; the focused collector spec passed 15 tests. E-SEA-096 records fresh targeted passes for T02 (10), T06 (1), and T07 (3). Together with the current collector-spec pass for T03–T05 and T01's recorded project-selection checks, the sources support the SPRINT-03 blocking gates for the bounded test-only scope.
+- **Evidence limits:** T01 `--list` verifies project test selection, not test execution. E-SEA-094's historical summaries remain summaries; E-SEA-095/E-SEA-096 provide later direct command results only for the specified focused specs. No full-suite/build, live-provider, broad user-validation, full-MVP, release, or deployment outcome is established; these are not claimed as Sprint 3 results.
+- **Artifacts:** E-SEA-097, the append-only RUNBOOK handoff dated 2026-09-30, and CHECKPOINT-27 record this post-E-SEA-095 review and bounded disposition. CHECKPOINT-26 and E-SEA-093–096 remain unchanged. No T01–T09 task status was edited.
+- **Verification:** `git diff --check -- TASK_SPEC.md EVIDENCE.md RUNBOOK.md` passed with no output. `git diff --no-index --check /dev/null docs/checkpoints/CHECKPOINT-27.md` produced no whitespace diagnostics (the expected non-zero diff status reflects the new untracked file). Focused structural checks passed for IDs, required metadata, local links, append-only placement, and source attribution. No application tests/build or provider/network commands were run for this closeout.
+- **Worktree / recovery / handoff:** preserved pre-existing `.idea/vcs.xml` and untracked `.mcp.json`; `.mcp.json` was not accessed. No source/test/config change, staging, commit, push, deployment, or destructive Git operation occurred. Preserve prior evidence and checkpoint history; any broader verification or scope change requires its own reviewed bounded contract and explicit approval.
+
+# TASK-SEA-R3-README-001 — Sprint 3 retrospective and root README update
+
+- **Version:** `1.0.0`
+- **Status:** `Verified — bounded README draft and root update only; companion awaits human review`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-10-01
+- **Related artifacts:** [`SPEC.md`](SPEC.md), [`SPRINT-03.md`](SPRINT-03.md), [`SPRINT-03-README.md`](SPRINT-03-README.md), [`SPRINT-02-README.md`](SPRINT-02-README.md), [`DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`DEC-013-r3-t06-demo-mode-test.md`](docs/decisions/DEC-013-r3-t06-demo-mode-test.md), [`E-SEA-093`–`E-SEA-097`](EVIDENCE.md), [`CHECKPOINT-26.md`](docs/checkpoints/CHECKPOINT-26.md), [`CHECKPOINT-27.md`](docs/checkpoints/CHECKPOINT-27.md)
+
+## Goal and authorization boundary
+
+- **Goal:** create a factual descriptive retrospective companion `SPRINT-03-README.md` and update the root `README.md` to reflect the current bounded Sprint 3 outcome in CHECKPOINT-27/E-SEA-097.
+- **Task class:** documentation-only summary based on existing records. Do not re-run, recreate, or imply any historical command or user-validation result.
+- **Approval gate:** this Draft records proposed scope only. Do not create or edit either README until the user explicitly approves this exact task contract. Approval of a broader documentation plan is not approval of this task's final bounded paths/content.
+- **Canonical boundary:** `SPRINT-03.md` remains the approved canonical Sprint 3 plan with its existing `Ready` metadata. The retrospective companion and root README are summaries, not replacements for the plan, EVIDENCE, RUNBOOK, task contracts, or checkpoints.
+
+## Inputs and expected outputs
+
+- **Read-only inputs:** `SPRINT-03.md`, `SPEC.md`, DEC-012/DEC-013, T01–T09 task records, E-SEA-093–097, R3 RUNBOOK entries, CHECKPOINT-26/27, and the root README plus SPRINT-01/02 companion conventions.
+- **Output 1:** new root `SPRINT-03-README.md`, using the descriptive companion pattern in `SPRINT-02-README.md`. Summarize approved scope, bounded `DONE` outcome, work performed and methods, criterion/evidence map for T01–T09, T04 follow-up, DEC-013's T06 test-setup change, source links, evidence distinctions, limitations, and handoff. Set its document status to `Draft` pending human review; clearly label it as a retrospective companion, not canonical plan or evidence.
+- **Output 2:** update root `README.md`'s project-status table, R3 summary, evidence-boundary text, and document links to reflect `DONE` for the test-only Sprint 3 scope and link the new companion. Preserve clear separation from full MVP acceptance, live-provider validation, release/deployment readiness, and overall product acceptance. Clarify that `SPRINT-03.md` remains the plan record with `Ready` metadata.
+- **Evidence rules:** cite exact sources for reported work and observed focused checks. State that T01 `--list` confirms selection, not execution; E-SEA-095 directly records the collector spec (15 passed) and T04 set/uniqueness follow-up; E-SEA-096 directly records T02 (10), T06 (1), and T07 (3) focused passes. Do not present E-SEA-094 historical summaries as retained raw output or turn any check into full-suite/build/provider evidence.
+
+## Constraints and allowed paths
+
+- **Contract preparation:** append this Draft to `TASK_SPEC.md` only.
+- **After explicit approval of this contract:** write only the new `SPRINT-03-README.md` and root `README.md`; the final factual closeout may update only this task's own status/closeout section in `TASK_SPEC.md`.
+- `SPRINT-03.md`, `SPEC.md`, DEC-012/DEC-013, EVIDENCE, RUNBOOK, checkpoints, docs catalogs, source, tests, configuration, and package files are read-only for this task. Do not add evidence or delivery-history entries because this summary creates no new observations.
+- Preserve current uncommitted modifications and untracked paths, including `.idea/vcs.xml`, EVIDENCE.md, RUNBOOK.md, TASK_SPEC.md, `.mcp.json`, and CHECKPOINT-27; do not inspect `.mcp.json` or secrets.
+- No application tests, build, runtime, provider/network command, dependency install, stage, commit, push, publication, deployment, or destructive Git operation.
+
+## Acceptance and verification
+
+- `SPRINT-03-README.md` follows the existing R2 companion's descriptive role and metadata convention; claims are traceable to the approved Sprint scope and existing records; the bounded disposition and all limitations are explicit.
+- The R3 matrix differentiates task-record/static-review evidence, T01 test selection, and fresh direct focused results in E-SEA-095/E-SEA-096. The original CHECKPOINT-26 T04 finding is described as accurate at its input revision and later addressed by E-SEA-095; CHECKPOINT-26 is not rewritten.
+- Root README no longer describes R3 only as a future plan, but does not overstate `DONE` beyond the bounded test-only Sprint scope or change canonical plan status/scope.
+- All new/modified Markdown local links resolve; document/task IDs are unique; required metadata and evidence references exist; `git diff --check` passes on changed tracked Markdown, with a separate whitespace check for the new untracked file.
+- **Targeted verification:** Markdown/source attribution review, local-link and structure checks, and focused Git diff review only. No app tests or build.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint 1:** user reviews and explicitly approves this Draft contract. Do not write either README before approval.
+- **Checkpoint 2:** after approval and documentation edits, present the focused diff and observed structural/whitespace checks for human review. No commit or push is authorized.
+- **Stop if:** source records conflict, the wording requires asserting unverified behavior or test execution, the README update would imply broad MVP/release/deployment acceptance, or any path beyond the allowed README files/task closeout is needed.
+- **Recovery:** revise only the new companion, root README, or this task's own closeout section after inspection. Preserve all prior evidence/checkpoints, canonical sprint records, and unrelated worktree changes.
+
+## Observed closeout — 2026-10-01
+
+- **Authorization:** after reviewing this bounded contract, the user instructed `продовжуй`, authorizing the README changes within its allowed paths.
+- **Changes:** created `SPRINT-03-README.md` as a descriptive retrospective draft and updated root `README.md` to reflect `DONE` only for the bounded test-only Sprint 3 scope. The guide maps T01–T09 to their existing sources, distinguishes direct focused runs from test-selection/historical summaries, explains the T04 test-only follow-up and DEC-013 T06 setup change, and records limitations. `SPRINT-03.md`, EVIDENCE, RUNBOOK, decisions, and checkpoints were not changed by this task.
+- **Human review status:** the new companion retains `Draft — descriptive retrospective companion pending human review`; its content and the root README update are presented for review. The canonical plan retains its existing `Ready` metadata.
+- **Evidence limits:** the documentation summarizes existing records only. T01 `--list` proves selection rather than execution; no full-suite/build, live-provider, broad user-validation, full-MVP, release, or deployment result is inferred. No application tests/build were run for this task.
+- **Worktree boundary:** preserved prior closeout changes in EVIDENCE.md, RUNBOOK.md, TASK_SPEC.md, and CHECKPOINT-27.md, plus `.idea/vcs.xml` and untracked `.mcp.json`; `.mcp.json` and secrets were not accessed. No staging, commit, push, publication, deployment, or destructive Git operation occurred.
+
+# TASK-SEA-R3-PDF-001 — Sprint 3 retrospective PDF
+
+- **Version:** `1.0.0`
+- **Status:** `Verified — execution-focused Sprint 3 retrospective PDF created and checked`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-10-01
+- **Related artifacts:** [`SPRINT-03-README.md`](SPRINT-03-README.md), [`SPRINT-03.md`](SPRINT-03.md), [`CHECKPOINT-27`](docs/checkpoints/CHECKPOINT-27.md), [`E-SEA-095`–`E-SEA-097`](EVIDENCE.md)
+
+## Goal and authorization boundary
+
+- **Goal:** create a readable PDF derivative of the Sprint 3 retrospective companion for convenient review.
+- **Source status:** `SPRINT-03-README.md` remains `Draft — descriptive retrospective companion pending human review`; the PDF must carry this draft status and must not imply human acceptance of the source.
+- **Approval gate:** this contract records proposed scope only. Do not create the PDF until the user explicitly approves this exact contract. Approval of the broader plan or this Draft alone does not authorize PDF generation.
+- **Outcome boundary:** `DONE` means only the bounded test-only Sprint 3 scope recorded by CHECKPOINT-27. The PDF is a formatted derivative, not canonical plan, independent evidence, or a new scope/acceptance decision.
+
+## Inputs and expected output
+
+- **Read-only inputs:** `SPRINT-03-README.md` as the narrative source; `CHECKPOINT-27.md` and E-SEA-095–097 for factual cross-checks; existing local PDF tooling documentation if needed.
+- **Output:** new root `SPRINT-03-RETROSPECTIVE.pdf`; no overwrite if that path already exists.
+- Preserve the retrospective's T01–T09 account, bounded outcome, E-SEA-095/E-SEA-096 targeted results, T04 follow-up, DEC-013 T06 test setup, historic CHECKPOINT-26 context, evidence distinctions, limitations, references, and handoff. Keep it faithful to the approved source; do not add unsupported facts.
+
+## Constraints and allowed paths
+
+- **Contract preparation:** append this Draft contract to `TASK_SPEC.md` only.
+- **After explicit approval:** create only `SPRINT-03-RETROSPECTIVE.pdf` and update only this task's own status/closeout in `TASK_SPEC.md`.
+- `SPRINT-03-README.md`, `SPRINT-03.md`, `README.md`, EVIDENCE, RUNBOOK, decisions, checkpoints, source, tests, configuration, and package files are read-only for this task.
+- Use only an already available local PDF generation/inspection tool. Do not install dependencies, change project configuration, or use an online converter or external service. If no suitable local tool is available, stop and report the blocker.
+- Preserve pre-existing uncommitted changes and untracked files, including `.idea/vcs.xml`, `EVIDENCE.md`, `README.md`, `RUNBOOK.md`, `TASK_SPEC.md`, `.mcp.json`, `SPRINT-03-README.md`, and `docs/checkpoints/CHECKPOINT-27.md`; do not inspect `.mcp.json` or secrets.
+- Do not run application tests/build, provider/network commands, stage, commit, push, publish, deploy, or perform destructive Git operations.
+
+## Acceptance and verification
+
+- PDF opens/renders locally and is legible with sensible page breaks, typography, table layout, Draft status, source references, and non-claims.
+- Facts are consistent with CHECKPOINT-27 and E-SEA-095–097. T01 `--list` is described as test selection, not test execution; do not imply a full-suite/build result, live-provider/network validation, broad user validation, full MVP acceptance, release readiness, or deployment readiness.
+- Record the available generation/inspection tool and actual command/result. Inspect PDF text/metadata or equivalent where supported, and review the generated artifact visually if a local renderer is available. Do not claim a check that could not be performed.
+- Review focused changes and whitespace/integrity checks for the generated PDF and task closeout; exclude unrelated pre-existing changes.
+
+## Checkpoint, stop conditions, and recovery
+
+- **Checkpoint 1:** user reviews and explicitly approves this exact Draft task contract. No PDF generation before approval.
+- **Checkpoint 2:** after generation and factual/layout checks, present the PDF and actual command results for human review; no commit or push is authorized.
+- **Stop if:** the source/checkpoint conflict, PDF generation requires installing or changing dependencies, the target already exists, a claim requires going beyond approved evidence, or an allowed path is insufficient.
+- **Recovery:** preserve the Markdown source and existing worktree changes. If a newly generated PDF fails verification, regenerate only that task-authorized output after inspection or stop and report the blocker; do not rewrite source/evidence history.
+
+## Observed closeout — 2026-10-01
+
+- **Authorization:** after the Draft contract was presented, the user reiterated the direct request to create the Sprint 3 PDF and clarified that the emphasis must be on work performed and how it was carried out. This was treated as explicit authorization for the bounded PDF task.
+- **Output:** created root `SPRINT-03-RETROSPECTIVE.pdf`, a three-page landscape PDF. Its opening centers the T01–T09 work/evidence matrix; the execution method and targeted commands follow, then bounded disposition, limitations, sources, and document metadata. The PDF retains the source companion's Draft/pending-review status and bounded test-only outcome.
+- **Method:** used installed Playwright/Chromium and an inline local Markdown-to-HTML renderer; no dependencies were installed and no project configuration or source README was changed.
+- **Verification:** `file SPRINT-03-RETROSPECTIVE.pdf` identified PDF 1.4. Local PDFKit opened the final PDF and extracted 7,066 characters across 3 pages. Normalized-text checks passed for Draft status, T01–T09 markers, E-SEA-095 and targeted pass counts (10/15/1/3), T01 selection-vs-execution language, and full-suite/deployment limitations. All three final pages were rendered with macOS PDFKit/Quartz and visually reviewed; the final layout places the work/evidence matrix first and has no orphaned source note. `git diff --check -- TASK_SPEC.md` passed with no output.
+- **Verification notes:** the built-in PDF Read preview could not render because `pdftoppm` is unavailable; local PDFKit/Quartz provided page rendering. An earlier layout pass exposed a fixed-footer overlap and was regenerated. An initial text-marker check did not account for PDF line wrapping (`1` and `passed` split across lines); after whitespace normalization the check passed. No application tests, build, runtime, provider/network checks, or secret access were performed.
+- **Worktree boundary:** only this task's contract/status/closeout and the requested new PDF were changed. Temporary local page-preview images were removed. Existing changes to `.idea/vcs.xml`, EVIDENCE, README, RUNBOOK, `.mcp.json`, `SPRINT-03-README.md`, and CHECKPOINT-27 were preserved; `.mcp.json` was not accessed. No staging, commit, push, publication, deployment, or destructive Git operation occurred.
+- **Handoff:** PDF is available for human review. The source `SPRINT-03-README.md` remains `Draft`; this PDF does not promote it to accepted status or claim more than the bounded Sprint 3 test-only outcome.
