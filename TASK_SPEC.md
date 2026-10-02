@@ -4160,13 +4160,13 @@ On 2026-09-30, the user approved option 2 in DEC-013 and authorized the versione
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-10-01
-- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`SPRINT-03b-CHANGE-REQUEST.md`](SPRINT-03b-CHANGE-REQUEST.md), [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), [`docs/decisions/README.md`](docs/decisions/README.md), [`docs/sprints/README.md`](docs/sprints/README.md), [`docs/checkpoints/CHECKPOINT-06.md`](docs/checkpoints/CHECKPOINT-06.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md)
+- **Related artifacts:** [`CLAUDE.md`](CLAUDE.md), [`SPEC.md`](SPEC.md), [`SPRINT-03b-CHANGE-REQUEST.md`](SPRINT-03b-CHANGE-REQUEST.md), [`SPRINT-03.md`](SPRINT-03.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`docs/decisions/DEC-014-r4-scope.md`](docs/decisions/DEC-014-r4-scope.md), [`docs/decisions/DEC-004-checkpoint-convention.md`](docs/decisions/DEC-004-checkpoint-convention.md), [`docs/decisions/README.md`](docs/decisions/README.md), [`docs/sprints/README.md`](docs/sprints/README.md), [`docs/checkpoints/CHECKPOINT-06.md`](docs/checkpoints/CHECKPOINT-06.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md)
 
 ## Goal and authorization boundary
 
 - **Goal:** analyze the supplied R4 change request and decompose it into bounded B-18, B-19, B-20 and B-21 contracts with explicit goals, requirements, non-goals, acceptance, verification, stop/recovery and human review checkpoints.
 - **Outcome:** a proposed plan in this canonical task file. The entries below are Draft contracts; they do not make R4 `Ready`, authorize code/test/README implementation, authorize provider access, authorize access to secret values, or authorize archive publication, commit, push or deployment.
-- **Governance conflict:** DEC-012 authorizes only the bounded test-only R3/US-09 scope. The new R4 customer request does not silently amend DEC-012. Obtain explicit approval of R4 scope and record a new versioned material decision before any B-18—B-21 implementation.
+- **Governance boundary:** DEC-012 authorizes only the bounded test-only R3/US-09 scope and remains unchanged. The user approved the R4 product-scope change on 2026-10-01; DEC-014 records that approval. This resolves the R4 scope-decision prerequisite but does not approve this decomposition or any B-18—B-21 implementation/acceptance task.
 - **Worktree boundary:** preserve all pre-existing changes. At task preparation the known unrelated paths are `.idea/vcs.xml`, `SPRINT-02.md`, staged `SPRINT-03b-CHANGE-REQUEST.md`, untracked `.mcp.json`, and `SPRINT-03-RETROSPECTIVE.pdf`. Do not inspect `.mcp.json` or secrets and do not stage/commit/push these paths.
 
 ## R4 outcome and non-goals
@@ -4179,7 +4179,7 @@ On 2026-09-30, the user approved option 2 in DEC-013 and authorized the versione
 
 | Stage | Contract | Goal / output | Entry gate | Exit / human checkpoint |
 |---|---|---|---|---|
-| G0 | Governance and task authorization | Approve bounded R4 outcome, versioned decision and individual task boundaries; resolve prerequisites | This decomposition reviewed; product owner explicitly approves the R4 scope | Scope decision and task contracts have unique IDs, allowed paths and observable acceptance. No code before this gate. |
+| G0 | Governance and task authorization | Reconcile the approved R4 outcome, versioned decision and individual task boundaries; resolve prerequisites | R4 product scope and DEC-014 are approved; this decomposition still requires human review | Scope decision and task contracts have unique IDs, allowed paths and observable acceptance. Each technical task still requires its own explicit approval before execution. |
 | B-18 | `TASK-SEA-R4-B18-001` | Implement only the R4 UI state/copy contract | G0 approved and B-18 contract separately approved | Targeted UI verification and diff review; no B-19 work until human disposition. |
 | B-19 | `TASK-SEA-R4-B19-001` | Browser tests for new state contract | B-18 accepted; B-19 contract separately approved | All required cases pass; only explicitly changed legacy state assertions differ; movement/selection regressions stay unchanged. |
 | B-20 | `TASK-SEA-R4-B20-001` | Final automated/manual/live-source and secret-boundary acceptance | B-19 accepted; exact checks and permitted manual actions approved | Report automated, manual and provider outcomes separately; source unavailability is a valid recorded outcome, not a pass for live success. |
@@ -4189,13 +4189,14 @@ On 2026-09-30, the user approved option 2 in DEC-013 and authorized the versione
 ## Decision and documentation register
 
 - This task is the planning source for proposed R4 work. Record each accepted task-local decision here in the relevant task’s **Decision log** table with the decision, approver, date, rationale and affected contract/version. A proposal, assumption or chat statement is not an accepted decision.
+- **Accepted product-scope decision:** on 2026-10-01, the user approved the R4 B-18—B-21 product scope; `DEC-014-r4-scope.md` records the decision. This satisfies scope approval only. This decomposition remains `Draft`, and each downstream task requires its own reviewed contract and explicit approval.
 - A material product/scope/stack/architecture decision must also have its own versioned `docs/decisions/DEC-<number>-<name>.md` record, with options, rationale, consequences, revisit trigger and links. Do not edit DEC-012 to rewrite R3 history.
 - Append factual verification only after it occurs: `EVIDENCE.md` for observed facts and `RUNBOOK.md` for delivery/handoff. Plans, intended commands and unverified outcomes do not belong in either log.
 - After every completed stage, stop for human review and `continue` / `revise` / `HOLD`. At that checkpoint, remind the owner to commit and push the reviewed stage. Do not execute either action without separate explicit authorization; isolate the stage’s paths from all pre-existing changes.
 
 ## Shared constraints, recovery and current blockers
 
-- Every downstream contract is Draft until reviewed and explicitly approved on its own. Approval of this decomposition does not approve the R4 product scope or implementation.
+- R4 product scope is approved by `DEC-014-r4-scope.md`; that approval does not promote this Draft decomposition or any downstream task. Every downstream contract remains `Draft` until reviewed and explicitly approved on its own. Approval of this decomposition would still not authorize implementation beyond the exact task contract approved.
 - Exact allowed paths are listed per downstream contract and must be rechecked against the current tree immediately before that task. Do not expand them to accommodate incidental cleanup.
 - If an acceptance criterion, environment, source, ID, secret check or path is unclear, stop and record `Unknown` / `Blocked` rather than infer a result.
 - The second laptop’s OS is unspecified. B-21 must either receive the OS/prerequisites from the owner or be explicitly approved as cross-platform instructions; no OS-specific claim is made by this plan.
@@ -4208,13 +4209,13 @@ On 2026-09-30, the user approved option 2 in DEC-013 and authorized the versione
 - B-18—B-21 each have a separate goal, requirements, non-goals, exact proposed paths, dependencies, acceptance criteria, targeted checks, stop conditions, recovery path, decision log and handoff.
 - Every criterion is traceable to the change request; R3/R2 behavior not superseded by the request remains a regression constraint.
 - The plan distinguishes requested outcome, proposed task contract, accepted decision, observed evidence and unresolved blocker.
-- IDs are unique; cross-links resolve; no historical record is overwritten; all new entries remain `Draft` pending the relevant approval.
+- IDs are unique; cross-links resolve; no historical record is overwritten; B-18 may become `Verified` only after its bounded checks and human disposition are recorded, while B-19—B-21 remain `Draft` pending their individual approvals.
 - Run `git diff --check -- TASK_SPEC.md`; run targeted structural checks for contract fields, unique IDs and local links; review only the appended diff. Do not run product tests/build, use a live provider, inspect secrets, archive, stage, commit or push as part of this planning task.
 
 ## Checkpoints and exit
 
 1. Human reviews the decomposition and any unresolved scope/prerequisite decisions.
-2. G0 begins only after explicit approval of the R4 product/scope change and its governance record.
+2. The R4 product/scope approval and governance record are established by DEC-014; G0's remaining checkpoint is human review of this decomposition. That review does not waive any downstream task-specific approval.
 3. Each implementation stage requires separate contract approval, its own targeted checks, observed evidence and human diff disposition.
 4. After each stage, present the actual result and remind the owner to commit and push; pause for instruction. No commit/push is implied by the reminder.
 
@@ -4223,7 +4224,7 @@ On 2026-09-30, the user approved option 2 in DEC-013 and authorized the versione
 # TASK-SEA-R4-B18-001 — UI state and source/attempt status
 
 - **Version:** `1.0.0`
-- **Status:** `Draft — blocked pending G0 R4 scope approval and separate task approval`
+- **Status:** `Verified — implementation and bounded B-18 checks accepted by the user on 2026-10-01; see E-SEA-098`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-10-01
@@ -4264,7 +4265,7 @@ No changes to API/provider/collector semantics, data merge/history/persistence, 
 
 ## Verification, stop and recovery
 
-- **Targeted verification (to be finalized in the approved execution contract):** focused Playwright UI checks for the changed state transitions; `npx tsc --noEmit`; static diff review for path/scope. B-19 owns the full 12-case browser matrix; this contract does not claim any run.
+- **Targeted verification:** use a one-off local Playwright browser check with mocked `GET /api/snapshot` responses (loading, empty, structured error, no-body, and nonempty success); block external OSM tile requests; do not add or edit repository test files. Run the unchanged `tests/demo-movement.spec.ts` and `tests/vessel-selection.spec.ts` as relevant regressions, plus `npx tsc --noEmit` and scoped diff review. Existing `tests/snapshot-interface.spec.ts` assertions that require the superseded R2 loading/empty/error behavior are not B-18 pass gates; B-19 owns authorized test changes and the full 12-case matrix. No check may call the live provider.
 - Stop if server response shape cannot support the requested timestamp/message, preserving the behavior requires an out-of-scope path, or an unchanged accepted behavior conflicts with the request. Record the conflict and ask for a new contract.
 - Recovery: revert only B-18-authorized edits after human decision; preserve all pre-existing worktree changes. Do not reset/clean the repository.
 
@@ -4272,16 +4273,24 @@ No changes to API/provider/collector semantics, data merge/history/persistence, 
 
 | Decision | State | Approver/date | Rationale / record |
 |---|---|---|---|
-| Separate displayed-set/source state from latest-attempt state | Proposed, not approved | Unknown | Requested in change request; G0 and B-18 approval pending |
+| Separate displayed-set/source state from latest-attempt state | Approved product contract by DEC-014; B-18 implementation separately approved | User / 2026-10-01 | User explicitly approved the exact B-18 contract on 2026-10-01; B-19/B-20/B-21 gates remain separate |
 
-At completion, present exact diff, checks and limits; request human `continue` / `revise` / `HOLD`, and remind the owner to commit and push this reviewed stage. Do not perform Git publication without explicit authorization.
+## Observed execution and disposition — 2026-10-02
+
+- **Authorization / disposition:** the user approved the exact B-18 contract on 2026-10-01 and, after reviewing the implementation and reported checks, instructed `continue B-18, далі R4 task breakdown`. This accepts the bounded B-18 result only; it does not approve B-19 execution or Git publication.
+- **Changed product path:** `app/map-shell.tsx` only. No repository test, API/provider, CSS, dependency, or README path was changed for B-18.
+- **Observed targeted checks:** `npx tsc --noEmit` — PASS (no output); `npx playwright test tests/demo-movement.spec.ts tests/vessel-selection.spec.ts --project=chromium` — PASS (2 passed); one-off Chromium browser check with mocked `GET /api/snapshot` — PASS for loading, demo movement, empty/error/no-body retention, nonempty replacement, response-body time/count, and selection update/clear, with external OSM requests blocked; `git diff --check -- app/map-shell.tsx TASK_SPEC.md` — PASS (no output); scoped diff review completed.
+- **Out-of-contract operations / limitations:** IDE lint returned no problems and IDE build returned `isSuccess=true`, `problems=[]`; both were run outside the B-18 verification list and are not B-18 acceptance gates. `npm run dev -- --hostname 127.0.0.1` exited 1; the existing local endpoint on port 3000 responded, and the launch failure's cause was not established. No B-19 browser suite, full suite, provider/live-network, secret, archive, deployment, or README check was performed.
+- **Evidence:** `E-SEA-098` records the observed B-18 checks and their limits. No checkpoint was created; no commit or push was performed.
+
+At completion, present the exact diff, checks and limits; request human `continue` / `revise` / `HOLD`, and remind the owner to commit and push this reviewed stage. Do not perform Git publication without explicit authorization.
 
 ---
 
 # TASK-SEA-R4-B19-001 — R4 browser contract tests
 
 - **Version:** `1.0.0`
-- **Status:** `Draft — blocked pending G0, accepted B-18 and separate task approval`
+- **Status:** `Verified — B-19 acceptance cases and protected movement/selection regressions pass; diff reviewed and closeout directed by the user (2026-10-02)`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-10-01
@@ -4324,7 +4333,38 @@ At completion, present exact diff, checks and limits; request human `continue` /
 
 | Decision | State | Approver/date | Rationale / record |
 |---|---|---|---|
-| Use mocked response-body timestamps and controlled page clock | Proposed, not approved | Unknown | Specified in change request; B-19 approval pending |
+| Use mocked response-body timestamps and controlled page clock | Approved | User (explicit approval recorded in conversation; exact approval date not recorded) | Included in the explicitly approved B-19 contract |
+
+## Observed B-19 execution and blocker — 2026-10-02
+
+- **Targeted command:** `npx playwright test tests/snapshot-interface.spec.ts` — **FAIL**; 22 passed, 1 failed.
+- **Failure:** `adds all demo vessels only when a successful snapshot contains fewer than three AIS vessels` expected `[data-source="aisstream"]` and `суден: 0` for an initial empty response. The locator was absent because the empty attempt correctly retains the initial demo source. This remaining legacy assertion needs reconciliation within the approved empty-result contract.
+- **Stop boundary:** stopped immediately as required by the approved execution plan. The separately approved regression command `npx playwright test tests/demo-movement.spec.ts tests/vessel-selection.spec.ts` was not run. No movement/selection regression pass is claimed; those two files were not edited.
+- **Changed legacy cases and reason:** loading/pending cases now expect retained vessels/source until replacement; empty and structured-error cases now expect displayed-set retention plus body timestamp in attempt status; malformed/no-body cases now expect retained data and the fixed no-response message; the view-reset case now checks pan/zoom preservation and the persistent reload note; stationary snapshot coverage now uses `page.clock` instead of `waitForTimeout` and checks the success attempt row. The zero-vessel branch in `adds all demo vessels only when a successful snapshot contains fewer than three AIS vessels` remains unresolved due the stop condition.
+- **New coverage exercised in the run:** successful replacement/freezing, failure movement, selection update/clear, plus the existing truncated and null-motion assertions. These passing cases do not override the failed overall command.
+- **Not run:** the regression command, full suite, build/typecheck, provider/live-network, secret, archive, deployment, or README checks. No evidence ID was created; no commit/push occurred.
+
+## Continuation authorization — 2026-10-02
+
+- **Disposition:** the user instructed `continue B-19 з виправленням нульового випадку` after the recorded targeted-test failure.
+- **Bounded correction:** update only the zero-vessel branch of `adds all demo vessels only when a successful snapshot contains fewer than three AIS vessels` to assert that an initial empty attempt retains the demo source and vessels while reporting its attempt status. Preserve positive-count source/count assertions.
+- **Verification resumes:** rerun `npx playwright test tests/snapshot-interface.spec.ts`; if it passes, run the separately approved `npx playwright test tests/demo-movement.spec.ts tests/vessel-selection.spec.ts`. No other test/build/typecheck/provider checks are authorized.
+
+## Resumed verification — 2026-10-02
+
+- **Correction:** the zero-vessel iteration of `adds all demo vessels only when a successful snapshot contains fewer than three AIS vessels` now asserts that the initial empty attempt retains the demo source/vessels and reports the literal attempt time; positive vessel counts retain their AIS source/count assertions.
+- **Targeted command:** `npx playwright test tests/snapshot-interface.spec.ts` — PASS on rerun, 23 passed. The earlier 22/23 failure is retained above as execution history.
+- **Regression command:** `npx playwright test tests/demo-movement.spec.ts tests/vessel-selection.spec.ts` — PASS, 2 passed.
+- **Changed legacy test names and reasons:** `locks a repeated request while retaining the displayed snapshot` (pending request retains existing markers/source); `retains a selected demo card while loading and clears it after replacement` (selection persists until valid replacement); `renders snapshot markers and keeps them stationary with exact status` (deterministic clock freeze and success attempt row); `retains the displayed snapshot after an empty collection attempt` (empty attempt retains prior source/set and reports its own time); generated tests `retains demo vessels after the no_api_key API error`, `retains demo vessels after the connect_failed API error`, `retains demo vessels after the provider_error API error`, `retains demo vessels after the disconnected API error`, and `retains demo vessels after the internal API error` (structured errors retain demo/source and report attemptedAt); `retains the previous snapshot when a later request fails` (error after success retains prior data/card); `adds all demo vessels only when a successful snapshot contains fewer than three AIS vessels` (zero response retains demo while positive counts retain sparse-overlay behavior); `retains demo vessels after invalid JSON` and `retains demo vessels after invalid snapshot shape` (malformed responses retain display and use fixed fallback); `retains the snapshot and shows the exact no-body fallback` (no-body response retains the snapshot and reports no timestamp); `resets the view on the first non-empty success only and returns to demo on reload` (assert panned center/zoom preservation and persistent reload note); R3 tests `retains demo vessels after a fixed error response` and `retains demo vessels after an empty snapshot response` (align superseded expectations with current contract). New tests cover demo motion stopping/continuing and selected-vessel update/clear on replacement.
+- **Scope/evidence:** only `tests/snapshot-interface.spec.ts` and this B-19 task record were edited for B-19. The protected movement/selection files remain unchanged. No new EVIDENCE ID; no commit or push. Status at that checkpoint was Active pending human diff review and disposition.
+
+## Final review and B-19 closeout — 2026-10-02
+
+- **Human disposition:** the user instructed `переглянь diff і закрий B-19`; the reviewed bounded change is accepted for B-19 closeout.
+- **Review result:** changes stay within the approved test and B-19 task-record paths; no product/API/config changes or protected regression edits. The review found that the later structured-error test used the same timestamp as its displayed snapshot, which did not distinguish `attemptedAt` from the source timestamp. The error fixture/assertion now use `NEXT_COLLECTED_AT`, and the targeted suite was rerun.
+- **Final verification:** `npx playwright test tests/snapshot-interface.spec.ts` — PASS (23 passed); `npx playwright test tests/demo-movement.spec.ts tests/vessel-selection.spec.ts` — PASS (2 passed); `git diff --check -- tests/snapshot-interface.spec.ts TASK_SPEC.md` — PASS (no output); protected regression specs have no staged or unstaged diff.
+- **Acceptance:** all 12 B-19 cases are covered by the passing snapshot suite; both protected regression tests pass. No live/provider, build, typecheck, secret, archive, deployment, or full-suite checks are claimed.
+- **Handoff:** B-19 is `Verified`; B-20 still requires its own exact task approval and any live/secret/archive actions remain independently gated. No Evidence ID, commit, or push was created/performed.
 
 At completion, present test names, commands and observed results, request human disposition, and remind the owner to commit and push this reviewed stage. No commit/push without separate explicit authorization.
 
@@ -4333,7 +4373,7 @@ At completion, present test names, commands and observed results, request human 
 # TASK-SEA-R4-B20-001 — Final acceptance and security-boundary checks
 
 - **Version:** `1.0.0`
-- **Status:** `Draft — blocked pending accepted B-18/B-19 and separate task approval`
+- **Status:** `Active — automated, secret-boundary, and owner-reported manual results recorded; archive check blocked; human disposition pending`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-10-01
@@ -4360,8 +4400,14 @@ At completion, present test names, commands and observed results, request human 
 
 | Decision | State | Approver/date | Rationale / record |
 |---|---|---|---|
-| A source-unavailable outcome is reportable without claiming live success | Proposed, not approved | Unknown | Explicit R4 acceptance alternative; B-20 approval pending |
-| Secret value must not be emitted or recorded | Proposed, not approved | Unknown | Project credential boundary; safe check method remains to be approved |
+| A source-unavailable outcome is reportable without claiming live success | Approved; one manually initiated live attempt only, no retries | User authorization / 2026-10-02 | Explicit R4 acceptance alternative; record only response time and vessel count or unavailability |
+| Secret value must not be emitted or recorded | Approved; bounded in-memory comparison only, output match/no-match | User authorization / 2026-10-02 | Do not print or store the value; approved targets are worktree files and `.next/static` |
+
+## Execution checkpoint — 2026-10-02
+
+- **Authorization:** the user approved this exact B-20 contract, authorized exactly one manually initiated live-source request with no retries, and approved a bounded in-memory comparison of the relevant `.env.local` `AISSTREAM_API_KEY` value against worktree files and `.next/static`; the value must never be printed or stored.
+- **Observed gates:** `npx playwright test` — PASS (56 passed); `npx tsc --noEmit` — PASS (no output); `npx next build` — PASS (Next.js 16.3.5). `.env.local` is not tracked; the bounded comparison reported no match in the scanned worktree or `.next/static`. See `E-SEA-099`.
+- **Owner-reported manual outcomes:** after the requested checks, the user reported that they completed them successfully. The live UI result was `AISStream · знімок за 15 с · отримано 13:03:44 UTC · суден: 4 · вибірка неповна`; this satisfies the single-attempt live-result record as a user-reported observation, not an independent network trace. The user also reports that reloading the page shows demo data. The no-key check is reported complete and correct, but the exact message and retained-set/motion details were not separately transcribed. Archive inspection remains blocked pending its format, target, and permission. B-20 remains Active pending human disposition; no broader acceptance is claimed.
 
 At completion, present each gate as PASS/FAIL/BLOCKED/UNKNOWN with evidence links; request human disposition and remind the owner to commit and push the reviewed stage. No commit/push without separate explicit authorization.
 
@@ -4407,7 +4453,7 @@ At completion, present the focused README diff and command results, request huma
 # TASK-SEA-R4-GOV-001 — R4 governance contract synchronization
 
 - **Version:** `1.0.0`
-- **Status:** `Active — governance outputs prepared; awaiting human diff review`
+- **Status:** `Verified — governance synchronization committed and pushed; downstream R4 tasks remain gated`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-10-01
@@ -4464,4 +4510,20 @@ At completion, present the focused README diff and command results, request huma
 - **Observed checks:** `git diff --check -- PROJECT_BRIEF.md SPEC.md TASK_SPEC.md docs/decisions/README.md` passed with no output. A read-only local-link/EOF check over the five governance files reported `checked_files=5; broken_local_links=[]`. A targeted search found one DEC-014 decision heading.
 - **Not run:** product build/tests, runtime/manual acceptance, provider/network or secret checks, README command checks, checkpoint/archive work.
 - **Evidence IDs:** none; no runtime or acceptance evidence was generated.
-- **Current checkpoint:** awaiting the user's diff review and `continue` / `revise` / `HOLD`; no commit/push performed. Preserve unrelated pre-existing worktree changes.
+- **Current checkpoint at initial closeout:** awaiting the user's diff review and `continue` / `revise` / `HOLD`; no commit/push performed. Preserve unrelated pre-existing worktree changes.
+
+## Follow-up checkpoint — 2026-10-01
+
+- **Observed Git outcome:** commit `1c2f1d9b3484829bda97ed289b87ef11ecc5d52e` (`docs(r4): sync approved governance scope`) contains only the five G1 governance paths and was pushed to `origin/sprint3b`; `HEAD` and `origin/sprint3b` were confirmed equal before this follow-up. Unrelated staged, modified, and untracked paths remained untouched.
+- **Human disposition:** the user instructed `продовжуй R4 task breakdown`; this proceeds to the next documentation/planning slice and does not approve B-18—B-21 execution or claim a separate technical diff review.
+- **Handoff:** reconcile the R4 task breakdown to DEC-014 in this file only; preserve individual downstream task gates and unresolved sprint, laptop-platform, and archive inputs.
+
+## R4 task-breakdown reconciliation — 2026-10-02
+
+- **Basis:** DEC-014 approves the R4 product contract only; it does not authorize downstream task execution. This reconciliation updates the bounded task register after the accepted B-18 closeout and does not alter DEC-014 or historical R3 records.
+- **B-18:** `TASK-SEA-R4-B18-001` is `Verified` for its scoped UI contract and checks, with factual details in `E-SEA-098`.
+- **B-19:** `TASK-SEA-R4-B19-001` remains `Draft`. B-18 acceptance now satisfies its prerequisite, but the exact B-19 contract still requires separate explicit approval before any test edit or execution.
+- **B-20:** remains separately gated on accepted B-19 and its own exact approval. Live-source execution needs explicit authorization; a safe secret-comparison method and permitted archive target remain unresolved/blocked.
+- **B-21:** remains separately gated on accepted B-20, its own exact approval, and an owner decision on target OS or explicit cross-platform scope.
+- **Unresolved:** R4 sprint assignment remains `Unknown`; archive format, publication target and recovery owner remain `Waiting for input`.
+- **Handoff:** next action is review of the existing B-19 Draft for explicit task approval only. No B-19 implementation, provider/secret/archive operation, checkpoint, commit, or push is authorized by this reconciliation.
