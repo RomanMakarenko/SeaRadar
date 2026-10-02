@@ -1235,3 +1235,28 @@
 - **Timestamp / environment:** 2026-10-02; user-operated local application; displayed live result time `13:03:44 UTC`.
 - **Remaining gates / recovery:** archive inspection remains `BLOCKED` pending its format, target, and permission. Keep B-20 Active pending human disposition; do not repeat the live request. Preserve this append-only record and prior evidence; no key was received or recorded.
 - **Handoff:** human reviewer to inspect the B-20 documentation diff and choose `continue`, `revise`, or `HOLD`. The user indicated no additional live display data is available beyond the provided line.
+
+### E-SEA-103 — Owner confirmation of Node.js 24 project runtime and test-stage acceptance
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R4-B21-001`; `TASK-SEA-R4-GOV-002`; `DEC-016-R4-NODE24-RUNTIME`.
+- **Claim under verification:** the user confirms Node.js 24 was the project runtime and accepts the development/testing stages performed on that runtime as passed.
+- **Source:** user confirmation in this session on 2026-10-02: `протягом всього проекта стояла нода 24 і етапи з тестуванням і розробки були всі на ньому, тому вважаємо пройденими`.
+- **Expected:** preserve the user's runtime and acceptance statement as owner-reported evidence, without presenting it as independently observed command output or rewriting prior evidence.
+- **Observed:** the user confirms that Node.js 24 was used throughout the project and asks that its development/testing stages be considered passed. This is an owner-reported project-level confirmation; no new runtime or test command was executed to create this entry.
+- **Status:** `PASS` for the user's reported project-level runtime/test-stage acceptance; `UNKNOWN` for command-by-command mapping and independent verification from this report alone.
+- **Reviewer / owner:** user-reported confirmation; delivery/technical owner records the statement.
+- **Limitations / reconciliation:** historical records including E-SEA-025 and E-SEA-026 explicitly report Node.js 22 for particular earlier checks. They remain unchanged as contemporaneous records; this entry records the user's later correction/confirmation without silently rewriting those entries. This report does not supply exact outputs for every B-21 README command. In the current B-21 continuation, `npm install` and `npx playwright test` were denied before execution; `npm run dev`, `npx tsc --noEmit`, and `npx next build` were not run. Those command-level outcomes remain distinct from the user's project-level acceptance.
+- **Timestamp / environment:** 2026-10-02; user-reported project history; exact dates, Node patch versions, and per-command runtime mapping were not supplied by this confirmation.
+- **Recovery / handoff:** retain the historical evidence and this append-only owner report. Do not repeat denied commands through an alternate route or infer missing command output; resolve any requested historical correction through a separately reviewed, dated amendment.
+
+### E-SEA-104 — B-21 owner-accepted closure
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R4-B21-001`; `E-SEA-099`; `E-SEA-103`; `DEC-016-R4-NODE24-RUNTIME`; `DEC-015-R4-ARCHIVE-GATE-DEFERRAL`.
+- **Claim under verification:** B-21 is accepted and closed by the owner's explicit disposition based on the project-level Node.js 24 confirmation, while command-specific and second-laptop limitations remain disclosed.
+- **Source / authorization:** the user instructed on 2026-10-02: `Переглянь diff і закрий B-21 за owner-підтвердженням`. Reviewed inputs were the current B-21 README diff, the B-21 v1.1 contract/approval, E-SEA-103, and historical Node-runtime evidence E-SEA-025/E-SEA-026.
+- **Expected:** record owner acceptance as the B-21 closure basis; keep exact historical/current command outcomes distinct; make no claim of independent per-command or second-laptop validation.
+- **Observed:** the reviewed README now identifies B-21 as owner-accepted, links E-SEA-103, and states that the project-level confirmation does not represent fresh command-by-command verification. `TASK_SPEC.md` records B-21 as closed by owner acceptance with the same limits. The user accepts project development/testing stages as passed on Node.js 24.
+- **Status:** `PASS` for owner-authorized B-21 closure and bounded documentation alignment; `UNKNOWN` for fresh command-by-command verification in this B-21 continuation and second-laptop setup.
+- **Command outcomes / limitations:** the earlier `npm install` succeeded on Node `v24.21.0` against the then-current `22.x` engine declaration, with `EBADENGINE` and one critical-severity vulnerability notice. In the current B-21 continuation, `npm install` and `npx playwright test` were denied before execution; `npm run dev`, `npx tsc --noEmit`, and `npx next build` were not run. These are not reported as fresh passes. The project-level runtime statement is owner-reported, not independent machine output. Historical E-SEA-025/E-SEA-026 Node.js 22 observations are preserved unchanged; their reconciliation with the later owner statement is not independently established.
+- **Timestamp / environment:** 2026-10-02; documentation review and owner disposition in the local SeaRadar repository; no runtime/test/build command executed for this closure.
+- **Recovery / handoff:** preserve this owner-accepted closure and prior evidence. Any future fresh command checks or second-laptop validation must be recorded as new evidence under a permitted bounded task. Archive inspection remains deferred under DEC-015; no dependency change, archive/checkpoint operation, commit, or push was performed.

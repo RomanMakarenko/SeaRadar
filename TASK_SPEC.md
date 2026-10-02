@@ -4412,44 +4412,98 @@ At completion, present test names, commands and observed results, request human 
 At completion, present each gate as PASS/FAIL/BLOCKED/UNKNOWN with evidence links; request human disposition and remind the owner to commit and push the reviewed stage. No commit/push without separate explicit authorization.
 
 ---
-
 # TASK-SEA-R4-B21-001 — Verified install/start README
 
-- **Version:** `1.0.0`
-- **Status:** `Draft — blocked pending accepted B-20, laptop target decision and separate task approval`
+- **Version:** `1.1.0`
+- **Status:** `Verified — owner-accepted closure on 2026-10-02 based on E-SEA-103/E-SEA-104; current command-level and second-laptop limits remain explicit`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-10-01
-- **Related artifacts:** [`TASK-SEA-R4-PLAN-001`](TASK_SPEC.md), [`TASK-SEA-R4-B20-001`](TASK_SPEC.md), [`SPRINT-03b-CHANGE-REQUEST.md`](SPRINT-03b-CHANGE-REQUEST.md), [`README.md`](README.md), [`DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md), [`EVIDENCE.md`](EVIDENCE.md)
+- **Date:** 2026-10-02
+- **Related artifacts:** [`TASK-SEA-R4-PLAN-001`](TASK_SPEC.md), [`TASK-SEA-R4-B20-001`](TASK_SPEC.md), [`SPRINT-03b-CHANGE-REQUEST.md`](SPRINT-03b-CHANGE-REQUEST.md), [`README.md`](README.md), [`DEC-016-r4-node24-runtime.md`](docs/decisions/DEC-016-r4-node24-runtime.md), [`DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md)
 
 ## Goal and README requirements
 
 - **Goal:** give a second laptop’s operator an executable, accurate installation/start guide and explain the R4 snapshot/failure contract.
 - Include prerequisites and install/start steps, environment-variable **names only** (never values), commands for the checks actually run, snapshot-not-monitoring semantics, preservation of the displayed set after error/empty response, reload returning to demo, incomplete-sample/known limitations, and handoff/source links.
-- Resolve target OS with the owner or explicitly choose and approve cross-platform instructions before writing; do not infer the second laptop’s platform. Respect the project’s confirmed Node.js 22 baseline unless an approved decision supersedes it.
+- Target is cross-platform by the user’s selection recorded below; do not infer that the second laptop was available. Use the current Node.js `24.x` baseline from approved DEC-016, not DEC-005’s historical R1 environment.
 - Prohibited wording from the change request: do not use claims equivalent to “monitoring” or “all vessels in the area”; do not promise completeness, persistent snapshots, source availability or checks not actually observed.
-- Execute every command included in README on the authorized environment and record exact observed output/status. If the target OS is not available for verification, label that limitation and stop short of claiming verified second-laptop setup.
+- After separate approval of this revised contract, execute every command included in README on the authorized Node 24.x environment and record exact observed output/status. If the target OS is not available for verification, label that limitation and stop short of claiming verified second-laptop setup.
 
 ## Non-goals, paths, verification and recovery
 
 - **Non-goals:** unrelated README rewrite, new dependencies, deployment instructions unless specifically in scope, archive publication, product changes, or claims beyond current evidence.
-- **Proposed allowed path:** `README.md` only for content; `TASK_SPEC.md` only for this task’s contract/status/closeout. Append actual evidence/history only after checks and approval.
-- **Prerequisite:** accepted B-20 results; target OS or cross-platform choice explicitly approved; separate approval of this exact README task.
-- **Acceptance:** every README command has an observed result; setup/version/env guidance matches canonical records; no secret values; no prohibited product claims; all local links resolve; diff limited to allowed path; human content review completed.
+- **Proposed allowed paths after approval:** `README.md` for content; `TASK_SPEC.md` only for this task's contract/status/closeout; append-only `EVIDENCE.md` for observed facts and `RUNBOOK.md` for delivery/handoff. Do not edit those logs before observations or approval.
+- **Prerequisite:** accepted B-20 results; approved cross-platform target; DEC-016 is `Ready`; separate explicit approval of this revised B-21 v1.1 contract.
+- **Acceptance:** every README command has an observed result on Node.js 24.x; setup/version/env guidance matches canonical records; no secret values; no prohibited product claims; all local links resolve; changes stay within the approved paths; human content review completed. No second-laptop validation is claimed unless performed.
 - **Stop:** command depends on unavailable key/provider, unsupported OS assumption, missing required prerequisite, or contradiction with source evidence. Mark exact limitation and request a bounded revision.
-- **Recovery:** revise only README and this task’s closeout within approved paths; preserve prior evidence and unrelated worktree changes.
+- **Recovery:** revise only approved README/task paths; append factual evidence/history only to the approved logs and never rewrite prior records. Preserve unrelated worktree changes.
 
 ## Decision log and stage handoff
 
 | Decision | State | Approver/date | Rationale / record |
 |---|---|---|---|
-| README targets a specific OS or an approved cross-platform baseline | Unknown / awaiting owner | Unknown | Second-laptop OS not specified in change request |
-| README’s commands must be executed before they are presented as verified | Proposed, not approved | Unknown | Requested acceptance rule; B-21 approval pending |
+| README targets a specific OS or an approved cross-platform baseline | Cross-platform selected | User / 2026-10-02 | User selected cross-platform instructions; this resolves the target choice only, not B-21 task approval or implementation authorization |
+| Every README command must be executed before it is presented as verified | Approved; exact command and observed status must be recorded | User / 2026-10-02 | User approved the exact B-21 task contract after B-20 acceptance; no unexecuted command may be presented as verified |
+| Adopt Node.js 24.x for current repository runtime | Recorded by successor decision DEC-016; revised B-21 contract still requires separate explicit approval | User report / 2026-10-02 | The user reports receiving an update that Node 24 is correct; the issuer/version of that update was not supplied |
+| Execute B-21 v1.1 under Node.js 24.x | Approved; exact contract and listed commands | User / 2026-10-02 | User explicitly selected `Approve B-21 v1.1 (Recommended)`; second-laptop verification, dependency changes, and `npm audit fix` remain excluded |
+
+## Initial execution checkpoint — 2026-10-02
+
+- **Authorization:** the user approved the exact B-21 contract after accepting B-20; only `README.md` and this B-21 contract/closeout are in scope.
+- **README draft:** added cross-platform install/start guidance, R4 snapshot/error semantics, limitations, and the B-20 check commands linked to E-SEA-099. No second-laptop validation is claimed.
+- **Observed command:** `npm install` exited successfully (`up to date`, 35 packages audited) but emitted `EBADENGINE`: package requires Node `22.x`, current runtime is Node `v24.21.0` with npm `11.19.0`. npm also reported one critical-severity vulnerability. No audit or fix command was run; no dependency files were intentionally edited.
+- **Stop / blocked:** Node 22.x is the approved baseline. `nvm ls` could not run because `nvm` is unavailable (`command not found`). Per the task boundary, do not run `npm run dev` or claim install/start verification until the approved Node runtime is available. B-20 test/type/build outcomes remain linked to E-SEA-099; that record does not capture the Node version, so those results are not represented as Node 22 verification.
+- **Not run:** `npm run dev` and any B-21-specific check under Node 22; no second laptop was available. No provider, secret, archive, or checkpoint operation was performed.
+- **Recovery / handoff:** resume only after the runtime baseline is resolved; then run each README command under that baseline, record exact output/status in this B-21 closeout, and review all scoped changes. Do not change dependencies or use `npm audit fix` under this task.
+
+## Revised contract draft — 2026-10-02
+
+- **Reason / history boundary:** DEC-016 establishes Node.js `24.x` as the current repository runtime and supersedes DEC-005 as the active runtime decision. The preceding install result remains accurate for the time it occurred: `npm install` succeeded on Node `v24.21.0` / npm `11.19.0`, emitted `EBADENGINE` against the then-current `22.x` package declaration, and reported one critical-severity vulnerability. No audit/fix command was run.
+- **Status:** this v1.1 contract is `Draft` and awaits separate explicit approval. It does not authorize a README edit or command execution.
+- **Commands to verify after approval:** `npm install`, `npm run dev`, `npx playwright test`, `npx tsc --noEmit`, and `npx next build`, as currently included in README. Record each actual runtime/version and exact outcome; preserve the local-only server boundary; stop on failures or any requirement for provider/key access.
+- **Evidence/history:** after checks and review, append actual factual results to `EVIDENCE.md` and the delivery handoff to `RUNBOOK.md`; update only this B-21 closeout in `TASK_SPEC.md`. No evidence or runbook entry is created by this draft.
+- **Limitations:** no second laptop is available for verification; cross-platform wording is not proof of setup on another machine. The archive gate remains deferred under DEC-015 and is unrelated to B-21. The critical-severity install notice is unresolved; this task does not authorize audit remediation or dependency changes.
+- **Approval checkpoint:** present the exact B-21 v1.1 contract for explicit human approval before changing `README.md` or running any listed command.
 
 At completion, present the focused README diff and command results, request human disposition, and remind the owner to commit and push the reviewed stage. No commit/push without separate explicit authorization.
 
----
+## Explicit approval of B-21 v1.1 — 2026-10-02
 
+- **Authorization:** the user explicitly selected `Approve B-21 v1.1 (Recommended)` after being shown the exact scope and commands. This authorizes the listed README update and B-21 checks on Node.js 24.x, plus append-only EVIDENCE/RUNBOOK records of actual results.
+- **Boundaries retained:** no second-laptop validation, provider/key access, dependency changes, `npm audit fix`, archive/checkpoint action, commit, or push is authorized.
+- **Execution state:** B-21 is Active. Record each command's actual status and output after execution; stop on failures, runtime mismatch, or unexpected changes.
+
+## Owner confirmation record checkpoint — 2026-10-02
+
+- **Task ID / goal:** `TASK-SEA-R4-B21-001` — record the user's confirmation that Node.js 24 was used throughout the project and that project development/testing stages are accepted as passed on that runtime.
+- **Allowed paths:** this B-21 closeout section in `TASK_SPEC.md`; append-only `EVIDENCE.md` entry `E-SEA-103`.
+- **Expected diff:** append this dated checkpoint and one owner-reported evidence entry; preserve all prior history and command-level outcomes; do not promote B-21 to `Verified` or claim unobserved exact command outputs.
+- **Targeted checks:** `git diff --check -- TASK_SPEC.md EVIDENCE.md`; verify `E-SEA-103` is unique, the new task/evidence links resolve, and only the two allowed paths changed for this slice.
+- **Checkpoint / stop / recovery:** present the focused diff for human review. If the user report conflicts with historical records, preserve those records and identify the conflict rather than silently rewriting them; any correction must be a dated append-only amendment.
+
+- **Owner-reported confirmation:** the user states that Node.js 24 was used throughout the project and that development/testing stages were all conducted on it, and asks that those stages be considered passed. Record this as owner-reported project-level confirmation, not independent machine output. Historical records naming Node.js 22 remain unchanged; exact B-21 command outcomes remain limited to their separately recorded observed/blocked status.
+
+## Owner-accepted B-21 closure checkpoint — 2026-10-02
+
+- **Task ID / goal:** `TASK-SEA-R4-B21-001` — review the current B-21 diff and close the task on the owner's explicit acceptance of the Node.js 24 project-level development/testing confirmation in E-SEA-103.
+- **Authorization:** the user instructed: `Переглянь diff і закрий B-21 за owner-підтвердженням`. This is an explicit owner disposition to accept B-21 with the command-level and second-laptop limitations stated below; it does not authorize presenting unrun commands as executed.
+- **Reviewed inputs:** current B-21 README changes, B-21 v1.1 contract and approval/checkpoints, E-SEA-103, and historical Node runtime records E-SEA-025/E-SEA-026.
+- **Allowed paths:** `README.md`; B-21 status/closeout and the superseding R4 task-register status follow-up in `TASK_SPEC.md`; append-only `EVIDENCE.md` entry `E-SEA-104`.
+- **Expected diff:** update the R4 README status and verification boundary to show owner-accepted B-21 closure; mark B-21 closed by owner acceptance with explicit limits; append a dated R4 status follow-up superseding the prior B-21 `Draft` status; append E-SEA-104. Preserve historical evidence and all unrelated worktree paths; do not run package, dev-server, test, or build commands.
+- **Acceptance boundary:** project-level Node.js 24 development/testing is accepted based on the user's report. This is not independent command output and does not make the current B-21 README commands freshly executed; second-laptop setup remains unverified.
+- **Targeted checks:** `git diff --check -- README.md TASK_SPEC.md EVIDENCE.md`; verify E-SEA-104 uniqueness, new local links, and the focused diff. No runtime/test/build check is part of this owner-disposition step.
+- **Checkpoint / recovery:** present the reviewed diff and closeout for human visibility. If any new edit would alter earlier records or exceed these paths, stop; correct history only through a dated append-only amendment.
+
+## Owner-accepted closure — 2026-10-02
+
+- **Disposition:** after review of the B-21 README diff and the owner-confirmation record, the user instructed: `Переглянь diff і закрий B-21 за owner-підтвердженням`. B-21 v1.1 is closed by owner acceptance, with the specific limitations below; this is not a claim that every listed README command was freshly executed.
+- **Acceptance basis:** the user confirms Node.js 24 was used throughout the project and accepts the project development/testing stages on that runtime as passed. See owner-reported E-SEA-103 and this closure disposition in E-SEA-104.
+- **Command-level status:** the earlier `npm install` on Node `v24.21.0` succeeded against the then-current `22.x` engine declaration but emitted `EBADENGINE` and one critical-severity vulnerability notice. In the current B-21 continuation, `npm install` and `npx playwright test` were denied before execution; `npm run dev`, `npx tsc --noEmit`, and `npx next build` were not run. These statuses are not converted into fresh command passes.
+- **Limits:** no second-laptop setup was tested; the user's project-level report is owner-reported, not independent runtime or per-command output. Historical E-SEA-025/E-SEA-026 entries describing Node.js 22 checks remain unchanged. The archive gate remains deferred by DEC-015; no dependency remediation, archive/checkpoint action, commit, or push occurred.
+- **README disposition:** the current R4 status and B-21 verification note now identify owner-accepted closure and link E-SEA-103 while distinguishing the project-level acceptance from fresh command-by-command verification.
+- **Recovery / handoff:** preserve E-SEA-103/E-SEA-104 and historical records. Any future request for fresh install/start/test/build or second-laptop validation requires its own permitted execution path and must be reported as new evidence, not backfilled into this closure.
+
+---
 # TASK-SEA-R4-GOV-001 — R4 governance contract synchronization
 
 - **Version:** `1.0.0`
@@ -4527,3 +4581,11 @@ At completion, present the focused README diff and command results, request huma
 - **B-21:** remains separately gated on accepted B-20, its own exact approval, and an owner decision on target OS or explicit cross-platform scope.
 - **Unresolved:** R4 sprint assignment remains `Unknown`; archive format, publication target and recovery owner remain `Waiting for input`.
 - **Handoff:** next action is review of the existing B-19 Draft for explicit task approval only. No B-19 implementation, provider/secret/archive operation, checkpoint, commit, or push is authorized by this reconciliation.
+
+## B-21 owner-accepted task-register status follow-up — 2026-10-02
+
+- **Reason / history boundary:** this dated addendum records the user's later owner-accepted closure of B-21 and supersedes the preceding `B-21 remains Draft` statement; that statement remains an accurate record of its earlier point in the sequence.
+- **B-21:** `Verified — owner-accepted closure` based on the user's Node.js 24 project-level development/testing confirmation in E-SEA-103 and the explicit closure disposition in E-SEA-104. This does not claim fresh command-by-command B-21 execution or second-laptop validation.
+- **Command-level limits:** current B-21 `npm install` and `npx playwright test` attempts were denied before execution; `npm run dev`, `npx tsc --noEmit`, and `npx next build` were not run in this continuation. The prior install warning remains historical; no audit remediation or dependency change was made.
+- **Other R4 state:** B-18–B-20 remain accepted in their bounded scopes; the archive gate remains deferred by DEC-015, the unique R4 checkpoint ID/path remains unresolved, and official R4 sprint assignment remains `Unknown`.
+- **Handoff:** preserve E-SEA-103/E-SEA-104 and historical Node.js 22 records. Any future fresh command or second-laptop verification requires a new bounded authorization; no archive/checkpoint action, commit, or push was performed for this closure.
