@@ -9,7 +9,7 @@ SeaRadar — навчальний проєкт інтерактивної кар
 | **Sprint 1 / R1** | `DONE / Verified` | Прийняті B-01…B-07: локальна карта, демонстраційні судна та їхня взаємодія. Див. [R1 guide](SPRINT-01-README.md) і [контракт Sprint 1](SPRINT-01.md). |
 | **Sprint 2 / R2** | `PASS / VERIFIED` — bounded acceptance | Лише US-05…US-08, B-08…B-14 і визначені критерії CHECKPOINT-03. Авторитетний результат — [CHECKPOINT-25](docs/checkpoints/CHECKPOINT-25.md); план — [SPRINT-02.md](SPRINT-02.md). |
 | **Sprint 3 / R3** | `DONE — bounded test-only scope` | Перевірки наявної US-09 поведінки завершені в погоджених межах; поточний результат — [CHECKPOINT-27](docs/checkpoints/CHECKPOINT-27.md). Канонічний план [SPRINT-03.md](SPRINT-03.md) зберігає `Ready` metadata; опис виконання — [SPRINT-03-README.md](SPRINT-03-README.md). |
-| **R4 / US-10** | `B-18–B-20 Verified; B-21 owner-accepted; sprint assignment Unknown` | B-21 закрито за owner-підтвердженням використання Node.js 24 та прийняття етапів розробки/тестування (див. [E-SEA-103](EVIDENCE.md)); це не незалежна перевірка кожної команди чи другого ноутбука. Архівну перевірку відкладено DEC-015, а не пройдено. |
+| **R4 / US-10** | `B-18–B-20 Verified; B-21 owner-accepted; sprint assignment Unknown` | Власник підтвердив завершення всіх перевірок B-18–B-21 (див. [E-SEA-105](EVIDENCE.md)); це owner-reported підтвердження, не незалежний command-by-command результат. B-21 закрито за owner-підтвердженням використання Node.js 24 та прийняття етапів розробки/тестування (див. [E-SEA-103](EVIDENCE.md)). Архівну перевірку відкладено DEC-015, а не пройдено. |
 
 Bounded результати Sprint 2 та Sprint 3 не означають повного MVP-приймання, live-provider validation, release readiness чи дозволу на deployment.
 
