@@ -1,12 +1,12 @@
 # Фінальний блок: як він влаштований
 
 - **ID:** `ABOUT-SEA-001`
-- **Version:** `1.0.0`
+- **Version:** `1.1.0`
 - **Status:** `Ready`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-22
-- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`RUNBOOK.md`](RUNBOOK.md)
+- **Date:** 2026-10-02
+- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`SPRINT-01.md`](SPRINT-01.md), [`RUNBOOK.md`](RUNBOOK.md), [`docs/decisions/DEC-016-r4-node24-runtime.md`](docs/decisions/DEC-016-r4-node24-runtime.md)
 
 Останні три тижні курсу - шість вебінарів, на яких ми разом розробляємо один проєкт з нуля через Claude Code. Проєкт - Sea Radar, локальний вебзастосунок для перегляду суден у протоці; завдання від замовника лежить поруч, у `PROJECT_BRIEF.md`, - можете зазирнути в нього заздалегідь, далі все крутиться навколо нього.
 
@@ -62,4 +62,4 @@ Checkpoint - прийнятий стан проєкту наприкінці в�
 
 ## Що знадобиться, якщо вирішите повторювати
 
-Node.js 22, Git, Claude Code CLI, браузер. Для справжніх даних - свій безкоштовний ключ AISStream aisstream.io; без ключа працює демонстраційна частина, тож почати можна й без нього. Мій ключ не передається.
+Node.js 24, Git, Claude Code CLI, браузер. Для справжніх даних - свій безкоштовний ключ AISStream aisstream.io; без ключа працює демонстраційна частина, тож почати можна й без нього. Мій ключ не передається.

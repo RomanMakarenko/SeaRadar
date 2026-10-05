@@ -2,7 +2,7 @@
 
 - **ID:** `DEC-005-R1-NODE22`
 - **Version:** `1.0.0`
-- **Status:** `Ready`
+- **Status:** `Superseded`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
 - **Date:** 2026-09-22

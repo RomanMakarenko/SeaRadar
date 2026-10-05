@@ -1236,6 +1236,17 @@
 - **Remaining gates / recovery:** archive inspection remains `BLOCKED` pending its format, target, and permission. Keep B-20 Active pending human disposition; do not repeat the live request. Preserve this append-only record and prior evidence; no key was received or recorded.
 - **Handoff:** human reviewer to inspect the B-20 documentation diff and choose `continue`, `revise`, or `HOLD`. The user indicated no additional live display data is available beyond the provided line.
 
+### E-SEA-102 — Owner-confirmed no-key UI behavior
+
+- **ID / version / status:** `E-SEA-102`; `1.0.0`; `PASS` for owner-confirmed no-key UI acceptance criteria only.
+- **Owner / date:** user-reported local-browser observation; 2026-10-02. The exact observation time was not supplied.
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R4-B20-001`; `E-SEA-100`; `SPRINT-03b-CHANGE-REQUEST.md`.
+- **Source / expected:** after being asked to clarify the manual no-key result without repeating the live-source request, the user selected confirmation of the exact no-key message and retained/moving demo behavior. The contract expects `Спроба HH:MM:SS UTC: не вдалося отримати дані: Ключ AISStream не налаштовано`, with the demo set/source retained and movement continuing.
+- **Observed:** the user confirms that the displayed no-key result matched the contract and the demo set/source remained visible and continued moving. This is owner-reported confirmation; no screenshot, literal timestamped UI line, key, or raw response was supplied.
+- **Status / limits:** `PASS` for the user-confirmed no-key criteria only; not independently observed by the agent. This does not resolve the separate archive exposure gate, which the user chose to leave `BLOCKED`, and does not by itself make B-20 `Verified`.
+- **Timestamp / environment:** 2026-10-02; owner-operated local application; exact observation time not recorded.
+- **Recovery / handoff:** preserve this owner-reported record and prior evidence. Do not repeat the live-source request. B-20 remains Active pending remaining gate disposition; archive format/target/permission are still unresolved.
+
 ### E-SEA-103 — Owner confirmation of Node.js 24 project runtime and test-stage acceptance
 
 - **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R4-B21-001`; `TASK-SEA-R4-GOV-002`; `DEC-016-R4-NODE24-RUNTIME`.
@@ -1272,3 +1283,26 @@
 - **Limitations / reconciliation:** preserve the existing B-18–B-21 task records and their specific observed, owner-reported, denied, and unrun outcomes. In particular, the B-21 continuation's denied/not-run command outcomes remain accurate for that continuation; this project-level report does not turn them into fresh agent-observed results or independently verify a second laptop. Archive inspection remains deferred by DEC-015, the unique R4 final-checkpoint path remains unresolved, and official R4 sprint assignment remains `Unknown`; this confirmation does not resolve those items.
 - **Timestamp / environment:** 2026-10-03; user-reported project confirmation; exact observation times and execution environment were not supplied.
 - **Recovery / handoff:** retain this append-only owner report and all earlier task evidence. Record any later command-specific outputs or corrections as separate dated evidence; do not infer them from this statement or repeat any denied command through another route.
+
+### E-SEA-106 — R4 checkpoint authoring verification
+
+- **ID / version / status:** `E-SEA-106`; `1.0.0`; `PASS` for the bounded checkpoint-authoring documentation checks only.
+- **Owner / date:** delivery / technical owner — executor role; 2026-10-03. Exact wall-clock time was not captured.
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R4-CHECKPOINT-001` v1.2.0; `DEC-004`; `DEC-014`; `DEC-015`; `DEC-017`; `CHECKPOINT-SEA-R4-028`.
+- **Source / expected:** the approved checkpoint contract and current R4 task, decision, README, checkpoint and evidence records. Expected a new `docs/checkpoints/CHECKPOINT-28.md` that follows DEC-004, preserves existing evidence classes/limitations and does not claim overall R4 completion; append only this authoring-check result without modifying E-SEA-098–E-SEA-105.
+- **Observed preflight:** `docs/checkpoints/` contained CHECKPOINT-01 and CHECKPOINT-03 through CHECKPOINT-27; `CHECKPOINT-28.md` was absent. Search found `CHECKPOINT-SEA-R4-028` references only in `TASK_SPEC.md` before creation. `E-SEA-106` was absent from `EVIDENCE.md` before append. The root README status row links DEC-017 and states assignment-only/no plan; its explanatory cell retains the E-SEA-105 owner-reported limitation and DEC-015 archive deferral.
+- **Observed authoring checks:** `git diff --check -- EVIDENCE.md` — **PASS**, exit 0 with no output. `git diff --no-index --check /dev/null docs/checkpoints/CHECKPOINT-28.md` — no whitespace diagnostics; expected exit 1 because the new file differs from `/dev/null`. Focused structural checks — **PASS** for checkpoint metadata/required sections, unique checkpoint and evidence heading IDs, required R4 scope/evidence limitations, local links, trailing whitespace, and final newlines. The first structural-script run had one failed assertion because it counted expected references to `E-SEA-106` as duplicate records; the assertion was corrected to check unique evidence headings, and the rerun passed. This was a check-script assertion issue, not a document defect.
+- **Limits:** this entry records documentation-authoring checks only. No B-18–B-21 product commands, tests, build, runtime, provider/network, secret, archive, or second-laptop checks were executed or independently repeated. Owner-reported, denied, not-run and historical command outcomes remain unchanged. This record does not declare overall R4 `DONE` or release/deployment readiness.
+- **Recovery / handoff:** preserve CHECKPOINT-28 and this append-only entry after review. Correct factual errors only through a dated superseding append-only record. No RUNBOOK entry, commit, push, archive operation, or publication was performed.
+
+### E-SEA-107 — Owner report with unspecified scope
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R4-OWNER-REPORT-RECORD-001` — cited only as the authorization/provenance for recording this statement; the report is not assigned to any specific product task or verification scope.
+- **Claim under verification:** the owner made the statement `все перевірено і працює`; the underlying checks are not identified by this statement.
+- **Source:** user statement in this conversation on 2026-10-05: `все перевірено і працює`.
+- **Expected:** preserve the owner-reported statement verbatim, mark it as owner-reported, and separate faithful recording from verification of any underlying checks; do not infer a referent or rewrite prior evidence.
+- **Observed:** the owner stated `все перевірено і працює`. The referent/scope, individual checks, commands, outputs, execution mapping, environment, and exact observation time were not supplied. No checks were executed as part of recording this statement.
+- **Status:** `PASS` for faithfully recording the owner's statement; `UNKNOWN` for independent verification of the underlying checks from this statement alone.
+- **Limitations / reconciliation:** do not attribute this unscoped report to R4, B-18–B-21, any named task or command, product behavior, or project-wide outcome. It does not resolve DEC-015's archive deferral, establish second-laptop validation, change B-21 denied/not-run outcomes, or establish overall R4 `DONE`, full MVP acceptance, or release/deployment readiness. E-SEA-098–E-SEA-106 remain unchanged.
+- **Timestamp / environment:** 2026-10-05; user-reported statement in this conversation. Exact wall-clock time and execution environment were not supplied.
+- **Recovery / handoff:** preserve this append-only owner report and all earlier evidence. Record any later scoped command/check results separately with their own source and observed output; do not infer them from this statement.

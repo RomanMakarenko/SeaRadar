@@ -2,8 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/reference" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/reference/bulletproof-react" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/reference/design-patterns-typescript" vcs="Git" />
   </component>
 </project>
