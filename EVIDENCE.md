@@ -1180,3 +1180,246 @@
 - **Worktree / operational boundary:** `.idea/vcs.xml` remained a pre-existing modified path; untracked `.mcp.json` was preserved and not accessed. No source/test/config change, secret access, test/build/provider command, staging, commit, push, publication, deployment, or destructive Git operation was performed for this closeout.
 - **Verification:** `git diff --check -- TASK_SPEC.md EVIDENCE.md RUNBOOK.md` passed with no output. `git diff --no-index --check /dev/null docs/checkpoints/CHECKPOINT-27.md` produced no whitespace diagnostics (expected non-zero diff status for the new file). Focused checks passed for unique IDs, required checkpoint metadata, T01–T09 matrix coverage, and all checkpoint local links.
 - **Recovery / handoff:** preserve E-SEA-093–096 and CHECKPOINT-26 as historical records. Correct any factual error through a dated append-only amendment; broader verification or scope change requires its own reviewed bounded contract and explicit authorization.
+
+### E-SEA-098 — B-18 R4 UI state and attempt-retention verification
+
+- **ID / version / status:** `E-SEA-098`; `1.0.0`; `Verified — bounded B-18 implementation and targeted checks only`.
+- **Owner / date:** product owner — методист відділення теорії судноводіння навчального центру «Норд-Вест»; delivery / technical owner — виконавець проєкту; 2026-10-02. Wall-clock time was not recorded.
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R4-PLAN-001`; `TASK-SEA-R4-B18-001`; `DEC-014`; `SPRINT-03b-CHANGE-REQUEST.md`.
+- **Authorization / disposition:** the user approved the exact B-18 contract on 2026-10-01 and, after review of the implementation and reported checks, instructed `continue B-18, далі R4 task breakdown`. This is acceptance of the bounded B-18 result only; it does not approve B-19 execution or Git publication.
+- **Source / expected:** B-18 acceptance criteria and targeted-verification contract in `TASK_SPEC.md`; implementation diff limited to `app/map-shell.tsx`. Expected response-mocked browser verification for loading, empty, structured error, no-body and nonempty success, unchanged movement/selection regressions, TypeScript check, and scoped diff review without live-provider access.
+- **Observed checks:** `npx tsc --noEmit` — **PASS**, no output. `npx playwright test tests/demo-movement.spec.ts tests/vessel-selection.spec.ts --project=chromium` — **PASS**, 2 passed. One-off Chromium browser check using mocked `GET /api/snapshot` responses — **PASS** for loading, continued demo movement, retention on empty/error/no-body, nonempty replacement, response-body time/count, and selection update/clear; external OSM tile requests were blocked. `git diff --check -- app/map-shell.tsx TASK_SPEC.md` — **PASS**, no output. Scoped diff review was completed; only `app/map-shell.tsx` was changed as a product path.
+- **Out-of-contract operations:** IDE lint reported no problems and IDE build returned `isSuccess=true`, `problems=[]`; both were run outside the B-18 verification list and are not acceptance gates. `npm run dev -- --hostname 127.0.0.1` exited with status 1; the existing local endpoint at port 3000 responded, and the launch failure's cause was not established.
+- **Timestamp / environment:** 2026-10-02; local SeaRadar repository, branch `sprint3b`; closeout timestamp recorded by date only, wall-clock time not captured.
+- **Conclusion / limitations:** the user accepted the bounded implementation after the targeted checks above. This record does not establish B-19's 12-case browser matrix, a full test suite/build, live-provider/network behavior, secret handling, archive/package behavior, README validity, release readiness, or deployment readiness. No B-19 test file was changed or executed.
+- **Worktree / operational boundary:** existing staged, modified and untracked paths were preserved; `.mcp.json` was not accessed. No staging, commit, push, deployment, provider request, secret access, archive operation, or destructive Git operation was performed for this closeout.
+- **Recovery / handoff:** preserve the B-18 implementation and this append-only evidence. Further test work requires separate B-19 contract approval; correct any factual error through a dated append-only amendment.
+
+### E-SEA-099 — B-20 automated and bounded secret-boundary checks
+
+- **ID / version / status:** `E-SEA-099`; `1.0.0`; `PASS` for the executed automated and bounded secret-boundary gates only.
+- **Owner / date:** delivery / technical owner — executor role; 2026-10-02. Exact wall-clock time was not captured; human review remains pending.
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R4-B20-001`; `TASK-SEA-R4-B18-001`; `TASK-SEA-R4-B19-001`; `SPRINT-03b-CHANGE-REQUEST.md`.
+- **Authorization:** the user approved the exact B-20 contract, authorized exactly one manually initiated live-source attempt with no retry, and approved a bounded in-memory comparison of the relevant `.env.local` `AISSTREAM_API_KEY` value against worktree files and `.next/static`. No credential value may be printed or stored.
+- **Automated source / expected:** full configured Playwright suite, TypeScript no-emit check, and Next.js production build should complete successfully; mocked tests do not prove provider availability.
+- **Observed automated results:** `npx playwright test` — **PASS**, 56 passed (13.2 s; configured node and chromium projects). `npx tsc --noEmit` — **PASS**, exit success with no output. `npx next build` — **PASS**, Next.js 16.3.5/Turbopack; TypeScript and static page generation completed. Build output named `.env.local` as an environment source but emitted no credential value. No live-provider request was performed by these commands as recorded by this task.
+- **Secret-boundary source / expected:** one-off inline Node comparison read the relevant key value only in memory, verified Git tracking metadata, compared the exact value against tracked and non-ignored untracked worktree files and `.next/static`, and emitted only status labels. The literal value was not printed or written to a file.
+- **Observed secret-boundary result:** `.env.local` is **not tracked**. Output was `ENV_LOCAL_TRACKED=NO; WORKTREE=NO_MATCH; NEXT_STATIC=NO_MATCH`. `.mcp.json` was excluded and not accessed. Scan targets excluded `.env*`, `.mcp.json`, `.git`, `node_modules`, and `.next` except `.next/static`; ignored files outside the specified static directory were not scanned. No archive was inspected.
+- **Owner-only gates / status:** the no-key UI check and exactly one live button attempt are assigned to the owner manually by the change request. Neither result has been supplied; both remain `BLOCKED` pending owner observation. Archive inspection remains `BLOCKED` pending format, target, and permission. This record does not claim overall B-20 acceptance or mark B-20 Verified.
+- **Timestamp / environment:** 2026-10-02; local SeaRadar repository, branch `sprint3b`, macOS. Exact check start/end times were not captured.
+- **Limitations / recovery:** these results do not establish no-key UI behavior, live provider availability, or archive contents. If any later check fails or a secret match is observed, stop and record the redacted result without exposing the value. Preserve all pre-existing staged, modified, and untracked paths; no product/test edits, archive operation, staging, commit, push, or deployment occurred.
+- **Handoff:** owner to perform the no-key manual check, restore their local configuration, and then perform at most one live-source attempt; report the visible attempt time and vessel count or unavailability without sharing the key. Keep B-20 Active until required owner observations and human review are complete.
+
+### E-SEA-100 — Owner-reported B-20 manual checks
+
+- **ID / version / status:** `E-SEA-100`; `1.0.0`; `UNKNOWN` for final manual acceptance detail.
+- **Owner / date:** user-provided manual report; 2026-10-02. The user's project role and exact observation time were not independently established.
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R4-B20-001`; `E-SEA-099`; `SPRINT-03b-CHANGE-REQUEST.md`.
+- **Authorization / source:** following the request to perform the owner-only no-key UI check and then exactly one live-source attempt, the user reported: `виконав, все працює коректно`. No screenshot, captured response, or credential value was supplied.
+- **Expected:** no-key click retains the moving demo source/vessels and shows the exact no-key message; the single live-source attempt records its actual response time and vessel count, or an explicit unavailable-source outcome.
+- **Observed:** the user reports completing the requested manual checks with a positive overall result. The report does not enumerate the exact no-key text/retained-set/movement observations and does not state the live response time, vessel count, or an explicit unavailable-source result. These details are not inferred.
+- **Gate status:** owner-reported completion is recorded, but the no-key oracle details are not individually captured; live-source acceptance remains `UNKNOWN` because the required time/count or explicit unavailability was not provided. This does not establish independent agent observation or overall B-20 acceptance.
+- **Timestamp / environment:** 2026-10-02; owner-operated local environment; exact wall-clock time and live response metadata not supplied.
+- **Limitations / recovery:** no key, `.env.local` content, screenshot, vessel identifiers, or raw provider response was received or recorded. Archive check remains blocked pending format, target, and permission. Preserve prior append-only evidence; do not repeat the live request to recover missing details.
+- **Handoff:** if the user has the display available, provide only the actual response time and vessel count, or explicitly confirm source unavailability; do not share credentials or vessel identifiers. B-20 remains Active pending the required metadata, any exact no-key clarification needed for review, archive disposition, and human diff review.
+
+### E-SEA-101 — B-20 owner-reported live result and reload behavior
+
+- **ID / version / status:** `E-SEA-101`; `1.0.0`; `PASS` for the reported single live-result metadata and reload-to-demo observation; owner-reported only.
+- **Owner / date:** user-provided local-browser observations; 2026-10-02; exact observation time is reported as part of the live UI result.
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R4-B20-001`; `E-SEA-099`; `E-SEA-100`; `SPRINT-03b-CHANGE-REQUEST.md`.
+- **Source / authorization:** after the single manually authorized live-source attempt, the user provided the UI text `AISStream · знімок за 15 с · отримано 13:03:44 UTC · суден: 4 · вибірка неповна`. The user separately reported `Після оновлення сторінки знову показуються демонстраційні дані` and stated `ось все що було`. No further UI output, screenshot, vessel identifiers, credential, or raw network trace was provided.
+- **Expected:** one live attempt records its actual response time and vessel count, or explicit source unavailability; reloading returns the interface to demo data.
+- **Observed:** the user-reported live UI line records a 15-second snapshot window, receipt time `13:03:44 UTC`, count `4`, and incomplete-sample wording. The user reports that a page reload shows demo data. No second request or independent provider/network instrumentation was performed by the agent.
+- **Status / limitations:** **PASS** for the requested live time/count outcome and the reported reload-to-demo behavior, based on the user's manual observation. The source, snapshot contents, and transport were not independently verified; no vessel identifiers or raw response were retained. The no-key manual check is also reported as successful in E-SEA-100, but its exact text and individual retained-set/motion observations were not separately transcribed.
+- **Timestamp / environment:** 2026-10-02; user-operated local application; displayed live result time `13:03:44 UTC`.
+- **Remaining gates / recovery:** archive inspection remains `BLOCKED` pending its format, target, and permission. Keep B-20 Active pending human disposition; do not repeat the live request. Preserve this append-only record and prior evidence; no key was received or recorded.
+- **Handoff:** human reviewer to inspect the B-20 documentation diff and choose `continue`, `revise`, or `HOLD`. The user indicated no additional live display data is available beyond the provided line.
+
+### E-SEA-102 — Owner-confirmed no-key UI behavior
+
+- **ID / version / status:** `E-SEA-102`; `1.0.0`; `PASS` for owner-confirmed no-key UI acceptance criteria only.
+- **Owner / date:** user-reported local-browser observation; 2026-10-02. The exact observation time was not supplied.
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R4-B20-001`; `E-SEA-100`; `SPRINT-03b-CHANGE-REQUEST.md`.
+- **Source / expected:** after being asked to clarify the manual no-key result without repeating the live-source request, the user selected confirmation of the exact no-key message and retained/moving demo behavior. The contract expects `Спроба HH:MM:SS UTC: не вдалося отримати дані: Ключ AISStream не налаштовано`, with the demo set/source retained and movement continuing.
+- **Observed:** the user confirms that the displayed no-key result matched the contract and the demo set/source remained visible and continued moving. This is owner-reported confirmation; no screenshot, literal timestamped UI line, key, or raw response was supplied.
+- **Status / limits:** `PASS` for the user-confirmed no-key criteria only; not independently observed by the agent. This does not resolve the separate archive exposure gate, which the user chose to leave `BLOCKED`, and does not by itself make B-20 `Verified`.
+- **Timestamp / environment:** 2026-10-02; owner-operated local application; exact observation time not recorded.
+- **Recovery / handoff:** preserve this owner-reported record and prior evidence. Do not repeat the live-source request. B-20 remains Active pending remaining gate disposition; archive format/target/permission are still unresolved.
+
+### E-SEA-103 — Owner confirmation of Node.js 24 project runtime and test-stage acceptance
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R4-B21-001`; `TASK-SEA-R4-GOV-002`; `DEC-016-R4-NODE24-RUNTIME`.
+- **Claim under verification:** the user confirms Node.js 24 was the project runtime and accepts the development/testing stages performed on that runtime as passed.
+- **Source:** user confirmation in this session on 2026-10-02: `протягом всього проекта стояла нода 24 і етапи з тестуванням і розробки були всі на ньому, тому вважаємо пройденими`.
+- **Expected:** preserve the user's runtime and acceptance statement as owner-reported evidence, without presenting it as independently observed command output or rewriting prior evidence.
+- **Observed:** the user confirms that Node.js 24 was used throughout the project and asks that its development/testing stages be considered passed. This is an owner-reported project-level confirmation; no new runtime or test command was executed to create this entry.
+- **Status:** `PASS` for the user's reported project-level runtime/test-stage acceptance; `UNKNOWN` for command-by-command mapping and independent verification from this report alone.
+- **Reviewer / owner:** user-reported confirmation; delivery/technical owner records the statement.
+- **Limitations / reconciliation:** historical records including E-SEA-025 and E-SEA-026 explicitly report Node.js 22 for particular earlier checks. They remain unchanged as contemporaneous records; this entry records the user's later correction/confirmation without silently rewriting those entries. This report does not supply exact outputs for every B-21 README command. In the current B-21 continuation, `npm install` and `npx playwright test` were denied before execution; `npm run dev`, `npx tsc --noEmit`, and `npx next build` were not run. Those command-level outcomes remain distinct from the user's project-level acceptance.
+- **Timestamp / environment:** 2026-10-02; user-reported project history; exact dates, Node patch versions, and per-command runtime mapping were not supplied by this confirmation.
+- **Recovery / handoff:** retain the historical evidence and this append-only owner report. Do not repeat denied commands through an alternate route or infer missing command output; resolve any requested historical correction through a separately reviewed, dated amendment.
+
+### E-SEA-104 — B-21 owner-accepted closure
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R4-B21-001`; `E-SEA-099`; `E-SEA-103`; `DEC-016-R4-NODE24-RUNTIME`; `DEC-015-R4-ARCHIVE-GATE-DEFERRAL`.
+- **Claim under verification:** B-21 is accepted and closed by the owner's explicit disposition based on the project-level Node.js 24 confirmation, while command-specific and second-laptop limitations remain disclosed.
+- **Source / authorization:** the user instructed on 2026-10-02: `Переглянь diff і закрий B-21 за owner-підтвердженням`. Reviewed inputs were the current B-21 README diff, the B-21 v1.1 contract/approval, E-SEA-103, and historical Node-runtime evidence E-SEA-025/E-SEA-026.
+- **Expected:** record owner acceptance as the B-21 closure basis; keep exact historical/current command outcomes distinct; make no claim of independent per-command or second-laptop validation.
+- **Observed:** the reviewed README now identifies B-21 as owner-accepted, links E-SEA-103, and states that the project-level confirmation does not represent fresh command-by-command verification. `TASK_SPEC.md` records B-21 as closed by owner acceptance with the same limits. The user accepts project development/testing stages as passed on Node.js 24.
+- **Status:** `PASS` for owner-authorized B-21 closure and bounded documentation alignment; `UNKNOWN` for fresh command-by-command verification in this B-21 continuation and second-laptop setup.
+- **Command outcomes / limitations:** the earlier `npm install` succeeded on Node `v24.21.0` against the then-current `22.x` engine declaration, with `EBADENGINE` and one critical-severity vulnerability notice. In the current B-21 continuation, `npm install` and `npx playwright test` were denied before execution; `npm run dev`, `npx tsc --noEmit`, and `npx next build` were not run. These are not reported as fresh passes. The project-level runtime statement is owner-reported, not independent machine output. Historical E-SEA-025/E-SEA-026 Node.js 22 observations are preserved unchanged; their reconciliation with the later owner statement is not independently established.
+- **Timestamp / environment:** 2026-10-02; documentation review and owner disposition in the local SeaRadar repository; no runtime/test/build command executed for this closure.
+- **Recovery / handoff:** preserve this owner-accepted closure and prior evidence. Any future fresh command checks or second-laptop validation must be recorded as new evidence under a permitted bounded task. Archive inspection remains deferred under DEC-015; no dependency change, archive/checkpoint operation, commit, or push was performed.
+
+### E-SEA-105 — Owner confirmation of B-18–B-21 checks
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R4-PLAN-001`; `TASK-SEA-R4-B18-001`; `TASK-SEA-R4-B19-001`; `TASK-SEA-R4-B20-001`; `TASK-SEA-R4-B21-001`; `E-SEA-098`–`E-SEA-104`.
+- **Claim under verification:** the owner confirms that all checks for B-18 through B-21 have been verified.
+- **Source:** user clarification on 2026-10-03: `вже все перевірино`, clarified as `Усі перевірки B-18–B-21`.
+- **Expected:** record this as an owner-reported confirmation of completion across the stated task range without rewriting prior evidence or attributing command output to this session.
+- **Observed:** the user confirms that all checks for B-18–B-21 have been verified. This confirmation contains no per-command output, timestamps, or mapping of individual checks to specific runs; no checks were executed for this documentation update.
+- **Status:** `PASS` for recording the owner's confirmation; `UNKNOWN` for independent command-by-command verification from this statement alone.
+- **Limitations / reconciliation:** preserve the existing B-18–B-21 task records and their specific observed, owner-reported, denied, and unrun outcomes. In particular, the B-21 continuation's denied/not-run command outcomes remain accurate for that continuation; this project-level report does not turn them into fresh agent-observed results or independently verify a second laptop. Archive inspection remains deferred by DEC-015, the unique R4 final-checkpoint path remains unresolved, and official R4 sprint assignment remains `Unknown`; this confirmation does not resolve those items.
+- **Timestamp / environment:** 2026-10-03; user-reported project confirmation; exact observation times and execution environment were not supplied.
+- **Recovery / handoff:** retain this append-only owner report and all earlier task evidence. Record any later command-specific outputs or corrections as separate dated evidence; do not infer them from this statement or repeat any denied command through another route.
+
+### E-SEA-106 — R4 checkpoint authoring verification
+
+- **ID / version / status:** `E-SEA-106`; `1.0.0`; `PASS` for the bounded checkpoint-authoring documentation checks only.
+- **Owner / date:** delivery / technical owner — executor role; 2026-10-03. Exact wall-clock time was not captured.
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R4-CHECKPOINT-001` v1.2.0; `DEC-004`; `DEC-014`; `DEC-015`; `DEC-017`; `CHECKPOINT-SEA-R4-028`.
+- **Source / expected:** the approved checkpoint contract and current R4 task, decision, README, checkpoint and evidence records. Expected a new `docs/checkpoints/CHECKPOINT-28.md` that follows DEC-004, preserves existing evidence classes/limitations and does not claim overall R4 completion; append only this authoring-check result without modifying E-SEA-098–E-SEA-105.
+- **Observed preflight:** `docs/checkpoints/` contained CHECKPOINT-01 and CHECKPOINT-03 through CHECKPOINT-27; `CHECKPOINT-28.md` was absent. Search found `CHECKPOINT-SEA-R4-028` references only in `TASK_SPEC.md` before creation. `E-SEA-106` was absent from `EVIDENCE.md` before append. The root README status row links DEC-017 and states assignment-only/no plan; its explanatory cell retains the E-SEA-105 owner-reported limitation and DEC-015 archive deferral.
+- **Observed authoring checks:** `git diff --check -- EVIDENCE.md` — **PASS**, exit 0 with no output. `git diff --no-index --check /dev/null docs/checkpoints/CHECKPOINT-28.md` — no whitespace diagnostics; expected exit 1 because the new file differs from `/dev/null`. Focused structural checks — **PASS** for checkpoint metadata/required sections, unique checkpoint and evidence heading IDs, required R4 scope/evidence limitations, local links, trailing whitespace, and final newlines. The first structural-script run had one failed assertion because it counted expected references to `E-SEA-106` as duplicate records; the assertion was corrected to check unique evidence headings, and the rerun passed. This was a check-script assertion issue, not a document defect.
+- **Limits:** this entry records documentation-authoring checks only. No B-18–B-21 product commands, tests, build, runtime, provider/network, secret, archive, or second-laptop checks were executed or independently repeated. Owner-reported, denied, not-run and historical command outcomes remain unchanged. This record does not declare overall R4 `DONE` or release/deployment readiness.
+- **Recovery / handoff:** preserve CHECKPOINT-28 and this append-only entry after review. Correct factual errors only through a dated superseding append-only record. No RUNBOOK entry, commit, push, archive operation, or publication was performed.
+
+### E-SEA-107 — Owner report with unspecified scope
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R4-OWNER-REPORT-RECORD-001` — cited only as the authorization/provenance for recording this statement; the report is not assigned to any specific product task or verification scope.
+- **Claim under verification:** the owner made the statement `все перевірено і працює`; the underlying checks are not identified by this statement.
+- **Source:** user statement in this conversation on 2026-10-05: `все перевірено і працює`.
+- **Expected:** preserve the owner-reported statement verbatim, mark it as owner-reported, and separate faithful recording from verification of any underlying checks; do not infer a referent or rewrite prior evidence.
+- **Observed:** the owner stated `все перевірено і працює`. The referent/scope, individual checks, commands, outputs, execution mapping, environment, and exact observation time were not supplied. No checks were executed as part of recording this statement.
+- **Status:** `PASS` for faithfully recording the owner's statement; `UNKNOWN` for independent verification of the underlying checks from this statement alone.
+- **Limitations / reconciliation:** do not attribute this unscoped report to R4, B-18–B-21, any named task or command, product behavior, or project-wide outcome. It does not resolve DEC-015's archive deferral, establish second-laptop validation, change B-21 denied/not-run outcomes, or establish overall R4 `DONE`, full MVP acceptance, or release/deployment readiness. E-SEA-098–E-SEA-106 remain unchanged.
+- **Timestamp / environment:** 2026-10-05; user-reported statement in this conversation. Exact wall-clock time and execution environment were not supplied.
+- **Recovery / handoff:** preserve this append-only owner report and all earlier evidence. Record any later scoped command/check results separately with their own source and observed output; do not infer them from this statement.
+
+### E-SEA-108 — Item-level owner-reported B-18–B-21 confirmations
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R4-B18-B21-OWNER-CHECKS-001`; `TASK-SEA-R4-B18-001`; `TASK-SEA-R4-B19-001`; `TASK-SEA-R4-B20-001`; `TASK-SEA-R4-B21-001`; `E-SEA-105`.
+- **Claim under verification:** the owner reported the listed B-18–B-21 checklist items as confirmed and reported B21-e working on the stated macOS and Node versions; this entry records the report and does not independently validate the underlying checks.
+- **Source:** owner-reported item-level confirmations conveyed in this conversation on 2026-10-06. No command transcript, output, screenshot, or independent run artifact was supplied with these confirmations.
+- **Expected:** append supplementary per-item detail to the broad owner confirmation in E-SEA-105, without duplicating it as a fresh verification, attributing unspecified command outcomes, or changing prior evidence.
+- **Observed:** the owner reported as confirmed B18-a/b/c; B19-a/b; B20-a/b/c/d/e/f/g; and B21-a/b/c/d1/d2/d3. For B21-e, the owner reported that it worked on macOS 15.0 Sequoia and macOS 26.0 Tahoe using Node 22 and Node 24; the OS-to-Node pairings were not supplied. These are owner-reported statements, not independently observed results.
+- **Timestamp / environment:** 2026-10-06; owner-reported in this conversation. Exact wall-clock time, per-run dates, device/machine identity, environment details, and mapping of individual items to runs were not supplied.
+- **Status:** `PASS` for faithfully recording the owner's item-level report; `UNKNOWN` for independent verification of the underlying B-18–B-21 checks and exact B21-e OS-to-Node pairings.
+- **Reviewer / owner:** owner is the source of the reported confirmations; delivery/technical owner records them. Owner review of this focused append remains pending.
+- **Limitations and follow-up:** this supplements but does not supersede E-SEA-105's broad confirmation. Commands, outputs, timestamps, device identity, and per-item run mapping remain unknown/not supplied. Preserve all historical denied-before-execution and not-run outcomes in E-SEA-098–E-SEA-104, and retain E-SEA-107 as unscoped. It does not establish second-laptop validation, complete `GATE-b`, overall R4 `DONE`, full MVP acceptance, release readiness, or deployment readiness. Final `GATE-b` remains deferred; Sprint 3b remains `CONTINUE WITH APPROVAL`.
+- **Recovery / handoff:** keep this as an append-only owner-report record. Correct any factual error only through a separately reviewed and approved dated amendment; do not edit earlier evidence or infer missing command/run details.
+
+### E-SEA-109 — Owner-reported GATE-b second-laptop result
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R4-GATE-B-SECOND-LAPTOP-001`; `TASK-SEA-R4-B21-001`; `E-SEA-108`.
+- **Claim under verification:** the owner reports that the immediately preceding GATE-b second-laptop README install/start checklist works.
+- **Source:** owner statement in this conversation on 2026-10-06: `перевірив все працює`, immediately following the bounded checklist for Node/npm version capture, `npm install`, `npm run dev`, and opening `http://127.0.0.1:3000`.
+- **Expected:** record the owner-reported result without upgrading it to independent command-by-command verification or inferring omitted outputs and environment details.
+- **Observed:** the owner reported that the checks work. No command transcript, exact Node/npm versions, exact Windows build, timestamp of execution, or individual command/page outcome was supplied. No check was executed by this session.
+- **Timestamp / environment:** 2026-10-06; owner report in this conversation. Exact execution time and run environment were not restated with the result; Windows 11 2026 Update (26H2) remains previously owner-reported, not independently observed for this run.
+- **Status:** `PASS` for recording the owner's aggregate GATE-b success report; `UNKNOWN` for independent or command-by-command verification of the acceptance criteria.
+- **Reviewer / owner:** owner is the source of the report; delivery/technical owner records it. Review of this entry remains pending.
+- **Limitations and follow-up:** this is a coarse owner report tied by immediate conversation context to the GATE-b checklist, not an independently observed test result. Do not infer exact Node/npm versions, Windows build, command exit codes, server binding, page content, or exact run time. It does not establish overall R4 `DONE`, full MVP acceptance, release readiness, deployment readiness, or resolve DEC-015 archive deferral.
+- **Recovery / handoff:** preserve this append-only report. Any later detailed results must be recorded separately with their own provenance; do not rewrite prior entries or infer missing details.
+
+### E-SEA-110 — Owner acceptance of GATE-b
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R4-GATE-B-SECOND-LAPTOP-001`; `E-SEA-109`.
+- **Claim under verification:** the owner explicitly accepts GATE-b on the basis of their confirmation that the bounded second-laptop checklist works.
+- **Source:** owner statement in this conversation on 2026-10-06: `зафіксуй GATE-b як прийнятий за моїм підтвердженням`.
+- **Expected:** record owner acceptance of this bounded GATE-b task while preserving the underlying validation evidence class as owner-reported and not independently verified.
+- **Observed:** the owner explicitly directed that GATE-b be recorded as accepted based on their confirmation. This is an acceptance/disposition decision; it supplies no additional command output, runtime version, OS build, or execution timestamp.
+- **Timestamp / environment:** 2026-10-06; owner acceptance in this conversation. Execution environment details remain as limited in E-SEA-109.
+- **Status:** `PASS` for recording the owner's bounded GATE-b acceptance; underlying command-by-command independent verification remains `UNKNOWN`.
+- **Reviewer / owner:** product owner provided the acceptance; delivery/technical owner recorded it.
+- **Limitations and follow-up:** closes only `TASK-SEA-R4-GATE-B-SECOND-LAPTOP-001` by owner acceptance of the owner-reported aggregate result. Does not upgrade E-SEA-109 to independent verification, establish missing versions/build/time, alter historical B-21 outcomes, resolve DEC-015 archive deferral, or establish overall R4 `DONE`, full MVP acceptance, release readiness, or deployment readiness.
+- **Recovery / handoff:** preserve this append-only acceptance record. Any additional execution detail must be recorded as a separate dated entry; do not rewrite E-SEA-109 or earlier evidence.
+
+### E-SEA-111 — Sprint 3b GATE-b status supplement
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R4-S3B-GATE-B-STATUS-SYNC-001`; `TASK-SEA-R4-GATE-B-SECOND-LAPTOP-001`; `E-SEA-109`; `E-SEA-110`.
+- **Claim under verification:** the canonical Sprint 3b plan now carries a dated supplemental record of owner-accepted GATE-b and the owner's `CONTINUE WITH APPROVAL` exit decision without asserting Sprint or R4 completion.
+- **Source:** owner approved the exact bounded status-sync task by replying `продовжуй`; source records E-SEA-109/E-SEA-110; focused plan/task diff and documentation checks.
+- **Expected:** append a dated plan supplement linking E-SEA-109 and E-SEA-110; preserve owner-reported evidence class, unknown command details, DEC-015 archive deferral, and the existing bounded exit decision; do not rewrite historical records or claim `DONE`.
+- **Observed:** `SPRINT-03b.md` was versioned to 1.1.0 and received one supplemental section stating GATE-b is owner-accepted based on the aggregate owner report, command-level details remain unknown, and Sprint 3b remains `CONTINUE WITH APPROVAL`. The task record was updated and this evidence entry was appended. No product, test, second-laptop, network, archive, or deployment operation was run.
+- **Timestamp / environment:** 2026-10-07; documentation changes/checks in the SeaRadar workspace. No product environment was used.
+- **Status:** `PASS` for the owner-approved bounded documentation update and its structural/whitespace checks; underlying GATE-b command-by-command behavior remains `UNKNOWN` as recorded in E-SEA-109.
+- **Reviewer / owner:** owner approved the exact task contract before execution; focused post-change human diff review remains pending.
+- **Limitations and follow-up:** this supplements the original Sprint 3b plan without retroactively changing its recorded state. It does not close Sprint 3b or overall R4, resolve archive deferral, verify runtime behavior, or fill the missing versions/build/command outputs.
+- **Recovery / handoff:** preserve the dated supplement and append-only evidence/history. Human reviewer should inspect the focused diff and choose `continue`, `revise`, or `HOLD`; any factual correction after append requires a dated amendment.
+
+### E-SEA-112 — Sprint 3b supplement approval-boundary correction
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R4-S3B-GATE-B-STATUS-SYNC-001`; `SPRINT-SEA-S3B-001`; `E-SEA-111`.
+- **Claim under verification:** the Sprint 3b v1.1.0 metadata distinguishes the previously owner-approved v1.0.0 plan from the newly task-authorized supplement, whose focused human diff review remains pending.
+- **Source:** focused human review of `SPRINT-03b.md` approval boundary, status metadata and dated supplement; `TASK_SPEC.md`; `E-SEA-111`; post-correction structural, link and whitespace checks.
+- **Expected:** do not imply the owner approved the entire v1.1.0 plan when the recorded approval names v1.0.0; preserve the approved supplement scope and leave the revision pending focused human review.
+- **Observed:** review found the v1.1.0 header still said `Ready — owner-approved plan`, while the approval boundary named only v1.0.0 and the task handoff said v1.1.0 review was pending. The header now marks v1.0.0 as owner-approved and v1.1.0 as pending focused human diff review; the approval boundary limits task authorization to the dated supplement. The existing GATE-b evidence classes, `CONTINUE WITH APPROVAL`, and DEC-015 archive deferral remain unchanged.
+- **Timestamp / environment:** 2026-10-07; documentation review and correction in the local SeaRadar workspace.
+- **Status:** `PASS` for this documentation consistency correction; final focused owner diff review remains pending.
+- **Reviewer / owner:** delivery/technical owner identified and corrected the metadata inconsistency during focused review; owner review of the final diff remains pending.
+- **Limitations and follow-up:** this is a documentation-status correction only. It does not independently verify GATE-b, close Sprint 3b or overall R4, resolve archive deferral, or establish full MVP/release/deployment readiness. Post-correction command and structural-check outcomes are recorded in the corresponding RUNBOOK handoff.
+- **Recovery / handoff:** preserve append-only E-SEA-111 and this dated correction. Human reviewer should inspect the focused diff and choose `continue`, `revise`, or `HOLD`.
+
+### E-SEA-113 — Sprint 3b v1.1.0 owner diff review
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R4-S3B-GATE-B-STATUS-SYNC-001`; `SPRINT-SEA-S3B-001`; `E-SEA-109`–`E-SEA-112`.
+- **Claim under verification:** the owner reviewed the corrected Sprint 3b v1.1.0 documentation diff and approved it for continuation as a planning record, without authorizing implementation or broader Sprint/R4 closure.
+- **Source:** owner reply `продовжуй` after presentation of the focused diff and boundaries; `SPRINT-03b.md`; `TASK_SPEC.md`; E-SEA-109–E-SEA-112.
+- **Expected:** record the owner’s bounded `continue` disposition; mark the documentation task verified and the v1.1.0 planning record owner-approved; preserve `CONTINUE WITH APPROVAL`, the archive deferral, and all implementation/closeout gates.
+- **Observed:** the owner chose `продовжуй`. `SPRINT-03b.md` now records v1.1.0 as owner-approved for planning only; `TASK-SEA-R4-S3B-GATE-B-STATUS-SYNC-001` is Verified for the bounded documentation update. Sprint 3b remains `CONTINUE WITH APPROVAL`, not `DONE`; implementation, archive operations, deployment, commit and push remain unauthorized by this decision.
+- **Timestamp / environment:** 2026-10-07; owner disposition in this conversation; local documentation review.
+- **Status:** `PASS` for owner approval of the bounded v1.1.0 planning-document revision.
+- **Reviewer / owner:** product owner — focused diff disposition `continue`; delivery/technical owner — record update.
+- **Limitations and follow-up:** this does not independently verify GATE-b, command-level results, broader R4 acceptance, full MVP acceptance, release readiness, or deployment readiness. GATE-b remains owner-accepted on the aggregate report; DEC-015 archive inspection remains separately deferred. Every future technical or closeout slice needs its own reviewed task contract and explicit approval.
+- **Recovery / handoff:** preserve this append-only disposition and prior evidence. Next bounded action requires a separate reviewed task contract; no implementation or other operation is inferred.
+
+### E-SEA-114 — Owner requests revisit of deferred archive gate
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R4-ARCHIVE-GATE-INPUTS-001`; `DEC-015-R4-ARCHIVE-GATE-DEFERRAL`.
+- **Claim under verification:** the owner chose to revisit DEC-015's archive gate, while the prerequisites for any separate archive task remain unspecified.
+- **Source:** owner response `Повернутися до gate` to the decision prompt in this conversation; approved task contract `TASK-SEA-R4-ARCHIVE-GATE-INPUTS-001`.
+- **Expected:** record only the explicit choice received; do not infer the archive format, target, permission, recovery owner, or authorization for an archive operation.
+- **Observed:** the owner selected `Повернутися до gate`. Archive format/type and non-sensitive scope, safe logical target/destination, exact permission/action boundary, recovery owner/approach, and the explicit request to prepare a separate archive task remain `Unknown` / `Waiting for input`. No archive or target was accessed; DEC-015 remains unchanged.
+- **Timestamp / environment:** 2026-10-07; owner input in this conversation; no archive or product environment used.
+- **Status:** `BLOCKED` pending the required non-sensitive owner inputs and explicit next-step request.
+- **Reviewer / owner:** product owner supplied the revisit choice; delivery/technical owner recorded its limited meaning.
+- **Limitations and follow-up:** this choice is not permission to inspect, create, copy, package, publish, or delete an archive. It does not pass or waive the gate, change B-20 status, close Sprint 3b or overall R4, or establish release/deployment readiness.
+- **Recovery / handoff:** preserve DEC-015 and this append-only record. Request only the missing non-sensitive inputs; if the owner elects to keep the gate deferred, record that explicit choice without archive action.
+
+### E-SEA-115 — Owner disposition for bounded Sprint 3b exit
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R4-S3B-EXIT-001`; `TASK-SEA-R4-ARCHIVE-GATE-INPUTS-001`; `SPRINT-SEA-S3B-001`; `DEC-015-R4-ARCHIVE-GATE-DEFERRAL`.
+- **Claim under verification:** the owner chose to retain DEC-015's archive deferral and close Sprint 3b as `DONE` for its stated bounded outcome only.
+- **Source:** owner instruction in this conversation on 2026-10-07; bounded Sprint 3b plan and DEC-015.
+- **Expected:** record the explicit owner disposition without upgrading owner-reported results, passing or waiving archive work, or claiming overall R4/MVP completion.
+- **Observed:** the owner instructed to leave the archive gate deferred and close Sprint 3b `DONE`. Sprint 3b v1.2.0 records this as the bounded plan exit; the prior `CONTINUE WITH APPROVAL` entry remains historical. Archive prerequisites remain `Unknown` / `Waiting for input`; DEC-015 is unchanged and no archive was accessed.
+- **Timestamp / environment:** 2026-10-07; owner input and documentation-only review in the local SeaRadar workspace.
+- **Status:** `PASS` for recording the bounded owner disposition and preserving stated boundaries; not evidence of archive safety or independent product verification.
+- **Reviewer / owner:** product owner supplied the disposition; delivery/technical owner recorded it.
+- **Limitations / follow-up:** broader R4 acceptance criteria remain `Unknown`; this does not establish overall R4 `DONE`, full MVP acceptance, release readiness, or deployment readiness. GATE-b remains owner-accepted based on its aggregate report, with command-level details unknown.
+- **Recovery / handoff:** preserve this append-only entry and prior evidence. Archive handling remains deferred, not passed or permanently waived; any archive task/action requires its own reviewed contract and explicit approval.
+
+### E-SEA-116 — Sprint 3b README summary and root README synchronization
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R4-S3B-README-001`; `SPRINT-SEA-S3B-README-001`; `SPRINT-SEA-S3B-001`; `E-SEA-115`.
+- **Claim under verification:** the descriptive Sprint 3b companion and general README consistently summarize the bounded Sprint 3b `DONE` disposition and preserve the limitations in canonical source records.
+- **Source:** `SPRINT-03b.md` v1.2.0, `TASK_SPEC.md`, CHECKPOINT-28, DEC-015, E-SEA-098–E-SEA-115, the owner-approved documentation task, and the updated `README.md` / `SPRINT-03b-README.md`.
+- **Expected:** use only source-supported task outcomes and evidence classes; keep the companion non-canonical; remove stale root README statements about no Sprint 3b plan; preserve archive and broader R4 non-claims.
+- **Observed:** `SPRINT-03b-README.md` provides a Draft descriptive summary and links the canonical records. Root `README.md` now links the plan and companion, describes only the bounded Sprint 3b `DONE` status, and records B-21/GATE-b limitations. Local Markdown link targets, task/evidence identifiers, selected content boundaries, and whitespace checks passed.
+- **Timestamp / environment:** 2026-10-07; documentation-only review in the local SeaRadar workspace.
+- **Status:** `PASS` for documentation consistency and link/structure checks; no new product, archive, provider, or runtime result was observed.
+- **Reviewer / owner:** delivery/technical owner prepared the summary at the product owner's request; companion remains Draft pending human review.
+- **Limitations / follow-up:** overall R4/MVP acceptance, release/deployment readiness, archive safety, and independent verification of owner-reported outcomes are not established. Archive prerequisites and broader R4 acceptance criteria remain `Unknown`.
+- **Recovery / handoff:** preserve this append-only record and prior evidence. Correct any factual issue through a dated addendum; keep `SPRINT-03b.md` canonical and the new README descriptive only.

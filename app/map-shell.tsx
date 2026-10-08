@@ -16,17 +16,21 @@ type SnapshotSuccess = {
   reason: "window_elapsed" | "limit_reached";
 };
 
-type SnapshotUiState =
-  | { kind: "idle-demo" }
+type DisplayedState =
+  | { kind: "demo" }
+  | { kind: "snapshot"; snapshot: SnapshotSuccess };
+
+type SnapshotAttempt =
+  | { kind: "idle" }
   | { kind: "loading" }
-  | { kind: "success"; snapshot: SnapshotSuccess }
-  | { kind: "empty"; snapshot: SnapshotSuccess }
+  | { kind: "success"; message: string }
+  | { kind: "empty"; message: string }
   | { kind: "error"; message: string };
 
-type MapMode = "demo" | "hidden" | "snapshot";
+type MapMode = "demo" | "snapshot";
 
-const SNAPSHOT_FALLBACK =
-  "Не вдалося отримати дані: Сервіс не повернув коректну відповідь";
+const NO_RESPONSE_MESSAGE =
+  "Спроба: не вдалося отримати дані: Немає відповіді сервера";
 const NO_VESSELS: Vessel[] = [];
 const ERROR_MESSAGES = {
   no_api_key: "Ключ AISStream не налаштовано",
@@ -114,13 +118,16 @@ function parseSnapshotSuccess(value: unknown): SnapshotSuccess | null {
   };
 }
 
-function parseSnapshotError(value: unknown): string | null {
+function parseSnapshotError(value: unknown): { attemptedAt: string; message: string } | null {
   if (!isRecord(value) || value.ok !== false || !isRecord(value.error)) {
     return null;
   }
 
+  const { attemptedAt } = value;
   const { code, message } = value.error;
   if (
+    typeof attemptedAt !== "string" ||
+    !Number.isFinite(Date.parse(attemptedAt)) ||
     typeof code !== "string" ||
     !(code in ERROR_MESSAGES) ||
     message !== ERROR_MESSAGES[code as keyof typeof ERROR_MESSAGES]
@@ -128,7 +135,10 @@ function parseSnapshotError(value: unknown): string | null {
     return null;
   }
 
-  return ERROR_MESSAGES[code as keyof typeof ERROR_MESSAGES];
+  return {
+    attemptedAt,
+    message: ERROR_MESSAGES[code as keyof typeof ERROR_MESSAGES],
+  };
 }
 
 function formatSnapshotTime(value: string): string {
@@ -141,7 +151,8 @@ function getSnapshotLabel(snapshot: SnapshotSuccess): string {
 }
 
 export default function MapShell() {
-  const [state, setState] = useState<SnapshotUiState>({ kind: "idle-demo" });
+  const [displayed, setDisplayed] = useState<DisplayedState>({ kind: "demo" });
+  const [attempt, setAttempt] = useState<SnapshotAttempt>({ kind: "idle" });
   const [selectedVessel, setSelectedVessel] = useState<Vessel | null>(null);
   const [viewResetToken, setViewResetToken] = useState(0);
   const inFlightRef = useRef(false);
@@ -164,36 +175,40 @@ export default function MapShell() {
     }
 
     inFlightRef.current = true;
-    setSelectedVessel(null);
-    setState({ kind: "loading" });
+    setAttempt({ kind: "loading" });
 
     try {
       const response = await fetch("/api/snapshot", { method: "GET" });
       const payload: unknown = await response.json();
 
       if (response.status === 502) {
-        const message = parseSnapshotError(payload);
-        if (message === null) {
-          setState({ kind: "error", message: SNAPSHOT_FALLBACK });
-        } else {
-          setState({ kind: "error", message: `Не вдалося отримати дані: ${message}` });
-        }
+        const error = parseSnapshotError(payload);
+        setAttempt({
+          kind: "error",
+          message:
+            error === null
+              ? NO_RESPONSE_MESSAGE
+              : `Спроба ${formatSnapshotTime(error.attemptedAt)} UTC: не вдалося отримати дані: ${error.message}`,
+        });
         return;
       }
 
       if (!response.ok) {
-        setState({ kind: "error", message: SNAPSHOT_FALLBACK });
+        setAttempt({ kind: "error", message: NO_RESPONSE_MESSAGE });
         return;
       }
 
       const snapshot = parseSnapshotSuccess(payload);
       if (snapshot === null) {
-        setState({ kind: "error", message: SNAPSHOT_FALLBACK });
+        setAttempt({ kind: "error", message: NO_RESPONSE_MESSAGE });
         return;
       }
 
       if (snapshot.vessels.length === 0) {
-        setState({ kind: "empty", snapshot });
+        setAttempt({
+          kind: "empty",
+          message: `Спроба ${formatSnapshotTime(snapshot.collectedAt)} UTC: за час збору позицій не отримано`,
+        });
         return;
       }
 
@@ -201,22 +216,25 @@ export default function MapShell() {
         hasResetForSnapshotRef.current = true;
         setViewResetToken((token) => token + 1);
       }
-      setState({ kind: "success", snapshot });
+      setDisplayed({ kind: "snapshot", snapshot });
+      setAttempt({
+        kind: "success",
+        message: `Спроба ${formatSnapshotTime(snapshot.collectedAt)} UTC: отримано суден: ${snapshot.count}`,
+      });
+      setSelectedVessel((currentVessel) =>
+        currentVessel === null
+          ? null
+          : snapshot.vessels.find((vessel) => vessel.id === currentVessel.id) ?? null,
+      );
     } catch {
-      setState({ kind: "error", message: SNAPSHOT_FALLBACK });
+      setAttempt({ kind: "error", message: NO_RESPONSE_MESSAGE });
     } finally {
       inFlightRef.current = false;
     }
   }, []);
 
-  const snapshot =
-    state.kind === "success" || state.kind === "empty" ? state.snapshot : null;
-  const mapMode: MapMode =
-    state.kind === "idle-demo"
-      ? "demo"
-      : snapshot !== null
-        ? "snapshot"
-        : "hidden";
+  const snapshot = displayed.kind === "snapshot" ? displayed.snapshot : null;
+  const mapMode: MapMode = snapshot === null ? "demo" : "snapshot";
   const mapVessels = useMemo(() => {
     if (snapshot === null) {
       return NO_VESSELS;
@@ -227,22 +245,14 @@ export default function MapShell() {
       : snapshot.vessels;
   }, [snapshot]);
   const sourceLabel =
-    state.kind === "idle-demo"
-      ? "Демонстраційні дані"
-      : state.kind === "loading"
+    snapshot === null ? "Демонстраційні дані" : getSnapshotLabel(snapshot);
+  const attemptMessage =
+    attempt.kind === "idle"
+      ? null
+      : attempt.kind === "loading"
         ? "Завантаження…"
-        : state.kind === "success" || state.kind === "empty"
-          ? getSnapshotLabel(state.snapshot)
-          : "Даних на карті немає";
-  const errorMessage = state.kind === "error" ? state.message : null;
-  const source =
-    state.kind === "idle-demo"
-      ? "demo"
-      : state.kind === "loading"
-        ? "loading"
-        : state.kind === "success" || state.kind === "empty"
-          ? "aisstream"
-          : "none";
+        : attempt.message;
+  const source = snapshot === null ? "demo" : "aisstream";
 
   return (
     <div className="sea-map-shell">
@@ -259,23 +269,21 @@ export default function MapShell() {
           type="button"
           className="future-data-button"
           onClick={loadSnapshot}
-          disabled={state.kind === "loading"}
+          disabled={attempt.kind === "loading"}
         >
           Завантажити справжні позиції
         </button>
         <div className="map-source-label" data-source={source} aria-live="polite">
           {sourceLabel}
         </div>
-        {errorMessage ? (
+        {attemptMessage ? (
           <div className="map-error-message" role="status" aria-live="polite">
-            {errorMessage}
+            {attemptMessage}
           </div>
         ) : null}
-        {state.kind === "empty" ? (
-          <div className="map-empty-message" role="status" aria-live="polite">
-            За час збору позицій не отримано
-          </div>
-        ) : null}
+        <div className="map-source-label">
+          Після оновлення сторінки знову показуються демонстраційні дані
+        </div>
         {selectedVessel ? <VesselCard vessel={selectedVessel} /> : null}
       </div>
     </div>

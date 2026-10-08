@@ -1,19 +1,19 @@
 # SeaRadar — правила роботи з проєктом
 
 - **ID:** `GOV-SEA-001`
-- **Version:** `1.5.0`
+- **Version:** `1.6.0`
 - **Status:** `Ready`
 - **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
 - **Delivery / technical owner:** виконавець проєкту
-- **Date:** 2026-09-29
-- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), [`docs/decisions/DEC-009-r2-current-task-status.md`](docs/decisions/DEC-009-r2-current-task-status.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`SPRINT-03.md`](SPRINT-03.md)
+- **Date:** 2026-10-02
+- **Related artifacts:** [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md), [`SPEC.md`](SPEC.md), [`TASK_SPEC.md`](TASK_SPEC.md), [`docs/decisions/DEC-001-mvp-contract.md`](docs/decisions/DEC-001-mvp-contract.md), [`docs/decisions/DEC-002-r1-stack.md`](docs/decisions/DEC-002-r1-stack.md), [`docs/decisions/DEC-005-r1-node22.md`](docs/decisions/DEC-005-r1-node22.md), [`docs/decisions/DEC-006-r2-scope.md`](docs/decisions/DEC-006-r2-scope.md), [`docs/decisions/DEC-009-r2-current-task-status.md`](docs/decisions/DEC-009-r2-current-task-status.md), [`docs/decisions/DEC-012-r3-scope.md`](docs/decisions/DEC-012-r3-scope.md), [`docs/decisions/DEC-016-r4-node24-runtime.md`](docs/decisions/DEC-016-r4-node24-runtime.md), [`SPRINT-03.md`](SPRINT-03.md)
 
 ## 1. Статус baseline
 
 Цей файл є стабільним operational contract для людей та AI-асистентів.
 
 - **Product / MVP:** `Ready — approved PROJECT_BRIEF.md / SPEC.md baseline; changes require a version bump and decision record`
-- **Stack / architecture:** `Ready for R1 only — current stack is recorded in DEC-005; architecture beyond R1 is Unknown`
+- **Stack / architecture:** `Ready for R1 only — historical R1 stack is recorded in DEC-005; current repository runtime is Node.js 24.x per DEC-016; architecture beyond R1 is Unknown`
 - **Sprint 1 / R1:** `Verified — delivered baseline; historical limitations remain recorded`
 - **Sprint 2 / R2:** `Ready — scope authorized by DEC-006; implementation remains task-gated; no R2 technical task is currently authorized (DEC-009)`
 - **Sprint 3:** `Ready — bounded US-09 verification scope authorized by DEC-012; each implementation slice remains task-gated`
