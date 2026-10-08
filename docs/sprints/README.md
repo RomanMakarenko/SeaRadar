@@ -35,7 +35,7 @@ Each future `S1`, `S2` or `S3` record must contain:
 | Sprint 1 | R1 | `Ready` | [`../../SPRINT-01.md`](../../SPRINT-01.md) |
 | Sprint 2 | Unknown | `Waiting for input` | Not created |
 | Sprint 3 | R3 / US-09 checks | `Ready — implementation task-gated` | [`SPRINT-03.md`](../../SPRINT-03.md) |
-| Sprint 3b | R4 | `Assigned — no sprint plan created` | [`DEC-017`](../decisions/DEC-017-r4-sprint-assignment.md) (assignment only) |
+| Sprint 3b | R4 | `Verified — bounded Sprint 3b exit DONE; overall R4 remains separately gated` | [`SPRINT-03b.md`](../../SPRINT-03b.md) (DEC-017 is assignment only) |
 
 ## Creation gate
 

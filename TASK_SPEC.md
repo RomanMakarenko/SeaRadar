@@ -5151,3 +5151,342 @@ At completion, present the focused README diff and command results, request huma
 - **Verification:** `git diff --check -- EVIDENCE.md TASK_SPEC.md` passed. The focused structural check passed: 107 unique evidence IDs, E-SEA-107 is the final entry, required fields are present, and the unscoped-report boundaries are retained. Two initial structural assertions failed because the check script used over-literal wording/capitalization expectations for the correctly stated negative boundary; after aligning the assertions with the recorded phrasing, validation passed. These were check-script assertion mismatches, not document defects. Documentation-only checks; no underlying/product checks were run.
 - **Retained limits:** E-SEA-105 and E-SEA-106 were not edited. No RUNBOOK entry was added. Archive deferral, second-laptop unknown, existing B-21 denied/not-run outcomes, and absence of an overall R4 `DONE` remain unchanged.
 - **Review checkpoint:** the focused E-SEA-107 append and this task-section diff were presented; the owner replied `погоджую`, accepting this bounded evidence-recording result.
+
+---
+
+# TASK-SEA-R4-S3B-PLAN-001 — Prepare the canonical Sprint 3b plan
+
+- **Version:** `1.0.0`
+- **Status:** `Verified — canonical Sprint 3b plan prepared, owner-approved, and documentation-checked; no implementation authorized`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-10-06
+- **Related artifacts:** [`SPEC.md`](SPEC.md), [`SPRINT-03b-CHANGE-REQUEST.md`](SPRINT-03b-CHANGE-REQUEST.md), [`TASK-SEA-R4-PLAN-001`](TASK_SPEC.md), [`DEC-014`](docs/decisions/DEC-014-r4-scope.md), [`DEC-015`](docs/decisions/DEC-015-r4-archive-gate-deferral.md), [`DEC-017`](docs/decisions/DEC-017-r4-sprint-assignment.md), [`docs/sprints/README.md`](docs/sprints/README.md), [`CHECKPOINT-28`](docs/checkpoints/CHECKPOINT-28.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md)
+
+## Goal and authority boundary
+
+- **Goal:** prepare a reviewable canonical Sprint 3b plan that states the bounded R4 outcome, current evidence-based task status, remaining blockers, and approval gates without claiming overall R4 completion.
+- **Initial preparation authority:** before this task was approved, the owner's request to continue toward finishing Sprint 3b authorized drafting this task contract only. The owner explicitly approved its exact v1.0.0 on 2026-10-06; that approval and limited authorization are recorded in the Approval follow-up below. No product, test, acceptance, closeout, or archive work is authorized.
+- **Existing planning record:** `TASK-SEA-R4-PLAN-001` is a Draft R4 B-18–B-21 decomposition, not the canonical Sprint 3b plan. DEC-017 records the R4 assignment only. Neither is promoted or replaced by this task.
+- **Proposed sprint outcome for owner approval:** produce one canonical Sprint 3b record that maps approved R4 scope to evidence-backed dispositions, identifies any remaining bounded actions and blockers, and states an honest exit decision. Scope is planning/reconciliation only unless the owner separately authorizes another exact task.
+- **Proposed success signal for owner approval:** the canonical plan meets `docs/sprints/README.md`, uniquely identifies each slice, cites observed evidence for completed work, separates owner-reported from independently observed results, preserves unresolved inputs, and makes no overall `DONE` claim unsupported by accepted gates.
+- **Proposed stack/architecture boundary for owner approval:** no stack, runtime, dependency, or architecture change is proposed. Any implication discovered during plan preparation is `Unknown` and blocks the affected scope pending a separate decision.
+- **Plan-creation gate:** satisfied on 2026-10-06 when the owner explicitly approved this exact task contract, including the proposed outcome, scope, success signal, stack/architecture boundary, and task boundaries below (see Approval follow-up). DEC-014's product-scope approval, DEC-017's assignment, and the general request to continue were not treated as substitutes. The resulting canonical plan remains `Draft` until the owner separately reviews and explicitly approves that exact plan; plan approval does not authorize implementation or testing.
+
+## Inputs, proposed output, and paths
+
+- **Read-only inputs:** current SPEC; root-level `SPRINT-03b-CHANGE-REQUEST.md`; `TASK-SEA-R4-PLAN-001` and B-18–B-21 records in `TASK_SPEC.md`; DEC-014, DEC-015 and DEC-017; Sprint planning convention/catalog; CHECKPOINT-28; EVIDENCE and RUNBOOK. The change request's example path under `docs/tasks/` is stale; use the actual root-level path.
+- **Proposed output after the plan-creation gate:** create root-level `SPRINT-03b.md` and update only the Sprint 3b catalog row in `docs/sprints/README.md`; record factual plan-authoring checks in this task section after they occur. Recheck path/ID uniqueness and current task dispositions immediately before execution.
+- The future sprint record must include one observable outcome and explicit non-goals; SPEC/task links; ordered slices with owners, inputs/outputs, allowed paths and dependencies; verification for each slice; checkpoints and human diff review; blocking/advisory gates; readiness assumptions, safe fixtures/fallback and blocking Unknowns; rollback/recovery; exit choices; and evidence/RUNBOOK handoff.
+- Treat B-18, B-19 and B-20 as `Verified` only within their recorded boundaries and B-21 as owner-accepted, not as fresh command-by-command or second-laptop validation. Preserve E-SEA-098–E-SEA-107 and all historical failed, denied, not-run, or owner-reported outcomes; do not re-run or relabel them here.
+- DEC-015 archive inspection remains deferred, not passed or waived. Leave archive format, target, permission and recovery owner unresolved; no archive activity is allowed. The second-laptop OS remains unknown. Do not reuse `CHECKPOINT-06.md` (an existing R2 record) or create another checkpoint: CHECKPOINT-28 is the existing bounded R4 closeout, and any additional checkpoint/overall R4 disposition requires its own reviewed and explicitly approved task.
+- **Allowed path for this preparation step:** `TASK_SPEC.md` only, appending this Draft task section. **Future paths under this contract:** `SPRINT-03b.md`, the Sprint 3b row in `docs/sprints/README.md`, and this task section for observed plan-authoring closeout only, all subject to the gates above.
+- No README/RUNBOOK/EVIDENCE/decision/checkpoint changes, source/tests/build/runtime/provider/network/secret actions, second-laptop validation, archive, deployment, staging, commit, push, or destructive operations are in scope.
+
+## Acceptance and verification
+
+- For this contract-preparation step, verify candidate task ID uniqueness, required metadata/sections, plan-approval gate, exact current/future paths, and local links; confirm that no Sprint 3b plan file is being created; run `git diff --check -- TASK_SPEC.md`; and review a focused diff containing only this appended Draft task section.
+- These checks validate the planning contract only. They do not approve the Sprint 3b plan, verify B-18–B-21 anew, alter evidence, establish an overall R4 `DONE`, or imply release/deployment readiness.
+- After approval of this exact task and satisfaction of its plan-creation gate, verify the Sprint file and catalog entry against current source records and the required sprint convention; record only observed authoring checks and present the resulting plan for separate owner review. Do not mark the canonical plan `Ready` without explicit approval of that exact plan.
+
+## Checkpoint, stop, recovery, and handoff
+
+- **Checkpoint:** after contract preparation, present this Draft task section and focused diff; wait for explicit approval of `TASK-SEA-R4-S3B-PLAN-001 v1.0.0` or `revise`/`HOLD`. That approval is not retroactive approval of unlisted paths or actions.
+- **Stop if:** the candidate ID collides; required owner approval is absent or does not cover every plan-creation gate; existing task outcomes/evidence conflict such that a faithful plan cannot be written; the plan would require inferring archive, checkpoint, second-laptop, metric, provider, stack, or architecture decisions; or any additional path/action is needed.
+- **Recovery:** under an explicit human decision, remove only this newly appended Draft section if it has not been accepted; preserve all existing staged, modified, and untracked state and every prior task/evidence/history record. Do not use broad revert/reset/cleanup.
+- **Handoff:** the owner approved this task contract and subsequently approved the exact canonical Sprint plan v1.0.0 on 2026-10-06. The plan is Ready as a planning record; technical work remains separately task-gated. No implementation or overall R4 completion is claimed.
+
+## Approval follow-up — 2026-10-06
+
+- The owner explicitly approved `TASK-SEA-R4-S3B-PLAN-001 v1.0.0` with “Погоджую TASK-SEA-R4-S3B-PLAN-001 v1.0.0”. This approves the task's proposed outcome, scope, success signal, stack/architecture boundary, task boundaries, and exact future paths. It authorizes only preparation of the canonical `SPRINT-03b.md` Draft, update of the Sprint 3b catalog row, and factual authoring closeout in this task section.
+- The exact canonical `SPRINT-03b.md` v1.0.0 was subsequently reviewed and explicitly approved by the owner on 2026-10-06 with “Погоджую SPRINT-03b.md v1.0.0”. Its status is now `Ready` as a planning record only. No implementation, product check, archive, provider/network, secret, deployment, commit, push, or destructive operation is authorized.
+
+## Plan-authoring progress — 2026-10-06
+
+- **Changed paths:** created root `SPRINT-03b.md`; updated only the Sprint 3b row in `docs/sprints/README.md`; updated this task's status, approval record, and authoring progress in this `TASK_SPEC.md` section. No other path was changed by this task. Existing untracked `.mcp.json` was not opened or read.
+- **Index preservation:** final status initially showed the newly created `SPRINT-03b.md` as staged and modified, while the pre-edit index had no staged paths. `git restore --staged -- SPRINT-03b.md` removed only its staged copy; final status shows the plan as untracked and preserves its working-tree content. No other index path was changed.
+- **Plan ID/path:** before creation, search found no `SPRINT-SEA-S3B-001` match; after creation, the exact ID search returned one occurrence in `SPRINT-03b.md`. The canonical path was absent before creation.
+- **Observed documentation checks:** `git diff --check -- SPRINT-03b.md docs/sprints/README.md TASK_SPEC.md` — **PASS** for tracked changes. `git diff --no-index --check /dev/null SPRINT-03b.md` — no whitespace diagnostics; exit 1 is expected because the new file differs from `/dev/null`. A focused structural check — **PASS** for nine required sprint sections, 13 resolving local links, the catalog link/status, evidence-bound Draft/exit wording, no trailing whitespace, and final newline. Task ID search confirms the contract and expected plan references in `TASK_SPEC.md`.
+- **Check-wrapper note:** the first shell attempt to capture the new-file diff exit code used zsh's read-only `status` variable and stopped with `read-only variable: status`; rerunning the same check with `rc` completed with no whitespace diagnostics. This was a shell-wrapper error, not a document finding.
+- **Review / limitations at authoring checkpoint:** the plan and focused tracked diff were inspected; at that point separate owner review/approval of the exact Sprint plan remained pending, so the plan was `Draft` and this task `Active`. The subsequent plan disposition is recorded below. No product/runtime/test/build/provider/network/secret/archive/second-laptop/deployment check was run; EVIDENCE, RUNBOOK, decisions, and checkpoints were not changed. No overall R4 `DONE` or release/deployment readiness is claimed.
+
+## Sprint plan approval and bounded task closeout — 2026-10-06
+
+- **Owner disposition:** the owner explicitly approved the exact `SPRINT-03b.md` v1.0.0 with “Погоджую SPRINT-03b.md v1.0.0”. This accepts the plan as a Ready planning record only; technical work remains separately task-gated.
+- **Status synchronization:** `SPRINT-03b.md` is `Ready — owner-approved plan; implementation remains separately task-gated`; the Sprint 3b catalog row matches. `TASK-SEA-R4-S3B-PLAN-001` is `Verified` for bounded plan preparation, owner approval, and documentation checks only.
+- **Post-approval checks:** `git diff --check -- SPRINT-03b.md docs/sprints/README.md TASK_SPEC.md` — **PASS**. `git diff --no-index --check /dev/null SPRINT-03b.md` — no whitespace diagnostics; exit 1 is expected for the new-file diff. The focused structural check — **PASS** for nine required sections, 13 resolving local links, approved Ready/implementation gate, no trailing whitespace, and final newline. The Sprint ID has one declaration in the plan and one cross-reference in this task record.
+- **Retained boundary / handoff:** no implementation, tests/build, runtime, provider/network, secret, archive, second-laptop, deployment, commit, or push action was taken. Archive details and second-laptop validation remain unresolved; no overall R4 `DONE` or release/deployment readiness is claimed. Any next technical or closeout slice needs its own reviewed task contract and explicit approval. No EVIDENCE or RUNBOOK entry was added.
+
+---
+
+# TASK-SEA-R4-B18-B21-OWNER-CHECKS-001 — Record item-level owner-reported confirmations
+
+- **Version:** `1.0.0`
+- **Status:** `Verified — bounded owner-report record appended, documentation checks passed, and focused diff accepted; underlying checks remain UNKNOWN`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-10-06
+- **Related artifacts:** [`SPEC.md`](SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`E-SEA-105`](EVIDENCE.md), [`E-SEA-107`](EVIDENCE.md), [`TASK-SEA-R4-B18-001`](TASK_SPEC.md), [`TASK-SEA-R4-B19-001`](TASK_SPEC.md), [`TASK-SEA-R4-B20-001`](TASK_SPEC.md), [`TASK-SEA-R4-B21-001`](TASK_SPEC.md), [`SPRINT-03b.md`](SPRINT-03b.md), [`DEC-015`](docs/decisions/DEC-015-r4-archive-gate-deferral.md), [`DEC-016`](docs/decisions/DEC-016-r4-node24-runtime.md)
+
+## Goal and authority boundary
+
+- **Goal:** define a bounded, supplementary, append-only record of the owner's item-level B-18–B-21 confirmations, retaining their owner-reported evidence class and all details not supplied.
+- **Preparation boundary:** this Draft contract records the proposed work only. Preparing or reviewing it does not authorize an EVIDENCE append, task closeout, repeat command, or change to any task, gate, sprint, or project disposition.
+- **Execution gate:** only after the owner explicitly approves this exact `TASK-SEA-R4-B18-B21-OWNER-CHECKS-001 v1.0.0` may the specifically scoped evidence append and this task's factual closeout be performed. Any scope/path expansion requires a revised contract and separate approval.
+- **Evidence boundary:** the future entry may be `PASS` only for faithfully recording what the owner reported. The underlying B-18–B-21 checks remain owner-reported, not independently validated by this task; do not imply fresh command-by-command verification, second-laptop validation, or any broader acceptance.
+
+## Inputs, proposed output, and paths
+
+- **Read-only inputs:** B-18–B-21 task records; E-SEA-098–E-SEA-107 and the EVIDENCE schema/append-only rule; the owner's item-level confirmations from 2026-10-06; DEC-015/016; and project instructions. E-SEA-105 already contains the broad owner confirmation; this proposal records only additional item-level specificity and must not duplicate or upgrade that earlier evidence.
+- **Reported checklist items:** owner-reported confirmed: B18-a/b/c; B19-a/b; B20-a/b/c/d/e/f/g; and B21-a/b/c/d1/d2/d3. Record these as reports, not independent observations.
+- **B21-e limit:** preserve only the owner's report that it worked on macOS 15.0 Sequoia and 26.0 Tahoe using Node 22 and Node 24. The OS-to-Node pairings, commands, outputs, dates/times for individual runs, device identity, and run mapping were not supplied; do not infer them.
+- **Other limitations:** per-check commands and outputs, exact timestamps, environment/device identity, and execution-to-item mapping were not supplied. Retain them as `Unknown` / not supplied. Do not associate an item with an unreported command or claim independent verification.
+- **Proposed output after separate exact approval:** append one new evidence entry to `EVIDENCE.md` (candidate `E-SEA-108`, subject to a fresh uniqueness and sequence check) and update only this task section with factual execution/closeout details after the owner reviews the focused diff. The evidence entry must use the required EVIDENCE fields: Evidence ID; related SPEC/TASK ID; claim; source; expected; observed; timestamp/environment; status; reviewer/owner; limitations/follow-up.
+- **Allowed paths while preparing this contract:** append this Draft section to `TASK_SPEC.md` only. **Future paths after separate exact approval:** append one entry to `EVIDENCE.md` and update only this task section. No other path is authorized by this contract.
+- Preserve the denied-before-execution and not-run outcomes recorded in E-SEA-098–E-SEA-104; do not rewrite, replace, reconcile, or upgrade them. Preserve E-SEA-107 as unscoped; do not attribute it to B-18–B-21.
+- DEC-015 archive inspection remains deferred; second-laptop validation remains undocumented. The final `GATE-b` check remains deferred. Sprint 3b remains `CONTINUE WITH APPROVAL`; no overall R4 `DONE`, full MVP acceptance, release readiness, or deployment readiness is established.
+- No RUNBOOK, README, sprint, decision, checkpoint, source, or test change; no runtime/test/build/provider/network/secret/archive/second-laptop/deployment/migration/staging/commit/push/destructive action is authorized.
+
+## Acceptance and verification
+
+- For this contract-preparation step, confirm this task ID is unique; candidate E-SEA-108 is unused at drafting time; required metadata and contract sections are present; local links resolve; the described owner reports and unknowns match the supplied record; and only this new Draft section is appended. Run `git diff --check -- TASK_SPEC.md` and review the focused diff.
+- After separate exact approval, recheck evidence ID uniqueness and sequence immediately before the append; confirm the new entry follows the EVIDENCE schema, labels the source owner-reported, states `PASS` only for recording the report and `UNKNOWN` for independent validation of underlying checks, preserves every limitation and prior outcome, and changes only the two future allowed paths. Run `git diff --check -- EVIDENCE.md TASK_SPEC.md` and present the focused diff for human review.
+- These documentation checks do not rerun commands, validate the underlying checks, complete `GATE-b`, change Sprint/R4 disposition, or establish product, release, or deployment readiness.
+
+## Checkpoint, stop, recovery, and handoff
+
+- **Checkpoint:** present the Draft section and focused diff; wait for explicit approval of this exact task contract or `revise`/`HOLD`. That approval must precede any EVIDENCE or task-closeout edit.
+- **Stop if:** the candidate task/evidence ID collides; the reported item list or B21-e wording cannot be matched without inference; the evidence schema cannot be met while retaining unknowns; the owner-reported evidence class is unclear; or any additional path/action is needed. Seek owner clarification instead of inferring missing details.
+- **Recovery:** under an explicit human decision, remove only this newly appended Draft section if it has not been accepted; if the separately approved evidence task is later executed, recovery must be separately authorized and limited to its new evidence entry and this task section. Preserve all prior records and staged/modified/untracked state; no broad revert/reset.
+- **Handoff:** this contract proposes only a future supplementary owner-report record. Final `GATE-b` remains deferred; Sprint 3b remains `CONTINUE WITH APPROVAL`; existing evidence classes and outcomes remain unchanged until a separately approved exact execution contract is carried out.
+
+## Approval follow-up — 2026-10-06
+
+- The owner explicitly approved `TASK-SEA-R4-B18-B21-OWNER-CHECKS-001 v1.0.0` on 2026-10-06 with `Погоджую TASK-SEA-R4-B18-B21-OWNER-CHECKS-001 v1.0.0`. This authorizes only the supplementary E-SEA-108 append and factual update of this task section described above.
+
+## Evidence-recording progress — 2026-10-06
+
+- **Changed paths:** appended E-SEA-108 to `EVIDENCE.md`; updated only this task section in `TASK_SPEC.md` with the exact approval and execution progress. No other path is within this task's allowed scope.
+- **Preflight:** before the append, E-SEA-108 was absent from `EVIDENCE.md`, E-SEA-107 was the final evidence entry, and this task ID had no prior occurrence in `TASK_SPEC.md`.
+- **Recorded scope:** E-SEA-108 records the specifically reported B18-a/b/c, B19-a/b, B20-a/b/c/d/e/f/g, and B21-a/b/c/d1/d2/d3 confirmations as owner-reported. It records the B21-e macOS 15.0 Sequoia / 26.0 Tahoe and Node 22 / Node 24 statement without inferring pairings.
+- **Retained limits:** command outputs, exact times, device identity, environment details, and per-item run mapping were not supplied. E-SEA-108 is `PASS` only for faithful recording and `UNKNOWN` for independent verification. Prior denied/not-run outcomes, E-SEA-105's broad confirmation, E-SEA-107's unscoped status, archive deferral, and the GATE-b deferral remain unchanged.
+- **Verification:** the first final-state `git diff --check -- EVIDENCE.md TASK_SPEC.md` reported one extra blank line at EOF in this task section; that blank line was removed. The final rerun — **PASS**, exit success with no diagnostics. A focused review confirmed one E-SEA-108 heading appended after E-SEA-107 and only this task section updated for approval/progress/owner review; the candidate task ID was absent before drafting. These are documentation checks only.
+- **Checkpoint:** the focused EVIDENCE/TASK_SPEC diff was presented; the owner replied `продовжуй` on 2026-10-06, accepting this bounded documentation result. No product checks, command reruns, or broader disposition were performed.
+
+## Human review and bounded closeout — 2026-10-06
+
+- **Owner disposition:** the owner selected `продовжуй` after review of the focused EVIDENCE/TASK_SPEC diff. This accepts only the E-SEA-108 owner-report record and the scoped task documentation update.
+- **Status:** `Verified` for faithful recording of the owner-reported item-level confirmations and passing documentation checks only. Independent verification of B-18–B-21, exact B21-e OS-to-Node pairings, and per-command results remain `UNKNOWN`.
+- **Retained boundaries:** final `GATE-b` remains deferred; Sprint 3b remains `CONTINUE WITH APPROVAL`; archive inspection remains deferred; second-laptop validation and command-level mapping remain unknown. No overall R4 `DONE`, full MVP acceptance, release readiness, or deployment readiness is claimed.
+- **Handoff:** any future independent command validation, second-laptop setup, or broader disposition requires its own reviewed bounded contract and explicit approval. No RUNBOOK entry was added.
+
+---
+
+# TASK-SEA-R4-GATE-B-SECOND-LAPTOP-001 — Define second-laptop GATE-b validation
+
+- **Version:** `1.1.0`
+- **Status:** `Verified — owner-accepted GATE-b based on owner-reported aggregate success; independent command-level verification remains unknown`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-10-06
+- **Related artifacts:** [`SPEC.md`](SPEC.md), [`TASK-SEA-R4-B21-001`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`E-SEA-108`](EVIDENCE.md), [`E-SEA-109`](EVIDENCE.md), [`E-SEA-110`](EVIDENCE.md), [`SPRINT-03b.md`](SPRINT-03b.md), [`CHECKPOINT-28`](docs/checkpoints/CHECKPOINT-28.md), [`DEC-015`](docs/decisions/DEC-015-r4-archive-gate-deferral.md), [`DEC-016`](docs/decisions/DEC-016-r4-node24-runtime.md)
+
+## Goal and authority boundary
+
+- **Goal:** define a separately reviewable contract for the owner-designated second-laptop validation referred to as GATE-b, keeping the validation procedure and acceptance criteria explicit before any execution.
+- **Scope clarified by owner:** GATE-b means second-laptop validation only. This does not include DEC-015 archive work, other B-18–B-21 re-verification, or a broader R4 disposition.
+- **Preparation boundary:** this contract authorizes only the bounded second-laptop README install/start validation below. It does not authorize archive work, other B-18–B-21 re-verification, or a broader R4 disposition.
+- **Execution gate:** on 2026-10-06, the owner said `погоджую продовжуй` to continue with this bounded validation, reported Windows 11 2026 Update (version 26H2), and selected a clean clone as the start condition. This authorizes only the described second-laptop validation on the owner-designated laptop, including npm registry access solely for `npm install`; it does not authorize any other network/provider, secret, archive, deployment, migration, commit, push, or destructive action. The exact Windows build is not supplied and must be recorded as observed or owner-reported during the run.
+
+## Inputs, proposed output, and paths
+
+- **Read-only inputs:** B-21 task record and current README instructions; E-SEA-108; SPRINT-03b; CHECKPOINT-28; DEC-015/016; and the project instructions. These records state that second-laptop setup has not been tested and that the archive gate is separate and deferred.
+- **Owner-selected procedure:** on 2026-10-06, the owner selected the README install/start scope for a clean repository copy: record `node --version` and `npm --version`, run `npm install`, run `npm run dev`, and open the documented loopback URL. Require Node.js `24.x` per DEC-016/README; record the npm version without imposing an undocumented version requirement.
+- **Acceptance criteria:** `npm install` exits successfully; `npm run dev` starts the application on the documented `127.0.0.1:3000` loopback address; and the local page loads. Capture sanitized command outcomes, timestamp, Node/npm versions, and target laptop OS/version. Do not capture secrets. These criteria are approved for this bounded task; they are not results.
+- **Owner-supplied environment:** the owner reported Windows 11 2026 Update (version 26H2) on 2026-10-06. This is an owner report, not independently observed; exact build is unknown. The owner selected a clean clone as the starting condition; no hardware identifier is required.
+- **Network boundary:** the owner selected npm registry access only for `npm install`, following approval of this bounded contract. The clean clone must already be available locally; Git clone/fetch or any other network/provider access is not authorized.
+- **Output:** the owner has accepted GATE-b based on their aggregate success report. E-SEA-109 records the report and E-SEA-110 records the acceptance. Underlying command/page outcomes are not independently observed, and exact versions/build/time were not supplied.
+- **Allowed paths:** this contract authorizes updating this task section in `TASK_SPEC.md` with observed progress/closeout, appending factual validation evidence to `EVIDENCE.md`, and appending the operational handoff to `RUNBOOK.md`. On the target clone, only expected local install/dev artifacts (such as `node_modules/` and `.next/`) may be generated; if any tracked file changes, stop and report without reverting it. No other path is authorized.
+- Do not read `.mcp.json` or secrets. No source/test/README change, product test/build, non-npm network/provider, archive, deployment, migration, staging, commit, push, or destructive action is authorized by this contract.
+
+## Acceptance and verification
+
+- **Contract acceptance:** the task ID is unique; scope is limited to second-laptop validation and preserves the separate archive deferral; Windows 11 2026 Update (version 26H2) is labeled owner-reported; clean clone is the selected starting condition; the README install/start procedure, measurable criteria, evidence handling, allowed paths, and npm-only network boundary are explicit. Owner approval authorizes the described validation only; it does not mean validation passed.
+- **GATE-b acceptance:** the owner explicitly accepted this bounded task on 2026-10-06 based on their report that the immediately preceding checklist works (`E-SEA-109`, `E-SEA-110`). This is `Verified` by owner acceptance for the bounded GATE-b disposition only. Individual outcomes for dependency installation, local development-server startup on `127.0.0.1:3000`, and page loading were not supplied; independent and command-by-command verification remains `UNKNOWN`. Existing owner-reported B-18–B-21 statements are not evidence for this check.
+- **Documentation checks only:** verify task-ID uniqueness and local links, inspect the focused diff to confirm only this task section was changed, and run `git diff --check -- TASK_SPEC.md`. These checks do not execute GATE-b.
+
+## Checkpoint, stop, recovery, and handoff
+
+- **Checkpoint:** on 2026-10-06, the owner explicitly accepted GATE-b based on their aggregate success report (`E-SEA-110`). This session did not run the checks; the current session host is macOS and is not the target laptop. Exact command outcomes, Node/npm versions, Windows build, and execution time remain unsupplied; acceptance does not imply independent verification.
+- **Stop if:** the clean clone is not already available locally; the designated laptop does not match the reported Windows 11 26H2 environment; Node.js is not `24.x`; `npm install` fails or requests access beyond the npm registry; the dev server does not bind to the documented loopback address; the page does not load; records conflict; or any additional path/action is required. Preserve the failure output after sanitizing sensitive values; do not troubleshoot outside this contract.
+- **Recovery:** stop the dev server with its normal foreground interrupt after recording results. Do not remove the clone, dependencies, or other files as part of this contract; preserve state for owner review. Any cleanup or remediation requires separate approval.
+- **Handoff:** GATE-b is accepted by the owner based on their report that the second-laptop checklist works (`E-SEA-109`, `E-SEA-110`). Exact build, Node/npm versions, command outcomes, and execution time remain unknown; the underlying result remains owner-reported, not independently verified. npm registry access was authorized only for `npm install`. DEC-015 archive inspection remains separately deferred; Sprint 3b remains `CONTINUE WITH APPROVAL`. No broader R4 `DONE`, full MVP acceptance, release readiness, or deployment readiness is claimed.
+
+---
+
+# TASK-SEA-R4-S3B-GATE-B-STATUS-SYNC-001 — Prepare Sprint 3b GATE-b status supplement
+
+- **Version:** `1.0.0`
+- **Status:** `Verified — owner-reviewed bounded documentation update; Sprint 3b remains CONTINUE WITH APPROVAL`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-10-07
+- **Related artifacts:** [`SPRINT-03b.md`](SPRINT-03b.md), [`TASK-SEA-R4-S3B-PLAN-001`](TASK_SPEC.md), [`TASK-SEA-R4-GATE-B-SECOND-LAPTOP-001`](TASK_SPEC.md), [`E-SEA-109`](EVIDENCE.md), [`E-SEA-110`](EVIDENCE.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`DEC-015`](docs/decisions/DEC-015-r4-archive-gate-deferral.md), [`DEC-017`](docs/decisions/DEC-017-r4-sprint-assignment.md)
+
+## Goal and authority boundary
+
+- **Goal:** prepare one bounded documentation update that supplements the canonical Sprint 3b plan with the owner-accepted GATE-b disposition and the owner's current `CONTINUE WITH APPROVAL` decision.
+- **Scope:** report GATE-b as owner-accepted based on the aggregate owner report in E-SEA-109 and the acceptance in E-SEA-110. Preserve the evidence classification: no command-by-command or independent verification is claimed.
+- **Not a sprint close:** this task does not mark Sprint 3b `DONE`, establish overall R4 `DONE`, or close broader R4 acceptance. DEC-015 archive inspection remains separately deferred.
+- **Approval record:** after this exact contract was presented, the owner replied `продовжуй`; this authorizes only the documentation paths and checks listed in this contract. It does not authorize sprint closure or any product/runtime/archive operation.
+
+## Inputs, expected output, and paths
+
+- **Read-only inputs:** current `SPRINT-03b.md`; the GATE-b task section and E-SEA-109/E-SEA-110; Sprint 3b task/plan records; DEC-015 and DEC-017.
+- **Expected output after separate approval:** one dated supplemental note in `SPRINT-03b.md` linking E-SEA-109/E-SEA-110, stating GATE-b is owner-accepted on aggregate owner report, preserving unknown command-level details, and retaining the current bounded Sprint 3b exit `CONTINUE WITH APPROVAL`.
+- **Allowed paths after approval:** append the supplement to `SPRINT-03b.md`; update only this task section in `TASK_SPEC.md` with execution/review status; append factual documentation-check evidence to `EVIDENCE.md`; append the operational handoff to `RUNBOOK.md`. No README, sprint catalog, checkpoint, decision, source, test, package, or other path is authorized.
+- **Execution boundary:** this documentation update changes only the paths listed above. It does not authorize implementation, product checks, network operations, archive operations, commit, push, or destructive actions.
+
+## Acceptance and verification
+
+- **Contract acceptance:** unique task ID; bounded allowed paths; explicit distinction between owner acceptance and independent verification; no rewriting of historical Sprint 3b statements; explicit preservation of `CONTINUE WITH APPROVAL` and DEC-015 archive deferral.
+- **Future task acceptance:** the canonical plan contains exactly one dated, linked supplement; E-SEA-109 remains an aggregate owner-reported result and E-SEA-110 remains the owner-acceptance decision; missing versions/build/command outputs remain `Unknown`; Sprint 3b is not represented as `DONE`.
+- **Documentation checks after approval:** verify task/evidence IDs and local links, inspect the focused diff, and run `git diff --check -- SPRINT-03b.md TASK_SPEC.md EVIDENCE.md RUNBOOK.md`. No product tests, build, second-laptop commands, or archive checks are in scope.
+
+## Checkpoint, stop, recovery, and handoff
+
+- **Checkpoint:** the owner approved this exact contract with `продовжуй` before the edit. Present the focused post-change diff for review and request `continue`, `revise`, or `HOLD`. Approval of GATE-b alone was not treated as approval of this separate Sprint plan edit.
+- **Stop if:** current plan wording conflicts with E-SEA-109/E-SEA-110; resolving a conflict requires rewriting the historical task/evidence record; or another path or decision is needed. Preserve `Unknown` rather than infer missing run details.
+- **Recovery:** the plan supplement and evidence are now recorded. Do not remove or rewrite them as part of this task; any correction requires a dated amendment and explicit owner direction. Preserve append-only records and all pre-existing worktree state; do not use broad revert/reset/cleanup.
+- **Handoff:** the owner reviewed the corrected v1.1.0 plan diff and chose `continue` on 2026-10-07. E-SEA-113 records owner approval of this bounded planning-document revision; the task is Verified for this documentation update only. Sprint 3b remains `CONTINUE WITH APPROVAL`; no overall R4 or Sprint `DONE` claim follows, and implementation remains separately task-gated.
+
+---
+
+# TASK-SEA-R4-ARCHIVE-GATE-INPUTS-001 — Record owner inputs for deferred archive gate
+
+- **Version:** `1.0.0`
+- **Status:** `Verified — owner chose to retain deferral; archive prerequisites remain Waiting for input`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-10-07
+- **Related artifacts:** [`DEC-015`](docs/decisions/DEC-015-r4-archive-gate-deferral.md), [`SPRINT-03b.md`](SPRINT-03b.md), [`TASK-SEA-R4-B20-001`](TASK_SPEC.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md)
+
+## Goal and authority boundary
+
+- **Goal:** if separately approved, capture the product owner's explicit decision on whether DEC-015's archive gate remains deferred and, only if they request future task preparation, record the non-sensitive prerequisite inputs DEC-015 requires.
+- **Preparation / execution authority:** the owner's request authorized preparation of this Draft. After reviewing the exact contract, the owner replied `продовжуй` on 2026-10-07, authorizing only this owner-input capture/recording slice under the paths listed below. No archive operation or decision change is authorized.
+- **No archive action:** this task is an owner-input/decision-recording slice only. It does not create, read, inspect, copy, package, publish, delete, or otherwise access an archive or its target.
+- **No decision supersession:** DEC-015 remains in force. If owner input proposes changing or lifting its deferral, stop and prepare the required versioned decision record under separate authorization before any archive task or operation.
+- **No completion claim:** no archive safety, B-20 acceptance beyond its existing record, Sprint 3b `DONE`, overall R4 `DONE`, full MVP acceptance, release readiness, or deployment readiness may be inferred.
+
+## Inputs, expected output, and paths
+
+- **Read-only inputs:** DEC-015, current Sprint 3b plan and B-20 task disposition. Do not inspect an archive, target contents, secrets, credentials, `.mcp.json`, or external systems.
+- **Owner inputs, only if the owner asks to revisit archive handling:** (1) archive format/type and non-sensitive contents scope; (2) target/destination identified at a safe logical level; (3) the exact proposed permission boundary and action under consideration; (4) recovery owner and recovery approach; and (5) whether to keep the deferral or request preparation of a separate bounded archive task. Missing or ambiguous fields stay `Unknown` / `Waiting for input`.
+- **Sensitive-data boundary:** do not request or record archive contents, credentials, secret values, or a target identifier the owner marks sensitive. A logical target label is sufficient for this input record; any exact local target, if later necessary, must remain local and be handled only under a separately approved contract.
+- **Expected output after separate approval:** update only this task section with the owner's exact non-sensitive decision/inputs, mark unavailable values `Unknown`, and record whether the deferral remains or a separate task is requested. Append the corresponding factual evidence and operational handoff. No archive work is authorized by those records.
+- **Allowed paths after separate approval:** this task section in `TASK_SPEC.md`, an append-only factual entry in `EVIDENCE.md`, and an append-only handoff in `RUNBOOK.md`. Do not change DEC-015, `SPRINT-03b.md`, B-20 status, checkpoints, README, source, tests, packages, or other paths under this contract.
+
+## Acceptance and verification
+
+- **Contract acceptance:** unique task ID; exact DEC-015 linkage; bounded documentation-only goal; owner-input fields are explicit; missing inputs remain `Unknown`; no archive target/content or secret is accessed; the execution approval gate is explicit.
+- **Execution acceptance:** record either (a) the owner's explicit choice to keep archive work deferred, or (b) all required non-sensitive inputs plus an explicit request to prepare a separate archive task. If any required input is absent, contradictory, or sensitive, record `Waiting for input`/`HOLD` without inference. Do not mark the archive gate passed or waived.
+- **Verification after execution:** check that every recorded value is directly supported by the owner's response, all required unknowns remain explicit, local links and IDs resolve, no unauthorized path changed, and `git diff --check -- TASK_SPEC.md EVIDENCE.md RUNBOOK.md` passes. These checks verify documentation only.
+
+## Checkpoint, stop, recovery, and handoff
+
+- **Checkpoint:** the owner explicitly approved execution of this exact v1.0.0 contract with `продовжуй` on 2026-10-07. In response to the archive-gate decision prompt, the owner chose `Повернутися до gate`; this records intent to revisit only. The required prerequisite details are not yet supplied, so the task remains Active / Waiting for input.
+- **Stop if:** the owner asks for any archive access/action, a proposed decision conflicts with DEC-015, a sensitive target/value would need to be recorded, or required permission/recovery information is ambiguous. Preserve the existing deferral and request a separately approved decision/task as needed.
+- **Recovery:** before execution, remove only this appended Draft section under explicit owner direction; preserve all pre-existing staged, modified, and untracked worktree state. After execution, preserve append-only evidence/history; corrections require a dated amendment.
+- **Handoff:** the owner approved this exact contract and chose to revisit the gate; await the missing non-sensitive inputs below. If the owner elects to keep the deferral, record that decision only. If they request archive work, this contract still stops at prerequisite capture; the archive action needs its own separately reviewed contract and explicit approval.
+
+## Execution checkpoint — 2026-10-07
+
+- **Owner decision received:** `Повернутися до gate` in response to the question about DEC-015's deferred archive gate.
+- **Interpretation:** the owner wants to revisit the gate. This does not on its own supply the missing archive prerequisites or authorize a separate archive task/action.
+- **Still `Unknown` / `Waiting for input`:** archive format/type and non-sensitive scope; safe logical target/destination; exact proposed permission/action boundary; recovery owner and approach; explicit request to prepare a separate bounded archive task.
+- **Observed boundary:** no archive, target, secret, credential, `.mcp.json`, or external system was accessed; DEC-015 remains unchanged. The task is Active pending the inputs above.
+
+## Execution disposition — 2026-10-07
+
+- **Owner decision received:** keep DEC-015's archive gate deferred. No archive prerequisites were supplied or requested for this disposition.
+- **Task outcome:** `Verified` for recording the owner's explicit choice to retain the deferral only. Archive format/type and scope, safe logical target, proposed permission/action boundary, and recovery owner/approach remain `Unknown` / `Waiting for input`.
+- **Boundary:** DEC-015 remains unchanged; archive work is not passed, permanently waived, or authorized. This decision does not establish B-20 beyond its recorded disposition or overall R4 `DONE`.
+- **Evidence / handoff:** E-SEA-115 records the owner decision; RUNBOOK records the documentation-only closeout. No archive or target was accessed.
+
+---
+
+# TASK-SEA-R4-S3B-EXIT-001 — Record bounded Sprint 3b exit disposition
+
+- **Version:** `1.0.0`
+- **Status:** `Verified — bounded Sprint 3b exit and archive-deferral disposition recorded`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-10-07
+- **Related artifacts:** [`SPRINT-03b.md`](SPRINT-03b.md), [`docs/sprints/README.md`](docs/sprints/README.md), [`DEC-015`](docs/decisions/DEC-015-r4-archive-gate-deferral.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md)
+
+## Goal and authority boundary
+
+- **Goal:** record the owner's explicit decision to retain the archive deferral and close Sprint 3b as `DONE` for the bounded outcome stated in `SPRINT-03b.md` only.
+- **Approval:** the owner requested this exact disposition on 2026-10-07 and approved this bounded closeout plan before implementation. This authorizes documentation changes only within the paths listed below.
+- **Bounded exit criteria:** the owner explicitly selects `DONE` for the Sprint 3b plan outcome (one traceable, evidence-bounded disposition of B-18–B-21 and unresolved follow-up gates); evidence classes and limitations remain accurate; archive handling remains deferred; the decision does not claim overall R4/MVP completion or release/deployment readiness.
+- **No broader acceptance:** unspecified broader R4 criteria and unresolved follow-up inputs remain `Unknown`; this task does not define or infer them.
+- **No archive action:** no archive operation, access, inspection, or target resolution is authorized.
+
+## Inputs, expected output, and paths
+
+- **Inputs:** owner decision in this conversation; current `SPRINT-03b.md`, DEC-015, task/evidence records, and sprint catalog.
+- **Expected output:** update only the bounded Sprint 3b exit/status, align the catalog, record the owner's archive deferral and Sprint disposition in append-only evidence/history, and mark the archive-input decision task complete for recording the choice only.
+- **Allowed paths:** this section and the archive-input task section in `TASK_SPEC.md`; `SPRINT-03b.md`; the Sprint 3b row in `docs/sprints/README.md`; append-only `EVIDENCE.md`; append-only `RUNBOOK.md`.
+- **Not authorized:** edits to DEC-015, CHECKPOINT-28, product source/tests, `.mcp.json`, credentials/secrets, archives, package/dependency files, unrelated docs, or any production/network/provider/deployment/migration/commit/push/destructive action.
+
+## Acceptance and verification
+
+- **Acceptance:** task/evidence IDs and local links resolve; the Sprint record and catalog both show only bounded Sprint 3b `DONE`; historical `CONTINUE WITH APPROVAL` is retained as prior disposition; archive remains deferred and not passed/permanently waived; overall R4/MVP/release/deployment claims remain explicitly out of scope.
+- **Verification:** review the focused diff, check ID/link uniqueness and status consistency, run `git diff --check` on the authorized Markdown files and targeted structural assertions. No product or archive commands.
+
+## Checkpoint, stop, recovery, and handoff
+
+- **Checkpoint:** owner requested `leave archive gate deferred and close Sprint 3b DONE` on 2026-10-07; this documentation-only task was approved before implementation.
+- **Stop if:** recording `DONE` requires inventing broader acceptance criteria, rewriting prior evidence, changing DEC-015, treating archive work as passed/waived, or changing paths outside this contract.
+- **Recovery:** only under explicit owner direction, revert this task's own non-append-only task/catalog/Sprint status changes; preserve append-only evidence and RUNBOOK history, and preserve all pre-existing worktree state. Do not use broad revert/reset/cleanup.
+- **Handoff:** `git diff --check -- TASK_SPEC.md EVIDENCE.md SPRINT-03b.md docs/sprints/README.md` and targeted structural/status assertions passed; intermediate assertion-script mismatches and their correction are recorded in RUNBOOK. Archive prerequisites and broader R4 acceptance criteria remain `Unknown`; no product behavior, overall R4 completion, release, deployment, or archive result is asserted.
+
+---
+
+# TASK-SEA-R4-S3B-README-001 — Publish Sprint 3b descriptive summary
+
+- **Version:** `1.0.0`
+- **Status:** `Verified — descriptive companion and root README synchronized`
+- **Product owner:** методист відділення теорії судноводіння навчального центру «Норд-Вест»
+- **Delivery / technical owner:** виконавець проєкту
+- **Date:** 2026-10-07
+- **Related artifacts:** [`SPRINT-03b.md`](SPRINT-03b.md), [`SPRINT-03b-README.md`](SPRINT-03b-README.md), [`README.md`](README.md), [`EVIDENCE.md`](EVIDENCE.md), [`RUNBOOK.md`](RUNBOOK.md), [`DEC-015`](docs/decisions/DEC-015-r4-archive-gate-deferral.md), [`CHECKPOINT-28`](docs/checkpoints/CHECKPOINT-28.md)
+
+## Goal and authority boundary
+
+- **Goal:** create a readable descriptive companion summarizing what was completed in Sprint 3b and update the root README's overview and documentation links.
+- **Approval:** the owner requested this documentation change and approved the bounded plan before implementation on 2026-10-07. This authorizes only the documentation paths below.
+- **Source boundary:** use the canonical Sprint 3b plan, existing task/checkpoint records, E-SEA-098–115, and DEC-015. Preserve the existing evidence classes and historical denied, not-run, and failed results.
+- **Non-canonical companion:** `SPRINT-03b-README.md` is a descriptive summary only. `SPRINT-03b.md`, `TASK_SPEC.md`, `EVIDENCE.md`, and the linked decision/checkpoint remain authoritative for their respective contracts and evidence.
+- **No broader claim:** Sprint 3b `DONE` is bounded to the recorded plan outcome. Do not claim overall R4/MVP completion, release/deployment readiness, archive pass/waiver, or independent verification of owner-reported results.
+
+## Inputs, output, and paths
+
+- **Inputs:** current root `README.md`, `SPRINT-03-README.md` companion pattern, `SPRINT-03b.md` v1.2.0, B-18–B-21 tasks, CHECKPOINT-28, E-SEA-098–115, and DEC-015.
+- **Expected output:** a dated, metadata-bearing Sprint 3b summary companion; corrected, concise R4/Sprint 3b status and links in the general README; append-only evidence and RUNBOOK handoff after checks.
+- **Allowed paths:** this task section in `TASK_SPEC.md`; new root `SPRINT-03b-README.md`; root `README.md`; append-only `EVIDENCE.md`; append-only `RUNBOOK.md`.
+- **Not authorized:** modifying canonical Sprint/decision/checkpoint/task outcomes, `docs/sprints/README.md`, source/tests/dependencies, `.mcp.json`, secrets, archives, provider/network, deployment, migration, commit, or push.
+
+## Acceptance and verification
+
+- **Acceptance:** the companion is clearly labeled as descriptive/non-canonical, reports only source-supported B-18–B-21 and bounded Sprint exit outcomes, and links the canonical records. Unknowns, owner-reported GATE-b boundaries, B-21 denied/not-run commands, archive deferral, and non-claims remain visible.
+- **Root README acceptance:** remove the stale claim that Sprint 3b has no plan; reflect the bounded Sprint 3b `DONE` disposition, link the canonical plan and companion, and retain the boundary against overall R4/MVP completion.
+- **Verification:** verify task/evidence IDs and local links, inspect the focused diff, run `git diff --check` on tracked changed Markdown and targeted structure/status/whitespace assertions including the new untracked summary. These checks verify documentation only; no product commands are run.
+
+## Checkpoint, stop, recovery, and handoff
+
+- **Checkpoint:** owner requested the summary and root README update and approved this bounded plan on 2026-10-07.
+- **Stop if:** any proposed summary statement lacks a source, requires inferring an acceptance result, or changes a canonical task/decision/checkpoint outside scope.
+- **Recovery:** under explicit owner direction, revert only this task's changes to root README and its own task section; preserve the new companion unless directed otherwise. EVIDENCE and RUNBOOK are append-only; correct them only through dated addenda. Preserve all pre-existing worktree state and do not use broad revert/reset/cleanup.
+- **Handoff:** E-SEA-116 and RUNBOOK record the README synchronization and checks. `git diff --check -- README.md TASK_SPEC.md` passed; targeted local-link, whitespace, task/evidence ID, summary-scope, and limitation assertions passed. The companion remains Draft pending human review; broader R4 acceptance and archive prerequisites remain `Unknown`.

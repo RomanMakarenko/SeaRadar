@@ -1306,3 +1306,120 @@
 - **Limitations / reconciliation:** do not attribute this unscoped report to R4, B-18–B-21, any named task or command, product behavior, or project-wide outcome. It does not resolve DEC-015's archive deferral, establish second-laptop validation, change B-21 denied/not-run outcomes, or establish overall R4 `DONE`, full MVP acceptance, or release/deployment readiness. E-SEA-098–E-SEA-106 remain unchanged.
 - **Timestamp / environment:** 2026-10-05; user-reported statement in this conversation. Exact wall-clock time and execution environment were not supplied.
 - **Recovery / handoff:** preserve this append-only owner report and all earlier evidence. Record any later scoped command/check results separately with their own source and observed output; do not infer them from this statement.
+
+### E-SEA-108 — Item-level owner-reported B-18–B-21 confirmations
+
+- **Related SPEC/TASK ID:** `SPEC-SEA-001`; `TASK-SEA-R4-B18-B21-OWNER-CHECKS-001`; `TASK-SEA-R4-B18-001`; `TASK-SEA-R4-B19-001`; `TASK-SEA-R4-B20-001`; `TASK-SEA-R4-B21-001`; `E-SEA-105`.
+- **Claim under verification:** the owner reported the listed B-18–B-21 checklist items as confirmed and reported B21-e working on the stated macOS and Node versions; this entry records the report and does not independently validate the underlying checks.
+- **Source:** owner-reported item-level confirmations conveyed in this conversation on 2026-10-06. No command transcript, output, screenshot, or independent run artifact was supplied with these confirmations.
+- **Expected:** append supplementary per-item detail to the broad owner confirmation in E-SEA-105, without duplicating it as a fresh verification, attributing unspecified command outcomes, or changing prior evidence.
+- **Observed:** the owner reported as confirmed B18-a/b/c; B19-a/b; B20-a/b/c/d/e/f/g; and B21-a/b/c/d1/d2/d3. For B21-e, the owner reported that it worked on macOS 15.0 Sequoia and macOS 26.0 Tahoe using Node 22 and Node 24; the OS-to-Node pairings were not supplied. These are owner-reported statements, not independently observed results.
+- **Timestamp / environment:** 2026-10-06; owner-reported in this conversation. Exact wall-clock time, per-run dates, device/machine identity, environment details, and mapping of individual items to runs were not supplied.
+- **Status:** `PASS` for faithfully recording the owner's item-level report; `UNKNOWN` for independent verification of the underlying B-18–B-21 checks and exact B21-e OS-to-Node pairings.
+- **Reviewer / owner:** owner is the source of the reported confirmations; delivery/technical owner records them. Owner review of this focused append remains pending.
+- **Limitations and follow-up:** this supplements but does not supersede E-SEA-105's broad confirmation. Commands, outputs, timestamps, device identity, and per-item run mapping remain unknown/not supplied. Preserve all historical denied-before-execution and not-run outcomes in E-SEA-098–E-SEA-104, and retain E-SEA-107 as unscoped. It does not establish second-laptop validation, complete `GATE-b`, overall R4 `DONE`, full MVP acceptance, release readiness, or deployment readiness. Final `GATE-b` remains deferred; Sprint 3b remains `CONTINUE WITH APPROVAL`.
+- **Recovery / handoff:** keep this as an append-only owner-report record. Correct any factual error only through a separately reviewed and approved dated amendment; do not edit earlier evidence or infer missing command/run details.
+
+### E-SEA-109 — Owner-reported GATE-b second-laptop result
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R4-GATE-B-SECOND-LAPTOP-001`; `TASK-SEA-R4-B21-001`; `E-SEA-108`.
+- **Claim under verification:** the owner reports that the immediately preceding GATE-b second-laptop README install/start checklist works.
+- **Source:** owner statement in this conversation on 2026-10-06: `перевірив все працює`, immediately following the bounded checklist for Node/npm version capture, `npm install`, `npm run dev`, and opening `http://127.0.0.1:3000`.
+- **Expected:** record the owner-reported result without upgrading it to independent command-by-command verification or inferring omitted outputs and environment details.
+- **Observed:** the owner reported that the checks work. No command transcript, exact Node/npm versions, exact Windows build, timestamp of execution, or individual command/page outcome was supplied. No check was executed by this session.
+- **Timestamp / environment:** 2026-10-06; owner report in this conversation. Exact execution time and run environment were not restated with the result; Windows 11 2026 Update (26H2) remains previously owner-reported, not independently observed for this run.
+- **Status:** `PASS` for recording the owner's aggregate GATE-b success report; `UNKNOWN` for independent or command-by-command verification of the acceptance criteria.
+- **Reviewer / owner:** owner is the source of the report; delivery/technical owner records it. Review of this entry remains pending.
+- **Limitations and follow-up:** this is a coarse owner report tied by immediate conversation context to the GATE-b checklist, not an independently observed test result. Do not infer exact Node/npm versions, Windows build, command exit codes, server binding, page content, or exact run time. It does not establish overall R4 `DONE`, full MVP acceptance, release readiness, deployment readiness, or resolve DEC-015 archive deferral.
+- **Recovery / handoff:** preserve this append-only report. Any later detailed results must be recorded separately with their own provenance; do not rewrite prior entries or infer missing details.
+
+### E-SEA-110 — Owner acceptance of GATE-b
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R4-GATE-B-SECOND-LAPTOP-001`; `E-SEA-109`.
+- **Claim under verification:** the owner explicitly accepts GATE-b on the basis of their confirmation that the bounded second-laptop checklist works.
+- **Source:** owner statement in this conversation on 2026-10-06: `зафіксуй GATE-b як прийнятий за моїм підтвердженням`.
+- **Expected:** record owner acceptance of this bounded GATE-b task while preserving the underlying validation evidence class as owner-reported and not independently verified.
+- **Observed:** the owner explicitly directed that GATE-b be recorded as accepted based on their confirmation. This is an acceptance/disposition decision; it supplies no additional command output, runtime version, OS build, or execution timestamp.
+- **Timestamp / environment:** 2026-10-06; owner acceptance in this conversation. Execution environment details remain as limited in E-SEA-109.
+- **Status:** `PASS` for recording the owner's bounded GATE-b acceptance; underlying command-by-command independent verification remains `UNKNOWN`.
+- **Reviewer / owner:** product owner provided the acceptance; delivery/technical owner recorded it.
+- **Limitations and follow-up:** closes only `TASK-SEA-R4-GATE-B-SECOND-LAPTOP-001` by owner acceptance of the owner-reported aggregate result. Does not upgrade E-SEA-109 to independent verification, establish missing versions/build/time, alter historical B-21 outcomes, resolve DEC-015 archive deferral, or establish overall R4 `DONE`, full MVP acceptance, release readiness, or deployment readiness.
+- **Recovery / handoff:** preserve this append-only acceptance record. Any additional execution detail must be recorded as a separate dated entry; do not rewrite E-SEA-109 or earlier evidence.
+
+### E-SEA-111 — Sprint 3b GATE-b status supplement
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R4-S3B-GATE-B-STATUS-SYNC-001`; `TASK-SEA-R4-GATE-B-SECOND-LAPTOP-001`; `E-SEA-109`; `E-SEA-110`.
+- **Claim under verification:** the canonical Sprint 3b plan now carries a dated supplemental record of owner-accepted GATE-b and the owner's `CONTINUE WITH APPROVAL` exit decision without asserting Sprint or R4 completion.
+- **Source:** owner approved the exact bounded status-sync task by replying `продовжуй`; source records E-SEA-109/E-SEA-110; focused plan/task diff and documentation checks.
+- **Expected:** append a dated plan supplement linking E-SEA-109 and E-SEA-110; preserve owner-reported evidence class, unknown command details, DEC-015 archive deferral, and the existing bounded exit decision; do not rewrite historical records or claim `DONE`.
+- **Observed:** `SPRINT-03b.md` was versioned to 1.1.0 and received one supplemental section stating GATE-b is owner-accepted based on the aggregate owner report, command-level details remain unknown, and Sprint 3b remains `CONTINUE WITH APPROVAL`. The task record was updated and this evidence entry was appended. No product, test, second-laptop, network, archive, or deployment operation was run.
+- **Timestamp / environment:** 2026-10-07; documentation changes/checks in the SeaRadar workspace. No product environment was used.
+- **Status:** `PASS` for the owner-approved bounded documentation update and its structural/whitespace checks; underlying GATE-b command-by-command behavior remains `UNKNOWN` as recorded in E-SEA-109.
+- **Reviewer / owner:** owner approved the exact task contract before execution; focused post-change human diff review remains pending.
+- **Limitations and follow-up:** this supplements the original Sprint 3b plan without retroactively changing its recorded state. It does not close Sprint 3b or overall R4, resolve archive deferral, verify runtime behavior, or fill the missing versions/build/command outputs.
+- **Recovery / handoff:** preserve the dated supplement and append-only evidence/history. Human reviewer should inspect the focused diff and choose `continue`, `revise`, or `HOLD`; any factual correction after append requires a dated amendment.
+
+### E-SEA-112 — Sprint 3b supplement approval-boundary correction
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R4-S3B-GATE-B-STATUS-SYNC-001`; `SPRINT-SEA-S3B-001`; `E-SEA-111`.
+- **Claim under verification:** the Sprint 3b v1.1.0 metadata distinguishes the previously owner-approved v1.0.0 plan from the newly task-authorized supplement, whose focused human diff review remains pending.
+- **Source:** focused human review of `SPRINT-03b.md` approval boundary, status metadata and dated supplement; `TASK_SPEC.md`; `E-SEA-111`; post-correction structural, link and whitespace checks.
+- **Expected:** do not imply the owner approved the entire v1.1.0 plan when the recorded approval names v1.0.0; preserve the approved supplement scope and leave the revision pending focused human review.
+- **Observed:** review found the v1.1.0 header still said `Ready — owner-approved plan`, while the approval boundary named only v1.0.0 and the task handoff said v1.1.0 review was pending. The header now marks v1.0.0 as owner-approved and v1.1.0 as pending focused human diff review; the approval boundary limits task authorization to the dated supplement. The existing GATE-b evidence classes, `CONTINUE WITH APPROVAL`, and DEC-015 archive deferral remain unchanged.
+- **Timestamp / environment:** 2026-10-07; documentation review and correction in the local SeaRadar workspace.
+- **Status:** `PASS` for this documentation consistency correction; final focused owner diff review remains pending.
+- **Reviewer / owner:** delivery/technical owner identified and corrected the metadata inconsistency during focused review; owner review of the final diff remains pending.
+- **Limitations and follow-up:** this is a documentation-status correction only. It does not independently verify GATE-b, close Sprint 3b or overall R4, resolve archive deferral, or establish full MVP/release/deployment readiness. Post-correction command and structural-check outcomes are recorded in the corresponding RUNBOOK handoff.
+- **Recovery / handoff:** preserve append-only E-SEA-111 and this dated correction. Human reviewer should inspect the focused diff and choose `continue`, `revise`, or `HOLD`.
+
+### E-SEA-113 — Sprint 3b v1.1.0 owner diff review
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R4-S3B-GATE-B-STATUS-SYNC-001`; `SPRINT-SEA-S3B-001`; `E-SEA-109`–`E-SEA-112`.
+- **Claim under verification:** the owner reviewed the corrected Sprint 3b v1.1.0 documentation diff and approved it for continuation as a planning record, without authorizing implementation or broader Sprint/R4 closure.
+- **Source:** owner reply `продовжуй` after presentation of the focused diff and boundaries; `SPRINT-03b.md`; `TASK_SPEC.md`; E-SEA-109–E-SEA-112.
+- **Expected:** record the owner’s bounded `continue` disposition; mark the documentation task verified and the v1.1.0 planning record owner-approved; preserve `CONTINUE WITH APPROVAL`, the archive deferral, and all implementation/closeout gates.
+- **Observed:** the owner chose `продовжуй`. `SPRINT-03b.md` now records v1.1.0 as owner-approved for planning only; `TASK-SEA-R4-S3B-GATE-B-STATUS-SYNC-001` is Verified for the bounded documentation update. Sprint 3b remains `CONTINUE WITH APPROVAL`, not `DONE`; implementation, archive operations, deployment, commit and push remain unauthorized by this decision.
+- **Timestamp / environment:** 2026-10-07; owner disposition in this conversation; local documentation review.
+- **Status:** `PASS` for owner approval of the bounded v1.1.0 planning-document revision.
+- **Reviewer / owner:** product owner — focused diff disposition `continue`; delivery/technical owner — record update.
+- **Limitations and follow-up:** this does not independently verify GATE-b, command-level results, broader R4 acceptance, full MVP acceptance, release readiness, or deployment readiness. GATE-b remains owner-accepted on the aggregate report; DEC-015 archive inspection remains separately deferred. Every future technical or closeout slice needs its own reviewed task contract and explicit approval.
+- **Recovery / handoff:** preserve this append-only disposition and prior evidence. Next bounded action requires a separate reviewed task contract; no implementation or other operation is inferred.
+
+### E-SEA-114 — Owner requests revisit of deferred archive gate
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R4-ARCHIVE-GATE-INPUTS-001`; `DEC-015-R4-ARCHIVE-GATE-DEFERRAL`.
+- **Claim under verification:** the owner chose to revisit DEC-015's archive gate, while the prerequisites for any separate archive task remain unspecified.
+- **Source:** owner response `Повернутися до gate` to the decision prompt in this conversation; approved task contract `TASK-SEA-R4-ARCHIVE-GATE-INPUTS-001`.
+- **Expected:** record only the explicit choice received; do not infer the archive format, target, permission, recovery owner, or authorization for an archive operation.
+- **Observed:** the owner selected `Повернутися до gate`. Archive format/type and non-sensitive scope, safe logical target/destination, exact permission/action boundary, recovery owner/approach, and the explicit request to prepare a separate archive task remain `Unknown` / `Waiting for input`. No archive or target was accessed; DEC-015 remains unchanged.
+- **Timestamp / environment:** 2026-10-07; owner input in this conversation; no archive or product environment used.
+- **Status:** `BLOCKED` pending the required non-sensitive owner inputs and explicit next-step request.
+- **Reviewer / owner:** product owner supplied the revisit choice; delivery/technical owner recorded its limited meaning.
+- **Limitations and follow-up:** this choice is not permission to inspect, create, copy, package, publish, or delete an archive. It does not pass or waive the gate, change B-20 status, close Sprint 3b or overall R4, or establish release/deployment readiness.
+- **Recovery / handoff:** preserve DEC-015 and this append-only record. Request only the missing non-sensitive inputs; if the owner elects to keep the gate deferred, record that explicit choice without archive action.
+
+### E-SEA-115 — Owner disposition for bounded Sprint 3b exit
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R4-S3B-EXIT-001`; `TASK-SEA-R4-ARCHIVE-GATE-INPUTS-001`; `SPRINT-SEA-S3B-001`; `DEC-015-R4-ARCHIVE-GATE-DEFERRAL`.
+- **Claim under verification:** the owner chose to retain DEC-015's archive deferral and close Sprint 3b as `DONE` for its stated bounded outcome only.
+- **Source:** owner instruction in this conversation on 2026-10-07; bounded Sprint 3b plan and DEC-015.
+- **Expected:** record the explicit owner disposition without upgrading owner-reported results, passing or waiving archive work, or claiming overall R4/MVP completion.
+- **Observed:** the owner instructed to leave the archive gate deferred and close Sprint 3b `DONE`. Sprint 3b v1.2.0 records this as the bounded plan exit; the prior `CONTINUE WITH APPROVAL` entry remains historical. Archive prerequisites remain `Unknown` / `Waiting for input`; DEC-015 is unchanged and no archive was accessed.
+- **Timestamp / environment:** 2026-10-07; owner input and documentation-only review in the local SeaRadar workspace.
+- **Status:** `PASS` for recording the bounded owner disposition and preserving stated boundaries; not evidence of archive safety or independent product verification.
+- **Reviewer / owner:** product owner supplied the disposition; delivery/technical owner recorded it.
+- **Limitations / follow-up:** broader R4 acceptance criteria remain `Unknown`; this does not establish overall R4 `DONE`, full MVP acceptance, release readiness, or deployment readiness. GATE-b remains owner-accepted based on its aggregate report, with command-level details unknown.
+- **Recovery / handoff:** preserve this append-only entry and prior evidence. Archive handling remains deferred, not passed or permanently waived; any archive task/action requires its own reviewed contract and explicit approval.
+
+### E-SEA-116 — Sprint 3b README summary and root README synchronization
+
+- **Related SPEC/TASK ID:** `TASK-SEA-R4-S3B-README-001`; `SPRINT-SEA-S3B-README-001`; `SPRINT-SEA-S3B-001`; `E-SEA-115`.
+- **Claim under verification:** the descriptive Sprint 3b companion and general README consistently summarize the bounded Sprint 3b `DONE` disposition and preserve the limitations in canonical source records.
+- **Source:** `SPRINT-03b.md` v1.2.0, `TASK_SPEC.md`, CHECKPOINT-28, DEC-015, E-SEA-098–E-SEA-115, the owner-approved documentation task, and the updated `README.md` / `SPRINT-03b-README.md`.
+- **Expected:** use only source-supported task outcomes and evidence classes; keep the companion non-canonical; remove stale root README statements about no Sprint 3b plan; preserve archive and broader R4 non-claims.
+- **Observed:** `SPRINT-03b-README.md` provides a Draft descriptive summary and links the canonical records. Root `README.md` now links the plan and companion, describes only the bounded Sprint 3b `DONE` status, and records B-21/GATE-b limitations. Local Markdown link targets, task/evidence identifiers, selected content boundaries, and whitespace checks passed.
+- **Timestamp / environment:** 2026-10-07; documentation-only review in the local SeaRadar workspace.
+- **Status:** `PASS` for documentation consistency and link/structure checks; no new product, archive, provider, or runtime result was observed.
+- **Reviewer / owner:** delivery/technical owner prepared the summary at the product owner's request; companion remains Draft pending human review.
+- **Limitations / follow-up:** overall R4/MVP acceptance, release/deployment readiness, archive safety, and independent verification of owner-reported outcomes are not established. Archive prerequisites and broader R4 acceptance criteria remain `Unknown`.
+- **Recovery / handoff:** preserve this append-only record and prior evidence. Correct any factual issue through a dated addendum; keep `SPRINT-03b.md` canonical and the new README descriptive only.
